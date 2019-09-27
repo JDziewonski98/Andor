@@ -26,8 +26,8 @@
  
  * *Tasks missed: N/A*
  * *Tasks scheduled:*
-    * Discuss programming language and tools
-    * Work on the sketch
+    * *Discuss programming language and tools*
+    * *Work on the sketch*
 
 ### Top 3 unexpected challenges encountered since last report
 
@@ -49,4 +49,4 @@
 
 ### Team mood
 
- * *Everything great, this course is awesome.*
+ * *Stoked.*
