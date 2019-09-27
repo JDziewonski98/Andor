@@ -24,10 +24,10 @@
 
 ### Tasks missed, scheduled for this report
  
- * *tasks missed: N/A*
- * *tasks scheduled:*
-    * discuss programming language and tools
-    * work on the sketch
+ * *Tasks missed: N/A*
+ * *Tasks scheduled:*
+    * Discuss programming language and tools
+    * Work on the sketch
 
 ### Top 3 unexpected challenges encountered since last report
 
@@ -39,12 +39,13 @@
 
 ### Contribution statement
 
- * *Dagobert Duck contributed 14% of the work effectuated since last week.*
- * *Daisy Duck contributed 42% of the work effectuated since last week.*
- * *Donald Duck contributed 16% of the work effectuated since last week.*
- * *Tick contributed 8% of the work effectuated since last week.*
- * *Trick contributed 8% of the work effectuated since last week.*
- * *Track contributed 20% of the work effectuated since last week.*
+ * *Philip Cheng contributed 14.29% of the work effectuated since last week.*
+ * *William Chien contributed 14.29% of the work effectuated since last week.*
+ * *Anthony Cui contributed 14.29% of the work effectuated since last week.*
+ * *Jacek Dziewonski contributed 14.29% of the work effectuated since last week.*
+ * *Omar Ibrahim contributed 14.29% of the work effectuated since last week.*
+ * *Cayce McClenen contributed 14.29% of the work effectuated since last week.*
+ * *Justin Sun contributed 14.29% of the work effectuated since last week.*
 
 ### Team mood
 
