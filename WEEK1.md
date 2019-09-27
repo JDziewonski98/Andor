@@ -26,8 +26,8 @@
  
  * *tasks missed: N/A*
  * *tasks scheduled:*
-    * discuess programming language and tools*
-    * work on the sketch*
+    * discuss programming language and tools
+    * work on the sketch
 
 ### Top 3 unexpected challenges encountered since last report
 
@@ -35,15 +35,7 @@
 
 ### Top 3 lessons learned since last report
 
- * *java singletons are not thread safe by default*
- * *never code a class before you coded the interface*
- * *write more junit tests*
-
-### 3 most critical bugs in current functionality (optional)
-
- * *when monsters advance, they do do not skip fields of the target field is already occupied by a monster.*
- * *game crashes when farmers are hit by monsters*
- * *game issues only green runestones*
+ * *N/A*
 
 ### Contribution statement
 
