@@ -2,7 +2,7 @@
 
 ### Group
 
- * Team 2*
+ * Team 2
  * *JavaScript & Phaser*
 
 ### Team Members
@@ -23,16 +23,15 @@
    * *Work on the sketch together*
 
 ### Tasks missed, scheduled for this report
-
- * *schetch slightly behind schedule*
+ 
+ * *tasks missed: N/A*
+ * *tasks scheduled:*
+    * -discuess programming language and tools*
+    * -work on the sketch*
 
 ### Top 3 unexpected challenges encountered since last report
 
- * *reconnection of clients on connection dropout*
- * *understanding java lambdas*
- * *convince Dagobert to use maven instead of gradle*
- * *arrangement of swing elements for dynamic window resizing*
- * *builing self contained jar*
+ * *N/A*
 
 ### Top 3 lessons learned since last report
 
