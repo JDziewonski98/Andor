@@ -26,8 +26,8 @@
  
  * *tasks missed: N/A*
  * *tasks scheduled:*
-    * -discuess programming language and tools*
-    * -work on the sketch*
+    * discuess programming language and tools*
+    * work on the sketch*
 
 ### Top 3 unexpected challenges encountered since last report
 
