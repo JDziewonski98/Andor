@@ -1,9 +1,12 @@
 # TEAM 2 
 
 ### Team Members
+ * *Philip Cheng*
+ * *William Chien*
  * *Anthony Cui*
- * *Cayce McClenen*
- * *Jacek Dziewonski*
  * *Jacek Dziewonski*
  * *Omar Ibrahim*
- * *Philip Cheng*
+ * *Cayce McClenen*
+ * *Justin Sun*
+
+ 
