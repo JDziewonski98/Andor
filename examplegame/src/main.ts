@@ -1,4 +1,5 @@
 import * as Phaser from 'phaser';
+import {Tile} from './tile';
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
   active: false,
@@ -8,9 +9,7 @@ const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
 
 export class GameScene extends Phaser.Scene {
   private square: Phaser.GameObjects.Rectangle & { body: Phaser.Physics.Arcade.Body };
-  private button;
-  private clickcount: number = 0;
-  public clickcounttext;
+  public tiles: Tile[] = [];
   constructor() {
     super(sceneConfig);
   }
@@ -24,15 +23,30 @@ export class GameScene extends Phaser.Scene {
     this.add.image(window.innerWidth/2, window.innerHeight/2, 'beach');
     this.square = this.add.rectangle(400, 400, 100, 100, 0xFFFFFF) as any;
     this.physics.add.existing(this.square);
-    this.clickcounttext = this.add.text(100,200,'');
-    this.button = this.add.image(400,300,'button').setInteractive().on('pointerdown', () => { this.updateclick(++this.clickcount) });
-    //this.add.button(window.innerWidth/2, window.innerHeight/2,);
-    this.updateclick(this.clickcount);
+
+    var id: number = 0;
+    for (let i = 0; i < 6; i++) {
+      for (let j = 0; j < 4; j++){
+        let rect: Tile = this.add.existing(new Tile(id++,this,300 + 175*i ,300 + 175*j,150,150,0x000000)) as any;
+        this.tiles.push(rect);
+        rect.setInteractive();
+        rect.on('pointerdown', function(pointer) {this.setFillStyle(0xff0000)});
+        rect.on('pointerup', function(pointer) {this.setFillStyle(0x000000)});
+        rect.on('pointerdown', function(pointer) {this.printstuff()});
+      }
+    }
+    this.setTileAdjacencies(this.tiles,4,6);
   }
 
-  public updateclick(clickcount: number) {
-    this.clickcounttext.setText("big dawg: " + clickcount + " clicks to date");
+  public setTileAdjacencies(tiles: Tile[], rows: number, cols: number) {
+    for (let i = 0; i < tiles.length; i++) {
+        tiles[i].adjacent.push(tiles[i-1])
+        tiles[i].adjacent.push(tiles[i+1])
+        tiles[i].adjacent.push(tiles[i-rows])
+        tiles[i].adjacent.push(tiles[i+rows])
+    }
   }
+
 
   public update() {
     const cursorKeys = this.input.keyboard.createCursorKeys();
@@ -50,10 +64,7 @@ export class GameScene extends Phaser.Scene {
             this.square.body.setVelocityY(this.square.body.velocity.y + 1);
           }
         }
-        //this.square.body.setVelocityY(0);
-      //this.square.body.setVelocityY(0);
     }
-    
     if (cursorKeys.right.isDown) {
       this.square.body.setVelocityX(500);
     } else if (cursorKeys.left.isDown) {
@@ -62,14 +73,6 @@ export class GameScene extends Phaser.Scene {
       this.square.body.setVelocityX(0);
     }
   }
-
-  public wait(ms){
-    var start = new Date().getTime();
-    var end = start;
-    while(end < start + ms) {
-      end = new Date().getTime();
-   }
- }
 
 }
 
