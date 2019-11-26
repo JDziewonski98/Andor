@@ -17,9 +17,6 @@ export default class GameScene extends Phaser.Scene {
   }
  
   public preload() {
-    this.load.image('map','./assets/andor_map.jpg');
-    this.load.spritesheet('weed', './assets/icons/Background 3b.png',
-    {frameWidth: 32, frameHeight: 32})
   }
 
   public create() {
