@@ -9,7 +9,7 @@ import { Tilemaps } from 'phaser';
 
 export default class GameScene extends Phaser.Scene {
   private square: Phaser.GameObjects.Rectangle & { body: Phaser.Physics.Arcade.Body };
-//   private weed: Phaser.GameObjects.Sprite & { body: Phaser.Physics.Arcade.Sprite };
+  private weed: Phaser.GameObjects.Sprite;
   public tiles: Tile[] = [];
 
   constructor() {
@@ -18,8 +18,7 @@ export default class GameScene extends Phaser.Scene {
  
   public preload() {
     this.load.image('map','./assets/andor_map.jpg');
-    this.load.spritesheet('weed', './assets/icons/Background 3b.png',
-    {frameWidth: 32, frameHeight: 32})
+    this.load.image('weed', './assets/8bit_herb.jpeg')
   }
 
   public create() {
@@ -35,12 +34,17 @@ export default class GameScene extends Phaser.Scene {
         rect.setInteractive();
         rect.on('pointerdown', function(pointer) {this.setFillStyle(0xff0000)});
         rect.on('pointerup', function(pointer) {this.setFillStyle(0x000000)});
+        rect.on('pointerout', function(pointer) {this.setFillStyle(0x000000)});
         rect.on('pointerdown', function(pointer) {this.printstuff()});
+        rect.on('pointerdown', function(pointer) {this.moveTo()})
       }
     }
     this.setTileAdjacencies(this.tiles, numRows, numCols);
 
-    // this.weed = this.add.sprite(500, 300, 'weed').setInteractive();
+    this.weed = this.add.sprite(this.tiles[0].x,this.tiles[0].y,'weed');
+    this.weed.depth = 5;
+    this.tiles[0].hero = this.weed;
+    this.tiles[0].heroexist = true;
 
     this.square = this.add.rectangle(400, 400, 100, 100, 0xFFFF00) as any;
     // this.square.createBitmapMask(this.weed);
@@ -53,8 +57,8 @@ export default class GameScene extends Phaser.Scene {
 
   public setTileAdjacencies(tiles: Tile[], rows: number, cols: number) {
     for (let i = 0; i < tiles.length; i++) {
-        tiles[i].adjacent.push(tiles[i-1])
-        tiles[i].adjacent.push(tiles[i+1])
+        if (i % rows != 0){tiles[i].adjacent.push(tiles[i-1])}
+        if (i % rows != rows - 1){tiles[i].adjacent.push(tiles[i+1])}
         tiles[i].adjacent.push(tiles[i-rows])
         tiles[i].adjacent.push(tiles[i+rows])
     }
