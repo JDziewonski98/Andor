@@ -4,12 +4,10 @@ export default class WeedScene extends Phaser.Scene {
     private herb: Phaser.GameObjects.Sprite & { body: Phaser.Physics.Arcade.Body};
 
     constructor() {
-        super('Weed');
+        super({key: 'Weed'});
     }
 
     public preload() {
-        this.load.image('beach','./assets/sample.jpg');
-        this.load.image('weed', './assets/8bit_herb.jpeg')
     }
 
     public create() {

@@ -13,12 +13,10 @@ export default class GameScene extends Phaser.Scene {
   public tiles: Tile[] = [];
 
   constructor() {
-    super('Game');
+    super({key: 'Game'});
   }
  
   public preload() {
-    this.load.image('map','./assets/andor_map.jpg');
-    this.load.image('weed', './assets/8bit_herb.jpeg')
   }
 
   public create() {

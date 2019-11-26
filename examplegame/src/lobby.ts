@@ -10,12 +10,13 @@ export default class LobbyScene extends Phaser.Scene {
     private gameText;
 
     constructor() {
-        super('Lobby');
+        super({key: 'Lobby'});
     }
 
     public preload() {
         this.load.image('beach','./assets/sample.jpg');
-        // this.load.bitmapFont('carrier_command', 'assets/fonts/bitmapFonts/carrier_command.png', 'assets/fonts/bitmapFonts/carrier_command.xml');
+        this.load.image('map','./assets/andor_map.jpg');
+        this.load.image('weed', './assets/8bit_herb.jpeg')
     }
 
     public create() {
