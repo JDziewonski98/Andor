@@ -4,7 +4,7 @@ export default class WeedScene extends Phaser.Scene {
     private herb: Phaser.GameObjects.Sprite & { body: Phaser.Physics.Arcade.Body};
 
     constructor() {
-        super('Weed');
+        super({key: 'Weed'});
     }
 
     public preload() {

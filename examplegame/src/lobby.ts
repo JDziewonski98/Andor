@@ -10,7 +10,7 @@ export default class LobbyScene extends Phaser.Scene {
     private gameText;
 
     constructor() {
-        super('Lobby');
+        super({key: 'Lobby'});
     }
 
     public preload() {

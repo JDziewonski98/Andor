@@ -13,7 +13,7 @@ export default class GameScene extends Phaser.Scene {
   public tiles: Tile[] = [];
 
   constructor() {
-    super('Game');
+    super({key: 'Game'});
   }
  
   public preload() {
