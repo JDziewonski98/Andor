@@ -11,6 +11,7 @@ export default class CreateGameScene extends Phaser.Scene {
     }
 
     public create() {
+        console.log(this)
         var background = this.add.image(500,300,'desert').setDisplaySize(1000,600)
         var style2 = { 
             fontFamily: '"Roboto Condensed"',
