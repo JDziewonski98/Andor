@@ -12,12 +12,13 @@ export default class CreateGameScene extends Phaser.Scene {
     }
 
     public create() {
+        var background = this.add.image(500,300,'desert').setDisplaySize(1000,600)
         var style2 = { 
             fontFamily: '"Roboto Condensed"',
             fontSize: "20px"
          }
         console.log('create')
-        this.cameras.main.setBackgroundColor('#42adf5');
+        //this.cameras.main.setBackgroundColor('#42adf5');
         var title = this.add.text(240, 10, 'Please enter your game name', style2);
         var element = this.add.dom(410, 200).createFromCache('nameform');
         var title = this.add.text(350, 100, 'Difficulty: easy/normal', style2);
