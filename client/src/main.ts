@@ -1,14 +1,15 @@
 import * as Phaser from 'phaser';
-import GameScene from "./scenes/GameScene";
-
+import Scenes from './scenes';
 const gameConfig: Phaser.Types.Core.GameConfig = {
   title: 'Sample',
  
   type: Phaser.AUTO,
  
-  width: window.innerWidth,
-  height: window.innerHeight,
- 
+  width: 1000,
+  height: 600,
+  dom:{
+    createContainer: true
+  },
   physics: {
     default: 'arcade',
     arcade: {
@@ -18,7 +19,7 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
  
   parent: 'game',
   backgroundColor: '#000000',
-  scene:  GameScene,
+  scene: Scenes
 };
  
 export const game = new Phaser.Game(gameConfig);
