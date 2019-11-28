@@ -1,12 +1,14 @@
 import {Tile} from './tile';
 import { Tilemaps } from 'phaser';
 import {Window} from './window'
+import { game } from './main';
 
 export default class GameScene extends Phaser.Scene {
   private weed: Phaser.GameObjects.Sprite;
   public tiles: Tile[] = [];
   private count: number = 0;
   private gameText;
+  private windows:Window[] = []
 
   constructor() {
     super({key: 'Game'});
@@ -41,7 +43,14 @@ export default class GameScene extends Phaser.Scene {
     this.tiles[0].heroexist = true;
 
     this.weed.setInteractive();
+    //Important!!!! gotta find a way to clear data when u exit a scene or else shit gets fricked
     this.weed.on('pointerdown', function (pointer) {
+      console.log(this.tiles.length)
+      this.windows.forEach(element => {
+        element.kill()
+      });
+      this.windows = []
+      this.tiles = []
         this.scene.start('Lobby');
     }, this);
 
@@ -84,6 +93,7 @@ export default class GameScene extends Phaser.Scene {
       });
 
       this.scene.add(handle, demo, true);
+      this.windows.push(demo)
   }
 
 

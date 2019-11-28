@@ -10,7 +10,7 @@ export class Window extends Phaser.Scene {
     create ()
     {
         var bg = this.add.image(0, 0, 'beach').setOrigin(0);
-
+        this.add.text(1,2,'drag me hoe',{backgroundColor: '0xf00'})
         this.cameras.main.setViewport(this.parent.x, this.parent.y, 100, 100);
 
         this.add.sprite(50, 50, 'weed').setOrigin(0.5);
@@ -21,6 +21,11 @@ export class Window extends Phaser.Scene {
         this.cameras.main.setPosition(this.parent.x, this.parent.y);
 
         this.scene.bringToTop();
+    }
+
+    kill()
+    {
+        this.scene.remove()
     }
 
 }

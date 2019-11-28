@@ -29,7 +29,7 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
     WeedScene,
     GameScene,
     CreateGameScene,
-    JoinGameScene,
+    JoinGameScene
   ]
 };
  
