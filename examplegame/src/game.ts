@@ -1,9 +1,12 @@
 import {Tile} from './tile';
 import { Tilemaps } from 'phaser';
+import {Window} from './window'
 
 export default class GameScene extends Phaser.Scene {
   private weed: Phaser.GameObjects.Sprite;
   public tiles: Tile[] = [];
+  private count: number = 0;
+  private gameText;
 
   constructor() {
     super({key: 'Game'});
@@ -41,7 +44,50 @@ export default class GameScene extends Phaser.Scene {
     this.weed.on('pointerdown', function (pointer) {
         this.scene.start('Lobby');
     }, this);
+
+    var style2 = { 
+      fontFamily: '"Roboto Condensed"',
+      fontSize: "40px",
+      backgroundColor: '#f00'
+    }
+    this.gameText = this.add.text(250,100,"Click Me",style2).setOrigin(0)
+    this.gameText.setInteractive();
+    this.gameText.on('pointerup', function (pointer) {
+
+      this.createWindow(100,70);
+
+  }, this);
+
   }
+
+
+  public createWindow (width,height)
+  {
+      var x = Phaser.Math.Between(400, 600);
+      var y = Phaser.Math.Between(64, 128);
+
+      var handle = 'window' + this.count++;
+
+      var win = this.add.zone(x, y, width, height).setInteractive().setOrigin(0);
+
+      var demo = new Window(handle, win);
+
+      this.input.setDraggable(win);
+
+      win.on('drag', function (pointer, dragX, dragY) {
+
+          this.x = dragX;
+          this.y = dragY;
+
+          demo.refresh()
+
+      });
+
+      this.scene.add(handle, demo, true);
+  }
+
+
+
 
   public setTileAdjacencies(tiles: Tile[], rows: number, cols: number) {
     for (let i = 0; i < tiles.length; i++) {
