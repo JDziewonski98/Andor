@@ -1,3 +1,2 @@
-examplegame/node_modules
-examplegame/node_modules/*
-examplegame/yarn.lock
+client/node_modules
+client/node_modules/*
