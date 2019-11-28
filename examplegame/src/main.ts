@@ -2,6 +2,8 @@ import * as Phaser from 'phaser';
 import GameScene from './game';
 import WeedScene from './weed';
 import LobbyScene from './lobby';
+import CreateGameScene from './creategame';
+import JoinGameScene from './joingame';
 
 const gameConfig: Phaser.Types.Core.GameConfig = {
   title: 'Sample',
@@ -10,7 +12,9 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
  
   width: 1000,
   height: 600,
- 
+  dom:{
+    createContainer: true
+  },
   physics: {
     default: 'arcade',
     arcade: {
@@ -23,7 +27,9 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
   scene:  [
     LobbyScene,
     WeedScene,
-    GameScene
+    GameScene,
+    CreateGameScene,
+    JoinGameScene,
   ]
 };
  

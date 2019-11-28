@@ -3,3 +3,6 @@ examplegame/node_modules/*
 examplegame/yarn.lock
 examplegame/webpack.config.js
 examplegame/package.json
+node_modules/*
+node_modules
+package-lock.json

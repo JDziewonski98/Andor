@@ -34,17 +34,25 @@ export default class LobbyScene extends Phaser.Scene {
             fontSize: "40px",
             backgroundColor: "#f00"
          }
-        this.weedText = this.add.text(500,300,"Get the herb", style2).setOrigin(0.5)
+        this.weedText = this.add.text(500,300,"New", style2).setOrigin(0.5)
         this.weedText.setInteractive();
         this.weedText.on('pointerdown', function (pointer) {
-            this.scene.start('Weed');
+            this.scene.start('Create');
         }, this);
 
-        this.gameText = this.add.text(500,400,"Play the boring game", style2).setOrigin(0.5)
+        this.gameText = this.add.text(500,400,"Join", style2).setOrigin(0.5)
         this.gameText.setInteractive();
         this.gameText.on('pointerdown', function (pointer) {
-            this.scene.start('Game');
+            this.scene.start('Join');
         }, this);
+
+        this.gameText = this.add.text(500,500,"Load", style2).setOrigin(0.5)
+        this.gameText.setInteractive();
+        this.gameText.on('pointerdown', function (pointer) {
+            this.scene.start('Weed');
+        }, this); 
+        
+        
     }
 
     public update() {
