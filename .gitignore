@@ -1,5 +1,3 @@
 examplegame/node_modules
 examplegame/node_modules/*
 examplegame/yarn.lock
-examplegame/webpack.config.js
-examplegame/package.json
