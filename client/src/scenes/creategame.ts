@@ -17,17 +17,15 @@ export default class CreateGameScene extends Phaser.Scene {
             fontSize: "20px",
             color: '#ff0'
          }
-        console.log('create')
-        //this.cameras.main.setBackgroundColor('#42adf5');
         var title = this.add.text(240, 10, 'Please enter your game name', style2);
+        //this is how we can add html elements
         var element = this.add.dom(410, 200).createFromCache('nameform');
         var title = this.add.text(350, 90, 'Difficulty: easy/normal', style2);
         var title = this.add.text(350, 200, 'Player number', style2);
         var passtitle = this.add.text(240,300,'Enter Password:', style2)
-        //element.setPerspective(800);
         element.addListener('click');
-        var myself = this
 
+    //this is how we can interact with the html dom element
     element.on('click', function (event) {
 
         if (event.target.name === 'submitButton')
@@ -42,7 +40,7 @@ export default class CreateGameScene extends Phaser.Scene {
 
                 this.setVisible(false)
 
-                //for some reason u can just go this.scene.start('x') ??????
+                //for some reason u can't just go this.scene.start('x') ??????
                 this.scene.changescene()
             }
             else
