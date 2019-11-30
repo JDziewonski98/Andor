@@ -1,0 +1,2141 @@
+{
+	"textures": [
+		{
+			"image": "tilesheet.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 895,
+				"h": 249
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "pipo-map001-0.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 48,
+						"h": 48
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 48,
+						"h": 48
+					}
+				},
+				{
+					"filename": "pipo-map001-10.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 48,
+						"h": 48
+					},
+					"frame": {
+						"x": 1,
+						"y": 51,
+						"w": 48,
+						"h": 48
+					}
+				},
+				{
+					"filename": "pipo-map001-12.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 48,
+						"h": 48
+					},
+					"frame": {
+						"x": 1,
+						"y": 101,
+						"w": 48,
+						"h": 48
+					}
+				},
+				{
+					"filename": "pipo-map001-13.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 48,
+						"h": 48
+					},
+					"frame": {
+						"x": 1,
+						"y": 151,
+						"w": 48,
+						"h": 48
+					}
+				},
+				{
+					"filename": "pipo-map001-15.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 1,
+						"w": 48,
+						"h": 47
+					},
+					"frame": {
+						"x": 1,
+						"y": 201,
+						"w": 48,
+						"h": 47
+					}
+				},
+				{
+					"filename": "pipo-map001-14.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 48,
+						"h": 48
+					},
+					"frame": {
+						"x": 51,
+						"y": 1,
+						"w": 48,
+						"h": 48
+					}
+				},
+				{
+					"filename": "pipo-map001-16.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 48,
+						"h": 48
+					},
+					"frame": {
+						"x": 51,
+						"y": 51,
+						"w": 48,
+						"h": 48
+					}
+				},
+				{
+					"filename": "pipo-map001-24.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 48,
+						"h": 48
+					},
+					"frame": {
+						"x": 51,
+						"y": 101,
+						"w": 48,
+						"h": 48
+					}
+				},
+				{
+					"filename": "pipo-map001-25.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 48,
+						"h": 48
+					},
+					"frame": {
+						"x": 51,
+						"y": 151,
+						"w": 48,
+						"h": 48
+					}
+				},
+				{
+					"filename": "pipo-map001-23.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 1,
+						"w": 48,
+						"h": 47
+					},
+					"frame": {
+						"x": 51,
+						"y": 201,
+						"w": 48,
+						"h": 47
+					}
+				},
+				{
+					"filename": "pipo-map001-27.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 48,
+						"h": 48
+					},
+					"frame": {
+						"x": 101,
+						"y": 1,
+						"w": 48,
+						"h": 48
+					}
+				},
+				{
+					"filename": "pipo-map001-28.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 48,
+						"h": 48
+					},
+					"frame": {
+						"x": 101,
+						"y": 51,
+						"w": 48,
+						"h": 48
+					}
+				},
+				{
+					"filename": "pipo-map001-3.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 48,
+						"h": 48
+					},
+					"frame": {
+						"x": 101,
+						"y": 101,
+						"w": 48,
+						"h": 48
+					}
+				},
+				{
+					"filename": "pipo-map001-33.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 48,
+						"h": 48
+					},
+					"frame": {
+						"x": 101,
+						"y": 151,
+						"w": 48,
+						"h": 48
+					}
+				},
+				{
+					"filename": "pipo-map001-26.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 1,
+						"w": 48,
+						"h": 47
+					},
+					"frame": {
+						"x": 101,
+						"y": 201,
+						"w": 48,
+						"h": 47
+					}
+				},
+				{
+					"filename": "pipo-map001-35.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 48,
+						"h": 48
+					},
+					"frame": {
+						"x": 151,
+						"y": 1,
+						"w": 48,
+						"h": 48
+					}
+				},
+				{
+					"filename": "pipo-map001-36.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 48,
+						"h": 48
+					},
+					"frame": {
+						"x": 151,
+						"y": 51,
+						"w": 48,
+						"h": 48
+					}
+				},
+				{
+					"filename": "pipo-map001-37.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 48,
+						"h": 48
+					},
+					"frame": {
+						"x": 151,
+						"y": 101,
+						"w": 48,
+						"h": 48
+					}
+				},
+				{
+					"filename": "pipo-map001-38.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 48,
+						"h": 48
+					},
+					"frame": {
+						"x": 151,
+						"y": 151,
+						"w": 48,
+						"h": 48
+					}
+				},
+				{
+					"filename": "pipo-map001-57.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 48,
+						"h": 47
+					},
+					"frame": {
+						"x": 151,
+						"y": 201,
+						"w": 48,
+						"h": 47
+					}
+				},
+				{
+					"filename": "pipo-map001-39.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 48,
+						"h": 48
+					},
+					"frame": {
+						"x": 201,
+						"y": 1,
+						"w": 48,
+						"h": 48
+					}
+				},
+				{
+					"filename": "pipo-map001-40.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 48,
+						"h": 48
+					},
+					"frame": {
+						"x": 201,
+						"y": 51,
+						"w": 48,
+						"h": 48
+					}
+				},
+				{
+					"filename": "pipo-map001-42.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 48,
+						"h": 48
+					},
+					"frame": {
+						"x": 201,
+						"y": 101,
+						"w": 48,
+						"h": 48
+					}
+				},
+				{
+					"filename": "pipo-map001-43.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 48,
+						"h": 48
+					},
+					"frame": {
+						"x": 201,
+						"y": 151,
+						"w": 48,
+						"h": 48
+					}
+				},
+				{
+					"filename": "pipo-map001-90.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 48,
+						"h": 47
+					},
+					"frame": {
+						"x": 201,
+						"y": 201,
+						"w": 48,
+						"h": 47
+					}
+				},
+				{
+					"filename": "pipo-map001-44.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 48,
+						"h": 48
+					},
+					"frame": {
+						"x": 251,
+						"y": 1,
+						"w": 48,
+						"h": 48
+					}
+				},
+				{
+					"filename": "pipo-map001-48.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 48,
+						"h": 48
+					},
+					"frame": {
+						"x": 251,
+						"y": 51,
+						"w": 48,
+						"h": 48
+					}
+				},
+				{
+					"filename": "pipo-map001-5.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 48,
+						"h": 48
+					},
+					"frame": {
+						"x": 251,
+						"y": 101,
+						"w": 48,
+						"h": 48
+					}
+				},
+				{
+					"filename": "pipo-map001-81.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 48,
+						"h": 48
+					},
+					"frame": {
+						"x": 251,
+						"y": 151,
+						"w": 48,
+						"h": 48
+					}
+				},
+				{
+					"filename": "pipo-map001-91.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 45,
+						"h": 47
+					},
+					"frame": {
+						"x": 251,
+						"y": 201,
+						"w": 45,
+						"h": 47
+					}
+				},
+				{
+					"filename": "pipo-map001-58.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 44,
+						"h": 47
+					},
+					"frame": {
+						"x": 298,
+						"y": 201,
+						"w": 44,
+						"h": 47
+					}
+				},
+				{
+					"filename": "pipo-map001-84.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 48,
+						"h": 48
+					},
+					"frame": {
+						"x": 301,
+						"y": 1,
+						"w": 48,
+						"h": 48
+					}
+				},
+				{
+					"filename": "pipo-map001-96.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 48,
+						"h": 48
+					},
+					"frame": {
+						"x": 301,
+						"y": 51,
+						"w": 48,
+						"h": 48
+					}
+				},
+				{
+					"filename": "pipo-map001-34.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 47,
+						"h": 48
+					},
+					"frame": {
+						"x": 301,
+						"y": 101,
+						"w": 47,
+						"h": 48
+					}
+				},
+				{
+					"filename": "pipo-map001-51.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 47,
+						"h": 48
+					},
+					"frame": {
+						"x": 301,
+						"y": 151,
+						"w": 47,
+						"h": 48
+					}
+				},
+				{
+					"filename": "pipo-map001-89.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 7,
+						"y": 0,
+						"w": 41,
+						"h": 47
+					},
+					"frame": {
+						"x": 344,
+						"y": 201,
+						"w": 41,
+						"h": 47
+					}
+				},
+				{
+					"filename": "pipo-map001-82.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 47,
+						"h": 48
+					},
+					"frame": {
+						"x": 350,
+						"y": 101,
+						"w": 47,
+						"h": 48
+					}
+				},
+				{
+					"filename": "pipo-map001-97.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 47,
+						"h": 48
+					},
+					"frame": {
+						"x": 350,
+						"y": 151,
+						"w": 47,
+						"h": 48
+					}
+				},
+				{
+					"filename": "pipo-map001-53.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 48,
+						"h": 46
+					},
+					"frame": {
+						"x": 387,
+						"y": 201,
+						"w": 48,
+						"h": 46
+					}
+				},
+				{
+					"filename": "pipo-map001-85.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 45,
+						"h": 48
+					},
+					"frame": {
+						"x": 351,
+						"y": 1,
+						"w": 45,
+						"h": 48
+					}
+				},
+				{
+					"filename": "pipo-map001-50.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 4,
+						"y": 0,
+						"w": 44,
+						"h": 48
+					},
+					"frame": {
+						"x": 351,
+						"y": 51,
+						"w": 44,
+						"h": 48
+					}
+				},
+				{
+					"filename": "pipo-map001-95.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 7,
+						"y": 0,
+						"w": 41,
+						"h": 48
+					},
+					"frame": {
+						"x": 397,
+						"y": 51,
+						"w": 41,
+						"h": 48
+					}
+				},
+				{
+					"filename": "pipo-map001-80.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 9,
+						"y": 0,
+						"w": 39,
+						"h": 48
+					},
+					"frame": {
+						"x": 398,
+						"y": 1,
+						"w": 39,
+						"h": 48
+					}
+				},
+				{
+					"filename": "pipo-map001-83.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 11,
+						"y": 0,
+						"w": 37,
+						"h": 48
+					},
+					"frame": {
+						"x": 439,
+						"y": 1,
+						"w": 37,
+						"h": 48
+					}
+				},
+				{
+					"filename": "pipo-map001-55.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 48,
+						"h": 46
+					},
+					"frame": {
+						"x": 399,
+						"y": 101,
+						"w": 48,
+						"h": 46
+					}
+				},
+				{
+					"filename": "pipo-map001-56.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 48,
+						"h": 46
+					},
+					"frame": {
+						"x": 440,
+						"y": 51,
+						"w": 48,
+						"h": 46
+					}
+				},
+				{
+					"filename": "pipo-map001-69.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 48,
+						"h": 46
+					},
+					"frame": {
+						"x": 478,
+						"y": 1,
+						"w": 48,
+						"h": 46
+					}
+				},
+				{
+					"filename": "pipo-map001-87.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 48,
+						"h": 46
+					},
+					"frame": {
+						"x": 399,
+						"y": 149,
+						"w": 48,
+						"h": 46
+					}
+				},
+				{
+					"filename": "pipo-map001-49.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 0,
+						"w": 47,
+						"h": 46
+					},
+					"frame": {
+						"x": 437,
+						"y": 197,
+						"w": 47,
+						"h": 46
+					}
+				},
+				{
+					"filename": "pipo-map001-54.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 2,
+						"y": 0,
+						"w": 46,
+						"h": 46
+					},
+					"frame": {
+						"x": 449,
+						"y": 99,
+						"w": 46,
+						"h": 46
+					}
+				},
+				{
+					"filename": "pipo-map001-73.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 3,
+						"y": 0,
+						"w": 45,
+						"h": 46
+					},
+					"frame": {
+						"x": 490,
+						"y": 49,
+						"w": 45,
+						"h": 46
+					}
+				},
+				{
+					"filename": "pipo-map001-52.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 0,
+						"w": 43,
+						"h": 46
+					},
+					"frame": {
+						"x": 528,
+						"y": 1,
+						"w": 43,
+						"h": 46
+					}
+				},
+				{
+					"filename": "pipo-map001-68.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 7,
+						"y": 0,
+						"w": 41,
+						"h": 46
+					},
+					"frame": {
+						"x": 449,
+						"y": 147,
+						"w": 41,
+						"h": 46
+					}
+				},
+				{
+					"filename": "pipo-map001-45.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 3,
+						"w": 48,
+						"h": 45
+					},
+					"frame": {
+						"x": 486,
+						"y": 195,
+						"w": 48,
+						"h": 45
+					}
+				},
+				{
+					"filename": "pipo-map001-47.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 3,
+						"w": 48,
+						"h": 45
+					},
+					"frame": {
+						"x": 492,
+						"y": 147,
+						"w": 48,
+						"h": 45
+					}
+				},
+				{
+					"filename": "pipo-map001-67.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 48,
+						"h": 45
+					},
+					"frame": {
+						"x": 497,
+						"y": 97,
+						"w": 48,
+						"h": 45
+					}
+				},
+				{
+					"filename": "pipo-map001-7.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 2,
+						"w": 48,
+						"h": 45
+					},
+					"frame": {
+						"x": 537,
+						"y": 49,
+						"w": 48,
+						"h": 45
+					}
+				},
+				{
+					"filename": "pipo-map001-99.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 48,
+						"h": 45
+					},
+					"frame": {
+						"x": 573,
+						"y": 1,
+						"w": 48,
+						"h": 45
+					}
+				},
+				{
+					"filename": "pipo-map001-100.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 47,
+						"h": 45
+					},
+					"frame": {
+						"x": 536,
+						"y": 194,
+						"w": 47,
+						"h": 45
+					}
+				},
+				{
+					"filename": "pipo-map001-88.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 47,
+						"h": 45
+					},
+					"frame": {
+						"x": 542,
+						"y": 144,
+						"w": 47,
+						"h": 45
+					}
+				},
+				{
+					"filename": "pipo-map001-46.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 2,
+						"y": 3,
+						"w": 46,
+						"h": 45
+					},
+					"frame": {
+						"x": 547,
+						"y": 96,
+						"w": 46,
+						"h": 45
+					}
+				},
+				{
+					"filename": "pipo-map001-65.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 4,
+						"y": 0,
+						"w": 44,
+						"h": 45
+					},
+					"frame": {
+						"x": 587,
+						"y": 48,
+						"w": 44,
+						"h": 45
+					}
+				},
+				{
+					"filename": "pipo-map001-66.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 7,
+						"y": 0,
+						"w": 41,
+						"h": 45
+					},
+					"frame": {
+						"x": 623,
+						"y": 1,
+						"w": 41,
+						"h": 45
+					}
+				},
+				{
+					"filename": "pipo-map001-86.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 7,
+						"y": 0,
+						"w": 41,
+						"h": 45
+					},
+					"frame": {
+						"x": 585,
+						"y": 191,
+						"w": 41,
+						"h": 45
+					}
+				},
+				{
+					"filename": "pipo-map001-20.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 48,
+						"h": 9
+					},
+					"frame": {
+						"x": 585,
+						"y": 238,
+						"w": 48,
+						"h": 9
+					}
+				},
+				{
+					"filename": "pipo-map001-98.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 7,
+						"y": 0,
+						"w": 41,
+						"h": 45
+					},
+					"frame": {
+						"x": 591,
+						"y": 143,
+						"w": 41,
+						"h": 45
+					}
+				},
+				{
+					"filename": "pipo-map001-60.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 4,
+						"w": 48,
+						"h": 44
+					},
+					"frame": {
+						"x": 628,
+						"y": 190,
+						"w": 48,
+						"h": 44
+					}
+				},
+				{
+					"filename": "pipo-map001-59.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 7,
+						"y": 4,
+						"w": 41,
+						"h": 44
+					},
+					"frame": {
+						"x": 595,
+						"y": 95,
+						"w": 41,
+						"h": 44
+					}
+				},
+				{
+					"filename": "pipo-map001-61.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 4,
+						"w": 38,
+						"h": 44
+					},
+					"frame": {
+						"x": 633,
+						"y": 48,
+						"w": 38,
+						"h": 44
+					}
+				},
+				{
+					"filename": "pipo-map001-93.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 5,
+						"w": 48,
+						"h": 43
+					},
+					"frame": {
+						"x": 666,
+						"y": 1,
+						"w": 48,
+						"h": 43
+					}
+				},
+				{
+					"filename": "pipo-map001-18.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 48,
+						"h": 8
+					},
+					"frame": {
+						"x": 635,
+						"y": 236,
+						"w": 48,
+						"h": 8
+					}
+				},
+				{
+					"filename": "pipo-map001-6.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 3,
+						"w": 47,
+						"h": 43
+					},
+					"frame": {
+						"x": 634,
+						"y": 141,
+						"w": 47,
+						"h": 43
+					}
+				},
+				{
+					"filename": "pipo-map001-71.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 2,
+						"w": 47,
+						"h": 43
+					},
+					"frame": {
+						"x": 638,
+						"y": 94,
+						"w": 47,
+						"h": 43
+					}
+				},
+				{
+					"filename": "pipo-map001-94.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 5,
+						"w": 47,
+						"h": 43
+					},
+					"frame": {
+						"x": 673,
+						"y": 46,
+						"w": 47,
+						"h": 43
+					}
+				},
+				{
+					"filename": "pipo-map001-72.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 3,
+						"y": 3,
+						"w": 45,
+						"h": 43
+					},
+					"frame": {
+						"x": 716,
+						"y": 1,
+						"w": 45,
+						"h": 43
+					}
+				},
+				{
+					"filename": "pipo-map001-64.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 6,
+						"y": 3,
+						"w": 42,
+						"h": 43
+					},
+					"frame": {
+						"x": 678,
+						"y": 186,
+						"w": 42,
+						"h": 43
+					}
+				},
+				{
+					"filename": "pipo-map001-92.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 7,
+						"y": 5,
+						"w": 41,
+						"h": 43
+					},
+					"frame": {
+						"x": 683,
+						"y": 139,
+						"w": 41,
+						"h": 43
+					}
+				},
+				{
+					"filename": "pipo-map001-62.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 4,
+						"y": 5,
+						"w": 40,
+						"h": 43
+					},
+					"frame": {
+						"x": 687,
+						"y": 91,
+						"w": 40,
+						"h": 43
+					}
+				},
+				{
+					"filename": "pipo-map001-30.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 6,
+						"w": 48,
+						"h": 42
+					},
+					"frame": {
+						"x": 722,
+						"y": 46,
+						"w": 48,
+						"h": 42
+					}
+				},
+				{
+					"filename": "pipo-map001-32.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 6,
+						"w": 48,
+						"h": 42
+					},
+					"frame": {
+						"x": 763,
+						"y": 1,
+						"w": 48,
+						"h": 42
+					}
+				},
+				{
+					"filename": "pipo-map001-76.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 6,
+						"w": 47,
+						"h": 42
+					},
+					"frame": {
+						"x": 722,
+						"y": 184,
+						"w": 47,
+						"h": 42
+					}
+				},
+				{
+					"filename": "pipo-map001-19.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 48,
+						"h": 20
+					},
+					"frame": {
+						"x": 722,
+						"y": 228,
+						"w": 48,
+						"h": 20
+					}
+				},
+				{
+					"filename": "pipo-map001-2.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 4,
+						"w": 45,
+						"h": 42
+					},
+					"frame": {
+						"x": 726,
+						"y": 136,
+						"w": 45,
+						"h": 42
+					}
+				},
+				{
+					"filename": "pipo-map001-79.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 6,
+						"w": 45,
+						"h": 42
+					},
+					"frame": {
+						"x": 729,
+						"y": 90,
+						"w": 45,
+						"h": 42
+					}
+				},
+				{
+					"filename": "pipo-map001-74.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 7,
+						"y": 6,
+						"w": 41,
+						"h": 42
+					},
+					"frame": {
+						"x": 772,
+						"y": 45,
+						"w": 41,
+						"h": 42
+					}
+				},
+				{
+					"filename": "pipo-map001-77.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 7,
+						"y": 6,
+						"w": 41,
+						"h": 42
+					},
+					"frame": {
+						"x": 813,
+						"y": 1,
+						"w": 41,
+						"h": 42
+					}
+				},
+				{
+					"filename": "pipo-map001-8.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 6,
+						"y": 8,
+						"w": 38,
+						"h": 40
+					},
+					"frame": {
+						"x": 856,
+						"y": 1,
+						"w": 38,
+						"h": 40
+					}
+				},
+				{
+					"filename": "pipo-map001-4.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 7,
+						"y": 7,
+						"w": 35,
+						"h": 33
+					},
+					"frame": {
+						"x": 856,
+						"y": 43,
+						"w": 35,
+						"h": 33
+					}
+				},
+				{
+					"filename": "pipo-map001-63.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 8,
+						"y": 9,
+						"w": 35,
+						"h": 28
+					},
+					"frame": {
+						"x": 815,
+						"y": 45,
+						"w": 35,
+						"h": 28
+					}
+				},
+				{
+					"filename": "pipo-map001-70.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 2,
+						"h": 37
+					},
+					"frame": {
+						"x": 852,
+						"y": 45,
+						"w": 2,
+						"h": 37
+					}
+				},
+				{
+					"filename": "pipo-map001-21.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 10,
+						"y": 11,
+						"w": 34,
+						"h": 29
+					},
+					"frame": {
+						"x": 815,
+						"y": 75,
+						"w": 34,
+						"h": 29
+					}
+				},
+				{
+					"filename": "pipo-map001-41.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 10,
+						"y": 11,
+						"w": 32,
+						"h": 26
+					},
+					"frame": {
+						"x": 776,
+						"y": 89,
+						"w": 32,
+						"h": 26
+					}
+				},
+				{
+					"filename": "pipo-map001-29.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 8,
+						"w": 48,
+						"h": 40
+					},
+					"frame": {
+						"x": 771,
+						"y": 180,
+						"w": 48,
+						"h": 40
+					}
+				},
+				{
+					"filename": "pipo-map001-1.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 13,
+						"y": 12,
+						"w": 22,
+						"h": 26
+					},
+					"frame": {
+						"x": 772,
+						"y": 222,
+						"w": 22,
+						"h": 26
+					}
+				},
+				{
+					"filename": "pipo-map001-17.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 48,
+						"h": 25
+					},
+					"frame": {
+						"x": 796,
+						"y": 222,
+						"w": 48,
+						"h": 25
+					}
+				},
+				{
+					"filename": "pipo-map001-31.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 8,
+						"w": 48,
+						"h": 40
+					},
+					"frame": {
+						"x": 846,
+						"y": 106,
+						"w": 48,
+						"h": 40
+					}
+				},
+				{
+					"filename": "pipo-map001-75.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 13,
+						"w": 48,
+						"h": 35
+					},
+					"frame": {
+						"x": 846,
+						"y": 148,
+						"w": 48,
+						"h": 35
+					}
+				},
+				{
+					"filename": "pipo-map001-9.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 13,
+						"w": 48,
+						"h": 35
+					},
+					"frame": {
+						"x": 821,
+						"y": 185,
+						"w": 48,
+						"h": 35
+					}
+				},
+				{
+					"filename": "pipo-map001-78.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 25,
+						"w": 48,
+						"h": 23
+					},
+					"frame": {
+						"x": 846,
+						"y": 222,
+						"w": 48,
+						"h": 23
+					}
+				},
+				{
+					"filename": "pipo-map001-22.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 11,
+						"y": 10,
+						"w": 30,
+						"h": 31
+					},
+					"frame": {
+						"x": 810,
+						"y": 106,
+						"w": 30,
+						"h": 31
+					}
+				},
+				{
+					"filename": "pipo-map001-11.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 48,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 14,
+						"w": 48,
+						"h": 34
+					},
+					"frame": {
+						"x": 773,
+						"y": 139,
+						"w": 48,
+						"h": 34
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:e65a7c81f0d750ecf834701e824cdd88:5c936d0842d4d3f99f1998af3b99742b:3d1796b17358e00e40886a2f90737def$"
+	}
+}

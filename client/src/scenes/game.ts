@@ -8,28 +8,44 @@ export default class GameScene extends Phaser.Scene {
   private count: number = 0;
   private gameText;
   private windows:Window[] = []
+  private hours;
 
   constructor() {
     super({key: 'Game'});
   }
  
   public preload() {
+    this.load.multiatlas('tiles','./assets/tilesheet.json','assets')
   }
 
   public create() {
     this.add.image(500, 300, 'map');
-
     var id: number = 0;
-    var numRows = 2;
-    var numCols = 3;
+
+    let tilelogic = (i: number, j: number) => {
+      if (i == 0 && j == 0) {
+        return 61
+      }
+      if (j == 3) {
+        return 3
+      }
+      return 0
+    }
+
+
+    var numRows = 5;
+    var numCols = 6;
     for (let i = 0; i < numCols; i++) { //num columns
       for (let j = 0; j < numRows; j++){ //num rows
-        let rect: Tile = this.add.existing(new Tile(id++,this,300 + 175*i ,300 + 175*j, 150, 150, 0x000000)) as any;
+        var atlastextures = this.textures.get('tiles')
+        var tiles = atlastextures.getFrameNames()
+        //let image = this.tilegraphics.get('tiles').getFrameNames()
+        let rect: Tile = this.add.existing(new Tile(id++,this,300 + 75*i ,200 + 75*j, tiles[tilelogic(i,j)])) as any;
         this.tiles.push(rect);
         rect.setInteractive();
-        rect.on('pointerdown', function(pointer) {this.setFillStyle(0xff0000)});
-        rect.on('pointerup', function(pointer) {this.setFillStyle(0x000000)});
-        rect.on('pointerout', function(pointer) {this.setFillStyle(0x000000)});
+        //rect.on('pointerdown', function(pointer) {this.setFillStyle(0xff0000)});
+        //rect.on('pointerup', function(pointer) {this.setFillStyle(0x000000)});
+        //rect.on('pointerout', function(pointer) {this.setFillStyle(0x000000)});
         rect.on('pointerdown', function(pointer) {this.printstuff()});
         rect.on('pointerdown', function(pointer) {this.moveTo()})
       }
@@ -55,30 +71,34 @@ export default class GameScene extends Phaser.Scene {
 
     var style2 = { 
       fontFamily: '"Roboto Condensed"',
-      fontSize: "40px",
+      fontSize: "20px",
       backgroundColor: '#f00'
     }
-    this.gameText = this.add.text(250,100,"Click Me",style2).setOrigin(0)
+    this.gameText = this.add.text(400,10,"You: 5g / 3 str / 8 will",style2)
     this.gameText.setInteractive();
     this.gameText.on('pointerup', function (pointer) {
 
-      this.createWindow(100,70);
+
+    this.createWindow(200,200,'herowindow');
 
   }, this);
+
+
+
 
   }
 
 
-  public createWindow (width,height)
+  public createWindow (width,height,funct)
   {
       var x = Phaser.Math.Between(400, 600);
       var y = Phaser.Math.Between(64, 128);
 
       var handle = 'window' + this.count++;
 
-      var win = this.add.zone(x, y, width, height).setInteractive().setOrigin(0);
+      var win = this.add.zone(x, y, width, height).setInteractive();
 
-      var demo = new Window(handle, win);
+      var demo = new Window(handle, win,funct);
 
       this.input.setDraggable(win);
 
