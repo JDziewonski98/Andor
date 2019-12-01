@@ -13,6 +13,7 @@ export default class LobbyScene extends Phaser.Scene {
         this.load.image('map', './assets/andor_map.jpg');
         this.load.image('weed', './assets/8bit_herb.jpeg')
         this.load.image('desert', './assets/fantasydesert.jpg')
+        this.load.image('mountains', './assets/mountains_bg.jpg')
         this.load.image('andordude', './assets/andordude.jpg')
         this.load.image('backbutton', './assets/Pass.png')
         this.load.image('playbutton', './assets/Play.png')
@@ -61,8 +62,8 @@ export default class LobbyScene extends Phaser.Scene {
         this.gameText = this.add.text(500, 500, "Load", style2).setOrigin(0.5)
         this.gameText.setInteractive();
         this.gameText.on('pointerdown', function (pointer) {
-            this.scene.start('Weed');
-        }, this);
+            this.scene.start('Load');
+        }, this); 
     }
 
     public update() {
