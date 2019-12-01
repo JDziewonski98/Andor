@@ -65,7 +65,7 @@ export default class GameScene extends Phaser.Scene {
       console.log(this.tiles.length)
       this.tiles = []
       WindowManager.destroy(this, 'chat');
-        this.scene.start('Lobby');
+      this.scene.start('Lobby');
     }, this);
 
     var style2 = { 
