@@ -2,12 +2,20 @@ import * as Phaser from 'phaser';
 export class Window extends Phaser.Scene {
     private parent
     private function: string;
-    private closebutton
-    constructor (handle, parent, funct)
+    private exists: boolean = false
+    public static window: Window
+    private constructor (handle, parent, funct)
     {
         super(handle);
         this.parent = parent;
         this.function = funct
+    }
+
+    public static getInstance(handle, parent, funct): Window {
+        if (!Window.window) {
+            Window.window = new Window(handle, parent, funct)
+        }
+        return this.window
     }
 
     create ()
@@ -39,15 +47,22 @@ export class Window extends Phaser.Scene {
     {
         try{
         this.scene.stop()
-        this.scene.remove()
+        this.scene.sendToBack()
+        //this.scene.remove()
         }
-        catch(e){}
+        catch(e){
+            console.log('something went wrong')
+        }
+    }
+
+    public revive() {
+        this.scene.start()
+        this.scene.bringToTop()
     }
 
     herowindow(){
         this.add.sprite(50, 50, 'weed').setOrigin(0.5);
         this.add.text(50,100,'Gold: 5',{backgroundColor: 'fx00'})
         this.add.text(50,120,'Willpower: 7',{backgroundColor: 'fx00'})
-        this.closebutton = this.add.text(50,140,'Close',{backgroundColor: 'fxrrr'})
     }
 }
