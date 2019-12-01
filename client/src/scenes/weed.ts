@@ -27,6 +27,13 @@ export default class WeedScene extends Phaser.Scene {
         this.herb.on('pointerdown', function (pointer) {
             this.scene.start('Lobby');
         }, this);
+
+        var backbutton = this.add.sprite(50,550,'backbutton').setInteractive()
+        backbutton.flipX = true
+        backbutton.on('pointerdown', function (pointer) {
+            this.scene.start('Lobby');
+        }, this);
+        
     }
 
     public update() {

@@ -1,44 +1,55 @@
 import * as Phaser from 'phaser';
+import { Hero } from '../objects/hero';
 
-export class Tile extends Phaser.GameObjects.Sprite{
+export class Tile extends Phaser.GameObjects.Sprite {
     public adjacent: Tile[] = [];
     public id: number;
     public heroexist: boolean = false;
     public x: number;
     public y: number;
     private graphic;
-    public hero: Phaser.GameObjects.Sprite;
-    constructor(id, scene, x, y,texture) {
-        super(scene, x, y,'tiles',texture);
+    public hero: Hero;
+    constructor(id, scene, x, y, texture) {
+        super(scene, x, y, 'tiles', texture);
         this.id = id;
         this.x = x;
         this.y = y;
-    
+        this.hero = null;
+
+    }
+    public printHerodata() {
+        if (this.heroexist) {
+            console.log("Tile id: " + this.id + " has a hero with id: " + this.hero.id + ".");
+        }
+        else {
+            console.log("Tile id: " + this.id + " does not have a hero.");
+        }
     }
     public printstuff() {
         console.log("Tile's id: " + this.id);
         this.adjacent.forEach(element => {
-            try{
+            try {
                 console.log(element.id)
             }
-            catch(e){}
+            catch (e) { }
         });
         console.log(this.id + ' tile has hero? ' + this.heroexist)
     }
 
-    public moveTo() {
+    public moveRequest() {
+        console.log("New request.");
         this.adjacent.forEach(element => {
-            try{
+            try {
+                console.log(element.id);
                 if (element.heroexist == true) {
-                    this.hero = element.hero;
+                    this.hero = element.hero.move(this);
+                    this.heroexist = true;
                     element.hero = null;
                     element.heroexist = false;
-                    this.heroexist = true;
-                    this.hero.x = this.x;
-                    this.hero.y = this.y;
                 }
             }
-            catch(e) {}
+            catch (e) { console.log("Tile: " + element.id + " threw an error.") }
         });
+
     }
 }

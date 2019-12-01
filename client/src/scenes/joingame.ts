@@ -65,6 +65,13 @@ export default class JoinGameScene extends Phaser.Scene {
             }
 
         });
+
+        //go back
+        var backbutton = this.add.sprite(50,550,'backbutton').setInteractive()
+        backbutton.flipX = true
+        backbutton.on('pointerdown', function (pointer) {
+            this.scene.start('Lobby');
+        }, this);
     }
 
     //transition into Game scene.

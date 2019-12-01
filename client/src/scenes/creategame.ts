@@ -11,6 +11,7 @@ export default class CreateGameScene extends Phaser.Scene {
     }
 
     public create() {
+
         var background = this.add.image(500,300,'desert').setDisplaySize(1000,600)
         var style2 = { 
             fontFamily: '"Roboto Condensed"',
@@ -59,9 +60,16 @@ export default class CreateGameScene extends Phaser.Scene {
             }
 
         });
+
+        var backbutton = this.add.sprite(50,550,'backbutton').setInteractive()
+        backbutton.flipX = true
+        backbutton.on('pointerdown', function (pointer) {
+            this.scene.start('Lobby');
+        }, this);
     }
+
     public changescene() {
-        this.scene.start('Game')
+        this.scene.start('Ready')
     }
 
     public update() {
