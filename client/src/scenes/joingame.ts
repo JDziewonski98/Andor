@@ -81,7 +81,7 @@ export default class JoinGameScene extends Phaser.Scene {
         }, this);
     }
 
-    //transition into Game scene.
+    //transition into Ready scene.
     public changescene() {
         this.scene.start('Ready')
     }
