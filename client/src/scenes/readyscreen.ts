@@ -10,7 +10,8 @@ export default class ReadyScreenScene extends Phaser.Scene {
     }
 
     public preload() {
-        this.load.html('readyform', './assets/readyscreen.html');
+        this.load.html('readyform', './assets/readyscreen.html')
+        this.load.html('readytable','./assets/readytable.html')
     }
 
     create() {
@@ -21,8 +22,10 @@ export default class ReadyScreenScene extends Phaser.Scene {
         this.mageportrait = this.add.image(830,200,'magemale').setDisplaySize(160,200)
         this.selection = this.add.sprite(200,70,'backbutton').setDisplaySize(48,48)
         this.selection.angle = 90
+        this.add.text(200,450,'Ready?',{ fontFamily: '"Roboto Condensed"',fontSize: "40px",color:"#E42168"})
 
-        var element = this.add.dom(500, 450).createFromCache('readyform');
+        var heroselect = this.add.dom(400, 420).createFromCache('readyform')
+        //var readytable = this.add.dom(690,420).createFromCache('readytable')
 
         var backbutton = this.add.sprite(950,550,'playbutton').setInteractive()
         backbutton.on('pointerdown', function (pointer) {
@@ -36,20 +39,18 @@ export default class ReadyScreenScene extends Phaser.Scene {
             this.scene.start('Lobby');
         }, this);
 
-        element.addListener('click');
+        heroselect.addListener('click');
 
         //this is how we can interact with the html dom element
-        element.on('click', function (event) {
+        heroselect.on('click', function (event) {
             let name = event.target.name
-            if (name === 'Archer' || 'Mage' || 'Dwarf' || 'Warrior')
+            if (name === 'Archer' ||name === 'Mage' ||name === 'Dwarf' ||name === 'Warrior')
             {
                 console.log('here 1 boio' + name)
                 this.scene.selection.x = this.scene.selectionmap[name]
 
             }
             else {
-                //fucks up without this lol
-                this.scene.selection.x = this.scene.selection.x
             }
 
         });
