@@ -11,12 +11,14 @@ export default class CreateGameScene extends Phaser.Scene {
     }
 
     public create() {
+
         var background = this.add.image(500,300,'desert').setDisplaySize(1000,600)
         var style2 = { 
             fontFamily: '"Roboto Condensed"',
             fontSize: "20px",
             color: '#ff0'
          }
+
         var title = this.add.text(240, 10, 'Please enter your game name', style2);
         //this is how we can add html elements
         var element = this.add.dom(410, 200).createFromCache('nameform');
@@ -25,41 +27,48 @@ export default class CreateGameScene extends Phaser.Scene {
         var passtitle = this.add.text(240,300,'Enter Password:', style2)
         element.addListener('click');
 
-    //this is how we can interact with the html dom element
-    element.on('click', function (event) {
+        //this is how we can interact with the html dom element
+        element.on('click', function (event) {
 
-        if (event.target.name === 'submitButton')
-        {
-            var inputText = this.getChildByName('passField');
-
-            //  Have they entered anything?
-            if (inputText.value !== '')
+            if (event.target.name === 'submitButton')
             {
-                //  Turn off the click events
-                this.removeListener('click')
+                var inputText = this.getChildByName('passField');
 
-                this.setVisible(false)
+                //  Have they entered anything?
+                if (inputText.value !== '')
+                {
+                    //  Turn off the click events
+                    this.removeListener('click')
 
-                //for some reason u can't just go this.scene.start('x') ??????
-                this.scene.changescene()
+                    this.setVisible(false)
+
+                    //for some reason u can't just go this.scene.start('x') ??????
+                    this.scene.changescene()
+                }
+                else
+                {
+                    //  Flash the prompt
+                    this.scene.tweens.add({
+                        targets: passtitle,
+                        alpha: 0.2,
+                        duration: 300,
+                        ease: 'Power3',
+                        yoyo: true
+                    });
+                            }
             }
-            else
-            {
-                //  Flash the prompt
-                this.scene.tweens.add({
-                    targets: passtitle,
-                    alpha: 0.2,
-                    duration: 300,
-                    ease: 'Power3',
-                    yoyo: true
-                });
-                        }
-        }
 
-    });
+        });
+
+        var backbutton = this.add.sprite(50,550,'backbutton').setInteractive()
+        backbutton.flipX = true
+        backbutton.on('pointerdown', function (pointer) {
+            this.scene.start('Lobby');
+        }, this);
     }
+
     public changescene() {
-        this.scene.start('Game')
+        this.scene.start('Ready')
     }
 
     public update() {

@@ -14,6 +14,8 @@ export default class LobbyScene extends Phaser.Scene {
         this.load.image('weed', './assets/8bit_herb.jpeg')
         this.load.image('desert', './assets/fantasydesert.jpg')
         this.load.image('andordude','./assets/andordude.jpg')
+        this.load.image('backbutton','./assets/Pass.png')
+        this.load.image('playbutton','./assets/Play.png')
     }
 
     public create() {
@@ -47,8 +49,6 @@ export default class LobbyScene extends Phaser.Scene {
         this.gameText.on('pointerdown', function (pointer) {
             this.scene.start('Weed');
         }, this); 
-        
-        
     }
 
     public update() {
