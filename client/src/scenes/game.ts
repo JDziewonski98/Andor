@@ -88,12 +88,12 @@ export default class GameScene extends Phaser.Scene {
     this.gameText.on('pointerup', function (pointer) {
 
       if (!Window.window) {
-        this.createWindow(200, 200, 'herowindow');
+        this.createWindow(300, 200, 'herowindow');
         console.log('here')
       }
       else {
         console.log('there')
-        let win = Window.getInstance(200, 200, 'herowindow')
+        let win = Window.getInstance(300, 200, 'herowindow')
         win.revive()
       }
     }, this);
