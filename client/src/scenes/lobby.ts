@@ -4,7 +4,7 @@ export default class LobbyScene extends Phaser.Scene {
     private welcomeText;
     private weedText;
     private gameText;
-
+    private scaleRatio = window.devicePixelRatio / 3;
     constructor() {
         super({key: 'Lobby'});
     }
@@ -14,17 +14,17 @@ export default class LobbyScene extends Phaser.Scene {
         this.load.image('map','./assets/andor_map.jpg');
         this.load.image('weed', './assets/8bit_herb.jpeg')
         this.load.image('desert', './assets/fantasydesert.jpg')
+        this.load.image('andordude','./assets/andordude.jpg')
     }
 
     public create() {
-        this.add.image(500, 300, 'beach');
-
+        var bg = this.add.image(500, 300, 'beach');
         var style1 = { 
             fontFamily: '"Roboto Condensed"',
             fontSize: "70px",
             backgroundColor: "#000"
          }
-        this.welcomeText = this.add.text(500,200,"Welcome to Andor Bitches", style1).setOrigin(0.5)
+        this.welcomeText = this.add.text(500,200,"Welcome to Andor", style1).setOrigin(0.5)
         
         var style2 = { 
             fontFamily: '"Roboto Condensed"',

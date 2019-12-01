@@ -8,28 +8,45 @@ export default class GameScene extends Phaser.Scene {
   private count: number = 0;
   private gameText;
   private windows:Window[] = []
+  private hours;
 
   constructor() {
     super({key: 'Game'});
   }
  
   public preload() {
+    this.load.multiatlas('tiles','./assets/tilesheet.json','assets')
   }
 
   public create() {
-    this.add.image(500, 300, 'map');
-
+    //i thought the andor board background was kind of messy
+    //this.add.image(500, 300, 'map');
+    this.add.image(500,300,'andordude').setDisplaySize(1000,600)
     var id: number = 0;
-    var numRows = 2;
-    var numCols = 3;
+
+    // temporary lambda function to load a few different tile icons when making tiles
+    let tilelogic = (i: number, j: number) => {
+      if (i == 0 && j == 0) {
+        return 61
+      }
+      if (j == 3) {
+        return 3
+      }
+      return 0
+    }
+
+
+    var numRows = 5;
+    var numCols = 6;
     for (let i = 0; i < numCols; i++) { //num columns
       for (let j = 0; j < numRows; j++){ //num rows
-        let rect: Tile = this.add.existing(new Tile(id++,this,300 + 175*i ,300 + 175*j, 150, 150, 0x000000)) as any;
+        var atlastextures = this.textures.get('tiles')
+        var tiles = atlastextures.getFrameNames()
+        //we can now reference each tile image by index
+        //Tile new extends sprite so we can pass a image to use for it.
+        let rect: Tile = this.add.existing(new Tile(id++,this,300 + 75*i ,200 + 75*j, tiles[tilelogic(i,j)])) as any;
         this.tiles.push(rect);
         rect.setInteractive();
-        rect.on('pointerdown', function(pointer) {this.setFillStyle(0xff0000)});
-        rect.on('pointerup', function(pointer) {this.setFillStyle(0x000000)});
-        rect.on('pointerout', function(pointer) {this.setFillStyle(0x000000)});
         rect.on('pointerdown', function(pointer) {this.printstuff()});
         rect.on('pointerdown', function(pointer) {this.moveTo()})
       }
@@ -42,12 +59,11 @@ export default class GameScene extends Phaser.Scene {
     this.tiles[0].heroexist = true;
 
     this.weed.setInteractive();
-    // TODO Important!!!! gotta find a way to clear data when u exit a scene or else shit gets fricked
+    // TODO Important!!!! gotta find a way to clear data when u exit a scene or else problems happen
     this.weed.on('pointerdown', function (pointer) {
       console.log(this.tiles.length)
-      this.windows.forEach(element => {
-        element.kill()
-      });
+      //gotta kill all the window scenes or else they will remain if you exit the scene
+      this.killwindows()
       this.windows = []
       this.tiles = []
         this.scene.start('Lobby');
@@ -55,30 +71,34 @@ export default class GameScene extends Phaser.Scene {
 
     var style2 = { 
       fontFamily: '"Roboto Condensed"',
-      fontSize: "40px",
+      fontSize: "20px",
       backgroundColor: '#f00'
     }
-    this.gameText = this.add.text(250,100,"Click Me",style2).setOrigin(0)
+    this.gameText = this.add.text(400,10,"You: 5g / 3 str / 8 will",style2)
     this.gameText.setInteractive();
     this.gameText.on('pointerup', function (pointer) {
 
-      this.createWindow(100,70);
+
+    this.createWindow(200,200,'herowindow');
 
   }, this);
+
+  //this.input.keyboard.on('keydown_A',this.killwindows,this)
+
 
   }
 
 
-  public createWindow (width,height)
+  public createWindow (width,height,funct)
   {
       var x = Phaser.Math.Between(400, 600);
       var y = Phaser.Math.Between(64, 128);
 
       var handle = 'window' + this.count++;
 
-      var win = this.add.zone(x, y, width, height).setInteractive().setOrigin(0);
+      var win = this.add.zone(x, y, width, height).setInteractive();
 
-      var demo = new Window(handle, win);
+      var demo = new Window(handle, win,funct);
 
       this.input.setDraggable(win);
 
@@ -95,9 +115,13 @@ export default class GameScene extends Phaser.Scene {
       this.windows.push(demo)
   }
 
+  public killwindows() {
+    this.windows.forEach(element => {
+      element.kill()
+    });
+  }
 
-
-
+  //leetcode hard algorithm
   public setTileAdjacencies(tiles: Tile[], rows: number, cols: number) {
     for (let i = 0; i < tiles.length; i++) {
         if (i % rows != 0){tiles[i].adjacent.push(tiles[i-1])}

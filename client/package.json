@@ -10,8 +10,8 @@
   "dependencies": {
     "phaser": "^3.21.0"
   },
-  "scripts": { 
-    "build": "webpack", 
-    "dev": "webpack-dev-server" 
+  "scripts": {
+    "build": "webpack",
+    "dev": "webpack-dev-server"
   }
 }
