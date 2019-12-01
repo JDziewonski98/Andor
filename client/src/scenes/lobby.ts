@@ -16,6 +16,10 @@ export default class LobbyScene extends Phaser.Scene {
         this.load.image('andordude','./assets/andordude.jpg')
         this.load.image('backbutton','./assets/Pass.png')
         this.load.image('playbutton','./assets/Play.png')
+        this.load.image('warriormale','./assets/warriormale.png')
+        this.load.image('magemale','./assets/magemale.png')
+        this.load.image('dwarfmale','./assets/dwarfmale.png')
+        this.load.image('archermale','./assets/archermale.png')
     }
 
     public create() {
@@ -23,7 +27,15 @@ export default class LobbyScene extends Phaser.Scene {
         var style1 = { 
             fontFamily: '"Roboto Condensed"',
             fontSize: "70px",
-            backgroundColor: "#000"
+            shadow: {
+                offsetX: 5,
+                offsetY: 5,
+                color: '#000',
+                blur: 10,
+                stroke: true,
+                fill: true
+            },
+            color:"#4944A4"
          }
         this.welcomeText = this.add.text(500,200,"Welcome to Andor", style1).setOrigin(0.5)
         
