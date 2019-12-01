@@ -9,7 +9,7 @@ export default class LobbyScene extends Phaser.Scene {
     }
 
     public preload() {
-        this.load.image('beach', './assets/sample.jpg');
+        this.load.image('beach', './assets/swamp.jpg');
         this.load.image('map', './assets/andor_map.jpg');
         this.load.image('weed', './assets/8bit_herb.jpeg')
         this.load.image('desert', './assets/fantasydesert.jpg')
@@ -26,7 +26,7 @@ export default class LobbyScene extends Phaser.Scene {
     }
 
     public create() {
-        var bg = this.add.image(500, 300, 'beach');
+        var bg = this.add.image(500, 300, 'beach').setDisplaySize(1000,600)
         var style1 = {
             fontFamily: '"Roboto Condensed"',
             fontSize: "70px",
