@@ -1,13 +1,14 @@
 import {Tile} from '../objects/tile';
 import { Tilemaps } from 'phaser';
-import {Window} from './window'
+import { Chat } from './chatwindow';
+import { HeroWindow } from './herowindow';
+import { WindowManager } from "../utils/WindowManager";
 
 export default class GameScene extends Phaser.Scene {
   private weed: Phaser.GameObjects.Sprite;
   public tiles: Tile[] = [];
   private count: number = 0;
   private gameText;
-  private windows:Window[] = []
   private hours;
 
   constructor() {
@@ -62,10 +63,8 @@ export default class GameScene extends Phaser.Scene {
     // TODO Important!!!! gotta find a way to clear data when u exit a scene or else problems happen
     this.weed.on('pointerdown', function (pointer) {
       console.log(this.tiles.length)
-      //gotta kill all the window scenes or else they will remain if you exit the scene
-      this.killwindows()
-      this.windows = []
       this.tiles = []
+      WindowManager.destroy(this, 'chat');
         this.scene.start('Lobby');
     }, this);
 
@@ -74,57 +73,24 @@ export default class GameScene extends Phaser.Scene {
       fontSize: "20px",
       backgroundColor: '#f00'
     }
+    
+    // WindowManager.create(this, 'heroOwn', HeroWindow);
     this.gameText = this.add.text(400,10,"You: 5g / 3 str / 8 will",style2)
     this.gameText.setInteractive();
     this.gameText.on('pointerup', function (pointer) {
+      
+    }, this);
 
-    if (!Window.window){
-      this.createWindow(200,200,'herowindow');
-      console.log('here')
-    }
-    else {
-      console.log('there')
-      let win = Window.getInstance(200,200,'herowindow')
-      win.revive()
-    }
-  }, this);
+    WindowManager.create(this,'chat', Chat);
+    this.gameText = this.add.text(800,550,"CHAT", style2).setOrigin(0.5)
+    this.gameText.setInteractive();
+    this.gameText.on('pointerdown', function (pointer) {
+      WindowManager.toggle(this, 'chat');
+    }, this); 
 
   //this.input.keyboard.on('keydown_A',this.killwindows,this)
 
 
-  }
-
-
-  public createWindow (width,height,funct)
-  {
-      var x = Phaser.Math.Between(400, 600);
-      var y = Phaser.Math.Between(64, 128);
-
-      var handle = 'window' + this.count++;
-
-      var win = this.add.zone(x, y, width, height).setInteractive();
-
-      var demo = Window.getInstance(handle, win,funct);
-
-      this.input.setDraggable(win);
-
-      win.on('drag', function (pointer, dragX, dragY) {
-
-          this.x = dragX;
-          this.y = dragY;
-
-          demo.refresh()
-
-      });
-
-      this.scene.add(handle, demo, true);
-      this.windows.push(demo)
-  }
-
-  public killwindows() {
-    this.windows.forEach(element => {
-      element.kill()
-    });
   }
 
   //leetcode hard algorithm
@@ -140,4 +106,5 @@ export default class GameScene extends Phaser.Scene {
 
   public update() {
   }
+
 }

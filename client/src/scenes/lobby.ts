@@ -49,40 +49,6 @@ export default class LobbyScene extends Phaser.Scene {
             this.scene.start('Weed');
         }, this); 
         
-        this.addChat();
-        this.gameText = this.add.text(800,550,"CHAT", style2).setOrigin(0.5)
-        this.gameText.setInteractive();
-        this.gameText.on('pointerdown', function (pointer) {
-            this.scene.setVisible(!this.scene.isVisible('chat'), 'chat');
-
-            
-        }, this); 
-        
-    }
-
-    private addChat(){
-        var x = Phaser.Math.Between(400, 600);
-        var y = Phaser.Math.Between(64, 128);
-
-        var key = 'chat';
-
-        var win = this.add.zone(x, y, 328, 266).setInteractive().setOrigin(0);
-
-        var demo = new Stars(key, win);
-
-        this.input.setDraggable(win);
-
-        win.on('drag', function (pointer, dragX, dragY) {
-
-            this.x = dragX;
-            this.y = dragY;
-
-            demo.refresh()
-
-        });
-
-        this.scene.add(key, demo, true);
-        this.scene.setVisible(false, key)
     }
 
     public update() {
