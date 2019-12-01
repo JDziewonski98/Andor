@@ -73,7 +73,7 @@ export default class LoadGameScene extends Phaser.Scene {
     }
 
     public changescene() {
-        this.scene.start('Game')
+        this.scene.start('Ready')
     }
 
     public update() {
