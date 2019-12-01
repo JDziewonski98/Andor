@@ -18,13 +18,14 @@ export default class CreateGameScene extends Phaser.Scene {
             fontSize: "20px",
             color: '#ff0'
          }
-
-        var title = this.add.text(240, 10, 'Please enter your game name', style2);
+        var title = this.add.text(240, 10, 'Username:', style2);
         //this is how we can add html elements
         var element = this.add.dom(410, 200).createFromCache('nameform');
+
+        
         var title = this.add.text(350, 90, 'Difficulty: easy/normal', style2);
         var title = this.add.text(350, 200, 'Player number', style2);
-        var passtitle = this.add.text(240,300,'Enter Password:', style2)
+        var passtitle = this.add.text(240,300,'Password:', style2);
         element.addListener('click');
 
         //this is how we can interact with the html dom element

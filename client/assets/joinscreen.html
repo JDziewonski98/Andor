@@ -1,0 +1,62 @@
+<!DOCTYPE html> 
+<html> 
+<head>
+    <style>
+        .top-section {
+            height: 50%;
+        }
+
+        .bottom-section {
+            height: 50%;
+            margin: 8px;
+        }
+
+        .bottom-aligner {
+            display: inline-block;
+            height: 100%;
+            vertical-align: bottom;
+            width: 3px;
+        }
+        option {
+            border: 2px solid rgb(221, 221, 221);
+            margin-top: -1px;
+            background-color: #5e8b82;
+            padding: 12px;
+            text-decoration: none;
+            font-size: 18px;
+            color: black;
+            display: block;
+            position: relative;
+          }
+          option:hover {
+            background-color: #7dc4b6;
+          }
+          form{
+            position: absolute;
+            left: -150px;
+            top: 75px;
+          }
+          button{
+            position: absolute;
+            left: 100px;
+            top: 125px;
+          }
+    </style>
+</head>  
+<body style="text-align:right;">  
+  <form>
+    <select name="Choose Game" size="4">
+      <option value="Game 1">Game 1</option>
+      <option value="Game 2">Game 2</option>
+      <option value="Game 3">Game 3</option>
+      <option value="Game 4">Game 4</option>
+    </select>
+    <br><br>
+  </form>
+
+  <button>
+    <input type="button" name="submitButton" value="Join" style = "font-family:fantasy,garamond,serif; font-size:26px; font-style:italic,bold;"> 
+  </button>
+</body> 
+  
+</html>
