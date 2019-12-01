@@ -61,7 +61,14 @@ export default class JoinGameScene extends Phaser.Scene {
         element.on('click', function (event) {
             if (event.target.name === 'submitButton')
             {
-                this.scene.changescene()
+                //player must select a game to join game
+                var selectedOption = this.getChildByName('Choose Game');
+
+                //  Have they entered anything?
+                if (selectedOption.value !== '')
+                {
+                    this.scene.changescene()
+                }
             }
 
         });
