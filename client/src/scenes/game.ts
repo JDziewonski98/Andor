@@ -5,6 +5,7 @@ import { Hero } from '../objects/hero';
 
 export default class GameScene extends Phaser.Scene {
   private weed: Phaser.GameObjects.Sprite;
+  private hourBar;
   private hero: Hero;
   public tiles: Tile[] = [];
   private count: number = 0;
@@ -24,6 +25,7 @@ export default class GameScene extends Phaser.Scene {
     //i thought the andor board background was kind of messy
     //this.add.image(500, 300, 'map');
     this.add.image(500, 300, 'andordude').setDisplaySize(1000, 600)
+    this.add.image(800, 40, 'hourbar').setDisplaySize(400, 75);
     var id: number = 0;
 
 
@@ -60,6 +62,7 @@ export default class GameScene extends Phaser.Scene {
 
     this.weed = this.add.sprite(this.tiles[0].x, this.tiles[0].y, 'weed');
     this.hero = new Hero(0, this, this.weed, 0, 0, tiles[0]);
+    this.hero.hourTrackerImage = this.add.image(625, 40, 'weed').setDisplaySize(40, 40);
     this.weed.depth = 5;
     this.tiles[0].hero = this.hero;
     this.tiles[0].heroexist = true;

@@ -6,7 +6,9 @@ export class Hero extends Phaser.GameObjects.Sprite {
     public tile: Tile;
     public x: number;
     public y: number;
+    public hourTrackerImage: Phaser.GameObjects.Image;
     public hourTracker: number;
+
     public sprite: Phaser.GameObjects.Sprite;
     constructor(id, scene, sprite, x, y, tile) {
         super(scene, sprite, x, y, tile);
@@ -14,15 +16,25 @@ export class Hero extends Phaser.GameObjects.Sprite {
         this.x = x;
         this.y = y;
         this.sprite = sprite;
+        this.hourTracker = 0;
     }
 
     public move(newTile) {
-        this.tile = newTile;
-        this.x = newTile.x;
-        this.y = newTile.y;
-        this.sprite.x = this.x;
-        this.sprite.y = this.y;
-        return this;
+        if (this.hourTracker != 7) {
+            this.tile = newTile;
+            this.x = newTile.x;
+            this.y = newTile.y;
+            this.sprite.x = this.x;
+            this.sprite.y = this.y;
+            this.hourTracker++;
+            this.hourTrackerImage.x += 50;
+            return this;
+        }
+        else {
+            return this;
+        }
+
 
     }
+
 }
