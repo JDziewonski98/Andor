@@ -14,6 +14,7 @@ export default class LobbyScene extends Phaser.Scene {
         this.load.image('weed', './assets/8bit_herb.jpeg')
         this.load.image('desert', './assets/fantasydesert.jpg')
         this.load.image('andordude','./assets/andordude.jpg')
+        this.load.image('fantasyhome','./assets/fantasyhome.jpg')
     }
 
     public create() {
