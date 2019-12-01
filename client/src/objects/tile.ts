@@ -43,9 +43,12 @@ export class Tile extends Phaser.GameObjects.Sprite {
                 console.log(element.id);
                 if (element.heroexist == true) {
                     this.hero = element.hero.move(this);
-                    this.heroexist = true;
-                    element.hero = null;
-                    element.heroexist = false;
+                    if (this.hero.tile === this) {
+                        this.heroexist = true;
+                        element.hero = null;
+                        element.heroexist = false;
+                    }
+
                 }
             }
             catch (e) { console.log("Tile: " + element.id + " threw an error.") }
