@@ -78,9 +78,15 @@ export default class GameScene extends Phaser.Scene {
     this.gameText.setInteractive();
     this.gameText.on('pointerup', function (pointer) {
 
-
-    this.createWindow(200,200,'herowindow');
-
+    if (!Window.window){
+      this.createWindow(200,200,'herowindow');
+      console.log('here')
+    }
+    else {
+      console.log('there')
+      let win = Window.getInstance(200,200,'herowindow')
+      win.revive()
+    }
   }, this);
 
   //this.input.keyboard.on('keydown_A',this.killwindows,this)
@@ -98,7 +104,7 @@ export default class GameScene extends Phaser.Scene {
 
       var win = this.add.zone(x, y, width, height).setInteractive();
 
-      var demo = new Window(handle, win,funct);
+      var demo = Window.getInstance(handle, win,funct);
 
       this.input.setDraggable(win);
 
