@@ -22,18 +22,26 @@ export class Window extends Phaser.Scene {
                 break
         }
         this.cameras.main.setViewport(this.parent.x, this.parent.y, 200, 200);
+        this.input.keyboard.on('keydown_ESC',this.kill,this)
     }
 
     refresh ()
     {
+
         this.cameras.main.setPosition(this.parent.x, this.parent.y);
 
         this.scene.bringToTop();
+
     }
 
+    //press ESC to close windows
     kill()
     {
+        try{
+        this.scene.stop()
         this.scene.remove()
+        }
+        catch(e){}
     }
 
     herowindow(){
