@@ -1,5 +1,7 @@
 import * as Phaser from 'phaser';
 import Scenes from './scenes';
+import Model from './model'
+
 const gameConfig: Phaser.Types.Core.GameConfig = {
   title: 'Sample',
  
@@ -22,4 +24,15 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
   scene: Scenes
 };
  
-export const game = new Phaser.Game(gameConfig);
+// export const game = new Phaser.Game(gameConfig);
+export default class AndorGame extends Phaser.Game {
+  public globals
+  constructor () {
+    super(gameConfig);
+    var model = new Model();
+    this.globals = { model, bgMusic: null };
+  }
+}
+
+// var game = new AndorGame();
+export const andorGame = new AndorGame()

@@ -1,3 +1,8 @@
+// import { game } from "../main";
+import LoadGameScene from "./loadgame";
+import Options from "./options";
+import AndorGame from "../main";
+import { andorGame } from "../main";
 
 export default class LobbyScene extends Phaser.Scene {
     private welcomeText;
@@ -5,9 +10,14 @@ export default class LobbyScene extends Phaser.Scene {
     private gameText;
     private soundOff;
     private soundOn;
+    private optionsIcon;
     private scaleRatio = window.devicePixelRatio / 3;
+    private model;
     constructor() {
-        super({ key: 'Lobby' });
+        super({ 
+            key: 'Lobby',
+            active: true
+        });
     }
 
     public preload() {
@@ -28,11 +38,14 @@ export default class LobbyScene extends Phaser.Scene {
 
         // Music
         this.load.audio('music', 'assets/doxent_-_Arcane.mp3')
-        this.load.image('soundon','./assets/SongOn.png')
-        this.load.image('soundoff','./assets/SongOff.png')
+        this.load.image('optionsIcon', './assets/icons/settings_icon.png')
+        // this.load.image('soundon','./assets/SongOn.png')
+        // this.load.image('soundoff','./assets/SongOff.png')
     }
 
     public create() {
+        // let andorGame = this.sys.game as AndorGame
+
         var bg = this.add.image(500, 300, 'beach').setDisplaySize(1000,600)
         var style1 = {
             fontFamily: '"Roboto Condensed"',
@@ -72,24 +85,24 @@ export default class LobbyScene extends Phaser.Scene {
             this.scene.start('Load');
         }, this); 
 
-        let music = this.sound.add('music')
-        music.play({
-            loop: true,
-            volume: 0.6
-        })
+        // Adding music to the game
+        // let music = this.game.sound.add('music')
+        // music.play({
+        //     loop: true,
+        //     volume: 0.6
+        // })
+        // music.pause()
 
-        this.soundOff = this.add.image(950, 50, 'soundoff');
-        this.soundOn = this.add.image(950, 50, 'soundon');
-        this.soundOn.setInteractive();
-        this.soundOn.on('pointerdown', function (pointer) {
-            music.pause()
-            this.soundOn.visible = false;
+        this.optionsIcon = this.add.image(930, 80, 'optionsIcon').setInteractive();
+        this.optionsIcon.on('pointerdown', function (pointer) {
+            this.sys.game.scene.bringToTop('Options')
         }, this);
-        this.soundOff.setInteractive();
-        this.soundOff.on('pointerdown', function (pointer) {
-            music.resume()
-            this.soundOn.visible = true;
-        }, this);
+
+        this.model = andorGame.globals.model;
+        if (this.model.musicOn === true) {
+            let bgMusic = this.sound.add('music', { volume: 0.5, loop: true });
+            bgMusic.play();
+        }
     }
 
     public update() {
