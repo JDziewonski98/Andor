@@ -4,11 +4,13 @@ export default class LobbyScene extends Phaser.Scene {
     private welcomeText;
     private weedText;
     private gameText;
-    private soundOff;
-    private soundOn;
+    private optionsIcon;
     private scaleRatio = window.devicePixelRatio / 3;
     constructor() {
-        super({ key: 'Lobby' });
+        super({ 
+            key: 'Lobby',
+            active: true
+        });
     }
 
     public preload() {
@@ -26,11 +28,7 @@ export default class LobbyScene extends Phaser.Scene {
         this.load.image('archermale', './assets/archermale.png')
         this.load.image('hourbar', './assets/hours.PNG')
         this.load.image('fantasyhome','./assets/fantasyhome.jpg')
-
-        // Music
-        this.load.audio('music', 'assets/doxent_-_Arcane.mp3')
-        this.load.image('soundon','./assets/SongOn.png')
-        this.load.image('soundoff','./assets/SongOff.png')
+        this.load.image('optionsIcon', './assets/icons/settings_icon.png')
     }
 
     public create() {
@@ -71,25 +69,14 @@ export default class LobbyScene extends Phaser.Scene {
         this.gameText.setInteractive();
         this.gameText.on('pointerdown', function (pointer) {
             this.scene.start('Load');
-        }, this); 
-
-        let music = this.sound.add('music')
-        music.play({
-            loop: true,
-            volume: 0.6
-        })
-
-        this.soundOff = this.add.image(950, 50, 'soundoff');
-        this.soundOn = this.add.image(950, 50, 'soundon');
-        this.soundOn.setInteractive();
-        this.soundOn.on('pointerdown', function (pointer) {
-            music.pause()
-            this.soundOn.visible = false;
         }, this);
-        this.soundOff.setInteractive();
-        this.soundOff.on('pointerdown', function (pointer) {
-            music.resume()
-            this.soundOn.visible = true;
+
+        this.sys.game.scene.getScene('Options').scene.setVisible(false, 'Options')
+        this.optionsIcon = this.add.image(930, 80, 'optionsIcon').setInteractive();
+        this.optionsIcon.on('pointerdown', function (pointer) {
+            this.sys.game.scene.bringToTop('Options')
+            this.sys.game.scene.getScene('Options').scene.setVisible(true, 'Options')
+            this.sys.game.scene.resume('Options')
         }, this);
     }
 
