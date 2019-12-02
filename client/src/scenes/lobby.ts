@@ -1,8 +1,5 @@
-// import { game } from "../main";
 import LoadGameScene from "./loadgame";
 import Options from "./options";
-import AndorGame from "../main";
-import { andorGame } from "../main";
 
 export default class LobbyScene extends Phaser.Scene {
     private welcomeText;
@@ -35,17 +32,10 @@ export default class LobbyScene extends Phaser.Scene {
         this.load.image('archermale', './assets/archermale.png')
         this.load.image('hourbar', './assets/hours.PNG')
         this.load.image('fantasyhome','./assets/fantasyhome.jpg')
-
-        // Music
-        this.load.audio('music', 'assets/doxent_-_Arcane.mp3')
         this.load.image('optionsIcon', './assets/icons/settings_icon.png')
-        // this.load.image('soundon','./assets/SongOn.png')
-        // this.load.image('soundoff','./assets/SongOff.png')
     }
 
     public create() {
-        // let andorGame = this.sys.game as AndorGame
-
         var bg = this.add.image(500, 300, 'beach').setDisplaySize(1000,600)
         var style1 = {
             fontFamily: '"Roboto Condensed"',
@@ -83,26 +73,15 @@ export default class LobbyScene extends Phaser.Scene {
         this.gameText.setInteractive();
         this.gameText.on('pointerdown', function (pointer) {
             this.scene.start('Load');
-        }, this); 
+        }, this);
 
-        // Adding music to the game
-        // let music = this.game.sound.add('music')
-        // music.play({
-        //     loop: true,
-        //     volume: 0.6
-        // })
-        // music.pause()
-
+        this.sys.game.scene.getScene('Options').scene.setVisible(false, 'Options')
         this.optionsIcon = this.add.image(930, 80, 'optionsIcon').setInteractive();
         this.optionsIcon.on('pointerdown', function (pointer) {
             this.sys.game.scene.bringToTop('Options')
+            this.sys.game.scene.getScene('Options').scene.setVisible(true, 'Options')
+            this.sys.game.scene.resume('Options')
         }, this);
-
-        this.model = andorGame.globals.model;
-        if (this.model.musicOn === true) {
-            let bgMusic = this.sound.add('music', { volume: 0.5, loop: true });
-            bgMusic.play();
-        }
     }
 
     public update() {
