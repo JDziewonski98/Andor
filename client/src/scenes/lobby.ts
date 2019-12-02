@@ -1,3 +1,4 @@
+import { Stars } from './Stars';
 
 export default class LobbyScene extends Phaser.Scene {
     private welcomeText;

@@ -57,7 +57,7 @@
         });
 
 		socket.on("update messages", function(msg){
-		var final_message = $("<p />").text(msg);
+		  var final_message = $("<p />").text(msg);
 		   $("#history").append(final_message);
 		});
     </script>

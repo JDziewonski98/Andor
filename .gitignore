@@ -1,4 +1,2 @@
-client/node_modules
-client/node_modules/*
-client\package.json
-client\yarn.lock
+*/node_modules
+*/node_modules/*

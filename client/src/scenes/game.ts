@@ -1,7 +1,10 @@
 import { Tile } from '../objects/tile';
 import { Tilemaps } from 'phaser';
-import { Window } from './window'
+import { Chat } from './chatwindow';
+import { HeroWindow } from './herowindow';
+import { WindowManager } from "../utils/WindowManager";
 import { Hero } from '../objects/hero';
+import { HourTracker } from '../objects/hourTracker';
 
 export default class GameScene extends Phaser.Scene {
   private weed: Phaser.GameObjects.Sprite;
@@ -10,8 +13,8 @@ export default class GameScene extends Phaser.Scene {
   public tiles: Tile[] = [];
   private count: number = 0;
   private gameText;
-  private windows: Window[] = []
-  private hours;
+  private windows: Window[] = [];
+  private hourTracker: HourTracker;
 
   constructor() {
     super({ key: 'Game' });
@@ -54,27 +57,30 @@ export default class GameScene extends Phaser.Scene {
         id += numCols;
         this.tiles.push(rect);
         rect.setInteractive();
-        rect.on('pointerdown', function (pointer) { this.printstuff() });
-        rect.on('pointerdown', function (pointer) { this.moveRequest() })
+
       }
     }
     this.setTileAdjacencies(this.tiles, numRows, numCols);
-
     this.weed = this.add.sprite(this.tiles[0].x, this.tiles[0].y, 'weed');
     this.hero = new Hero(0, this, this.weed, 0, 0, tiles[0]);
-    this.hero.hourTrackerImage = this.add.image(625, 40, 'weed').setDisplaySize(40, 40);
-    this.weed.depth = 5;
     this.tiles[0].hero = this.hero;
     this.tiles[0].heroexist = true;
+
+    this.hourTracker = new HourTracker(this, 625, 40, this.add.sprite(625, 40, 'weed').setDisplaySize(40, 40), this.hero);
+    this.hourTracker.depth = 5;
+    this.hourTracker.depth = 0;
+    this.hero.hourTracker = this.hourTracker;
+    this.hourTracker.setInteractive();
+
+    this.weed.depth = 5;
+
 
     this.weed.setInteractive();
     // TODO Important!!!! gotta find a way to clear data when u exit a scene or else problems happen
     this.weed.on('pointerdown', function (pointer) {
       console.log(this.tiles.length)
-      //gotta kill all the window scenes or else they will remain if you exit the scene
-      this.killwindows()
-      this.windows = []
       this.tiles = []
+      WindowManager.destroy(this, 'chat');
       this.scene.start('Lobby');
     }, this);
 
@@ -86,19 +92,8 @@ export default class GameScene extends Phaser.Scene {
     this.gameText = this.add.text(400, 10, "You: 5g / 3 str / 8 will", style2)
     this.gameText.setInteractive();
     this.gameText.on('pointerup', function (pointer) {
-
-      if (!Window.window) {
-        this.createWindow(300, 200, 'herowindow');
-        console.log('here')
-      }
-      else {
-        console.log('there')
-        let win = Window.getInstance(300, 200, 'herowindow')
-        win.revive()
-      }
+      
     }, this);
-
-    //this.input.keyboard.on('keydown_A',this.killwindows,this)
 
     //Options
     var optionsIcon = this.add.image(80, 80, 'optionsIcon').setInteractive();
@@ -108,38 +103,28 @@ export default class GameScene extends Phaser.Scene {
         this.sys.game.scene.resume('Options')
     }, this);
 
+    // var chat = WindowManager.create(this,'chat', Chat);
+    this.gameText = this.add.text(800,550,"CHAT", style2).setOrigin(0.5)
+    this.gameText.setInteractive();
+    this.gameText.on('pointerdown', function (pointer) {
+      // TODO clean this up.
+      if(this.scene.isVisible('chat')){
+        WindowManager.destroy(this, 'chat');
+      } else {
+        WindowManager.create(this, 'chat', Chat);
+      }
+      
+    }, this); 
+
+    this.input.keyboard.on('keydown_ESC', this.escChat,this)
+
+    //this.input.keyboard.on('keydown_A',this.killwindows,this)
+
+
   }
 
-
-  public createWindow(width, height, funct) {
-    var x = Phaser.Math.Between(400, 600);
-    var y = Phaser.Math.Between(64, 128);
-
-    var handle = 'window' + this.count++;
-
-    var win = this.add.zone(x, y, width, height).setInteractive();
-
-    var demo = Window.getInstance(handle, win, funct);
-
-    this.input.setDraggable(win);
-
-    win.on('drag', function (pointer, dragX, dragY) {
-
-      this.x = dragX;
-      this.y = dragY;
-
-      demo.refresh()
-
-    });
-
-    this.scene.add(handle, demo, true);
-    this.windows.push(demo)
-  }
-
-  public killwindows() {
-    this.windows.forEach(element => {
-      element.kill()
-    });
+  private escChat(){
+    WindowManager.destroy(this, 'chat');
   }
 
   //leetcode hard algorithm
@@ -158,4 +143,5 @@ export default class GameScene extends Phaser.Scene {
 
   public update() {
   }
+
 }
