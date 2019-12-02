@@ -17,7 +17,7 @@ export abstract class Window extends Phaser.Scene {
         });
         this.initialize()
         this.cameras.main.setViewport(this.parent.x, this.parent.y, this.windowData.width, this.windowData.height);
-        this.input.keyboard.on('keydown_ESC',this.kill,this)
+        // this.input.keyboard.on('keydown_ESC',this.kill,this)
         this.cameras.main.setBackgroundColor("6E8C97")
     }
 

@@ -12,6 +12,7 @@ export class WindowManager extends Phaser.Scene {
     }
 
     public static destroy(self, key: string){
+        self.scene.stop(key);
         self.scene.remove(key);
     }
 }

@@ -1,9 +1,11 @@
 import { Window } from "./window";
 import * as io from "socket.io-client";
+import { WindowManager } from "../utils/WindowManager";
 
 export class Chat extends Window {
     private socket;
     private text;
+    private element;
     public constructor (key, windowData={x:10, y:10, width: 350, height: 250}){
         super(key, windowData);
     }
@@ -11,15 +13,14 @@ export class Chat extends Window {
     public preload() {
         this.load.html('chatform', './assets/chat.html');
     }
-
+    
     protected initialize(){
-        console.log("chat window create", this)
         this.text = "";
         this.cameras.main.setBackgroundColor(0xffffff)
 
-        var element = this.add.dom(200,220).createFromCache('chatform');
-        element.addListener('click');
-        element.on('click', function (event) {
+        this.element = this.add.dom(200,220).createFromCache('chatform');
+        this.element.addListener('click');
+        this.element.on('click', function (event) {
     
             if (event.target.name === 'playButton')
             {
@@ -41,6 +42,8 @@ export class Chat extends Window {
             }
     
         });
+
+        console.log("chat window create", this)
 
     }
 

@@ -95,16 +95,28 @@ export default class GameScene extends Phaser.Scene {
       
     }, this);
 
-    WindowManager.create(this,'chat', Chat);
+    var chat = WindowManager.create(this,'chat', Chat);
     this.gameText = this.add.text(800,550,"CHAT", style2).setOrigin(0.5)
     this.gameText.setInteractive();
     this.gameText.on('pointerdown', function (pointer) {
-      WindowManager.toggle(this, 'chat');
+      // TODO clean this up.
+      if(this.scene.isVisible('chat')){
+        WindowManager.destroy(this, 'chat');
+      } else {
+        WindowManager.create(this, 'chat', Chat);
+      }
+      
     }, this); 
+
+    this.input.keyboard.on('keydown_ESC', this.escChat,this)
 
     //this.input.keyboard.on('keydown_A',this.killwindows,this)
 
 
+  }
+
+  private escChat(){
+    WindowManager.destroy(this, 'chat');
   }
 
   //leetcode hard algorithm
