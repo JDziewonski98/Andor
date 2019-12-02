@@ -24,7 +24,7 @@ export default class CreateGameScene extends Phaser.Scene {
 
         
         var title = this.add.text(350, 90, 'Difficulty: easy/normal', style2);
-        var title = this.add.text(350, 200, 'Player number', style2);
+        var title = this.add.text(350, 200, 'Number of Players', style2);
         var passtitle = this.add.text(240,300,'Password:', style2);
         element.addListener('click');
 
