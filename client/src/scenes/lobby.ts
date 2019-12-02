@@ -1,15 +1,10 @@
-import LoadGameScene from "./loadgame";
-import Options from "./options";
 
 export default class LobbyScene extends Phaser.Scene {
     private welcomeText;
     private weedText;
     private gameText;
-    private soundOff;
-    private soundOn;
     private optionsIcon;
     private scaleRatio = window.devicePixelRatio / 3;
-    private model;
     constructor() {
         super({ 
             key: 'Lobby',
