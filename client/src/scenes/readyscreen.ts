@@ -27,8 +27,8 @@ export default class ReadyScreenScene extends Phaser.Scene {
         this.selection.angle = 90
         this.readytext = this.add.text(200,450,'Ready?',{ fontFamily: '"Roboto Condensed"',fontSize: "40px",color:"#E42168"})
 
-        var heroselect = this.add.dom(400, 420).createFromCache('readyform')
-        //var readytable = this.add.dom(690,420).createFromCache('readytable')
+        var heroselect = this.add.dom(400, 400).createFromCache('readyform')
+        var readytable = this.add.dom(690,420).createFromCache('readytable')
 
         var backbutton = this.add.sprite(50,550,'backbutton').setInteractive()
         backbutton.flipX = true
