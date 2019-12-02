@@ -1,5 +1,4 @@
-import LoadGameScene from "./loadgame";
-import Options from "./options";
+import { Stars } from './Stars';
 
 export default class LobbyScene extends Phaser.Scene {
     private welcomeText;

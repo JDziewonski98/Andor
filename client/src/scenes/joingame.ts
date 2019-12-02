@@ -20,9 +20,9 @@ export default class JoinGameScene extends Phaser.Scene {
         var titleStyle = { 
             fontFamily: '"Roboto Condensed"',
             fontSize: "50px",
-            color: '#FFF',
+            color: '#4b5c09',
             shadow: {
-                offsetX: 5,
+                offsetX: 2,
                 offsetY: 2,
                 color: '#000',
                 blur: 5,
@@ -32,7 +32,7 @@ export default class JoinGameScene extends Phaser.Scene {
          }
         var regularTextStyle = { 
             fontFamily: '"Roboto Condensed"',
-            fontSize: "20px",
+            fontSize: "23px",
             color: '#89B4B3',
             shadow: {
                 offsetX: 5,
@@ -48,7 +48,7 @@ export default class JoinGameScene extends Phaser.Scene {
         var gameText = this.add.text(500,100,"Join Game",titleStyle).setOrigin(0.5)
 
         //putting select title on the screen just below join game and move left
-        var title = this.add.text(125, 145, 'Select from existing games:', regularTextStyle);
+        var title = this.add.text(110, 165, 'Select from existing games:', regularTextStyle);
 
 
         //HTML - modify 'joinscreen' for HTML file
@@ -81,7 +81,7 @@ export default class JoinGameScene extends Phaser.Scene {
         }, this);
     }
 
-    //transition into Game scene.
+    //transition into Ready scene.
     public changescene() {
         this.scene.start('Ready')
     }
