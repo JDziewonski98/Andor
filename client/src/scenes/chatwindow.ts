@@ -20,8 +20,10 @@ export class Chat extends Window {
         this.cameras.main.setBackgroundColor(0xffffff)
 
         this.element = this.add.dom(200,140).createFromCache('chatform');
-        this.element.addListener('click');
-        console.log(this);
+        
+        if(!this.element._events.click) { // only add click event if doesnt exist
+            this.element.addListener('click');
+        }
         this.element.on('click', function (event) {
     
             if (event.target.name === 'playButton')
@@ -39,6 +41,7 @@ export class Chat extends Window {
             }
     
         });
+        
 
         socket.on("update messages", function(msg){
             var paragraph = document.createElement('p');

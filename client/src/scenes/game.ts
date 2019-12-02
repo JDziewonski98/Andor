@@ -89,10 +89,16 @@ export default class GameScene extends Phaser.Scene {
       fontSize: "20px",
       backgroundColor: '#f00'
     }
+
+    // WindowManager.create(this, 'heroCard', HeroWindow);
     this.gameText = this.add.text(400, 10, "You: 5g / 3 str / 8 will", style2)
     this.gameText.setInteractive();
-    this.gameText.on('pointerup', function (pointer) {
-      
+    this.gameText.on('pointerdown', function (pointer) {
+      if(this.scene.isVisible('heroCard')){
+        WindowManager.destroy(this, 'heroCard');
+      } else {
+        WindowManager.create(this, 'heroCard', HeroWindow);
+      }
     }, this);
 
     // var chat = WindowManager.create(this,'chat', Chat);
