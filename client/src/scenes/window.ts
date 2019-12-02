@@ -8,16 +8,15 @@ export abstract class Window extends Phaser.Scene {
     }
 
     create () {
-        console.log("parent window create")
-        this.parent = this.add.zone(this.windowData.x, this.windowData.y, this.windowData.length, this.windowData.width).setInteractive().setOrigin(0);
+        console.log("parent window create", this.windowData)
+        this.parent = this.add.zone(this.windowData.x, this.windowData.y, this.windowData.width, this.windowData.height).setInteractive().setOrigin(0);
         this.parent.on('drag', function (pointer, dragX, dragY) {
             this.x = dragX;
             this.y = dragY;
             // demo.refresh()
         });
-        // var bg = this.add.image(0, 0, 'beach');
         this.initialize()
-        this.cameras.main.setViewport(this.parent.x, this.parent.y, 400, 200);
+        this.cameras.main.setViewport(this.parent.x, this.parent.y, this.windowData.width, this.windowData.height);
         this.input.keyboard.on('keydown_ESC',this.kill,this)
     }
 
@@ -34,7 +33,7 @@ export abstract class Window extends Phaser.Scene {
     {
         try{
         this.scene.stop()
-        this.scene.sendToBack()
+        // this.scene.sendToBack()
         //this.scene.remove()
         }
         catch(e){

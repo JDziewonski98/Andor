@@ -1,83 +1,53 @@
-<!-- <!DOCTYPE html>
-<html>
-    <head>
-      <title>ChatJS</title>
-      <link rel="stylesheet" type="text/css" href="/css/style.css" />
-    </head>
-  <body>
-   <div id="history"></div>
-    <form id="chat">
-     <input type="text" id="msg_text" name="msg_text" />
-     <input type="submit" value="Send!" />
-   </form>
-   <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-   <script type="text/javascript" src="/socket.io/socket.io.js"></script>
-   <script type="text/javascript">
-   var socket = io.connect();
-   $("form#chat").submit(function(e) {
-     e.preventDefault();
-
-     socket.emit("send message", $(this).find("#msg_text").val(), function() {
-       $("form#chat #msg_text").val("");
-     });
-
-     socket.on("update messages", function(msg){
-       var final_message = $("<p />").text(msg);
-       $("#history").append(final_message);
-     });
-   });
-   </script>
-  </body>
-</html> -->
-
-
 <!DOCTYPE html>
 <html>
 
 <head>
     <title>ChatJS</title>
     <style>
-    html, body, input {
-        font-family: Georgia, Tahoma, Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-    }
-    
-    
-    form {
-        margin: 15px 0;
-    }
-    
-    form input[type='text'] {
-        border: 2px solid #eb5424;
-        border-radius: 5px;
-        padding: 5px;
-        width: 75%;
-    }
-    
-    form input[type='submit'] {
-        background: #eb5424;
-        border: none;
-        border-radius: 5px;
-        color: #FFF;
-        cursor: pointer;
-        font-weight: bold;
-        padding: 7px 5px;
-        width: 19%;
-    }
-    
-    #history {
-        background: #FFF;
-        border: 2px solid #eb5424;
-        /* height: 550px; */
-    }
-    </style>
+        body input, body #history {
+            text-align: right;
+        }
+
+        html, body, input {
+            font-family: Georgia, Tahoma, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        
+        
+        form {
+            margin: 15px 0;
+        }
+        
+        form input[type='text'] {
+            border: 2px solid #eb5424;
+            border-radius: 5px;
+            padding: 5px;
+            width: 75%;
+        }
+        
+        form input[type='submit'] {
+            background: #eb5424;
+            border: none;
+            border-radius: 5px;
+            color: #FFF;
+            cursor: pointer;
+            font-weight: bold;
+            padding: 7px 5px;
+            width: 19%;
+        }
+        
+        </style>
 </head>
 
 <body>
-    <input type="text" name="nameField" placeholder="Enter your name" style="font-size: 32px">
-    <input type="button" name="playButton" value="Let's Play" style="font-size: 32px"><br />
-    <label for="over18" style="font-size: 32px">Are you over 18?</label> <input type="checkbox" id="over18" name="over18" style="font-size: 32px">
+    <div id="history">
+        <p>Some message</p>
+        <p>Another message</p>
+        <p>And another message</p>
+    </div>
+    <input type="text" name="nameField" placeholder="Type something" style="font-size: 22px">
+    <input type="button" name="playButton" value="Send" style="font-size: 22px" autocomplete="off"><br />
 
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>

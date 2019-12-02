@@ -3,7 +3,8 @@ import * as io from "socket.io-client";
 
 export class Chat extends Window {
     private socket;
-    public constructor (key, windowData={}){
+    private text;
+    public constructor (key, windowData={x:10, y:10, width: 350, height: 250}){
         super(key, windowData);
     }
 
@@ -12,11 +13,11 @@ export class Chat extends Window {
     }
 
     protected initialize(){
-        console.log("chat window create")
+        console.log("chat window create", this)
+        this.text = "";
         this.cameras.main.setBackgroundColor(0xffffff)
 
-        var text = this.add.text(300, 10, 'Please enter your name', { color: 'white', fontSize: '20px '});
-        var element = this.add.dom(this.windowData.x, this.windowData.y + 30).createFromCache('chatform');
+        var element = this.add.dom(200,220).createFromCache('chatform');
         element.addListener('click');
         element.on('click', function (event) {
     
@@ -35,7 +36,7 @@ export class Chat extends Window {
                     this.setVisible(false);
     
                     //  Populate the text with whatever they typed in
-                    text.setText('Welcome ' + inputText.value);
+                    this.text.setText('Welcome ' + inputText.value);
                 }
             }
     
