@@ -3,7 +3,6 @@ import * as io from "socket.io-client";
 import { WindowManager } from "../utils/WindowManager";
 
 export class Chat extends Window {
-    private socket;
     private text;
     private element;
     public constructor (key, windowData={x:10, y:10, width: 350, height: 250}){
@@ -20,8 +19,9 @@ export class Chat extends Window {
         this.text = "";
         this.cameras.main.setBackgroundColor(0xffffff)
 
-        this.element = this.add.dom(200,220).createFromCache('chatform');
+        this.element = this.add.dom(200,140).createFromCache('chatform');
         this.element.addListener('click');
+        console.log(this);
         this.element.on('click', function (event) {
     
             if (event.target.name === 'playButton')
@@ -31,14 +31,6 @@ export class Chat extends Window {
                 //  Have they entered anything?
                 if (inputText.value !== '')
                 {
-                    //  Turn off the click events
-                    // this.removeListener('click');
-    
-                    //  Hide the login element
-                    // this.setVisible(false);
-    
-
-                    console.log("a;dkhsflkb");
                     event.preventDefault();
                     socket.emit("send message", inputText.value, function() {
                         inputText.value = "";
