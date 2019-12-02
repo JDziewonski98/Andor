@@ -26,10 +26,10 @@ export default class LoadGameScene extends Phaser.Scene {
             }
          }
 
-        var title = this.add.text(240, 50, 'Choose the game that you wish to load:', style2);
-        var gameName = this.add.text(240, 90, 'Game name:', style2);
+        var title = this.add.text(200, 50, 'Choose the game that you wish to load:', style2);
+        var gameName = this.add.text(200, 90, 'Game name:', style2);
         var form = this.add.dom(380, 190).createFromCache('loadgame_form');
-        var passtitle = this.add.text(240, 210,'Enter Password:', style2)
+        var passtitle = this.add.text(200, 235,'Enter Password:', style2)
         form.addListener('click');
 
         //this is how we can interact with the html dom element
