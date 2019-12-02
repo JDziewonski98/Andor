@@ -15,6 +15,8 @@ export class Chat extends Window {
     }
     
     protected initialize(){
+        var socket = io.connect("http://localhost:3000/");
+
         this.text = "";
         this.cameras.main.setBackgroundColor(0xffffff)
 
@@ -24,23 +26,32 @@ export class Chat extends Window {
     
             if (event.target.name === 'playButton')
             {
-                //**** logic for sending message should go here ****
                 var inputText = this.getChildByName('nameField');
     
                 //  Have they entered anything?
                 if (inputText.value !== '')
                 {
                     //  Turn off the click events
-                    this.removeListener('click');
+                    // this.removeListener('click');
     
                     //  Hide the login element
-                    this.setVisible(false);
+                    // this.setVisible(false);
     
-                    //  Populate the text with whatever they typed in
-                    this.text.setText('Welcome ' + inputText.value);
+
+                    console.log("a;dkhsflkb");
+                    event.preventDefault();
+                    socket.emit("send message", inputText.value, function() {
+                        inputText.value = "";
+                    });
                 }
             }
     
+        });
+
+        socket.on("update messages", function(msg){
+            var paragraph = document.createElement('p');
+            paragraph.append(msg);
+            document.getElementById("history").append(paragraph);
         });
 
         console.log("chat window create", this)
