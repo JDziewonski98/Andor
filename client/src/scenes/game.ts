@@ -95,7 +95,7 @@ export default class GameScene extends Phaser.Scene {
       
     }, this);
 
-    var chat = WindowManager.create(this,'chat', Chat);
+    // var chat = WindowManager.create(this,'chat', Chat);
     this.gameText = this.add.text(800,550,"CHAT", style2).setOrigin(0.5)
     this.gameText.setInteractive();
     this.gameText.on('pointerdown', function (pointer) {
