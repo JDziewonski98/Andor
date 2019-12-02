@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser';
-import { Hero } from '../objects/hero';
+import { Hero } from './hero';
 
 export class Tile extends Phaser.GameObjects.Sprite {
     public adjacent: Tile[] = [];
@@ -15,7 +15,8 @@ export class Tile extends Phaser.GameObjects.Sprite {
         this.x = x;
         this.y = y;
         this.hero = null;
-
+        this.on('pointerdown', function (pointer) { this.printstuff() });
+        this.on('pointerdown', function (pointer) { this.moveRequest() })
     }
     public printHerodata() {
         if (this.heroexist) {

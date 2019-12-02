@@ -2,6 +2,7 @@ import { Tile } from '../objects/tile';
 import { Tilemaps } from 'phaser';
 import { Window } from './window'
 import { Hero } from '../objects/hero';
+import { HourTracker } from '../objects/hourTracker';
 
 export default class GameScene extends Phaser.Scene {
   private weed: Phaser.GameObjects.Sprite;
@@ -10,8 +11,8 @@ export default class GameScene extends Phaser.Scene {
   public tiles: Tile[] = [];
   private count: number = 0;
   private gameText;
-  private windows: Window[] = []
-  private hours;
+  private windows: Window[] = [];
+  private hourTracker: HourTracker;
 
   constructor() {
     super({ key: 'Game' });
@@ -54,18 +55,23 @@ export default class GameScene extends Phaser.Scene {
         id += numCols;
         this.tiles.push(rect);
         rect.setInteractive();
-        rect.on('pointerdown', function (pointer) { this.printstuff() });
-        rect.on('pointerdown', function (pointer) { this.moveRequest() })
+
       }
     }
     this.setTileAdjacencies(this.tiles, numRows, numCols);
-
     this.weed = this.add.sprite(this.tiles[0].x, this.tiles[0].y, 'weed');
     this.hero = new Hero(0, this, this.weed, 0, 0, tiles[0]);
-    this.hero.hourTrackerImage = this.add.image(625, 40, 'weed').setDisplaySize(40, 40);
-    this.weed.depth = 5;
     this.tiles[0].hero = this.hero;
     this.tiles[0].heroexist = true;
+
+    this.hourTracker = new HourTracker(this, 625, 40, this.add.sprite(625, 40, 'weed').setDisplaySize(40, 40), this.hero);
+    this.hourTracker.depth = 5;
+    this.hourTracker.depth = 0;
+    this.hero.hourTracker = this.hourTracker;
+    this.hourTracker.setInteractive();
+
+    this.weed.depth = 5;
+
 
     this.weed.setInteractive();
     // TODO Important!!!! gotta find a way to clear data when u exit a scene or else problems happen
