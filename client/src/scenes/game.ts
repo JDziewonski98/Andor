@@ -101,6 +101,14 @@ export default class GameScene extends Phaser.Scene {
       }
     }, this);
 
+    //Options
+    var optionsIcon = this.add.image(80, 80, 'optionsIcon').setInteractive();
+    optionsIcon.on('pointerdown', function (pointer) {
+        this.sys.game.scene.bringToTop('Options')
+        this.sys.game.scene.getScene('Options').scene.setVisible(true, 'Options')
+        this.sys.game.scene.resume('Options')
+    }, this);
+
     // var chat = WindowManager.create(this,'chat', Chat);
     this.gameText = this.add.text(800,550,"CHAT", style2).setOrigin(0.5)
     this.gameText.setInteractive();
