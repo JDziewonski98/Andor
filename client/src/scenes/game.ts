@@ -25,8 +25,6 @@ export default class GameScene extends Phaser.Scene {
   }
 
   public create() {
-    //i thought the andor board background was kind of messy
-    //this.add.image(500, 300, 'map');
     this.add.image(500, 300, 'andordude').setDisplaySize(1000, 600)
     this.add.image(800, 40, 'hourbar').setDisplaySize(400, 75);
     var id: number = 0;
