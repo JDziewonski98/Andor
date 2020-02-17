@@ -10,6 +10,7 @@ class Region {
     // private fog: Fog;
     private gold;
     // private wineskins: Wineskin[] = [];
+    // private farmers: Farmer[] = [];
     private hasWell;
     private wellUsed: boolean = false;
     private currMonster: Monster;
@@ -50,5 +51,16 @@ class Region {
 
     // public addWineskin(w: Wineskin) {
     //     this.wineskins.push(w);
+    // }
+
+    public getNextRegion() {
+        return this.nextRegion;
+    }
+
+    // public removeFarmer() {
+    //     this.farmers = [];
+    // }
+    // public addFarmer(f: Farmer) {
+    //     this.farmers.push(f);
     // }
 }

@@ -1,3 +1,7 @@
+import { GameDifficulty } from "./GameDifficulty"
+import { RietburgCastle } from "./RietburgCastle"
+import { Farmer } from "./Farmer"
+
 export class Game{
     private numOfDesiredPlayers: Number;
     private difficulty: GameDifficulty;

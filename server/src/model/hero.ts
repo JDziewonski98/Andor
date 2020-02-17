@@ -1,3 +1,5 @@
+import { HeroKind } from "./HeroKind";
+
 export class Hero {
     private hk: HeroKind;
     private region: Region;
