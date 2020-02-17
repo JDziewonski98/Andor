@@ -1,27 +1,24 @@
 {
-    "compilerOptions": {
-      "module": "commonjs",
-      "strict": true,
-      "baseUrl": "./",
-      "outDir": "build",
-      "removeComments": true,
-      "experimentalDecorators": true,
-      "target": "es6",
-      "emitDecoratorMetadata": true,
-      "moduleResolution": "node",
-      "importHelpers": true,
-      "noImplicitAny": false,
-      "types": [
-        "node"
-      ],
-      "typeRoots": [
-        "node_modules/@types"
-      ]
-    },
-    "include": [
-      "./src/**/*.ts"
-    ],
-    "exclude": [
-      "./src/public/"
-    ]
-  }
+  "compilerOptions": {
+    "module": "commonjs",
+    "strict": true,
+    "baseUrl": "./",
+    "outDir": "build",
+    "removeComments": true,
+    "experimentalDecorators": true,
+    "target": "es6",
+    "emitDecoratorMetadata": true,
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "noImplicitAny": false
+    // "typeRoots": [
+    //   "node_modules/@types"
+    // ]
+  },
+  "include": [
+    "./src/**/*.ts"
+  ],
+  "exclude": [
+    "./src/public/"
+  ]
+}
