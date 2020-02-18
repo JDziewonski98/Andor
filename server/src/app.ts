@@ -1,7 +1,3 @@
-// var app = require('http').createServer(response);
-// var fs = require('fs');
-// var io = require('socket.io')(app);
-
 var express = require("express");
 var app = express();
 var path = require('path');
@@ -16,17 +12,24 @@ server.listen(port, () => {
 });
 
 // import controllers that we need from here
-import { game, chat } from "./controller";
-import { Game } from "./model"
+import { game, chat, lobby } from "./controller";
+import { Game, Lobby } from "./model"
 import { GameDifficulty } from './model/GameDifficulty';
 
-var gamensp = io.of("/game")
-gamensp.on("connection", function (socket){
-	var g = new Game(4, GameDifficulty.Easy)
-	game(socket, gamensp, g)
+// var gamensp = io.of("/game")
+// gamensp.on("connection", function (socket){
+// 	var g = new Game(4, GameDifficulty.Easy)
+// 	game(socket, gamensp, g)
+// });
+
+var lobbynsp = io.of("/lobby")
+var l = new Lobby()
+lobbynsp.on("connection", function (socket){
+	lobby(socket, lobbynsp, l)
 });
 
 var chatnsp = io.of("/chat")
 chatnsp.on("connection", function (socket){
 	chat(socket, chatnsp)
 });
+

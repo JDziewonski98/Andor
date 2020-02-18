@@ -1,12 +1,11 @@
-import UUID from '../utils/UUID';
 
 export class Player {
     private readyToPlay: boolean;
     private id: string;
 
-    constructor(){
+    constructor(id: string){
         this.readyToPlay = false;
-        this.id = UUID.generate();
+        this.id = id;
     }
 
     public getID(){

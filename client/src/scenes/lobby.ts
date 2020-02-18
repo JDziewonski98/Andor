@@ -1,4 +1,4 @@
-import { Stars } from './Stars';
+import { addNewPlayerToLobby } from "../api/lobby"
 
 export default class LobbyScene extends Phaser.Scene {
     private welcomeText;
@@ -7,7 +7,7 @@ export default class LobbyScene extends Phaser.Scene {
     private optionsIcon;
     private scaleRatio = window.devicePixelRatio / 3;
     constructor() {
-        super({ 
+        super({
             key: 'Lobby',
             active: true
         });
@@ -26,12 +26,22 @@ export default class LobbyScene extends Phaser.Scene {
         this.load.image('dwarfmale', './assets/dwarfmale.png')
         this.load.image('archermale', './assets/archermale.png')
         this.load.image('hourbar', './assets/hours.PNG')
-        this.load.image('fantasyhome','./assets/fantasyhome.jpg')
+        this.load.image('fantasyhome', './assets/fantasyhome.jpg')
         this.load.image('optionsIcon', './assets/icons/settings_icon.png')
     }
 
     public create() {
-        var bg = this.add.image(500, 300, 'beach').setDisplaySize(1000,600)
+        this.draw()
+
+        this.connect()
+    }
+
+    private connect() {
+        addNewPlayerToLobby()
+    }
+
+    private draw() {
+        var bg = this.add.image(500, 300, 'beach').setDisplaySize(1000, 600)
         var style1 = {
             fontFamily: '"Roboto Condensed"',
             fontSize: "70px",

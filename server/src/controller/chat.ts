@@ -1,7 +1,6 @@
-import { Game } from 'src/model/Game';
-
 export function chat(socket, nsp) {
   socket.on("send message", function (sent_msg, callback) {
+    console.log(socket.conn.id, "said: ", sent_msg)
     sent_msg = "[ " + getCurrentDate() + " ]: " + sent_msg;
     nsp.emit("update messages", sent_msg);
     callback();
