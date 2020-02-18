@@ -1,6 +1,5 @@
 import { Window } from "./window";
 import * as io from "socket.io-client";
-import { WindowManager } from "../utils/WindowManager";
 
 export class Chat extends Window {
     private text;
@@ -14,7 +13,7 @@ export class Chat extends Window {
     }
     
     protected initialize(){
-        var socket = io.connect("http://localhost:3000/");
+        var socket = io.connect("http://localhost:3000/chat");
 
         this.text = "";
         this.cameras.main.setBackgroundColor(0xffffff)
@@ -44,6 +43,7 @@ export class Chat extends Window {
         
 
         socket.on("update messages", function(msg){
+            console.log(msg)
             var paragraph = document.createElement('p');
             paragraph.append(msg);
             document.getElementById("history").append(paragraph);
