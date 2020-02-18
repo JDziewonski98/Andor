@@ -1,4 +1,4 @@
-class Monster {
+export class Monster {
     constructor() {
         
     }

@@ -5,6 +5,8 @@ import { HeroWindow } from './herowindow';
 import { WindowManager } from "../utils/WindowManager";
 import { Hero } from '../objects/hero';
 import { HourTracker } from '../objects/hourTracker';
+import * as io from "socket.io-client";
+
 
 export default class GameScene extends Phaser.Scene {
   private weed: Phaser.GameObjects.Sprite;
@@ -122,13 +124,17 @@ export default class GameScene extends Phaser.Scene {
 
     this.input.keyboard.on('keydown_ESC', this.escChat,this)
 
-    //this.input.keyboard.on('keydown_A',this.killwindows,this)
-
+    this.test()
 
   }
 
   private escChat(){
     WindowManager.destroy(this, 'chat');
+  }
+
+  private test() {
+    var socket = io.connect("http://localhost:3000/game");
+    
   }
 
   //leetcode hard algorithm

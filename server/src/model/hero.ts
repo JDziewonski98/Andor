@@ -1,22 +1,22 @@
 import { HeroKind } from "./HeroKind";
+import { Region } from './region';
 
 export class Hero {
     private hk: HeroKind;
     private region: Region;
-    private gold: Number;
-    private strength: Number;
-    private will: Number;
-    private moveCompleted: Boolean = false;
-    private timeOfDay: Number = 1;
-    private farmer: Boolean = false;
+    private gold: number;
+    private strength: number;
+    private will: number;
+    private moveCompleted: boolean = false;
+    private timeOfDay: number = 1;
+    private farmer: boolean = false;
 
-    constructor(hk, region, gold, strength, will) {
+    constructor(hk: HeroKind, region: Region, gold: number, strength: number, will: number) {
         this.hk = hk
         this.region = region
         this.gold = gold
         this.strength = strength
         this.will = will
-        //need to add socket call to frontend to create hero instance
     }
 
     private moveTo(newTile) {
