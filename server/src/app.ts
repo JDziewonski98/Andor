@@ -22,7 +22,7 @@ import { GameDifficulty } from './model/GameDifficulty';
 
 var gamensp = io.of("/game")
 gamensp.on("connection", function (socket){
-	var g = new Game(2, GameDifficulty.Easy, NaN)
+	var g = new Game(4, GameDifficulty.Easy)
 	game(socket, gamensp, g)
 });
 

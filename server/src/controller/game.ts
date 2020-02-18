@@ -2,7 +2,14 @@ import { Game } from 'src/model/game';
 
 export function game(socket, nsp, model: Game) {
     socket.on("heroMove", function (heroId, callback) {
-        nsp.emit("updateHeroMove", heroId);
+        let successful: boolean = false
+        // any logic for movement here
+        
+        if(successful){
+          nsp.emit("updateHeroMove", heroId);
+        } else {
+          // could emit event for handling failure move case here.
+        }
         callback();
       });
   
