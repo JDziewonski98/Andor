@@ -1,4 +1,4 @@
-import { Game } from 'src/model/game';
+import { Game } from 'src/model';
 
 export function game(socket, nsp, model: Game) {
     socket.on("heroMove", function (heroId, callback) {

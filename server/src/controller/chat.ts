@@ -1,4 +1,4 @@
-import { Game } from 'src/model/game';
+import { Game } from 'src/model/Game';
 
 export function chat(socket, nsp) {
   socket.on("send message", function (sent_msg, callback) {
