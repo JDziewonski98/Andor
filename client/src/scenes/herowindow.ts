@@ -1,23 +1,39 @@
 import { Window } from "./window";
 export class HeroWindow extends Window {
-    public constructor (key, windowData={x:350, y:30, width: 350, height: 150}){
+
+    public icon
+    public gold: number
+    public will: number
+    public str: number
+    private goldtext
+    private willtext
+    private nametext
+    private name
+
+
+    public constructor (key, icon, windowData={x:350, y:30, width: 350, height: 150}){
         super(key, windowData);
+        this.icon = icon
+        this.gold = 5
+        this.will = 5
+        this.str = 5
+        this.name = 'undeclared'
     }
 
- 
     protected initialize(){
+
         console.log("hero window", this)
-        this.cameras.main.setBackgroundColor('0xa4sd44')
         var bg = this.add.image(0,0,'scrollbg').setOrigin(0.5)
-        var weed = this.add.sprite(50, 50, 'weed');
-        this.add.text(50,100,'Gold: 5',{backgroundColor: 'fx00'})
-        this.add.text(50,120,'Willpower: 7',{backgroundColor: 'fx00'})
-        this.add.text(150,50,'Special ability text ....',{backgroundColor: 'fx00'})
-        this.add.text(150,70,'Items ....',{backgroundColor: 'fx00'})
-        // weed.setInteractive()
-        // this.input.setDraggable(weed)
+        var weed = this.add.sprite(50, 50, this.icon);
+        this.goldtext = this.add.text(50,100,'Gold: ' + this.gold, {backgroundColor: 'fx00'})
+        this.willtext = this.add.text(50,120,'Willpower: ' + this.will, {backgroundColor: 'fx00'})
+        this.nametext = this.add.text(30,10,"", {color: '#2c03fc'})
+        this.add.text(150,50,'Special ability text ....', {backgroundColor: 'fx00'})
+        this.add.text(150,70,'Items ....', {backgroundColor: 'fx00'})
+
         bg.setInteractive()
         this.input.setDraggable(bg)
+        //This drag is pretty f'd up.
         bg.on('drag', function (pointer, dragX, dragY) {
             if (dragX < this.scene.parent.x - 10 && dragY < this.scene.parent.y - 10) {
                 this.scene.parent.x = this.scene.parent.x - 10;
@@ -32,4 +48,30 @@ export class HeroWindow extends Window {
         });
     }
 
+    public setGold(amt: number) {
+        this.gold = amt
+        this.refreshText()
+    }
+
+    public setStr(amt: number) {
+        this.str = amt
+        this.refreshText()
+    }
+
+    public setWill(amt: number) {
+        this.will = amt
+        this.refreshText()
+    }
+
+    public setName(name : string) {
+        this.name = name
+        this.refreshText()
+    }
+
+    private refreshText() {
+        console.log('refeshing')
+        this.goldtext.setText('Gold: ' + this.gold)
+        this.willtext.setText('Willpower: ' + this.will)
+        this.nametext.setText(this.name)
+    }
 }
