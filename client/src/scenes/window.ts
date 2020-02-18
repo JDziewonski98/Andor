@@ -5,20 +5,23 @@ export abstract class Window extends Phaser.Scene {
     public constructor (key, windowData={}){
         super(key);
         this.windowData = windowData;
-    }
+    } 
 
     create () {
         console.log("parent window create", this.windowData)
-        this.parent = this.add.zone(this.windowData.x, this.windowData.y, this.windowData.width, this.windowData.height).setInteractive().setOrigin(0);
-        this.parent.on('drag', function (pointer, dragX, dragY) {
-            this.x = dragX;
-            this.y = dragY;
-            // demo.refresh()
-        });
+        this.parent = this.add.zone(this.windowData.x, this.windowData.y, this.windowData.width, this.windowData.height).setOrigin(0);
+        var bg = this.add.image(0,0,'scrollbg')
+        // this.input.setDraggable(bg)
+        // bg.on('drag', function (pointer, dragX, dragY) {
+        //     this.x = dragX;
+        //     this.y = dragY;
+        //     // demo.refresh()
+        // });
         this.initialize();
         this.cameras.main.setViewport(this.parent.x, this.parent.y, this.windowData.width, this.windowData.height);
         // this.input.keyboard.on('keydown_ESC',this.kill,this)
         // this.cameras.main.setBackgroundColor("6E8C97")
+        
     }
 
     //press ESC to close windows
