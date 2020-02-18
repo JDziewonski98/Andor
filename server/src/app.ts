@@ -15,7 +15,17 @@ server.listen(port, () => {
 	console.log('Server listening at port %d', port);
 });
 
-import { chat } from "./controller/chat";
+// import controllers that we need from here
+import { game, chat } from "./controller";
+import { Game } from "./model"
+import { GameDifficulty } from './model/GameDifficulty';
+
+var gamensp = io.of("/game")
+gamensp.on("connection", function (socket){
+	var g = new Game(2, GameDifficulty.Easy, NaN)
+	game(socket, gamensp, g)
+});
+
 var chatnsp = io.of("/chat")
 chatnsp.on("connection", function (socket){
 	chat(socket, chatnsp)

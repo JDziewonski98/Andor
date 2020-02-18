@@ -1,4 +1,5 @@
 import { HeroKind } from "./HeroKind";
+import { Region } from './region';
 
 export class Hero {
     private hk: HeroKind;

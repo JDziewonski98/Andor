@@ -1,4 +1,6 @@
-class Region {
+import { Monster } from '.';
+
+export class Region {
     public adjacentRegions: Region[] = [];
     nextRegion: Region;
     public id: number;
