@@ -14,7 +14,7 @@ export function lobby(socket, nsp, model: Lobby) {
     //   game(socket, gamensp, g)
     // });
   })
-
+ 
 
   socket.on("newPlayer", function () {
     let id = model.connectNewPlayer(socket.conn.id)
@@ -22,7 +22,12 @@ export function lobby(socket, nsp, model: Lobby) {
   });
 
   socket.on('disconnect', function (x) {
+    let id = socket.conn.id
     model.disconnectPlayer(socket.conn.id)
-    console.log('Lobby disconnected', model.getPlayers());
+    console.log('Lobby disconnected', id);
+  });
+
+  socket.on('bind hero', function(herotype, player) {
+    console.log('player ', player, ' chose ', herotype)
   });
 }

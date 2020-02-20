@@ -3,7 +3,7 @@ import { Region } from './region';
 
 export class Hero {
     private hk: HeroKind;
-    private region: Region;
+    //private region: Region;
     private gold: number;
     private strength: number;
     private will: number;
@@ -11,9 +11,9 @@ export class Hero {
     private timeOfDay: number = 1;
     private farmer: boolean = false;
 
-    constructor(hk: HeroKind, region: Region, gold: number, strength: number, will: number) {
+    constructor(hk: HeroKind, region: number, gold: number, strength: number, will: number) {
         this.hk = hk
-        this.region = region
+        //this.region = region
         this.gold = gold
         this.strength = strength
         this.will = will
@@ -48,7 +48,7 @@ export class Hero {
     }
 
     private setRegion(r) {
-        this.region = r;
+        //this.region = r;
     }
 
 
