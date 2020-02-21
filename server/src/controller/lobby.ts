@@ -27,7 +27,7 @@ export function lobby(socket, nsp, model: Lobby) {
     console.log('Lobby disconnected', id);
   });
 
-  socket.on('bind hero', function(herotype, player) {
-    console.log('player ', player, ' chose ', herotype)
+  socket.on('bind hero', function(herotype) {
+    console.log('player ', socket.conn.id, ' chose ', herotype)
   });
 }

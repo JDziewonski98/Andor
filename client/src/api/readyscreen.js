@@ -7,6 +7,6 @@ function connect() {
     return io.connect(BASE_API + "/lobby");
 }
 
-export function bindhero(herotype, player) {
-    socket.emit("bind hero",herotype, player);
+export function bindhero(herotype) {
+    socket.emit("bind hero",herotype);
 }

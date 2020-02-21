@@ -49,7 +49,7 @@ export default class ReadyScreenScene extends Phaser.Scene {
                 var hero = this.revselectionmap[heroselectedx]
                 //bind that herotype to the player's hero instance
                 //TODO
-                bindhero(hero, '1')
+                bindhero(hero)
                 this.scene.start('Game');
             }
             else {
