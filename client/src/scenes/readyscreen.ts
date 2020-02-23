@@ -1,4 +1,4 @@
-import { bindhero } from "../api/readyscreen"
+import { game } from "../api/game";
 
 export default class ReadyScreenScene extends Phaser.Scene {
         public archerportrait;
@@ -10,9 +10,18 @@ export default class ReadyScreenScene extends Phaser.Scene {
         public playbutton
         public readytext
         public selectionmap = {'Archer':200,'Dwarf':410,'Warrior':620,'Mage':830}
+        public name: string;
+        public gameController;
+
         public revselectionmap = {200:'Archer', 410:'Dwarf', 620:'Warrior', 830:'Mage'}
     constructor() {
         super({key: 'Ready'});
+    }
+
+    public init(data){
+        this.name = data.name
+        this.gameController = new game(this.name);
+
     }
 
     public preload() {
@@ -49,7 +58,7 @@ export default class ReadyScreenScene extends Phaser.Scene {
                 var hero = this.revselectionmap[heroselectedx]
                 //bind that herotype to the player's hero instance
                 //TODO
-                bindhero(hero)
+                // bindhero(hero)
                 this.scene.start('Game');
             }
             else {

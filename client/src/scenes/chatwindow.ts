@@ -29,21 +29,23 @@ export class Chat extends Window {
                 //  Have they entered anything?
                 if (inputText.value !== '') {
                     event.preventDefault();
-                    send(inputText.value, function () {
+                    send(inputText.value, function (msg) {
                         inputText.value = "";
+                        update(msg)
                     })
                 }
             }
 
         });
 
-        recieve(function (msg) {
+        function update(msg){
             console.log(msg)
             var paragraph = document.createElement('p');
             paragraph.append(msg);
             document.getElementById("history").append(paragraph);
-        })
-        console.log("chat window create", this)
+        }
+
+        recieve(update)
 
     }
 

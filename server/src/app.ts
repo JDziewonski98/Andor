@@ -5,31 +5,32 @@ var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 var port = 3000;
 
-app.use(express.static(path.join(__dirname, 'public')));
+// server.listen()
 
-server.listen(port, () => {
-	console.log('Server listening at port %d', port);
-});
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+server.listen(port, '0.0.0.0');
 
 // import controllers that we need from here
 import { game, chat, lobby } from "./controller";
-import { Game, Lobby } from "./model"
-import { GameDifficulty } from './model/GameDifficulty';
-
-// var gamensp = io.of("/game")
-// gamensp.on("connection", function (socket){
-// 	var g = new Game(4, GameDifficulty.Easy)
-// 	game(socket, gamensp, g)
-// });
+import { Lobby } from "./model"
 
 var lobbynsp = io.of("/lobby")
 var l = new Lobby()
 lobbynsp.on("connection", function (socket){
-	lobby(socket, lobbynsp, l)
+	lobby(socket, l, io)
 });
+
+var os = require('os')
+var n = os.networkInterfaces();
+// console.log(n)
+console.log(n['en0'][1]['address'])
 
 var chatnsp = io.of("/chat")
 chatnsp.on("connection", function (socket){
-	chat(socket, chatnsp)
+	chat(socket)
 });
+
 

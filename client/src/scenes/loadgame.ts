@@ -1,4 +1,4 @@
-
+import { lobby } from "../api"
 export default class LoadGameScene extends Phaser.Scene {
 
     constructor() {
@@ -10,7 +10,10 @@ export default class LoadGameScene extends Phaser.Scene {
     }
 
     public create() {
-
+        // getGames(function (games){
+        //     console.log("Finally got games inside load game: ", games)
+        // })
+        
         var background = this.add.image(500,300,'mountains').setDisplaySize(1000,600)
         var style2 = { 
             fontFamily: '"Roboto Condensed"',

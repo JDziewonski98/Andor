@@ -1,9 +1,9 @@
-export function chat(socket, nsp) {
+export function chat(socket) {
   socket.on("send message", function (sent_msg, callback) {
     console.log(socket.conn.id, "said: ", sent_msg)
     sent_msg = "[ " + getCurrentDate() + " ]: " + sent_msg;
-    nsp.emit("update messages", sent_msg);
-    callback();
+    socket.broadcast.emit("update messages", sent_msg);
+    callback(sent_msg);
   });
 
   socket.on('disconnect', function () {
