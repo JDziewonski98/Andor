@@ -54,7 +54,7 @@ export default class ReadyScreenScene extends Phaser.Scene {
             if (this.ready){
                 console.log('here')
                 this.gameController.bindHero("Archer")
-            // this.scene.start('Game');
+            this.scene.start('Game');
             }
             else {
                 console.log('here2' + this.ready)
