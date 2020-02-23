@@ -1,4 +1,4 @@
-import { addNewPlayerToLobby } from "../api/lobby"
+import { lobby } from "../api";
 
 export default class LobbyScene extends Phaser.Scene {
     private welcomeText;
@@ -6,11 +6,17 @@ export default class LobbyScene extends Phaser.Scene {
     private gameText;
     private optionsIcon;
     private scaleRatio = window.devicePixelRatio / 3;
+    private lobbyController;
+
     constructor() {
         super({
             key: 'Lobby',
             active: true
         });
+    }
+
+    public init(data){
+        this.lobbyController = new lobby();
     }
 
     public preload() {
@@ -38,7 +44,7 @@ export default class LobbyScene extends Phaser.Scene {
     }
 
     private connect() {
-        addNewPlayerToLobby()
+        this.lobbyController.addNewPlayerToLobby()
     }
 
     private draw() {

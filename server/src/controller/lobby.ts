@@ -1,24 +1,28 @@
 import { Lobby, Game, GameDifficulty } from '../model';
+import { game } from './game';
 
-export function lobby(socket, nsp, model: Lobby) {
-  socket.on("createGame", function (numPlayers, difficulty) {
+export function lobby(socket, model: Lobby, io) {
+  socket.on("createGame", function (name, numPlayers, difficulty) {
     const d = difficulty === "Easy" ? GameDifficulty.Easy : GameDifficulty.Hard;
-    let g = new Game(numPlayers, d);
+    let g = new Game(name, numPlayers, d);
     model.createGame(g);
-
+    console.log("Created game", name)
     // TODO create namespace for game instance and connect it to socket.io
     
-    // var gamensp = io.of("/game")
-    // gamensp.on("connection", function (socket) {
-    //   var g = new Game(4, GameDifficulty.Easy)
-    //   game(socket, gamensp, g)
-    // });
+    var gamensp = io.of("/" + name)
+    gamensp.on("connection", function (socket) {
+      game(socket, g)
+    });
+  })
+
+  socket.on("getGames", function(callback){
+    callback(Array.from(model.getAvailableGames().keys()))
   })
 
 
   socket.on("newPlayer", function () {
     let id = model.connectNewPlayer(socket.conn.id)
-    console.log(id, " just joined");
+    console.log(model.getPlayers());
   });
 
   socket.on('disconnect', function (x) {

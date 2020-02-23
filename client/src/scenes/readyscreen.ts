@@ -1,3 +1,5 @@
+import { game } from "../api/game";
+
 export default class ReadyScreenScene extends Phaser.Scene {
         public archerportrait;
         public warriorportrait;
@@ -8,8 +10,17 @@ export default class ReadyScreenScene extends Phaser.Scene {
         public playbutton
         public readytext
         public selectionmap = {'Archer':200,'Dwarf':410,'Warrior':620,'Mage':830}
+        public name: string;
+        public gameController;
+
     constructor() {
         super({key: 'Ready'});
+    }
+
+    public init(data){
+        this.name = data.name
+        this.gameController = new game(this.name);
+
     }
 
     public preload() {
@@ -42,7 +53,8 @@ export default class ReadyScreenScene extends Phaser.Scene {
         this.playbutton.on('pointerdown', function (pointer) {
             if (this.ready){
                 console.log('here')
-            this.scene.start('Game');
+                this.gameController.bindHero("Archer")
+            // this.scene.start('Game');
             }
             else {
                 console.log('here2' + this.ready)

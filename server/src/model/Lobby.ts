@@ -11,7 +11,7 @@ export class Lobby {
     }
 
     public createGame(g: Game){
-        this.games.set("1", g);
+        this.games.set(g.getName(), g);
     }
 
     public connectNewPlayer(id: string){
@@ -26,6 +26,10 @@ export class Lobby {
 
     public getPlayers(){
         return this.players;
+    }
+     
+    public getAvailableGames(){
+        return this.games;
     }
 
 }

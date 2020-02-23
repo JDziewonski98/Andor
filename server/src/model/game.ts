@@ -4,14 +4,21 @@ import { Farmer } from "./Farmer"
 import { Region } from "./region"
 
 export class Game {
+    
     private numOfDesiredPlayers: number;
     private difficulty: GameDifficulty;
     private castle: RietburgCastle;
+    private name: string;
 
-    constructor(numOfDesiredPlayers: number, difficulty: GameDifficulty){
+    constructor(name: string, numOfDesiredPlayers: number, difficulty: GameDifficulty){
+        this.name = name;
         this.numOfDesiredPlayers = numOfDesiredPlayers;
         this.difficulty = difficulty;
         this.castle = new RietburgCastle();
+    }
+
+    public getName(): string {
+        return this.name;
     }
 
     public removeFarmer(f: Farmer){
