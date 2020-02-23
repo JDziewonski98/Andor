@@ -20,6 +20,15 @@ export class game {
         this.socket.emit("bind hero", herotype)
     }
 
+    public send(msg, callback) {
+        console.log('ok we do the send api call')
+        let t = this.socket.emit("send message", msg, callback);
+        console.log(t)
+    }
+    
+    public recieve(callback) {
+        this.socket.on("update messages", callback);
+    }
 
 }
 

@@ -1,5 +1,5 @@
 import { game } from "../api/game";
-
+import {bindhero} from "../api/readyscreen"
 export default class ReadyScreenScene extends Phaser.Scene {
         public archerportrait;
         public warriorportrait;
@@ -21,6 +21,8 @@ export default class ReadyScreenScene extends Phaser.Scene {
     public init(data){
         this.name = data.name
         this.gameController = new game(this.name);
+        console.log('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')
+        console.log(this.gameController)
 
     }
 
@@ -49,7 +51,7 @@ export default class ReadyScreenScene extends Phaser.Scene {
 
         }, this);
 
-
+        var self = this;
         this.playbutton = this.add.sprite(950,550,'playbutton').setInteractive()
         this.playbutton.on('pointerdown', function (pointer) {
             if (this.ready){
@@ -58,8 +60,8 @@ export default class ReadyScreenScene extends Phaser.Scene {
                 var hero = this.revselectionmap[heroselectedx]
                 //bind that herotype to the player's hero instance
                 //TODO
-                // bindhero(hero)
-                this.scene.start('Game');
+                bindhero(hero)
+                this.scene.start('Game',{gameinstance:self.gameController});
             }
             else {
                 console.log('here2' + this.ready)

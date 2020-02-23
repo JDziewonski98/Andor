@@ -45,6 +45,8 @@ export default class LobbyScene extends Phaser.Scene {
 
     private connect() {
         this.lobbyController.addNewPlayerToLobby()
+        console.log('in the lobby scene:')
+        console.log(this.lobbyController)
     }
 
     private draw() {
@@ -69,10 +71,11 @@ export default class LobbyScene extends Phaser.Scene {
             fontSize: "40px",
             backgroundColor: "#f00"
         }
+        var self = this;
         this.weedText = this.add.text(500, 300, "New", style2).setOrigin(0.5)
         this.weedText.setInteractive();
         this.weedText.on('pointerdown', function (pointer) {
-            this.scene.start('Create');
+            this.scene.start('Create',{controller:self.lobbyController});
         }, this);
 
         this.gameText = this.add.text(500, 400, "Join", style2).setOrigin(0.5)

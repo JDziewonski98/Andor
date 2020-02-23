@@ -23,12 +23,12 @@ lobbynsp.on("connection", function (socket){
 	lobby(socket, l, io)
 });
 
-var os = require('os')
-var n = os.networkInterfaces();
+//var os = require('os')
+//var n = os.networkInterfaces();
 // console.log(n)
-console.log(n['en0'][1]['address'])
+//console.log(n['en0'][1]['address'])
 
-var chatnsp = io.of("/chat")
+var chatnsp = io.of("/asd")
 chatnsp.on("connection", function (socket){
 	chat(socket)
 });

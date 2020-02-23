@@ -6,6 +6,7 @@ import { WindowManager } from "../utils/WindowManager";
 import { Hero } from '../objects/hero';
 import { HourTracker } from '../objects/hourTracker';
 import * as io from "socket.io-client";
+import { game } from '../api/game';
 
 
 export default class GameScene extends Phaser.Scene {
@@ -17,9 +18,14 @@ export default class GameScene extends Phaser.Scene {
   private gameText;
   private windows: Window[] = [];
   private hourTracker: HourTracker;
+  private gameinstance: game;
 
   constructor() {
     super({ key: 'Game' });
+  }
+
+  public init(data) {
+    this.gameinstance = data.gameinstance;
   }
 
   public preload() {
@@ -27,6 +33,9 @@ export default class GameScene extends Phaser.Scene {
   }
 
   public create() {
+
+    var self = this;
+
     this.add.image(500, 300, 'andordude').setDisplaySize(1000, 600)
     this.add.image(800, 40, 'hourbar').setDisplaySize(400, 75);
     var id: number = 0;
@@ -157,7 +166,7 @@ export default class GameScene extends Phaser.Scene {
       if(this.scene.isVisible('chat')){
         WindowManager.destroy(this, 'chat');
       } else {
-        WindowManager.create(this, 'chat', Chat);
+        WindowManager.create(this, 'chat', Chat, null, self.gameinstance);
       }
       
     }, this); 

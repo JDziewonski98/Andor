@@ -2,11 +2,17 @@ import { NONE } from "phaser";
 
 
 export class WindowManager extends Phaser.Scene {
-    public static create(self, key: string, obj, icon : string = null){
-        if (icon == null) {
+    public static create(self, key: string, obj, icon : string = null, gameinstance = null){
+        if (gameinstance != null) {
+            //were making chat window
+            console.log('in window manager:',gameinstance)
+            var win = new obj(key, gameinstance)
+        }
+        else if (icon == null) {
             var win = new obj(key);
         }
         else {
+            //were making hero window
             var win = new obj(key, icon);
         }
         self.scene.add(key, win, true);

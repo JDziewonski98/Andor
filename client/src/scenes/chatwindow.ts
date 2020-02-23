@@ -1,11 +1,16 @@
 import { Window } from "./window";
-import { send, recieve } from "../api/chat"
+//import { send, recieve } from "../api/chat"
+import { game } from "../api/game";
 
 export class Chat extends Window {
     private text;
     private element;
-    public constructor(key, windowData = { x: 10, y: 10, width: 350, height: 250 }) {
+    private gameinstance: game;
+
+    public constructor(key, gameinstance, windowData = { x: 10, y: 10, width: 350, height: 250 }) {
         super(key, windowData);
+        this.gameinstance = gameinstance
+        console.log('in chatwindow:', gameinstance)
     }
 
     public preload() {
@@ -13,6 +18,7 @@ export class Chat extends Window {
     }
 
     protected initialize() {
+        var self = this;
         this.text = "";
         this.cameras.main.setBackgroundColor(0xffffff)
 
@@ -29,7 +35,8 @@ export class Chat extends Window {
                 //  Have they entered anything?
                 if (inputText.value !== '') {
                     event.preventDefault();
-                    send(inputText.value, function (msg) {
+                    console.log('ok so we see theres text in chat input')
+                    self.gameinstance.send(inputText.value, function (msg) {
                         inputText.value = "";
                         update(msg)
                     })
@@ -45,7 +52,7 @@ export class Chat extends Window {
             document.getElementById("history").append(paragraph);
         }
 
-        recieve(update)
+        this.gameinstance.recieve(update)
 
     }
 
