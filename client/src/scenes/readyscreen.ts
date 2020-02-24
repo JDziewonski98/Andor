@@ -1,5 +1,8 @@
 import { game } from "../api/game";
 import {bindhero} from "../api/readyscreen"
+import { WindowManager } from "../utils/WindowManager";
+import { Chat } from './chatwindow';
+
 export default class ReadyScreenScene extends Phaser.Scene {
         public archerportrait;
         public warriorportrait;
@@ -12,6 +15,7 @@ export default class ReadyScreenScene extends Phaser.Scene {
         public selectionmap = {'Archer':200,'Dwarf':410,'Warrior':620,'Mage':830}
         public name: string;
         public gameController;
+        private gameText;
 
         public revselectionmap = {200:'Archer', 410:'Dwarf', 620:'Warrior', 830:'Mage'}
     constructor() {
@@ -89,13 +93,18 @@ export default class ReadyScreenScene extends Phaser.Scene {
 
         });
 
-        //Options: issue - DOM elements render above all scenes so looks finicky
-        // var optionsIcon = this.add.image(930, 80, 'optionsIcon').setInteractive();
-        // optionsIcon.on('pointerdown', function (pointer) {
-        //     this.sys.game.scene.bringToTop('Options')
-        //     this.sys.game.scene.getScene('Options').scene.setVisible(true, 'Options')
-        //     this.sys.game.scene.resume('Options')
-        // }, this);
+        // chat window
+        this.gameText = this.add.text(800,550,"CHAT").setOrigin(0.5)
+        this.gameText.setInteractive();
+        this.gameText.on('pointerdown', function (pointer) {
+        if(this.scene.isVisible('chat')){
+            WindowManager.destroy(this, 'chat');
+        } 
+        else {
+            WindowManager.create(this, 'chat', Chat, {gameinstance: self.gameController} );
+        }
+        
+        }, this); 
 
     }
 

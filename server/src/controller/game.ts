@@ -24,7 +24,6 @@ export function game(socket, model: Game) {
     let raw_sent_msg = sent_msg
     sent_msg = "[ " + datestamp + " ]: " + sent_msg;
     socket.broadcast.emit("update messages", sent_msg);
-    model.chatlog.push({author:socket.conn.id, datestamp:datestamp, content:raw_sent_msg})
     console.log(model.chatlog)
     callback(sent_msg);
   });

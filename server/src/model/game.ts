@@ -16,7 +16,6 @@ export class Game {
         this.numOfDesiredPlayers = numOfDesiredPlayers;
         this.difficulty = difficulty;
         this.castle = new RietburgCastle();
-        this.chatlog = []
     }
 
     public getName(): string {

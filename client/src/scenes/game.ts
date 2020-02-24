@@ -165,7 +165,7 @@ export default class GameScene extends Phaser.Scene {
       
     }, this); 
 
-    this.input.keyboard.on('keydown_ESC', this.escChat,this)
+    //this.input.keyboard.on('keydown_ESC', this.escChat,this)
 
     this.test()
 
