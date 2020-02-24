@@ -28,9 +28,9 @@ lobbynsp.on("connection", function (socket){
 // console.log(n)
 //console.log(n['en0'][1]['address'])
 
-var chatnsp = io.of("/asd")
-chatnsp.on("connection", function (socket){
-	chat(socket)
-});
+// var chatnsp = io.of("/asd")
+// chatnsp.on("connection", function (socket){
+// 	chat(socket)
+// });
 
 

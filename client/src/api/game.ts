@@ -4,11 +4,12 @@ import * as io from "socket.io-client";
 export class game {
     private name: string;
     private socket;
+    public chatlog: any;
 
     constructor(name) {
         this.name = name
         this.socket = this.connect(this.name)
-
+        this.chatlog = [];
     }
 
     private connect(name) {

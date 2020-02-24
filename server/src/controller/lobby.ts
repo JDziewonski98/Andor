@@ -10,7 +10,9 @@ export function lobby(socket, model: Lobby, io) {
     // TODO create namespace for game instance and connect it to socket.io
     
     var gamensp = io.of("/" + name)
+    console.log('xxxxxxxxxxxxxxxxx', name)
     gamensp.on("connection", function (socket) {
+      console.log('we in dis')
       game(socket, g)
     });
   })
@@ -19,7 +21,6 @@ export function lobby(socket, model: Lobby, io) {
     callback(Array.from(model.getAvailableGames().keys()))
   })
  
-
   socket.on("newPlayer", function () {
     let id = model.connectNewPlayer(socket.conn.id)
     console.log(model.getPlayers());

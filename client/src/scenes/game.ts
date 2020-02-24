@@ -1,5 +1,4 @@
 import { Tile } from '../objects/tile';
-import { Tilemaps } from 'phaser';
 import { Chat } from './chatwindow';
 import { HeroWindow } from './herowindow';
 import { WindowManager } from "../utils/WindowManager";
@@ -11,12 +10,9 @@ import { game } from '../api/game';
 
 export default class GameScene extends Phaser.Scene {
   private weed: Phaser.GameObjects.Sprite;
-  private hourBar;
   private hero: Hero;
   public tiles: Tile[] = [];
-  private count: number = 0;
   private gameText;
-  private windows: Window[] = [];
   private hourTracker: HourTracker;
   private gameinstance: game;
 
@@ -40,7 +36,6 @@ export default class GameScene extends Phaser.Scene {
     this.add.image(800, 40, 'hourbar').setDisplaySize(400, 75);
     var id: number = 0;
 
-
     // temporary lambda function to load a few different tile icons when making tiles
     let tilelogic = (i: number, j: number) => {
       if (i == 0 && j == 0) {
@@ -51,7 +46,6 @@ export default class GameScene extends Phaser.Scene {
       }
       return 0
     }
-
 
     var numRows = 5;
     var numCols = 6;
@@ -106,7 +100,7 @@ export default class GameScene extends Phaser.Scene {
       if(this.scene.isVisible('heroCard')){
         WindowManager.destroy(this, 'heroCard');
       } else {
-        WindowManager.create(this, 'heroCard', HeroWindow, 'weed');
+        WindowManager.create(this, 'heroCard', HeroWindow, {icon:'weed'});
         let window = WindowManager.get(this, 'heroCard')
         window.setName('You!!')
       }
@@ -119,7 +113,7 @@ export default class GameScene extends Phaser.Scene {
       if(this.scene.isVisible('heroCard2')){
         WindowManager.destroy(this, 'heroCard2');
       } else {
-        WindowManager.create(this, 'heroCard2', HeroWindow, 'playbutton');
+        WindowManager.create(this, 'heroCard2', HeroWindow, {icon:'playbutton'});
         let window = WindowManager.get(this, 'heroCard2')
         window.setName('Player 2')
       }
@@ -131,7 +125,7 @@ export default class GameScene extends Phaser.Scene {
       if(this.scene.isVisible('heroCard3')){
         WindowManager.destroy(this, 'heroCard3');
       } else {
-        WindowManager.create(this, 'heroCard3', HeroWindow, 'playbutton');
+        WindowManager.create(this, 'heroCard3', HeroWindow, {icon:'playbutton'});
         let window = WindowManager.get(this, 'heroCard3')
         window.setName('Player 3')
       }
@@ -143,7 +137,7 @@ export default class GameScene extends Phaser.Scene {
       if(this.scene.isVisible('heroCard4')){
         WindowManager.destroy(this, 'heroCard4');
       } else {
-        WindowManager.create(this, 'heroCard4', HeroWindow, 'playbutton');
+        WindowManager.create(this, 'heroCard4', HeroWindow, {icon:'playbutton'});
         let window = WindowManager.get(this, 'heroCard4')
         window.setName('Player 4')
       }
@@ -162,11 +156,11 @@ export default class GameScene extends Phaser.Scene {
     this.gameText = this.add.text(800,550,"CHAT", style2).setOrigin(0.5)
     this.gameText.setInteractive();
     this.gameText.on('pointerdown', function (pointer) {
-      // TODO clean this up.
       if(this.scene.isVisible('chat')){
         WindowManager.destroy(this, 'chat');
-      } else {
-        WindowManager.create(this, 'chat', Chat, null, self.gameinstance);
+      } 
+      else {
+        WindowManager.create(this, 'chat', Chat, {gameinstance: self.gameinstance} );
       }
       
     }, this); 

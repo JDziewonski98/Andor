@@ -9,12 +9,14 @@ export class Game {
     private difficulty: GameDifficulty;
     private castle: RietburgCastle;
     private name: string;
+    public chatlog: any;
 
     constructor(name: string, numOfDesiredPlayers: number, difficulty: GameDifficulty){
         this.name = name;
         this.numOfDesiredPlayers = numOfDesiredPlayers;
         this.difficulty = difficulty;
         this.castle = new RietburgCastle();
+        this.chatlog = []
     }
 
     public getName(): string {
@@ -48,5 +50,6 @@ export class Game {
     private incrementNarratorPosition(){
         //TO BE IMPLEMENTED
     }
+
 
 }

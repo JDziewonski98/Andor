@@ -36,6 +36,7 @@ export class Chat extends Window {
                 if (inputText.value !== '') {
                     event.preventDefault();
                     console.log('ok so we see theres text in chat input')
+                    //self.gameinstance.chatlog.push({})
                     self.gameinstance.send(inputText.value, function (msg) {
                         inputText.value = "";
                         update(msg)
@@ -47,10 +48,18 @@ export class Chat extends Window {
 
         function update(msg){
             console.log(msg)
+            self.gameinstance.chatlog.push(msg)
             var paragraph = document.createElement('p');
             paragraph.append(msg);
             document.getElementById("history").append(paragraph);
         }
+
+        //when window is reopened, populate it with the chatlog.
+        this.gameinstance.chatlog.forEach(element => {
+            let p = document.createElement('p')
+            p.append(element)
+            document.getElementById("history").append(p)
+        });
 
         this.gameinstance.recieve(update)
 
