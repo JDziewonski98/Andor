@@ -12,12 +12,12 @@ export function lobby(socket, model: Lobby, io) {
     var gamensp = io.of("/" + name)
     console.log('xxxxxxxxxxxxxxxxx', name)
     gamensp.on("connection", function (socket) {
-      console.log('we in dis')
       game(socket, g)
     });
   })
 
   socket.on("getGames", function(callback){
+    socket.broadcast.emit("recieveGames", Array.from(model.getAvailableGames().keys()));
     callback(Array.from(model.getAvailableGames().keys()))
   })
  
@@ -30,9 +30,11 @@ export function lobby(socket, model: Lobby, io) {
     let id = socket.conn.id
     model.disconnectPlayer(socket.conn.id)
     console.log('Lobby disconnected', id);
+    console.log('remaining players: ', model.getPlayers())
   });
 
   socket.on('bind hero', function(herotype) {
     console.log('player ', socket.conn.id, ' chose ', herotype)
   });
+
 }

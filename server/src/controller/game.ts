@@ -1,7 +1,7 @@
 import { Game } from 'src/model';
 
 export function game(socket, model: Game) {
-
+  
   socket.on("heroMove", function (heroId, callback) {
     let successful: boolean = false
     // any logic for movement here
@@ -15,21 +15,15 @@ export function game(socket, model: Game) {
   });
 
   socket.on('disconnect', function () {
-    console.log('user disconnected');
+    console.log('user disconnected', socket.conn.id, ' in game.');
   });
 
   socket.on("send message", function (sent_msg, callback) {
     console.log(socket.conn.id, "said: ", sent_msg)
     let datestamp = getCurrentDate()
-    let raw_sent_msg = sent_msg
     sent_msg = "[ " + datestamp + " ]: " + sent_msg;
     socket.broadcast.emit("update messages", sent_msg);
-    console.log(model.chatlog)
     callback(sent_msg);
-  });
-
-  socket.on('disconnect', function () {
-    console.log('user disconnected');
   });
 
   function getCurrentDate() {

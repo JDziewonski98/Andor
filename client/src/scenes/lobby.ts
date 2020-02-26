@@ -81,7 +81,7 @@ export default class LobbyScene extends Phaser.Scene {
         this.gameText = this.add.text(500, 400, "Join", style2).setOrigin(0.5)
         this.gameText.setInteractive();
         this.gameText.on('pointerdown', function (pointer) {
-            this.scene.start('Join');
+            this.scene.start('Join',{controller:self.lobbyController});
         }, this);
 
         this.gameText = this.add.text(500, 500, "Load", style2).setOrigin(0.5)

@@ -25,7 +25,6 @@ export default class ReadyScreenScene extends Phaser.Scene {
     public init(data){
         this.name = data.name
         this.gameController = new game(this.name);
-        console.log('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')
         console.log(this.gameController)
 
     }

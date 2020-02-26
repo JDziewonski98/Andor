@@ -9,7 +9,6 @@ export default class CreateGameScene extends Phaser.Scene {
 
     public init(data){
         this.lobbyController = data.controller;
-        console.log('here xxxxxxxxxxxxxxx importanto')
     }
 
     public preload() {
