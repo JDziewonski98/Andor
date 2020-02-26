@@ -3,7 +3,6 @@ export class WindowManager extends Phaser.Scene {
     public static create(self, key: string, obj, data){
         if (key == 'chat') {
             //were making chat window
-            console.log('in window manager:',data.gameinstance)
             var win = new obj(key, data.gameinstance)
         }
         else {

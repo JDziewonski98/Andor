@@ -22,7 +22,6 @@ export class HeroWindow extends Window {
 
     protected initialize(){
 
-        console.log("hero window", this)
         var bg = this.add.image(0,0,'scrollbg').setOrigin(0.5)
         var weed = this.add.sprite(50, 50, this.icon);
         this.goldtext = this.add.text(50,100,'Gold: ' + this.gold, {backgroundColor: 'fx00'})

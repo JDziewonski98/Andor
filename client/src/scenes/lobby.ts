@@ -45,8 +45,6 @@ export default class LobbyScene extends Phaser.Scene {
 
     private connect() {
         this.lobbyController.addNewPlayerToLobby()
-        console.log('in the lobby scene:')
-        console.log(this.lobbyController)
     }
 
     private draw() {

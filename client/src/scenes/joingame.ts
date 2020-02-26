@@ -20,8 +20,6 @@ export default class JoinGameScene extends Phaser.Scene {
         this.lobbyController.getGames( function(games) {
             setGames(games)
         })
-        
-        this.lobbyController.recieveGames(setGames)
 
         function setGames(games) {
             console.log(games)

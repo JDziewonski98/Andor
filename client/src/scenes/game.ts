@@ -81,7 +81,6 @@ export default class GameScene extends Phaser.Scene {
     this.weed.setInteractive();
     // TODO Important!!!! gotta find a way to clear data when u exit a scene or else problems happen
     this.weed.on('pointerdown', function (pointer) {
-      console.log(this.tiles.length)
       this.tiles = []
       WindowManager.destroy(this, 'chat');
       this.scene.start('Lobby');

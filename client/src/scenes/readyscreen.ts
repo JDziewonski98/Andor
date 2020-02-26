@@ -25,7 +25,6 @@ export default class ReadyScreenScene extends Phaser.Scene {
     public init(data){
         this.name = data.name
         this.gameController = new game(this.name);
-        console.log(this.gameController)
 
     }
 
@@ -58,7 +57,6 @@ export default class ReadyScreenScene extends Phaser.Scene {
         this.playbutton = this.add.sprite(950,550,'playbutton').setInteractive()
         this.playbutton.on('pointerdown', function (pointer) {
             if (this.ready){
-                console.log(this.selection, ' xxxxxxxxxxxxxxxxxxxxxxxxxxxx')
                 let heroselectedx = this.selection.x
                 var hero = this.revselectionmap[heroselectedx]
                 //bind that herotype to the player's hero instance
@@ -67,7 +65,6 @@ export default class ReadyScreenScene extends Phaser.Scene {
                 this.scene.start('Game',{gameinstance:self.gameController});
             }
             else {
-                console.log('here2' + this.ready)
                 this.tween()
             }
         }, this);
@@ -79,12 +76,10 @@ export default class ReadyScreenScene extends Phaser.Scene {
             let name = event.target.name
             if (name === 'Archer' ||name === 'Mage' ||name === 'Dwarf' ||name === 'Warrior')
             {
-                console.log('here 1 boio' + name)
                 this.scene.selection.x = this.scene.selectionmap[name]
 
             }
             if (name === 'readyswitch'){
-                console.log('here3' + this.ready)
                 this.scene.ready = !(this.scene.ready)
             }
             else {

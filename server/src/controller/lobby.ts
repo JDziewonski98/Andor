@@ -10,14 +10,12 @@ export function lobby(socket, model: Lobby, io) {
     // TODO create namespace for game instance and connect it to socket.io
     
     var gamensp = io.of("/" + name)
-    console.log('xxxxxxxxxxxxxxxxx', name)
     gamensp.on("connection", function (socket) {
       game(socket, g)
     });
   })
 
   socket.on("getGames", function(callback){
-    socket.broadcast.emit("recieveGames", Array.from(model.getAvailableGames().keys()));
     callback(Array.from(model.getAvailableGames().keys()))
   })
  

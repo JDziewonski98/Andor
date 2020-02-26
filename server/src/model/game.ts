@@ -9,13 +9,14 @@ export class Game {
     private difficulty: GameDifficulty;
     private castle: RietburgCastle;
     private name: string;
-    public chatlog: any;
+    private chatlog: any;
 
     constructor(name: string, numOfDesiredPlayers: number, difficulty: GameDifficulty){
         this.name = name;
         this.numOfDesiredPlayers = numOfDesiredPlayers;
         this.difficulty = difficulty;
         this.castle = new RietburgCastle();
+        this.chatlog = [];
     }
 
     public getName(): string {
@@ -50,5 +51,11 @@ export class Game {
         //TO BE IMPLEMENTED
     }
 
+    public pushToLog(item) {
+        this.chatlog.push(item)
+    }
 
+    public getChatLog() {
+        return this.chatlog;
+    }
 }
