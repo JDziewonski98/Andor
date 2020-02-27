@@ -21,7 +21,7 @@ export default class GameScene extends Phaser.Scene {
   }
 
   public init(data) {
-    this.gameinstance = data.gameinstance;
+    this.gameinstance = data.controller;
   }
 
   public preload() {

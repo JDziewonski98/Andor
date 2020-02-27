@@ -13,10 +13,11 @@ export default class LobbyScene extends Phaser.Scene {
             key: 'Lobby',
             active: true
         });
+        this.lobbyController = new lobby();
     }
 
     public init(data){
-        this.lobbyController = new lobby();
+        
     }
 
     public preload() {
@@ -40,10 +41,6 @@ export default class LobbyScene extends Phaser.Scene {
     public create() {
         this.draw()
 
-        this.connect()
-    }
-
-    private connect() {
         this.lobbyController.addNewPlayerToLobby()
     }
 

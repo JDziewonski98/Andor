@@ -1,7 +1,7 @@
 import { Game } from 'src/model';
 
 export function game(socket, model: Game) {
-  
+
   socket.on("heroMove", function (heroId, callback) {
     let successful: boolean = false
     // any logic for movement here
@@ -14,23 +14,29 @@ export function game(socket, model: Game) {
     callback();
   });
 
+  socket.on('bind hero', function (herotype) {
+    console.log('player ', socket.conn.id, ' chose ', herotype)
+  });
+
   socket.on('disconnect', function () {
     console.log('user disconnected', socket.conn.id, ' in game.');
   });
 
+
+  /*
+   * CHAT RELATED
+   */
   socket.on("send message", function (sent_msg, callback) {
     console.log(socket.conn.id, "said: ", sent_msg)
     let raw_sent_msg = sent_msg
     let datestamp = getCurrentDate()
     sent_msg = "[ " + datestamp + " ]: " + sent_msg;
-    model.pushToLog({author:socket.conn.id, datestamp:datestamp, content:raw_sent_msg})
-    console.log('current log in backend: ', model.getChatLog())
+    model.pushToLog({ author: socket.conn.id, datestamp: datestamp, content: raw_sent_msg })
     socket.broadcast.emit("update messages", sent_msg);
     callback(sent_msg);
   });
 
-  socket.on("getChatLog", function(callback) {
-    console.log(model.getChatLog(), 'ok we got chatlog message in baccend')
+  socket.on("getChatLog", function (callback) {
     callback(model.getChatLog())
   })
 

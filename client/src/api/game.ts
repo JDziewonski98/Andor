@@ -20,8 +20,7 @@ export class game {
     }
 
     public send(msg, callback) {
-        let t = this.socket.emit("send message", msg, callback);
-        console.log(t)
+        this.socket.emit("send message", msg, callback);
     }
     
     public recieve(callback) {
