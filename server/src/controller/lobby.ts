@@ -19,7 +19,6 @@ export function lobby(socket, model: Lobby, io) {
     callback(Array.from(model.getAvailableGames().keys()))
   })
  
-
   socket.on("newPlayer", function () {
     let id = model.connectNewPlayer(socket.conn.id)
     console.log(model.getPlayers());
@@ -29,9 +28,11 @@ export function lobby(socket, model: Lobby, io) {
     let id = socket.conn.id
     model.disconnectPlayer(socket.conn.id)
     console.log('Lobby disconnected', id);
+    console.log('remaining players: ', model.getPlayers())
   });
 
   socket.on('bind hero', function(herotype) {
     console.log('player ', socket.conn.id, ' chose ', herotype)
   });
+
 }

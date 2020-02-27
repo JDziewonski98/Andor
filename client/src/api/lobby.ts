@@ -24,6 +24,10 @@ export class lobby {
     public getGames(callback){
         this.socket.emit("getGames", callback)
     }
+
+    public recieveGames(callback) {
+        this.socket.on('recieveGames', callback);
+    }
 }
 
 

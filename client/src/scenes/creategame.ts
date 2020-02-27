@@ -44,7 +44,7 @@ export default class CreateGameScene extends Phaser.Scene {
                     //  Turn off the click events
                     this.removeListener('click')
 
-                    this.lobbyController.createGame(inputText.value, 4, "Easy");
+                    self.lobbyController.createGame(inputText.value, 4, "Easy");
 
                     this.setVisible(false)
 

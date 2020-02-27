@@ -14,7 +14,7 @@ app.use(express.urlencoded({ extended: true }));
 server.listen(port, '0.0.0.0');
 
 // import controllers that we need from here
-import { game, chat, lobby } from "./controller";
+import { game, lobby } from "./controller";
 import { Lobby } from "./model"
 
 var lobbynsp = io.of("/lobby")
@@ -22,15 +22,3 @@ var l = new Lobby()
 lobbynsp.on("connection", function (socket){
 	lobby(socket, l, io)
 });
-
-var os = require('os')
-var n = os.networkInterfaces();
-// console.log(n)
-console.log(n['en0'][1]['address'])
-
-var chatnsp = io.of("/chat")
-chatnsp.on("connection", function (socket){
-	chat(socket)
-});
-
-

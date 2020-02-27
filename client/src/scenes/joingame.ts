@@ -1,5 +1,9 @@
+import { lobby } from "../api/lobby";
 
 export default class JoinGameScene extends Phaser.Scene {
+
+    private lobbyController: lobby;
+    private games;
 
     constructor() {
         super({key: 'Join'});
@@ -8,6 +12,20 @@ export default class JoinGameScene extends Phaser.Scene {
     //HTML
     public preload() {
         this.load.html('joinscreen', './assets/joinscreen.html');
+    }
+
+    public init(data){
+        this.lobbyController = data.controller;
+        var self = this;
+        this.lobbyController.getGames( function(games) {
+            setGames(games)
+        })
+
+        function setGames(games) {
+            console.log(games)
+            self.games = games;
+        }
+
     }
 
     //create the join screen
@@ -51,10 +69,14 @@ export default class JoinGameScene extends Phaser.Scene {
         var title = this.add.text(110, 165, 'Select from existing games:', regularTextStyle);
 
 
-        //HTML - modify 'joinscreen' for HTML file
+        //HTML - modify 'joinscreen' for HTML file 
         var element = this.add.dom(410, 200).createFromCache('joinscreen');
 
 
+        this.games.forEach(e => {
+            let form = element.getChildByName("Choose Game")
+            form.innerHTML = form.innerHTML + '<option value="'+ e + '">' + e + '</option>'
+        });
 
         //for clicking, Join Game
         element.addListener('click');
@@ -63,11 +85,11 @@ export default class JoinGameScene extends Phaser.Scene {
             {
                 //player must select a game to join game
                 var selectedOption = this.getChildByName('Choose Game');
-
+                var gamename = selectedOption.options[selectedOption.selectedIndex].text
                 //  Have they entered anything?
                 if (selectedOption.value !== '')
                 {
-                    this.scene.changescene()
+                    this.scene.scene.start('Ready', {name: gamename})
                 }
             }
 

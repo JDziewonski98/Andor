@@ -1,25 +1,27 @@
 import { Tile } from '../objects/tile';
-import { Tilemaps } from 'phaser';
 import { Chat } from './chatwindow';
 import { HeroWindow } from './herowindow';
 import { WindowManager } from "../utils/WindowManager";
 import { Hero } from '../objects/hero';
 import { HourTracker } from '../objects/hourTracker';
 import * as io from "socket.io-client";
+import { game } from '../api/game';
 
 
 export default class GameScene extends Phaser.Scene {
   private weed: Phaser.GameObjects.Sprite;
-  private hourBar;
   private hero: Hero;
   public tiles: Tile[] = [];
-  private count: number = 0;
   private gameText;
-  private windows: Window[] = [];
   private hourTracker: HourTracker;
+  private gameinstance: game;
 
   constructor() {
     super({ key: 'Game' });
+  }
+
+  public init(data) {
+    this.gameinstance = data.gameinstance;
   }
 
   public preload() {
@@ -27,10 +29,12 @@ export default class GameScene extends Phaser.Scene {
   }
 
   public create() {
+
+    var self = this;
+
     this.add.image(500, 300, 'andordude').setDisplaySize(1000, 600)
     this.add.image(800, 40, 'hourbar').setDisplaySize(400, 75);
     var id: number = 0;
-
 
     // temporary lambda function to load a few different tile icons when making tiles
     let tilelogic = (i: number, j: number) => {
@@ -42,7 +46,6 @@ export default class GameScene extends Phaser.Scene {
       }
       return 0
     }
-
 
     var numRows = 5;
     var numCols = 6;
@@ -78,7 +81,6 @@ export default class GameScene extends Phaser.Scene {
     this.weed.setInteractive();
     // TODO Important!!!! gotta find a way to clear data when u exit a scene or else problems happen
     this.weed.on('pointerdown', function (pointer) {
-      console.log(this.tiles.length)
       this.tiles = []
       WindowManager.destroy(this, 'chat');
       this.scene.start('Lobby');
@@ -97,7 +99,7 @@ export default class GameScene extends Phaser.Scene {
       if(this.scene.isVisible('heroCard')){
         WindowManager.destroy(this, 'heroCard');
       } else {
-        WindowManager.create(this, 'heroCard', HeroWindow, 'weed');
+        WindowManager.create(this, 'heroCard', HeroWindow, {icon:'weed'});
         let window = WindowManager.get(this, 'heroCard')
         window.setName('You!!')
       }
@@ -110,7 +112,7 @@ export default class GameScene extends Phaser.Scene {
       if(this.scene.isVisible('heroCard2')){
         WindowManager.destroy(this, 'heroCard2');
       } else {
-        WindowManager.create(this, 'heroCard2', HeroWindow, 'playbutton');
+        WindowManager.create(this, 'heroCard2', HeroWindow, {icon:'playbutton'});
         let window = WindowManager.get(this, 'heroCard2')
         window.setName('Player 2')
       }
@@ -122,7 +124,7 @@ export default class GameScene extends Phaser.Scene {
       if(this.scene.isVisible('heroCard3')){
         WindowManager.destroy(this, 'heroCard3');
       } else {
-        WindowManager.create(this, 'heroCard3', HeroWindow, 'playbutton');
+        WindowManager.create(this, 'heroCard3', HeroWindow, {icon:'playbutton'});
         let window = WindowManager.get(this, 'heroCard3')
         window.setName('Player 3')
       }
@@ -134,7 +136,7 @@ export default class GameScene extends Phaser.Scene {
       if(this.scene.isVisible('heroCard4')){
         WindowManager.destroy(this, 'heroCard4');
       } else {
-        WindowManager.create(this, 'heroCard4', HeroWindow, 'playbutton');
+        WindowManager.create(this, 'heroCard4', HeroWindow, {icon:'playbutton'});
         let window = WindowManager.get(this, 'heroCard4')
         window.setName('Player 4')
       }
@@ -153,16 +155,16 @@ export default class GameScene extends Phaser.Scene {
     this.gameText = this.add.text(800,550,"CHAT", style2).setOrigin(0.5)
     this.gameText.setInteractive();
     this.gameText.on('pointerdown', function (pointer) {
-      // TODO clean this up.
       if(this.scene.isVisible('chat')){
         WindowManager.destroy(this, 'chat');
-      } else {
-        WindowManager.create(this, 'chat', Chat);
+      } 
+      else {
+        WindowManager.create(this, 'chat', Chat, {gameinstance: self.gameinstance} );
       }
       
     }, this); 
 
-    this.input.keyboard.on('keydown_ESC', this.escChat,this)
+    //this.input.keyboard.on('keydown_ESC', this.escChat,this)
 
     this.test()
 
