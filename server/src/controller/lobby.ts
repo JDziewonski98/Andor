@@ -7,7 +7,7 @@ export function lobby(socket, model: Lobby, io) {
     const d = difficulty === "Easy" ? GameDifficulty.Easy : GameDifficulty.Hard;
     let g = new Game(name, numPlayers, d);
     model.createGame(g);
-    console.log("Created game", name)
+    console.log("Created game", name, "with", numPlayers, "players");
 
     var gamensp = io.of("/" + name)
     gamensp.on("connection", function (socket) {
