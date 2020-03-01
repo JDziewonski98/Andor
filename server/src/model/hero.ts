@@ -4,19 +4,16 @@ import { Region } from './region';
 export class Hero {
     private hk: HeroKind;
     //private region: Region;
-    private gold: number;
-    private strength: number;
-    private will: number;
+    private gold!: number;
+    private strength!: number;
+    private will!: number;
     private moveCompleted: boolean = false;
     private timeOfDay: number = 1;
     private farmer: boolean = false;
 
-    constructor(hk: HeroKind, region: number, gold: number, strength: number, will: number) {
+    constructor(hk: HeroKind) {
         this.hk = hk
-        //this.region = region
-        this.gold = gold
-        this.strength = strength
-        this.will = will
+        this.initializeResources()
     }
 
     private moveTo(newTile) {
@@ -66,6 +63,26 @@ export class Hero {
 
     private dropGold(amount) {
         //todo
+    }
+
+    private initializeResources() {
+        if (this.hk === HeroKind.Archer) {
+            this.gold = 1
+            this.strength = 2
+            this.will = 3
+        } else if (this.hk === HeroKind.Dwarf) {
+            this.gold = 1
+            this.strength = 2
+            this.will = 3
+        } else if (this.hk === HeroKind.Mage) {
+            this.gold = 1
+            this.strength = 2
+            this.will = 3
+        } else if (this.hk === HeroKind.Warrior) {
+            this.gold = 1
+            this.strength = 2
+            this.will = 3
+        }
     }
 
 

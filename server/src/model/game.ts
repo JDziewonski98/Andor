@@ -4,6 +4,7 @@ import { Farmer } from "./Farmer"
 import { Region } from "./region"
 import { Player } from "./player"
 import { Hero } from "./hero"
+import { HeroKind } from './HeroKind'
 
 export class Game {
 
@@ -14,7 +15,7 @@ export class Game {
     private name: string;
     private chatlog: any;
     private heroList: Map<string, Hero>;
-    private regions: any;
+    private regions: Map<number, Region>;
 
     constructor(name: string, numOfDesiredPlayers: number, difficulty: GameDifficulty) {
         this.name = name;
@@ -24,7 +25,7 @@ export class Game {
         this.chatlog = [];
         this.players = new Set<Player>();
         this.heroList = new Map<string, Hero>();
-        this.regions = [];
+        this.regions = new Map<number, Region>();
         this.setRegions();
     }
 
@@ -38,7 +39,25 @@ export class Game {
         return this.name;
     }
 
-    public bindHero(id: string, heroType: string) {
+    /*
+    * Attach player ID to hero if nobody else selected the same HeroType
+    * @param id is player socket ID
+    * @param heroType
+    */
+    public bindHero(id: string, heroType: string): boolean {
+        // HeroKind h = HeroKind.Archer;
+        if (heroType === "archer")
+            this.heroList.set(id, new Hero(HeroKind.Archer));
+        else if (heroType === "warrior")
+            this.heroList.set(id, new Hero(HeroKind.Warrior));
+        else if (heroType === "mage")
+            this.heroList.set(id, new Hero(HeroKind.Mage));
+        else if (heroType === "dwarf")
+            this.heroList.set(id, new Hero(HeroKind.Dwarf));
+        else
+            return false;
+
+        return true;
 
     }
 
