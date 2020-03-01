@@ -21,7 +21,12 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
  
   parent: 'game',
   backgroundColor: '#000000',
-  scene: Scenes
+  scene: Scenes,
+
+  scale : {
+    mode: Phaser.Scale.FIT,
+    autoCenter: Phaser.Scale.CENTER_BOTH
+  }
 };
  
 export const game = new Phaser.Game(gameConfig);
