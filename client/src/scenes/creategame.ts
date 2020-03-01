@@ -24,7 +24,7 @@ export default class CreateGameScene extends Phaser.Scene {
         }
         var title = this.add.text(270, 10, 'Game Name:', style2);
         //this is how we can add html elements
-        var element = this.add.dom(410, 200).createFromCache('nameform');
+        var element = this.add.dom(310, 200).createFromCache('nameform');
 
 
         var subtitle = this.add.text(350, 90, 'Difficulty: easy/normal', style2);
