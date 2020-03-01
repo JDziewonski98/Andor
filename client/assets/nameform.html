@@ -90,6 +90,13 @@
         .slider.round:before {
           border-radius: 50%;
         }
+
+        select {
+            display:table-row;
+        }
+        option {
+            display:table-cell;
+        }
     </style>
 </head>  
 <body style="text-align:center;">  
@@ -108,10 +115,12 @@
               <div class="bottom-aligner"></div>
               <div class="bottom-content">
                     <form>
-                            <input type="radio" name="players" value="1" checked> 1<br>
-                            <input type="radio" name="players" value="2"> 2<br>
-                            <input type="radio" name="players" value="3"> 3<br>  
-                            <input type="radio" name="players" value="4"> 4 
+                      <select name="numPlayers" size="4">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option selected="selected" value="4">4</option>
+                      </select>
                     </form> 
               </div>
             </div>
