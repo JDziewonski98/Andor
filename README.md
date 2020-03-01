@@ -9,4 +9,46 @@
  * *Cayce McClenen*
  * *Justin Sun*
 
- 
+## Instructions
+
+Some instructions on how to start the game. 
+
+### Client
+
+#### Installing dependencies
+First, we need to install all dependencies for the client. 
+
+From the project directory:
+```
+cd client
+```
+Then, in the client folder:
+```
+yarn install
+```
+
+#### Starting the client
+Simply run
+```
+yarn dev
+```
+
+### Server
+
+#### Installing dependencies
+First, we need to install all dependencies for the server. 
+
+From the project directory:
+```
+cd server
+```
+Then, in the server folder:
+```
+yarn install
+```
+
+#### Starting the server
+Simply run
+```
+npm run dev
+```
