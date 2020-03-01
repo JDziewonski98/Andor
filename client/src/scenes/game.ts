@@ -6,7 +6,7 @@ import { Hero } from '../objects/hero';
 import { HourTracker } from '../objects/hourTracker';
 import * as io from "socket.io-client";
 import { game } from '../api/game';
-
+import { expandedWidth, expandedHeight } from '../main'
 
 export default class GameScene extends Phaser.Scene {
   private weed: Phaser.GameObjects.Sprite;
@@ -15,6 +15,13 @@ export default class GameScene extends Phaser.Scene {
   private gameText;
   private hourTracker: HourTracker;
   private gameinstance: game;
+
+  private upKey; 
+  private downKey; 
+  private leftKey;
+  private rightKey;
+
+  private cameraScrollSpeed = 15;
 
   constructor() {
     super({ key: 'Game' });
@@ -29,10 +36,19 @@ export default class GameScene extends Phaser.Scene {
   }
 
   public create() {
+    // Set bounds of camera to the limits of the gameboard
+    var camera = this.cameras.main;
+    camera.setBounds(0, 0, expandedWidth, expandedHeight);
+    // Set keys for scrolling
+    this.upKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
+    this.downKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
+    this.leftKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
+    this.rightKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
 
     var self = this;
 
-    this.add.image(500, 300, 'andordude').setDisplaySize(1000, 600)
+    // TODO: Move these to a separate view
+    this.add.image(expandedWidth/2, expandedHeight/2, 'gameboard').setDisplaySize(expandedWidth, expandedHeight)
     this.add.image(800, 40, 'hourbar').setDisplaySize(400, 75);
     var id: number = 0;
 
@@ -193,6 +209,24 @@ export default class GameScene extends Phaser.Scene {
   }
 
   public update() {
+    var camera = this.cameras.main;
+    if (this.upKey.isDown)
+    {
+        camera.scrollY -= this.cameraScrollSpeed;
+    }
+    else if (this.downKey.isDown)
+    {
+        camera.scrollY += this.cameraScrollSpeed;
+    }
+
+    if (this.leftKey.isDown)
+    {
+        camera.scrollX -= this.cameraScrollSpeed;
+    }
+    else if (this.rightKey.isDown)
+    {
+        camera.scrollX += this.cameraScrollSpeed;
+    }
   }
 
 }
