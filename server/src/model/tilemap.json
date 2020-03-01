@@ -674,7 +674,7 @@
             "hasMerchant":false
         },
         {
-            "id" : ,83
+            "id" : 83,
             "adjacent" : [],
             "hasWell":false,
             "nextTile":"None",
@@ -688,6 +688,6 @@
             "hasWell":false,
             "nextTile":82,
             "hasMerchant":false
-        },
+        }
     ]
 }
