@@ -62,6 +62,11 @@ export default class ReadyScreenScene extends Phaser.Scene {
                 //bind that herotype to the player's hero instance
                 //TODO
                 bindhero(hero)
+
+                // We start the BoardOverlay scene at the same time as the Game scene.
+                // Chat is now triggered from BoardOverlay scene, so we need to pass
+                // the gameController to it as well.
+                this.scene.start('BoardOverlay',{gameinstance:self.gameController});
                 this.scene.start('Game',{gameinstance:self.gameController});
             }
             else {
@@ -103,14 +108,14 @@ export default class ReadyScreenScene extends Phaser.Scene {
     }
 
     public tween() {
-                                            //  Flash the prompt
-                                            this.tweens.add({
-                                                targets: this.readytext,
-                                                alpha: 0.2,
-                                                duration: 200,
-                                                ease: 'Power3',
-                                                yoyo: true
-                                            });
+        //  Flash the prompt
+        this.tweens.add({
+            targets: this.readytext,
+            alpha: 0.2,
+            duration: 200,
+            ease: 'Power3',
+            yoyo: true
+        });
     }
 
 }
