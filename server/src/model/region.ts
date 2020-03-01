@@ -5,8 +5,8 @@ export class Region {
     nextRegion: Region;
     public id: number;
     // public heroexist: boolean = false;
-    public x: number;
-    public y: number;
+    //public x: number;
+    //public y: number;
     // private graphic;
     // public currHero: Hero;
     // private fog: Fog;
@@ -14,13 +14,14 @@ export class Region {
     // private wineskins: Wineskin[] = [];
     // private farmers: Farmer[] = [];
     private hasWell;
+    private hasMerchant;
     private wellUsed: boolean = false;
     private currMonster: Monster;
     
-    constructor(id, x, y, hasWell, monster, nextRegion) {
+    constructor(id, hasWell, monster, nextRegion, hasMerchant) {
         this.id = id;
-        this.x = x;
-        this.y = y;
+        //this.x = x;
+        //this.y = y;
         // this.hero = null;
         this.hasWell = hasWell;
         // this.currHero = hero;

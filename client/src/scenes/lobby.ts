@@ -26,6 +26,7 @@ export default class LobbyScene extends Phaser.Scene {
         this.load.image('desert', './assets/fantasydesert.jpg')
         this.load.image('mountains', './assets/mountains_bg.jpg')
         this.load.image('andordude', './assets/andordude.jpg')
+        this.load.image('gameboard', './assets/Andor_Board.jpg')
         this.load.image('backbutton', './assets/Pass.png')
         this.load.image('playbutton', './assets/Play.png')
         this.load.image('warriormale', './assets/warriormale.png')
@@ -39,6 +40,14 @@ export default class LobbyScene extends Phaser.Scene {
     }
 
     public create() {
+        // Scale the game size to the original screen size of pre-game-entry
+        // scenes (lobby, load, join, etc). This has the effect of keeping desired
+        // behaviour of Phaser Game autoscaling, while keeping the actual game size
+        // larger.
+        var reducedWidth = 1000;
+        var reducedHeight = 600;
+        this.scale.setGameSize(reducedWidth, reducedHeight);
+        
         this.draw()
 
         this.lobbyController.addNewPlayerToLobby()
@@ -96,5 +105,11 @@ export default class LobbyScene extends Phaser.Scene {
 
     public update() {
 
+    }
+
+    // Currently unused
+    static setCameraViewport(currScene) {
+        var camera = currScene.cameras.main;
+        camera.setViewport(0, 0, 1000, 600);
     }
 }

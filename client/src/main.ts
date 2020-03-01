@@ -1,14 +1,17 @@
 import * as Phaser from 'phaser';
 import Scenes from './scenes/';
 
+// Size of game is based on size of gameboard jpg
+export var expandedWidth = 9861*.15;
+export var expandedHeight = 6476*.15;
 
 const gameConfig: Phaser.Types.Core.GameConfig = {
   title: 'Sample',
  
   type: Phaser.AUTO,
  
-  width: 1000,
-  height: 600,
+  width: expandedWidth,
+  height: expandedHeight,
   dom:{
     createContainer: true
   },
