@@ -3,6 +3,7 @@ import { RietburgCastle } from "./RietburgCastle"
 import { Farmer } from "./Farmer"
 import { Region } from "./region"
 import { Player } from "./player"
+import { Hero } from "./hero"
 
 export class Game {
     
@@ -12,6 +13,7 @@ export class Game {
     private players: Set<Player>;
     private name: string;
     private chatlog: any;
+    private heroList: Map<string, Hero>;
 
     constructor(name: string, numOfDesiredPlayers: number, difficulty: GameDifficulty){
         this.name = name;
@@ -19,11 +21,16 @@ export class Game {
         this.difficulty = difficulty;
         this.castle = new RietburgCastle();
         this.chatlog = [];
-        this.players = new Set;
+        this.players = new Set<Player>();
+        this.heroList = new Map<string, Hero>();
     }
 
     public getName(): string {
         return this.name;
+    }
+
+    public bindHero(id: string, heroType: string){
+        
     }
 
     public getNumOfDesiredPlayers(): number {
@@ -35,6 +42,15 @@ export class Game {
 
     public addPlayer(p: Player){
         this.players.add(p);
+    }
+
+    public removePlayer(id: string){
+        this.players.forEach((player) => {
+            if(player.getID() === id){
+                this.players.delete(player);
+                return;
+            }
+        })
     }
 
     public removeFarmer(f: Farmer){

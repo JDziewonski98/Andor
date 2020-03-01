@@ -14,12 +14,21 @@ export function game(socket, model: Game) {
     callback();
   });
 
-  socket.on('bind hero', function (herotype) {
+  socket.on('bind hero', function (herotype, callback) {
+    let success = !false;
+    
     console.log('player ', socket.conn.id, ' chose ', herotype)
+    let availableHeros = [];
+    if(success){
+      socket.broadcast.emit("updateHeroList", availableHeros)
+      callback(availableHeros);
+    }
+    
   });
 
   socket.on('disconnect', function () {
     console.log('user disconnected', socket.conn.id, ' in game.');
+    model.removePlayer(socket.conn.id);
   });
 
 
