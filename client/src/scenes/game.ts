@@ -36,6 +36,9 @@ export default class GameScene extends Phaser.Scene {
   }
 
   public create() {
+    // Set bounds of camera to the limits of the gameboard
+    var camera = this.cameras.main;
+    camera.setBounds(0, 0, expandedWidth, expandedHeight);
     // Set keys for scrolling
     this.upKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
     this.downKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
