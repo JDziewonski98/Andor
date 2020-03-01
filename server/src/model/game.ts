@@ -2,7 +2,7 @@ import { GameDifficulty } from "./GameDifficulty"
 import { RietburgCastle } from "./RietburgCastle"
 import { Farmer } from "./Farmer"
 import { Region } from "./region"
-
+//import fs = require('fs');
 export class Game {
     
     private numOfDesiredPlayers: number;
@@ -10,6 +10,7 @@ export class Game {
     private castle: RietburgCastle;
     private name: string;
     private chatlog: any;
+    private regions: any;
 
     constructor(name: string, numOfDesiredPlayers: number, difficulty: GameDifficulty){
         this.name = name;
@@ -17,6 +18,13 @@ export class Game {
         this.difficulty = difficulty;
         this.castle = new RietburgCastle();
         this.chatlog = [];
+        this.regions = [];
+        this.setRegions();
+    }
+
+    private setRegions() {
+        let rawdata = require('fs').readFileSync(require('path').resolve('src/model/tilemap.json'));
+        let student = JSON.parse(rawdata.toString());
     }
 
     public getName(): string {

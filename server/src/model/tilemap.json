@@ -1,0 +1,59 @@
+{
+    "map": [
+        {
+            "id" : 1,
+            "adjacent" : [
+                0, 2, 3, 4
+            ],
+            "hasWell":false,
+            "nextTile":0,
+            "hasMerchant" : false
+        },
+        {
+            "id" : 2,
+            "adjacent" : [
+                0, 1, 3, 14, 6
+            ],
+            "hasWell":false,
+            "nextTile":0,
+            "hasMerchant":false
+        },
+        {
+            "id" : 3,
+            "adjacent" : [
+                1, 2, 14, 10, 19, 20, 4
+            ],
+            "hasWell":false,
+            "nextTile":1,
+            "hasMerchant":false
+        },
+        {
+            "id" : 4,
+            "adjacent" : [
+                0, 1, 3, 20, 21, 5
+            ],
+            "hasWell":false,
+            "nextTile":0,
+            "hasMerchant":false
+        },
+        {
+            "id" : 5,
+            "adjacent" : [
+                0, 4, 21
+            ],
+            "hasWell":true,
+            "nextTile":0,
+            "hasMerchant":false
+        },
+        {
+            "id" : 6,
+            "adjacent" : [
+                0, 11, 13, 17, 14, 2
+            ],
+            "hasWell":true,
+            "nextTile":0,
+            "hasMerchant":false
+        }
+       
+    ]
+}
