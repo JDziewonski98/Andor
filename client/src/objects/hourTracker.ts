@@ -1,9 +1,5 @@
 import * as Phaser from 'phaser';
 import { Hero } from './hero';
-// import { boardScalingFactor } from '../scenes/game'
-
-// export var initialX = 4500;
-// export var initialY = 200;
 
 export class HourTracker extends Phaser.GameObjects.Sprite {
     private constants = require('../constants');
@@ -38,7 +34,4 @@ export class HourTracker extends Phaser.GameObjects.Sprite {
     public getCount() {
         return this.count;
     }
-    // public getInitialLocation() {
-    //     return (this.initialX, this.initialY);
-    // }
 }

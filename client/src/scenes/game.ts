@@ -4,10 +4,6 @@ import { Hero } from '../objects/hero';
 import { HourTracker } from '../objects/hourTracker';
 import * as io from "socket.io-client";
 import { game } from '../api/game';
-// import { expandedWidth, expandedHeight } from '../main'
-// import { initialX, initialY } from '../objects/hourTracker'
-
-// export var boardScalingFactor = .15;
 
 export default class GameScene extends Phaser.Scene {
   private weed: Phaser.GameObjects.Sprite;

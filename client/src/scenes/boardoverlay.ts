@@ -26,8 +26,6 @@ export default class BoardOverlay extends Phaser.Scene {
     public create() {
         var self = this;
 
-        // this.add.image(800, 40, 'hourbar').setDisplaySize(400, 75);
-
         var style2 = {
             fontFamily: '"Roboto Condensed"',
             fontSize: "20px",
