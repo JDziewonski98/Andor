@@ -1,6 +1,13 @@
 import * as Phaser from 'phaser';
 import { Hero } from './hero';
 
+/* 
+On the client, Tiles should definitely know what they have on them so that
+those things can be displayed: Heroes, Monsters, Items, Farmers.
+Not sure if Tiles need to know adjacencies on the client side. 
+Tiles don't need to be sprites? Because they themselves aren't represented
+by a
+*/
 export class Tile extends Phaser.GameObjects.Sprite {
     public adjacent: Tile[] = [];
     public id: number;
@@ -8,7 +15,10 @@ export class Tile extends Phaser.GameObjects.Sprite {
     public x: number;
     public y: number;
     private graphic;
+    // Should support multiple heroes
     public hero: Hero;
+    public heroCoords;
+
     constructor(id, scene, x, y, texture) {
         super(scene, x, y, 'tiles', texture);
         this.id = id;
@@ -17,7 +27,16 @@ export class Tile extends Phaser.GameObjects.Sprite {
         this.hero = null;
         this.on('pointerdown', function (pointer) { this.printstuff() });
         this.on('pointerdown', function (pointer) { this.moveRequest() })
+
+        // Set coordinates for hero representations as 2d array
+        this.heroCoords = [
+            [this.x-30, this.y-30],
+            [this.x+30, this.y-30],
+            [this.x-30, this.y+30],
+            [this.x+30, this.y+30]
+        ]
     }
+
     public printHerodata() {
         if (this.heroexist) {
             console.log("Tile id: " + this.id + " has a hero with id: " + this.hero.id + ".");
@@ -26,6 +45,7 @@ export class Tile extends Phaser.GameObjects.Sprite {
             console.log("Tile id: " + this.id + " does not have a hero.");
         }
     }
+
     public printstuff() {
         console.log("Tile's id: " + this.id);
         this.adjacent.forEach(element => {
