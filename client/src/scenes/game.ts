@@ -41,10 +41,17 @@ export default class GameScene extends Phaser.Scene {
     this.sys.game.scene.bringToTop('BoardOverlay');
 
     // Need to instantiate all tiles in GUI at start of game
+<<<<<<< HEAD
 
     this.addMageMock();
     this.addDwarfMock();
 
+=======
+
+    this.addMageMock();
+    this.addDwarfMock();
+
+>>>>>>> d727823dbf060d3c0bd25eeea8937d850e821bfa
     // Creating the hour tracker
     var htx = htX;
     var hty = htY;
@@ -65,6 +72,7 @@ export default class GameScene extends Phaser.Scene {
 
     this.test()
   }
+<<<<<<< HEAD
 
   private cameraSetup() {
     // Set bounds of camera to the limits of the gameboard
@@ -77,6 +85,20 @@ export default class GameScene extends Phaser.Scene {
     this.rightKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
   }
 
+=======
+
+  private cameraSetup() {
+    // Set bounds of camera to the limits of the gameboard
+    var camera = this.cameras.main;
+    camera.setBounds(0, 0, expandedWidth, expandedHeight);
+    // Set keys for scrolling
+    this.upKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
+    this.downKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
+    this.leftKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
+    this.rightKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+  }
+
+>>>>>>> d727823dbf060d3c0bd25eeea8937d850e821bfa
   private addMageMock() {
     // Demo tile for mage - Tiles should have better encapsulation lol
     var tile9X = 1500*scaleFactor;
