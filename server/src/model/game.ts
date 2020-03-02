@@ -2,7 +2,8 @@ import { GameDifficulty } from "./GameDifficulty"
 import { RietburgCastle } from "./RietburgCastle"
 import { Farmer } from "./Farmer"
 import { Region } from "./region"
-//import fs = require('fs');
+// import { map as tilesData } from "./tilemap"
+
 export class Game {
     
     private numOfDesiredPlayers: number;
@@ -10,9 +11,10 @@ export class Game {
     private castle: RietburgCastle;
     private name: string;
     private chatlog: any;
-    private regions: any;
+    private regions: Region[] = [];
 
     constructor(name: string, numOfDesiredPlayers: number, difficulty: GameDifficulty){
+        // console.log("Server game constructor");
         this.name = name;
         this.numOfDesiredPlayers = numOfDesiredPlayers;
         this.difficulty = difficulty;
@@ -23,8 +25,16 @@ export class Game {
     }
 
     private setRegions() {
-        let rawdata = require('fs').readFileSync(require('path').resolve('src/model/tilemap.json'));
-        let student = JSON.parse(rawdata.toString());
+        // Note that regions 73-79 and 83 are unused, but created anyways to preserve direct
+        // indexing between regions array and region IDs
+        var tilesData = require("./tilemap").map;
+        var currTileData;
+        for (currTileData of tilesData) {
+            var r = new Region(currTileData.id, currTileData.hasWell, null, currTileData.nextTile, 
+                                currTileData.adjacent, currTileData.hasMerchant);
+            this.regions.push(r);
+        }
+        // console.log("regions sanity check:", this.regions);
     }
 
     public getName(): string {
