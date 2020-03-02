@@ -4,7 +4,7 @@ import { Hero } from '../objects/hero';
 import { HourTracker } from '../objects/hourTracker';
 import * as io from "socket.io-client";
 import { game } from '../api/game';
-import {expandedWidth, expandedHeight, htX, htY} from '../constants'
+import {expandedWidth, expandedHeight, htX, htY, scaleFactor} from '../constants'
 
 export default class GameScene extends Phaser.Scene {
   // private weed: Phaser.GameObjects.Sprite;
@@ -84,23 +84,14 @@ export default class GameScene extends Phaser.Scene {
     //     rect.setInteractive();
     //   }
     // }
-<<<<<<< HEAD
     
     // this.setTileAdjacencies(this.tiles, numRows, numCols);
 
     // Demo tile - Tiles should have better encapsulation lol
     // Get the file name of the desired frame to pass as texture
     
-=======
-    
-    // this.setTileAdjacencies(this.tiles, numRows, numCols);
-
-    // Demo tile - Tiles should have better encapsulation lol
-    // Get the file name of the desired frame to pass as texture
-    
->>>>>>> 8c35a41fb8e39af5b1807ac5fea9551db934c7b9
-    var tile9X = 1500*this.constants.scaleFactor;
-    var tile9Y = 250*this.constants.scaleFactor;
+    var tile9X = 1500*scaleFactor;
+    var tile9Y = 250*scaleFactor;
 
     var treeTile = this.textures.get('tiles').getFrameNames()[12];
     var startTile = new Tile(9, this, tile9X, tile9Y, treeTile);
@@ -114,24 +105,22 @@ export default class GameScene extends Phaser.Scene {
     startTile.hero = this.hero;
     startTile.heroexist = true;
 
-<<<<<<< HEAD
     var htx = htX;
     var hty = htY;
-=======
-    var htx = this.constants.htX;
-    var hty = this.constants.htY;
->>>>>>> 8c35a41fb8e39af5b1807ac5fea9551db934c7b9
     console.log(htx, ", ", hty);
     var mageHtIcon = this.add.sprite(htx, hty, 'magemale').setDisplaySize(40, 40);
-    this.hourTracker = new HourTracker(this, htx, hty, mageHtIcon, this.hero);
+    this.hourTracker = new HourTracker(this, htx, hty, [mageHtIcon], this.hero);
+    // Hero ids are hardcoded for now, need to be linked to game setup
+    mageHtIcon.x = this.hourTracker.heroCoords[0][0];
+    mageHtIcon.y = this.hourTracker.heroCoords[0][1];
 
+    // we're not actually adding the hourTracker, we're adding it's internal sprite
     this.hourTracker.depth = 5;
     this.hourTracker.depth = 0;
     this.hero.hourTracker = this.hourTracker;
     this.hourTracker.setInteractive();
 
-    // What is this for?
-    mageHero.depth = 5;
+    mageHero.depth = 5;// What is this for?
 
     // Deprecated code, "return to lobby" should be moved into overlay or options scene
     mageHero.setInteractive();
