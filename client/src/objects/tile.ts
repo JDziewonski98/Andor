@@ -15,7 +15,9 @@ export class Tile extends Phaser.GameObjects.Sprite {
     public x: number;
     public y: number;
     private graphic;
+    // Should support multiple heroes
     public hero: Hero;
+    public heroCoords;
 
     constructor(id, scene, x, y, texture) {
         super(scene, x, y, 'tiles', texture);
@@ -25,6 +27,14 @@ export class Tile extends Phaser.GameObjects.Sprite {
         this.hero = null;
         this.on('pointerdown', function (pointer) { this.printstuff() });
         this.on('pointerdown', function (pointer) { this.moveRequest() })
+
+        // Set coordinates for hero representations as 2d array
+        this.heroCoords = [
+            [this.x-30, this.y-30],
+            [this.x+30, this.y-30],
+            [this.x-30, this.y+30],
+            [this.x+30, this.y+30]
+        ]
     }
 
     public printHerodata() {
