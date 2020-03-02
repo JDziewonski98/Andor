@@ -7,8 +7,6 @@ import { game } from '../api/game';
 import {expandedWidth, expandedHeight, htX, htY, scaleFactor} from '../constants'
 
 export default class GameScene extends Phaser.Scene {
-  // private weed: Phaser.GameObjects.Sprite;
-  // private mageHero: Phaser.GameObjects.Sprite;
   private hero: Hero;
   public tiles: Tile[] = [];
   private hourTracker: HourTracker;
@@ -31,7 +29,7 @@ export default class GameScene extends Phaser.Scene {
   public preload() {
     // Loading the tiles sprite sheet for use of textures for Sprites
     this.load.multiatlas('tiles', './assets/tilesheet.json', 'assets')
-    // Create a sprite sheet for heroes as well so they don't need an 
+    // TODO: Create a sprite sheet for heroes as well so they don't need an 
     // internal sprite to render their image
   }
 
@@ -44,28 +42,13 @@ export default class GameScene extends Phaser.Scene {
     // Bring overlay scene to top
     this.sys.game.scene.bringToTop('BoardOverlay');
 
-    // Need to instantiate all tiles in GUI at start of game
+    // TODO: instantiate all tiles in GUI at start of game
+    // Define JSON for this: each tile needs manual x,y set
 
     this.addMageMock();
     this.addDwarfMock();
 
-    // Creating the hour tracker
-    var htx = htX;
-    var hty = htY;
-    console.log(htx, ", ", hty);
-    var mageHtIcon = this.add.sprite(htx, hty, 'magemale').setDisplaySize(40, 40);
-    var dwarfHtIcon = this.add.sprite(htx, hty, 'dwarfmale').setDisplaySize(40, 40);
-    this.hourTracker = new HourTracker(this, htx, hty, [mageHtIcon, dwarfHtIcon], this.hero);
-    // Hero ids are hardcoded for now, need to be linked to game setup
-    mageHtIcon.x = this.hourTracker.heroCoords[0][0];
-    mageHtIcon.y = this.hourTracker.heroCoords[0][1];
-    dwarfHtIcon.x = this.hourTracker.heroCoords[1][0];
-    dwarfHtIcon.y = this.hourTracker.heroCoords[1][1];
-    // we're not actually adding the hourTracker, we're adding it's internal sprite
-    this.hourTracker.depth = 5;
-    this.hourTracker.depth = 0;
-    this.hero.hourTracker = this.hourTracker;
-    this.hourTracker.setInteractive();
+    this.hourTrackerSetup();
 
     this.test()
   }
@@ -135,26 +118,31 @@ export default class GameScene extends Phaser.Scene {
     dwarfHero.depth = 5;// What is this for?
   }
 
+  private hourTrackerSetup() {
+    // Creating the hour tracker
+    var htx = htX;
+    var hty = htY;
+    var mageHtIcon = this.add.sprite(htx, hty, 'magemale').setDisplaySize(40, 40);
+    var dwarfHtIcon = this.add.sprite(htx, hty, 'dwarfmale').setDisplaySize(40, 40);
+    this.hourTracker = new HourTracker(this, htx, hty, [mageHtIcon, dwarfHtIcon], this.hero);
+    // Hero ids are hardcoded for now, need to be linked to game setup
+    mageHtIcon.x = this.hourTracker.heroCoords[0][0];
+    mageHtIcon.y = this.hourTracker.heroCoords[0][1];
+    dwarfHtIcon.x = this.hourTracker.heroCoords[1][0];
+    dwarfHtIcon.y = this.hourTracker.heroCoords[1][1];
+    // we're not actually adding the hourTracker, we're adding it's internal sprite
+    this.hourTracker.depth = 5;
+    this.hourTracker.depth = 0;
+    this.hero.hourTracker = this.hourTracker;
+    this.hourTracker.setInteractive();
+  }
+
   private escChat(){
     WindowManager.destroy(this, 'chat');
   }
 
   private test() {
     var socket = io.connect("http://localhost:3000/game");
-  }
-
-  //leetcode hard algorithm
-  public setTileAdjacencies(tiles: Tile[], rows: number, cols: number) {
-    for (let i = 0; i < tiles.length; i++) {
-      //left
-      if (tiles[i].id % cols != 0) { tiles[i].adjacent.push(tiles[i - rows]) }
-      //right
-      if (tiles[i].id % cols != cols - 1) { tiles[i].adjacent.push(tiles[i + rows]) }
-      //down
-      if (tiles[i].id < ((cols * rows) - 1)) { tiles[i].adjacent.push(tiles[i + 1]) }
-      //up
-      if (tiles[i].id >= cols) { tiles[i].adjacent.push(tiles[i - 1]) }
-    }
   }
 
   public update() {
