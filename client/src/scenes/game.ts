@@ -16,7 +16,7 @@ export default class GameScene extends Phaser.Scene {
 
   private cameraKeys;
   private cameraScrollSpeed = 15;
-  private minZoom = 0.5;
+  private minZoom = 0.4;
   private maxZoom = 1;
   private zoomAmount = 0.01;
 
@@ -37,7 +37,7 @@ export default class GameScene extends Phaser.Scene {
 
   public create() {
     this.cameraSetup();
-    
+
     this.add.image(expandedWidth/2, expandedHeight/2, 'gameboard')
                   .setDisplaySize(expandedWidth, expandedHeight);
     
@@ -94,6 +94,7 @@ export default class GameScene extends Phaser.Scene {
     // Get the file name of the desired frame to pass as texture
     var treeTile = this.textures.get('tiles').getFrameNames()[12];
     var mageStartTile = new Tile(9, this, tile9X, tile9Y, treeTile);
+    mageStartTile.setInteractive();
     this.add.existing(mageStartTile);
 
     var mageStartX = mageStartTile.heroCoords[0][0];
@@ -121,6 +122,7 @@ export default class GameScene extends Phaser.Scene {
     // Get the file name of the desired frame to pass as texture
     var treeTile = this.textures.get('tiles').getFrameNames()[12];
     var dwarfStartTile = new Tile(43, this, tile43X, tile43Y, treeTile);
+    dwarfStartTile.setInteractive();
     this.add.existing(dwarfStartTile);
 
     var dwarfStartX = dwarfStartTile.heroCoords[1][0];
