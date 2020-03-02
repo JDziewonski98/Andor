@@ -84,12 +84,21 @@ export default class GameScene extends Phaser.Scene {
     //     rect.setInteractive();
     //   }
     // }
+<<<<<<< HEAD
     
     // this.setTileAdjacencies(this.tiles, numRows, numCols);
 
     // Demo tile - Tiles should have better encapsulation lol
     // Get the file name of the desired frame to pass as texture
     
+=======
+    
+    // this.setTileAdjacencies(this.tiles, numRows, numCols);
+
+    // Demo tile - Tiles should have better encapsulation lol
+    // Get the file name of the desired frame to pass as texture
+    
+>>>>>>> 8c35a41fb8e39af5b1807ac5fea9551db934c7b9
     var tile9X = 1500*this.constants.scaleFactor;
     var tile9Y = 250*this.constants.scaleFactor;
 
@@ -105,8 +114,13 @@ export default class GameScene extends Phaser.Scene {
     startTile.hero = this.hero;
     startTile.heroexist = true;
 
+<<<<<<< HEAD
     var htx = htX;
     var hty = htY;
+=======
+    var htx = this.constants.htX;
+    var hty = this.constants.htY;
+>>>>>>> 8c35a41fb8e39af5b1807ac5fea9551db934c7b9
     console.log(htx, ", ", hty);
     var mageHtIcon = this.add.sprite(htx, hty, 'magemale').setDisplaySize(40, 40);
     this.hourTracker = new HourTracker(this, htx, hty, mageHtIcon, this.hero);
