@@ -1,16 +1,14 @@
 import * as Phaser from 'phaser';
 import Scenes from './scenes/';
-import {expandedWidth, expandedHeight} from './constants'
-
-// var constants = require('./constants');
+import {fullWidth, fullHeight} from './constants'
 
 const gameConfig: Phaser.Types.Core.GameConfig = {
   title: 'Sample',
  
   type: Phaser.AUTO,
  
-  width: expandedWidth,
-  height: expandedHeight,
+  width: fullWidth,
+  height: fullHeight,
   dom:{
     createContainer: true
   },

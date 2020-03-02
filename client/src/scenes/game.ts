@@ -4,7 +4,8 @@ import { Hero } from '../objects/hero';
 import { HourTracker } from '../objects/hourTracker';
 import * as io from "socket.io-client";
 import { game } from '../api/game';
-import {expandedWidth, expandedHeight, htX, htY, scaleFactor} from '../constants'
+import {expandedWidth, expandedHeight, borderWidth, 
+  fullWidth, fullHeight, htX, htY, scaleFactor} from '../constants'
 
 export default class GameScene extends Phaser.Scene {
   private hero: Hero;
@@ -36,7 +37,8 @@ export default class GameScene extends Phaser.Scene {
   public create() {
     this.cameraSetup();
 
-    this.add.image(expandedWidth/2, expandedHeight/2, 'gameboard')
+    // Centered gameboard with border
+    this.add.image(fullWidth/2, fullHeight/2, 'gameboard')
                   .setDisplaySize(expandedWidth, expandedHeight);
     
     // Bring overlay scene to top
@@ -56,7 +58,7 @@ export default class GameScene extends Phaser.Scene {
   private cameraSetup() {
     // Set bounds of camera to the limits of the gameboard
     var camera = this.cameras.main;
-    camera.setBounds(0, 0, expandedWidth, expandedHeight);
+    camera.setBounds(0, 0, fullWidth, fullHeight);
     // Set keys for scrolling
     // Set keys for scrolling and zooming
     this.cameraKeys = this.input.keyboard.addKeys({
@@ -71,8 +73,9 @@ export default class GameScene extends Phaser.Scene {
 
   private addMageMock() {
     // Demo tile for mage - Tiles should have better encapsulation lol
-    var tile9X = 1500*scaleFactor;
-    var tile9Y = 250*scaleFactor;
+    var tile9X = 1500*scaleFactor+borderWidth;
+    var tile9Y = 250*scaleFactor+borderWidth;
+    console.log("mage", tile9X, tile9Y)
 
     // Get the file name of the desired frame to pass as texture
     var treeTile = this.textures.get('tiles').getFrameNames()[12];
@@ -99,8 +102,8 @@ export default class GameScene extends Phaser.Scene {
 
   private addDwarfMock() {
     // Demo tile for mage - Tiles should have better encapsulation lol
-    var tile43X = 6460*scaleFactor;
-    var tile43Y = 4360*scaleFactor;
+    var tile43X = 6460*scaleFactor+borderWidth;
+    var tile43Y = 4360*scaleFactor+borderWidth;
 
     // Get the file name of the desired frame to pass as texture
     var treeTile = this.textures.get('tiles').getFrameNames()[12];
