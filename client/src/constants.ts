@@ -1,9 +1,5 @@
 // Scaling factor of game board
-<<<<<<< HEAD
-export var scaleFactor = .15;
-=======
 var scaleFactor = .25;
->>>>>>> Tiles relative to gameboard
 
 // Gameboard jpg size
 export var expandedWidth = 9861*scaleFactor;
