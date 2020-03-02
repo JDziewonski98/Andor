@@ -6,7 +6,8 @@ import * as io from "socket.io-client";
 import { game } from '../api/game';
 
 export default class GameScene extends Phaser.Scene {
-  private weed: Phaser.GameObjects.Sprite;
+  // private weed: Phaser.GameObjects.Sprite;
+  // private mageHero: Phaser.GameObjects.Sprite;
   private hero: Hero;
   public tiles: Tile[] = [];
   private hourTracker: HourTracker;
@@ -30,7 +31,10 @@ export default class GameScene extends Phaser.Scene {
   }
 
   public preload() {
+    // Loading the tiles sprite sheet for use of textures for Sprites
     this.load.multiatlas('tiles', './assets/tilesheet.json', 'assets')
+    // Create a sprite sheet for heroes as well so they don't need an 
+    // internal sprite to render their image
   }
 
   public create() {
@@ -64,42 +68,56 @@ export default class GameScene extends Phaser.Scene {
       return 0
     }
 
-    var numRows = 5;
-    var numCols = 6;
-    for (let i = 0; i < numCols; i++) { //num columns
-      id = i;
-      for (let j = 0; j < numRows; j++) { //num rows
-        var atlastextures = this.textures.get('tiles')
-        var tiles = atlastextures.getFrameNames()
-        //we can now reference each tile image by index
-        //Tile new extends sprite so we can pass a image to use for it.
-        let rect: Tile = this.add.existing(new Tile(id, this, 300 + 75 * i, 200 + 75 * j, tiles[tilelogic(i, j)])) as any;
-        id += numCols;
-        this.tiles.push(rect);
-        rect.setInteractive();
-      }
-    }
+    // var numRows = 5;
+    // var numCols = 6;
+    // for (let i = 0; i < numCols; i++) { //num columns
+    //   id = i;
+    //   for (let j = 0; j < numRows; j++) { //num rows
+        // var atlastextures = this.textures.get('tiles')
+        // var tiles = atlastextures.getFrameNames()
+    //     //we can now reference each tile image by index
+    //     //Tile new extends sprite so we can pass a image to use for it.
+    //     let rect: Tile = this.add.existing(new Tile(id, this, 300 + 75 * i, 200 + 75 * j, tiles[tilelogic(i, j)])) as any;
+    //     id += numCols;
+    //     this.tiles.push(rect);
+    //     rect.setInteractive();
+    //   }
+    // }
     
-    this.setTileAdjacencies(this.tiles, numRows, numCols);
-    this.weed = this.add.sprite(this.tiles[0].x, this.tiles[0].y, 'weed');
-    this.hero = new Hero(0, this, this.weed, 0, 0, tiles[0]);
-    this.tiles[0].hero = this.hero;
-    this.tiles[0].heroexist = true;
+    // this.setTileAdjacencies(this.tiles, numRows, numCols);
+
+    // Demo tile - Tiles should have better encapsulation lol
+    var mageStartX = 1400*this.constants.scaleFactor;
+    var mageStartY = 200*this.constants.scaleFactor;
+    var atlastextures = this.textures.get('tiles');
+    var tiles = atlastextures.getFrameNames();
+    var treeTile = tiles[12];
+    var startTile = new Tile(9, this, 100, 400, treeTile);
+    this.add.existing(startTile);
+
+    var mageHero = this.add.sprite(mageStartX, mageStartY, 'magemale');
+    mageHero.setScale(0.2);
+    this.hero = new Hero(0, this, mageHero, 0, 0, startTile);
+    startTile.hero = this.hero;
+    startTile.heroexist = true;
 
     var htx = this.constants.htX;
     var hty = this.constants.htY;
     console.log(htx, ", ", hty);
-    this.hourTracker = new HourTracker(this, htx, hty, 
-        this.add.sprite(htx, hty, 'weed').setDisplaySize(40, 40), this.hero);
+    var mageHtIcon = this.add.sprite(htx, hty, 'magemale').setDisplaySize(40, 40);
+    this.hourTracker = new HourTracker(this, htx, hty, mageHtIcon, this.hero);
+
     this.hourTracker.depth = 5;
     this.hourTracker.depth = 0;
     this.hero.hourTracker = this.hourTracker;
     this.hourTracker.setInteractive();
 
-    this.weed.depth = 5;
+    // What is this for?
+    mageHero.depth = 5;
 
-    this.weed.setInteractive();
-    this.weed.on('pointerdown', function (pointer) {
+    // Deprecated code, "return to lobby" should be moved into overlay or options scene
+    mageHero.setInteractive();
+    mageHero.on('pointerdown', function (pointer) {
       this.tiles = []
       WindowManager.destroy(this, 'chat');
       this.scene.start('Lobby');

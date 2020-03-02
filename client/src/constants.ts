@@ -1,5 +1,5 @@
 // Scaling factor of game board
-var scaleFactor = .15;
+var scaleFactor = .25;
 
 // Gameboard jpg size
 var expandedWidth = 9861*scaleFactor;
