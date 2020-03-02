@@ -1,0 +1,68 @@
+# Week 18
+
+### Group
+
+ * Team 2
+ * *JavaScript & Phaser*
+
+### Team Members
+
+ * *Philip Cheng*
+ * *William Chien*
+ * *Anthony Cui*
+ * *Jacek Dziewonski*
+ * *Omar Ibrahim*
+ * *Cayce McClenen*
+ * *Justin Sun*
+
+## Status
+
+### 3 most outstanding tasks scheduled until the next report, per team member
+
+ * Phillip and William
+    * Game board and UI
+ * Omar
+    * Login, ready screen and networking
+ * Jacek
+    * Chat functionality and networking
+ * Anthony
+    * Game logic and networking
+ * Justin
+    * Pickup farmer
+ * Cayce
+    * 
+
+### Tasks missed, scheduled for this report
+
+ * *Tasks missed:*
+   * None
+ * *Tasks scheduled:*
+   * Code refactoring in preparation to M6
+   * Chat functionality
+   * Game architecture
+   * Game scaling and zooming
+
+### Top 3 unexpected challenges encountered since last report
+
+ * JS can be confusing at times
+ * Real-time updates to sync different clients is difficult
+
+
+### Top 3 lessons learned since last report
+
+ * We need a roadmap to make sure the team is following deadlines and we arent falling behind
+ * 
+
+### Contribution statement
+
+ * *Philip Cheng contributed 10% of the work effectuated since last week.*
+ * *William Chien contributed 13% of the work effectuated since last week.*
+ * *Anthony Cui contributed 25% of the work effectuated since last week.*
+ * *Jacek Dziewonski contributed 25% of the work effectuated since last week.*
+ * *Omar Ibrahim contributed 25% of the work effectuated since last week.*
+ * *Cayce McClenen contributed 1% of the work effectuated since last week.*
+ * *Justin Sun contributed 1% of the work effectuated since last week.*
+
+### Team mood
+
+ * Mildly stressful 
