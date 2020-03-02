@@ -3,6 +3,9 @@ import { Tile } from './tile';
 import { HourTracker } from './hourTracker';
 // import { boardScalingFactor } from '../scenes/game'
 
+// Why are Heroes Sprites and also take a Sprite as a constructor
+// param? Why not just use the Sprite texture - then we don't have
+// to update two things all the time
 export class Hero extends Phaser.GameObjects.Sprite {
     public id: number;
     public tile: Tile;
