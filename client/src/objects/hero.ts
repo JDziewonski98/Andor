@@ -23,19 +23,20 @@ export class Hero extends Phaser.GameObjects.Sprite {
     }
 
     public move(newTile) {
-        if (this.hourTracker.getCount() < 7) {
+        // All heroes use the same hour tracker, access with their id
+        if (this.hourTracker.getCount(this.id) < 7) {
             this.tile = newTile;
             this.x = newTile.x;
             this.y = newTile.y;
             this.sprite.x = this.x;
             this.sprite.y = this.y;
-            this.hourTracker.incHour();
+            this.hourTracker.incHour(this.id);
         }
         return this;
     }
 
     public resetHours() {
-        this.hourTracker.reset();
+        this.hourTracker.reset(this.id);
     }
 
 }
