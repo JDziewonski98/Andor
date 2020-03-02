@@ -1,8 +1,9 @@
 import * as Phaser from 'phaser';
 import { Hero } from './hero';
+import {htX, htShift} from '../constants'
 
 export class HourTracker extends Phaser.GameObjects.Sprite {
-    private constants = require('../constants');
+    // private constants = require('../constants');
     
     private count: number;
     private hero: Hero;
@@ -22,14 +23,14 @@ export class HourTracker extends Phaser.GameObjects.Sprite {
     }
     public reset() {
         this.count = 0;
-        this.x = this.constants.htX;
-        this.sprite.x = this.constants.htX;
+        this.x = htX;
+        this.sprite.x = htX;
         this.hero.resetHours();
     }
     public incHour() {
         this.count++;
-        this.sprite.x += this.constants.htShift;
-        this.x += this.constants.htShift;
+        this.sprite.x += htShift;
+        this.x += htShift;
     }
     public getCount() {
         return this.count;

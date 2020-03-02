@@ -4,6 +4,7 @@ import { Hero } from '../objects/hero';
 import { HourTracker } from '../objects/hourTracker';
 import * as io from "socket.io-client";
 import { game } from '../api/game';
+import {expandedWidth, expandedHeight, htX, htY} from '../constants'
 
 export default class GameScene extends Phaser.Scene {
   private weed: Phaser.GameObjects.Sprite;
@@ -19,7 +20,7 @@ export default class GameScene extends Phaser.Scene {
 
   private cameraScrollSpeed = 15;
 
-  private constants = require('../constants');
+  // private constants = require('../constants');
 
   constructor() {
     super({ key: 'Game' });
@@ -36,8 +37,8 @@ export default class GameScene extends Phaser.Scene {
   public create() {
     // Set bounds of camera to the limits of the gameboard
     var camera = this.cameras.main;
-    var gameW = this.constants.expandedWidth;
-    var gameH = this.constants.expandedHeight;
+    var gameW = expandedWidth;
+    var gameH = expandedHeight;
     console.log(gameW, gameH);
     camera.setBounds(0, 0, gameW, gameH);
     // Set keys for scrolling
@@ -86,8 +87,8 @@ export default class GameScene extends Phaser.Scene {
     this.tiles[0].hero = this.hero;
     this.tiles[0].heroexist = true;
 
-    var htx = this.constants.htX;
-    var hty = this.constants.htY;
+    var htx = htX;
+    var hty = htY;
     console.log(htx, ", ", hty);
     this.hourTracker = new HourTracker(this, htx, hty, 
         this.add.sprite(htx, hty, 'weed').setDisplaySize(40, 40), this.hero);

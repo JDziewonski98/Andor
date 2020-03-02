@@ -1,20 +1,20 @@
 // Scaling factor of game board
-var scaleFactor = .15;
+export var scaleFactor = .15;
 
 // Gameboard jpg size
-var expandedWidth = 9861*scaleFactor;
-var expandedHeight = 6476*scaleFactor;
+export var expandedWidth = 9861*scaleFactor;
+export var expandedHeight = 6476*scaleFactor;
 
 // Positioning of HourTracker
-var htX = 4600*scaleFactor;
-var htY = 250*scaleFactor;
-var htShift = 415*scaleFactor;
+export var htX = 4600*scaleFactor;
+export var htY = 250*scaleFactor;
+export var htShift = 415*scaleFactor;
 
-module.exports = {
-    scaleFactor,
-    expandedHeight, 
-    expandedWidth,
-    htX,
-    htY,
-    htShift
-};
+// module.exports = {
+//     scaleFactor,
+//     expandedHeight, 
+//     expandedWidth,
+//     htX,
+//     htY,
+//     htShift
+// };
