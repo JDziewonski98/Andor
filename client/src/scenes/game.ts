@@ -88,16 +88,19 @@ export default class GameScene extends Phaser.Scene {
     // this.setTileAdjacencies(this.tiles, numRows, numCols);
 
     // Demo tile - Tiles should have better encapsulation lol
-    var mageStartX = 1400*this.constants.scaleFactor;
-    var mageStartY = 200*this.constants.scaleFactor;
-    var atlastextures = this.textures.get('tiles');
-    var tiles = atlastextures.getFrameNames();
-    var treeTile = tiles[12];
-    var startTile = new Tile(9, this, 100, 400, treeTile);
+    // Get the file name of the desired frame to pass as texture
+    
+    var tile9X = 1500*this.constants.scaleFactor;
+    var tile9Y = 250*this.constants.scaleFactor;
+
+    var treeTile = this.textures.get('tiles').getFrameNames()[12];
+    var startTile = new Tile(9, this, tile9X, tile9Y, treeTile);
     this.add.existing(startTile);
 
-    var mageHero = this.add.sprite(mageStartX, mageStartY, 'magemale');
-    mageHero.setScale(0.2);
+    var mageStartX = startTile.heroCoords[1][0];
+    var mageStartY = startTile.heroCoords[1][1];
+
+    var mageHero = this.add.sprite(mageStartX, mageStartY, 'magemale').setDisplaySize(40, 40);
     this.hero = new Hero(0, this, mageHero, 0, 0, startTile);
     startTile.hero = this.hero;
     startTile.heroexist = true;
