@@ -1,6 +1,7 @@
 import * as Phaser from 'phaser';
 import { Tile } from './tile';
 import { HourTracker } from './hourTracker';
+// import { boardScalingFactor } from '../scenes/game'
 
 export class Hero extends Phaser.GameObjects.Sprite {
     public id: number;
@@ -19,21 +20,19 @@ export class Hero extends Phaser.GameObjects.Sprite {
     }
 
     public move(newTile) {
-        if (this.hourTracker.count < 7) {
+        if (this.hourTracker.getCount() < 7) {
             this.tile = newTile;
             this.x = newTile.x;
             this.y = newTile.y;
             this.sprite.x = this.x;
             this.sprite.y = this.y;
-            this.hourTracker.count++;
-            this.hourTracker.sprite.x += 50;
-            this.hourTracker.x += 50;
+            this.hourTracker.incHour();
         }
         return this;
     }
 
     public resetHours() {
-        this.hourTracker.count = 0;
+        this.hourTracker.reset();
     }
 
 }

@@ -4,7 +4,6 @@ import { Hero } from '../objects/hero';
 import { HourTracker } from '../objects/hourTracker';
 import * as io from "socket.io-client";
 import { game } from '../api/game';
-import { expandedWidth, expandedHeight } from '../main'
 
 export default class GameScene extends Phaser.Scene {
   private weed: Phaser.GameObjects.Sprite;
@@ -19,6 +18,8 @@ export default class GameScene extends Phaser.Scene {
   private rightKey;
 
   private cameraScrollSpeed = 15;
+
+  private constants = require('../constants');
 
   constructor() {
     super({ key: 'Game' });
@@ -35,14 +36,17 @@ export default class GameScene extends Phaser.Scene {
   public create() {
     // Set bounds of camera to the limits of the gameboard
     var camera = this.cameras.main;
-    camera.setBounds(0, 0, expandedWidth, expandedHeight);
+    var gameW = this.constants.expandedWidth;
+    var gameH = this.constants.expandedHeight;
+    console.log(gameW, gameH);
+    camera.setBounds(0, 0, gameW, gameH);
     // Set keys for scrolling
     this.upKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
     this.downKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
     this.leftKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
     this.rightKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
 
-    this.add.image(expandedWidth/2, expandedHeight/2, 'gameboard').setDisplaySize(expandedWidth, expandedHeight)
+    this.add.image(gameW/2, gameH/2, 'gameboard').setDisplaySize(gameW, gameH)
     
     // Bring overlay scene to top
     this.sys.game.scene.bringToTop('BoardOverlay')
@@ -82,7 +86,11 @@ export default class GameScene extends Phaser.Scene {
     this.tiles[0].hero = this.hero;
     this.tiles[0].heroexist = true;
 
-    this.hourTracker = new HourTracker(this, 625, 40, this.add.sprite(625, 40, 'weed').setDisplaySize(40, 40), this.hero);
+    var htx = this.constants.htX;
+    var hty = this.constants.htY;
+    console.log(htx, ", ", hty);
+    this.hourTracker = new HourTracker(this, htx, hty, 
+        this.add.sprite(htx, hty, 'weed').setDisplaySize(40, 40), this.hero);
     this.hourTracker.depth = 5;
     this.hourTracker.depth = 0;
     this.hero.hourTracker = this.hourTracker;
