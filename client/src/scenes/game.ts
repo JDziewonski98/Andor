@@ -4,22 +4,20 @@ import { Hero } from '../objects/hero';
 import { HourTracker } from '../objects/hourTracker';
 import * as io from "socket.io-client";
 import { game } from '../api/game';
+import {expandedWidth, expandedHeight, borderWidth, 
+  fullWidth, fullHeight, htX, htY, scaleFactor} from '../constants'
 
 export default class GameScene extends Phaser.Scene {
-  private weed: Phaser.GameObjects.Sprite;
   private hero: Hero;
   public tiles: Tile[] = [];
   private hourTracker: HourTracker;
   private gameinstance: game;
 
-  private upKey; 
-  private downKey; 
-  private leftKey;
-  private rightKey;
-
+  private cameraKeys;
   private cameraScrollSpeed = 15;
-
-  private constants = require('../constants');
+  private minZoom = 0.4;
+  private maxZoom = 1;
+  private zoomAmount = 0.01;
 
   constructor() {
     super({ key: 'Game' });
@@ -30,82 +28,116 @@ export default class GameScene extends Phaser.Scene {
   }
 
   public preload() {
+    // Loading the tiles sprite sheet for use of textures for Sprites
     this.load.multiatlas('tiles', './assets/tilesheet.json', 'assets')
+    // TODO: Create a sprite sheet for heroes as well so they don't need an 
+    // internal sprite to render their image
   }
 
   public create() {
-    // Set bounds of camera to the limits of the gameboard
-    var camera = this.cameras.main;
-    var gameW = this.constants.expandedWidth;
-    var gameH = this.constants.expandedHeight;
-    console.log(gameW, gameH);
-    camera.setBounds(0, 0, gameW, gameH);
-    // Set keys for scrolling
-    this.upKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
-    this.downKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
-    this.leftKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
-    this.rightKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+    this.cameraSetup();
 
-    this.add.image(gameW/2, gameH/2, 'gameboard').setDisplaySize(gameW, gameH)
+    // Centered gameboard with border
+    this.add.image(fullWidth/2, fullHeight/2, 'gameboard')
+                  .setDisplaySize(expandedWidth, expandedHeight);
     
     // Bring overlay scene to top
-    this.sys.game.scene.bringToTop('BoardOverlay')
+    this.sys.game.scene.bringToTop('BoardOverlay');
 
-    var id: number = 0;
+    // TODO: instantiate all tiles in GUI at start of game
+    // Define JSON for this: each tile needs manual x,y set
 
-    // temporary lambda function to load a few different tile icons when making tiles
-    let tilelogic = (i: number, j: number) => {
-      if (i == 0 && j == 0) {
-        return 61
-      }
-      if (j == 3) {
-        return 3
-      }
-      return 0
-    }
+    this.addMageMock();
+    this.addDwarfMock();
 
-    var numRows = 5;
-    var numCols = 6;
-    for (let i = 0; i < numCols; i++) { //num columns
-      id = i;
-      for (let j = 0; j < numRows; j++) { //num rows
-        var atlastextures = this.textures.get('tiles')
-        var tiles = atlastextures.getFrameNames()
-        //we can now reference each tile image by index
-        //Tile new extends sprite so we can pass a image to use for it.
-        let rect: Tile = this.add.existing(new Tile(id, this, 300 + 75 * i, 200 + 75 * j, tiles[tilelogic(i, j)])) as any;
-        id += numCols;
-        this.tiles.push(rect);
-        rect.setInteractive();
-      }
-    }
-    
-    this.setTileAdjacencies(this.tiles, numRows, numCols);
-    this.weed = this.add.sprite(this.tiles[0].x, this.tiles[0].y, 'weed');
-    this.hero = new Hero(0, this, this.weed, 0, 0, tiles[0]);
-    this.tiles[0].hero = this.hero;
-    this.tiles[0].heroexist = true;
+    this.hourTrackerSetup();
 
-    var htx = this.constants.htX;
-    var hty = this.constants.htY;
-    console.log(htx, ", ", hty);
-    this.hourTracker = new HourTracker(this, htx, hty, 
-        this.add.sprite(htx, hty, 'weed').setDisplaySize(40, 40), this.hero);
-    this.hourTracker.depth = 5;
-    this.hourTracker.depth = 0;
-    this.hero.hourTracker = this.hourTracker;
-    this.hourTracker.setInteractive();
+    this.test()
+  }
 
-    this.weed.depth = 5;
+  private cameraSetup() {
+    // Set bounds of camera to the limits of the gameboard
+    var camera = this.cameras.main;
+    camera.setBounds(0, 0, fullWidth, fullHeight);
+    // Set keys for scrolling
+    // Set keys for scrolling and zooming
+    this.cameraKeys = this.input.keyboard.addKeys({
+        up: 'up',
+        down: 'down',
+        left: 'left',
+        right: 'right',
+        zoomIn: 'plus',
+        zoomOut: 'minus'
+    });
+  }
 
-    this.weed.setInteractive();
-    this.weed.on('pointerdown', function (pointer) {
+  private addMageMock() {
+    // Demo tile for mage - Tiles should have better encapsulation lol
+    var tile9X = 1500*scaleFactor+borderWidth;
+    var tile9Y = 250*scaleFactor+borderWidth;
+    console.log("mage", tile9X, tile9Y)
+
+    // Get the file name of the desired frame to pass as texture
+    var treeTile = this.textures.get('tiles').getFrameNames()[12];
+    var mageStartTile = new Tile(9, this, tile9X, tile9Y, treeTile);
+    mageStartTile.setInteractive();
+    this.add.existing(mageStartTile);
+
+    var mageStartX = mageStartTile.heroCoords[0][0];
+    var mageStartY = mageStartTile.heroCoords[0][1];
+    var mageHero = this.add.sprite(mageStartX, mageStartY, 'magemale').setDisplaySize(40, 40);
+    this.hero = new Hero(0, this, mageHero, 0, 0, mageStartTile);
+    mageStartTile.hero = this.hero;
+    mageStartTile.heroexist = true;
+
+    mageHero.depth = 5;// What is this for?
+    // Deprecated code, "return to lobby" should be moved into overlay or options scene
+    mageHero.setInteractive();
+    mageHero.on('pointerdown', function (pointer) {
       this.tiles = []
       WindowManager.destroy(this, 'chat');
       this.scene.start('Lobby');
     }, this);
+  }
 
-    this.test()
+  private addDwarfMock() {
+    // Demo tile for mage - Tiles should have better encapsulation lol
+    var tile43X = 6460*scaleFactor+borderWidth;
+    var tile43Y = 4360*scaleFactor+borderWidth;
+
+    // Get the file name of the desired frame to pass as texture
+    var treeTile = this.textures.get('tiles').getFrameNames()[12];
+    var dwarfStartTile = new Tile(43, this, tile43X, tile43Y, treeTile);
+    dwarfStartTile.setInteractive();
+    this.add.existing(dwarfStartTile);
+
+    var dwarfStartX = dwarfStartTile.heroCoords[1][0];
+    var dwarfStartY = dwarfStartTile.heroCoords[1][1];
+    var dwarfHero = this.add.sprite(dwarfStartX, dwarfStartY, 'dwarfmale').setDisplaySize(40, 40);
+    this.hero = new Hero(0, this, dwarfHero, 0, 0, dwarfStartTile);
+    dwarfStartTile.hero = this.hero;
+    dwarfStartTile.heroexist = true;
+
+    dwarfHero.depth = 5;// What is this for?
+  }
+
+  private hourTrackerSetup() {
+    // Creating the hour tracker
+    var htx = htX;
+    var hty = htY;
+    var mageHtIcon = this.add.sprite(htx, hty, 'magemale').setDisplaySize(40, 40);
+    var dwarfHtIcon = this.add.sprite(htx, hty, 'dwarfmale').setDisplaySize(40, 40);
+    this.hourTracker = new HourTracker(this, htx, hty, [mageHtIcon, dwarfHtIcon], this.hero);
+    // Hero ids are hardcoded for now, need to be linked to game setup
+    mageHtIcon.x = this.hourTracker.heroCoords[0][0];
+    mageHtIcon.y = this.hourTracker.heroCoords[0][1];
+    dwarfHtIcon.x = this.hourTracker.heroCoords[1][0];
+    dwarfHtIcon.y = this.hourTracker.heroCoords[1][1];
+    // we're not actually adding the hourTracker, we're adding it's internal sprite
+    this.hourTracker.depth = 5;
+    this.hourTracker.depth = 0;
+    this.hero.hourTracker = this.hourTracker;
+    this.hourTracker.setInteractive();
   }
 
   private escChat(){
@@ -116,33 +148,27 @@ export default class GameScene extends Phaser.Scene {
     var socket = io.connect("http://localhost:3000/game");
   }
 
-  //leetcode hard algorithm
-  public setTileAdjacencies(tiles: Tile[], rows: number, cols: number) {
-    for (let i = 0; i < tiles.length; i++) {
-      //left
-      if (tiles[i].id % cols != 0) { tiles[i].adjacent.push(tiles[i - rows]) }
-      //right
-      if (tiles[i].id % cols != cols - 1) { tiles[i].adjacent.push(tiles[i + rows]) }
-      //down
-      if (tiles[i].id < ((cols * rows) - 1)) { tiles[i].adjacent.push(tiles[i + 1]) }
-      //up
-      if (tiles[i].id >= cols) { tiles[i].adjacent.push(tiles[i - 1]) }
-    }
-  }
-
   public update() {
     var camera = this.cameras.main;
 
-    if (this.upKey.isDown) {
+    // Scroll updates
+    if (this.cameraKeys["up"].isDown) {
         camera.scrollY -= this.cameraScrollSpeed;
-    } else if (this.downKey.isDown) {
+    } else if (this.cameraKeys["down"].isDown) {
         camera.scrollY += this.cameraScrollSpeed;
     }
 
-    if (this.leftKey.isDown) {
+    if (this.cameraKeys["left"].isDown) {
         camera.scrollX -= this.cameraScrollSpeed;
-    } else if (this.rightKey.isDown) {
+    } else if (this.cameraKeys["right"].isDown) {
         camera.scrollX += this.cameraScrollSpeed;
+    }
+
+    // Zoom updates
+    if (this.cameraKeys["zoomIn"].isDown && camera.zoom<this.maxZoom) {
+      camera.zoom += this.zoomAmount;
+    } else if (this.cameraKeys["zoomOut"].isDown && camera.zoom>this.minZoom) {
+      camera.zoom -= this.zoomAmount;
     }
   }
 

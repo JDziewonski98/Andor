@@ -21,6 +21,7 @@ export default class LobbyScene extends Phaser.Scene {
     }
 
     public preload() {
+        // Load all game assets in first scene
         this.load.image('beach', './assets/swamp.jpg');
         this.load.image('weed', './assets/8bit_herb.jpeg')
         this.load.image('desert', './assets/fantasydesert.jpg')

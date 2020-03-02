@@ -5,6 +5,7 @@ import { Region } from "./region"
 import { Player } from "./player"
 import { Hero } from "./hero"
 import { HeroKind } from './HeroKind'
+// import { map as tilesData } from "./tilemap"
 
 export class Game {
 
@@ -15,7 +16,7 @@ export class Game {
     private name: string;
     private chatlog: any;
     private heroList: Map<string, Hero>;
-    private regions: Map<number, Region>;
+    private regions: Array<Region>;
 
     constructor(name: string, numOfDesiredPlayers: number, difficulty: GameDifficulty) {
         this.name = name;
@@ -25,14 +26,21 @@ export class Game {
         this.chatlog = [];
         this.players = new Set<Player>();
         this.heroList = new Map<string, Hero>();
-        this.regions = new Map<number, Region>();
+        this.regions = new Array();
         this.setRegions();
     }
 
     private setRegions() {
-        // whoever was working on this, make tilemap a js file and export an object from there. Do that instad of importing fs and reading file and parsing..
-        let rawdata = require('fs').readFileSync(require('path').resolve('src/model/tilemap.json'));
-        let student = JSON.parse(rawdata.toString());
+        // Note that regions 73-79 and 83 are unused, but created anyways to preserve direct
+        // indexing between regions array and region IDs
+        var tilesData = require("./tilemap").map;
+        var currTileData;
+        for (currTileData of tilesData) {
+            var r = new Region(currTileData.id, currTileData.hasWell, null, currTileData.nextTile, 
+                                currTileData.adjacent, currTileData.hasMerchant);
+            this.regions.push(r);
+        }
+        // console.log("regions sanity check:", this.regions);
     }
 
     public getName(): string {
