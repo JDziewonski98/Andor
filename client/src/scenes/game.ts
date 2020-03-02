@@ -4,10 +4,11 @@ import { Hero } from '../objects/hero';
 import { HourTracker } from '../objects/hourTracker';
 import * as io from "socket.io-client";
 import { game } from '../api/game';
-import {expandedWidth, expandedHeight, htX, htY} from '../constants'
+import {expandedWidth, expandedHeight, htX, htY, scaleFactor} from '../constants'
 
 export default class GameScene extends Phaser.Scene {
-  private weed: Phaser.GameObjects.Sprite;
+  // private weed: Phaser.GameObjects.Sprite;
+  // private mageHero: Phaser.GameObjects.Sprite;
   private hero: Hero;
   public tiles: Tile[] = [];
   private hourTracker: HourTracker;
@@ -15,7 +16,7 @@ export default class GameScene extends Phaser.Scene {
 
   private cameraKeys;
   private cameraScrollSpeed = 15;
-  private minZoom = 0.5;
+  private minZoom = 0.4;
   private maxZoom = 1;
   private zoomAmount = 0.01;
 
@@ -28,16 +29,52 @@ export default class GameScene extends Phaser.Scene {
   }
 
   public preload() {
+    // Loading the tiles sprite sheet for use of textures for Sprites
     this.load.multiatlas('tiles', './assets/tilesheet.json', 'assets')
+    // Create a sprite sheet for heroes as well so they don't need an 
+    // internal sprite to render their image
   }
 
   public create() {
+    this.cameraSetup();
+
+    this.add.image(expandedWidth/2, expandedHeight/2, 'gameboard')
+                  .setDisplaySize(expandedWidth, expandedHeight);
+    
+    // Bring overlay scene to top
+    this.sys.game.scene.bringToTop('BoardOverlay');
+
+    // Need to instantiate all tiles in GUI at start of game
+
+    this.addMageMock();
+    this.addDwarfMock();
+
+    // Creating the hour tracker
+    var htx = htX;
+    var hty = htY;
+    console.log(htx, ", ", hty);
+    var mageHtIcon = this.add.sprite(htx, hty, 'magemale').setDisplaySize(40, 40);
+    var dwarfHtIcon = this.add.sprite(htx, hty, 'dwarfmale').setDisplaySize(40, 40);
+    this.hourTracker = new HourTracker(this, htx, hty, [mageHtIcon, dwarfHtIcon], this.hero);
+    // Hero ids are hardcoded for now, need to be linked to game setup
+    mageHtIcon.x = this.hourTracker.heroCoords[0][0];
+    mageHtIcon.y = this.hourTracker.heroCoords[0][1];
+    dwarfHtIcon.x = this.hourTracker.heroCoords[1][0];
+    dwarfHtIcon.y = this.hourTracker.heroCoords[1][1];
+    // we're not actually adding the hourTracker, we're adding it's internal sprite
+    this.hourTracker.depth = 5;
+    this.hourTracker.depth = 0;
+    this.hero.hourTracker = this.hourTracker;
+    this.hourTracker.setInteractive();
+
+    this.test()
+  }
+
+  private cameraSetup() {
     // Set bounds of camera to the limits of the gameboard
     var camera = this.cameras.main;
-    var gameW = expandedWidth;
-    var gameH = expandedHeight;
-    console.log(gameW, gameH);
-    camera.setBounds(0, 0, gameW, gameH);
+    camera.setBounds(0, 0, expandedWidth, expandedHeight);
+    // Set keys for scrolling
     // Set keys for scrolling and zooming
     this.cameraKeys = this.input.keyboard.addKeys({
         up: 'up',
@@ -47,67 +84,55 @@ export default class GameScene extends Phaser.Scene {
         zoomIn: 'plus',
         zoomOut: 'minus'
     });
+  }
 
-    this.add.image(gameW/2, gameH/2, 'gameboard').setDisplaySize(gameW, gameH)
-    
-    // Bring overlay scene to top
-    this.sys.game.scene.bringToTop('BoardOverlay')
+  private addMageMock() {
+    // Demo tile for mage - Tiles should have better encapsulation lol
+    var tile9X = 1500*scaleFactor;
+    var tile9Y = 250*scaleFactor;
 
-    var id: number = 0;
+    // Get the file name of the desired frame to pass as texture
+    var treeTile = this.textures.get('tiles').getFrameNames()[12];
+    var mageStartTile = new Tile(9, this, tile9X, tile9Y, treeTile);
+    mageStartTile.setInteractive();
+    this.add.existing(mageStartTile);
 
-    // temporary lambda function to load a few different tile icons when making tiles
-    let tilelogic = (i: number, j: number) => {
-      if (i == 0 && j == 0) {
-        return 61
-      }
-      if (j == 3) {
-        return 3
-      }
-      return 0
-    }
+    var mageStartX = mageStartTile.heroCoords[0][0];
+    var mageStartY = mageStartTile.heroCoords[0][1];
+    var mageHero = this.add.sprite(mageStartX, mageStartY, 'magemale').setDisplaySize(40, 40);
+    this.hero = new Hero(0, this, mageHero, 0, 0, mageStartTile);
+    mageStartTile.hero = this.hero;
+    mageStartTile.heroexist = true;
 
-    var numRows = 5;
-    var numCols = 6;
-    for (let i = 0; i < numCols; i++) { //num columns
-      id = i;
-      for (let j = 0; j < numRows; j++) { //num rows
-        var atlastextures = this.textures.get('tiles')
-        var tiles = atlastextures.getFrameNames()
-        //we can now reference each tile image by index
-        //Tile new extends sprite so we can pass a image to use for it.
-        let rect: Tile = this.add.existing(new Tile(id, this, 300 + 75 * i, 200 + 75 * j, tiles[tilelogic(i, j)])) as any;
-        id += numCols;
-        this.tiles.push(rect);
-        rect.setInteractive();
-      }
-    }
-    
-    this.setTileAdjacencies(this.tiles, numRows, numCols);
-    this.weed = this.add.sprite(this.tiles[0].x, this.tiles[0].y, 'weed');
-    this.hero = new Hero(0, this, this.weed, 0, 0, tiles[0]);
-    this.tiles[0].hero = this.hero;
-    this.tiles[0].heroexist = true;
-
-    var htx = htX;
-    var hty = htY;
-    console.log(htx, ", ", hty);
-    this.hourTracker = new HourTracker(this, htx, hty, 
-        this.add.sprite(htx, hty, 'weed').setDisplaySize(40, 40), this.hero);
-    this.hourTracker.depth = 5;
-    this.hourTracker.depth = 0;
-    this.hero.hourTracker = this.hourTracker;
-    this.hourTracker.setInteractive();
-
-    this.weed.depth = 5;
-
-    this.weed.setInteractive();
-    this.weed.on('pointerdown', function (pointer) {
+    mageHero.depth = 5;// What is this for?
+    // Deprecated code, "return to lobby" should be moved into overlay or options scene
+    mageHero.setInteractive();
+    mageHero.on('pointerdown', function (pointer) {
       this.tiles = []
       WindowManager.destroy(this, 'chat');
       this.scene.start('Lobby');
     }, this);
+  }
 
-    this.test()
+  private addDwarfMock() {
+    // Demo tile for mage - Tiles should have better encapsulation lol
+    var tile43X = 6460*scaleFactor;
+    var tile43Y = 4360*scaleFactor;
+
+    // Get the file name of the desired frame to pass as texture
+    var treeTile = this.textures.get('tiles').getFrameNames()[12];
+    var dwarfStartTile = new Tile(43, this, tile43X, tile43Y, treeTile);
+    dwarfStartTile.setInteractive();
+    this.add.existing(dwarfStartTile);
+
+    var dwarfStartX = dwarfStartTile.heroCoords[1][0];
+    var dwarfStartY = dwarfStartTile.heroCoords[1][1];
+    var dwarfHero = this.add.sprite(dwarfStartX, dwarfStartY, 'dwarfmale').setDisplaySize(40, 40);
+    this.hero = new Hero(0, this, dwarfHero, 0, 0, dwarfStartTile);
+    dwarfStartTile.hero = this.hero;
+    dwarfStartTile.heroexist = true;
+
+    dwarfHero.depth = 5;// What is this for?
   }
 
   private escChat(){
