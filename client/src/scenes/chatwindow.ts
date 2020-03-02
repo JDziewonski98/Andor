@@ -7,11 +7,13 @@ export class Chat extends Window {
     private gameinstance: game;
     private chatwindow: any;
     private chatlog: any;
+    private populated: boolean;
 
     public constructor(key, gameinstance, windowData = { x: 10, y: 10, width: 350, height: 250 }) {
         super(key, windowData);
         this.gameinstance = gameinstance
         this.chatlog = []
+        this.populated = false;
         console.log('in constructo')
     }
 
@@ -21,7 +23,6 @@ export class Chat extends Window {
             setChatLog(chatlog)
         });
         function setChatLog(chatlog) {
-            console.log(chatlog)
             self.chatlog = chatlog;
         }
     }
@@ -44,15 +45,17 @@ export class Chat extends Window {
 
         this.element.on('click', function (event) {
 
-            if (event.target.name === 'playButton') {
+            if (event.target.name === 'playButton' ) {
                 var inputText = this.getChildByName('nameField');
-
                 //  Have they entered anything?
                 if (inputText.value !== '') {
+                    if (self.populated == false) {
+                        self.populate();
+                        self.populated = true;
+                    }
                     event.preventDefault();
                     //self.gameinstance.chatlog.push({})
                     console.log(self.chatlog)
-                    self.populate()
                     self.gameinstance.send(inputText.value, function (msg) {
                         inputText.value = "";
                         update(msg)
@@ -70,7 +73,7 @@ export class Chat extends Window {
 
 
         this.gameinstance.recieve(update)
-        this.populate()
+        //this.populate()
 
     }
 

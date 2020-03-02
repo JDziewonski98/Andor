@@ -1,18 +1,14 @@
 import { Tile } from '../objects/tile';
-import { Chat } from './chatwindow';
-import { HeroWindow } from './herowindow';
 import { WindowManager } from "../utils/WindowManager";
 import { Hero } from '../objects/hero';
 import { HourTracker } from '../objects/hourTracker';
 import * as io from "socket.io-client";
 import { game } from '../api/game';
-import { expandedWidth, expandedHeight } from '../main'
 
 export default class GameScene extends Phaser.Scene {
   private weed: Phaser.GameObjects.Sprite;
   private hero: Hero;
   public tiles: Tile[] = [];
-  private gameText;
   private hourTracker: HourTracker;
   private gameinstance: game;
 
@@ -22,6 +18,8 @@ export default class GameScene extends Phaser.Scene {
   private rightKey;
 
   private cameraScrollSpeed = 15;
+
+  private constants = require('../constants');
 
   constructor() {
     super({ key: 'Game' });
@@ -38,18 +36,21 @@ export default class GameScene extends Phaser.Scene {
   public create() {
     // Set bounds of camera to the limits of the gameboard
     var camera = this.cameras.main;
-    camera.setBounds(0, 0, expandedWidth, expandedHeight);
+    var gameW = this.constants.expandedWidth;
+    var gameH = this.constants.expandedHeight;
+    console.log(gameW, gameH);
+    camera.setBounds(0, 0, gameW, gameH);
     // Set keys for scrolling
     this.upKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
     this.downKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
     this.leftKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
     this.rightKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
 
-    var self = this;
+    this.add.image(gameW/2, gameH/2, 'gameboard').setDisplaySize(gameW, gameH)
+    
+    // Bring overlay scene to top
+    this.sys.game.scene.bringToTop('BoardOverlay')
 
-    // TODO: Move these to a separate view
-    this.add.image(expandedWidth/2, expandedHeight/2, 'gameboard').setDisplaySize(expandedWidth, expandedHeight)
-    this.add.image(800, 40, 'hourbar').setDisplaySize(400, 75);
     var id: number = 0;
 
     // temporary lambda function to load a few different tile icons when making tiles
@@ -76,23 +77,26 @@ export default class GameScene extends Phaser.Scene {
         id += numCols;
         this.tiles.push(rect);
         rect.setInteractive();
-
       }
     }
+    
     this.setTileAdjacencies(this.tiles, numRows, numCols);
     this.weed = this.add.sprite(this.tiles[0].x, this.tiles[0].y, 'weed');
     this.hero = new Hero(0, this, this.weed, 0, 0, tiles[0]);
     this.tiles[0].hero = this.hero;
     this.tiles[0].heroexist = true;
 
-    this.hourTracker = new HourTracker(this, 625, 40, this.add.sprite(625, 40, 'weed').setDisplaySize(40, 40), this.hero);
+    var htx = this.constants.htX;
+    var hty = this.constants.htY;
+    console.log(htx, ", ", hty);
+    this.hourTracker = new HourTracker(this, htx, hty, 
+        this.add.sprite(htx, hty, 'weed').setDisplaySize(40, 40), this.hero);
     this.hourTracker.depth = 5;
     this.hourTracker.depth = 0;
     this.hero.hourTracker = this.hourTracker;
     this.hourTracker.setInteractive();
 
     this.weed.depth = 5;
-
 
     this.weed.setInteractive();
     this.weed.on('pointerdown', function (pointer) {
@@ -101,88 +105,7 @@ export default class GameScene extends Phaser.Scene {
       this.scene.start('Lobby');
     }, this);
 
-    var style2 = {
-      fontFamily: '"Roboto Condensed"',
-      fontSize: "20px",
-      backgroundColor: '#f00'
-    }
-
-    // Your profile.
-    this.gameText = this.add.text(400, 10, "You: 5g / 3 str / 8 will", style2)
-    this.gameText.setInteractive();
-    this.gameText.on('pointerdown', function (pointer) {
-      if(this.scene.isVisible('heroCard')){
-        WindowManager.destroy(this, 'heroCard');
-      } else {
-        WindowManager.create(this, 'heroCard', HeroWindow, {icon:'weed'});
-        let window = WindowManager.get(this, 'heroCard')
-        window.setName('You!!')
-      }
-    }, this);
-
-    //Other player's icons.
-    this.gameText = this.add.text(360, 10, "P2", style2)
-    this.gameText.setInteractive();
-    this.gameText.on('pointerdown', function (pointer) {
-      if(this.scene.isVisible('heroCard2')){
-        WindowManager.destroy(this, 'heroCard2');
-      } else {
-        WindowManager.create(this, 'heroCard2', HeroWindow, {icon:'playbutton'});
-        let window = WindowManager.get(this, 'heroCard2')
-        window.setName('Player 2')
-      }
-    }, this);
-
-    this.gameText = this.add.text(330, 10, "P3", style2)
-    this.gameText.setInteractive();
-    this.gameText.on('pointerdown', function (pointer) {
-      if(this.scene.isVisible('heroCard3')){
-        WindowManager.destroy(this, 'heroCard3');
-      } else {
-        WindowManager.create(this, 'heroCard3', HeroWindow, {icon:'playbutton'});
-        let window = WindowManager.get(this, 'heroCard3')
-        window.setName('Player 3')
-      }
-    }, this);
-
-    this.gameText = this.add.text(300, 10, "P4", style2)
-    this.gameText.setInteractive();
-    this.gameText.on('pointerdown', function (pointer) {
-      if(this.scene.isVisible('heroCard4')){
-        WindowManager.destroy(this, 'heroCard4');
-      } else {
-        WindowManager.create(this, 'heroCard4', HeroWindow, {icon:'playbutton'});
-        let window = WindowManager.get(this, 'heroCard4')
-        window.setName('Player 4')
-      }
-    }, this);
-
-    //Options
-    var optionsIcon = this.add.image(30, 30, 'optionsIcon').setInteractive();
-    optionsIcon.setScale(0.5)
-    optionsIcon.on('pointerdown', function (pointer) {
-        this.sys.game.scene.bringToTop('Options')
-        this.sys.game.scene.getScene('Options').scene.setVisible(true, 'Options')
-        this.sys.game.scene.resume('Options')
-    }, this);
-
-    // chat window
-    this.gameText = this.add.text(800,550,"CHAT", style2).setOrigin(0.5)
-    this.gameText.setInteractive();
-    this.gameText.on('pointerdown', function (pointer) {
-      if(this.scene.isVisible('chat')){
-        WindowManager.destroy(this, 'chat');
-      } 
-      else {
-        WindowManager.create(this, 'chat', Chat, {gameinstance: self.gameinstance} );
-      }
-      
-    }, this); 
-
-    //this.input.keyboard.on('keydown_ESC', this.escChat,this)
-
     this.test()
-
   }
 
   private escChat(){
@@ -191,7 +114,6 @@ export default class GameScene extends Phaser.Scene {
 
   private test() {
     var socket = io.connect("http://localhost:3000/game");
-    
   }
 
   //leetcode hard algorithm
@@ -210,21 +132,16 @@ export default class GameScene extends Phaser.Scene {
 
   public update() {
     var camera = this.cameras.main;
-    if (this.upKey.isDown)
-    {
+
+    if (this.upKey.isDown) {
         camera.scrollY -= this.cameraScrollSpeed;
-    }
-    else if (this.downKey.isDown)
-    {
+    } else if (this.downKey.isDown) {
         camera.scrollY += this.cameraScrollSpeed;
     }
 
-    if (this.leftKey.isDown)
-    {
+    if (this.leftKey.isDown) {
         camera.scrollX -= this.cameraScrollSpeed;
-    }
-    else if (this.rightKey.isDown)
-    {
+    } else if (this.rightKey.isDown) {
         camera.scrollX += this.cameraScrollSpeed;
     }
   }

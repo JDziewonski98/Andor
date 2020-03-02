@@ -67,9 +67,8 @@ export default class Options extends Phaser.Scene {
 
         this.backText = this.add.text(500, 400, "Back", style1).setOrigin(0.5).setInteractive();
         this.backText.on('pointerdown', function (pointer) {
-            this.sys.game.scene.getScene('Options').scene.setVisible(false, this.currentScene)
-            this.sys.game.scene.sendToBack('Options')
-            this.sys.game.scene.pause('Options')
+            this.scene.sendToBack('Options')
+            this.scene.sleep('Options')
         }, this);
     }
 }

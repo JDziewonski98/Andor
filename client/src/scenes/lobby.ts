@@ -33,7 +33,6 @@ export default class LobbyScene extends Phaser.Scene {
         this.load.image('magemale', './assets/magemale.png')
         this.load.image('dwarfmale', './assets/dwarfmale.png')
         this.load.image('archermale', './assets/archermale.png')
-        this.load.image('hourbar', './assets/hours.PNG')
         this.load.image('fantasyhome', './assets/fantasyhome.jpg')
         this.load.image('optionsIcon', './assets/icons/settings_icon.png')
         this.load.image('scrollbg','./assets/windowbg.jpg')
@@ -47,6 +46,10 @@ export default class LobbyScene extends Phaser.Scene {
         var reducedWidth = 1000;
         var reducedHeight = 600;
         this.scale.setGameSize(reducedWidth, reducedHeight);
+        
+        // Initially hide Options and BoardOverlay scenes
+        this.scene.sleep('BoardOverlay')
+        this.scene.sleep('Options')
         
         this.draw()
 
@@ -94,12 +97,11 @@ export default class LobbyScene extends Phaser.Scene {
             this.scene.start('Load');
         }, this);
 
-        this.sys.game.scene.getScene('Options').scene.setVisible(false, 'Options')
         this.optionsIcon = this.add.image(930, 80, 'optionsIcon').setInteractive();
         this.optionsIcon.on('pointerdown', function (pointer) {
             this.sys.game.scene.bringToTop('Options')
             this.sys.game.scene.getScene('Options').scene.setVisible(true, 'Options')
-            this.sys.game.scene.resume('Options')
+            this.scene.resume('Options')
         }, this);
     }
 

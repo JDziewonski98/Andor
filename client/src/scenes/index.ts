@@ -5,9 +5,11 @@ import JoinGameScene from './joingame';
 import LoadGameScene from './loadgame';
 import ReadyScreenScene from './readyscreen';
 import Options from './options';
+import BoardOverlay from './boardoverlay';
 
 export default [
     Options,
+    BoardOverlay,
     LobbyScene,
     GameScene,
     CreateGameScene,
