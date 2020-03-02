@@ -13,14 +13,11 @@ export default class GameScene extends Phaser.Scene {
   private hourTracker: HourTracker;
   private gameinstance: game;
 
-  private upKey; 
-  private downKey; 
-  private leftKey;
-  private rightKey;
-
+  private cameraKeys;
   private cameraScrollSpeed = 15;
-
-  // private constants = require('../constants');
+  private minZoom = 0.5;
+  private maxZoom = 1;
+  private zoomAmount = 0.01;
 
   constructor() {
     super({ key: 'Game' });
@@ -41,11 +38,15 @@ export default class GameScene extends Phaser.Scene {
     var gameH = expandedHeight;
     console.log(gameW, gameH);
     camera.setBounds(0, 0, gameW, gameH);
-    // Set keys for scrolling
-    this.upKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
-    this.downKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
-    this.leftKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
-    this.rightKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+    // Set keys for scrolling and zooming
+    this.cameraKeys = this.input.keyboard.addKeys({
+        up: 'up',
+        down: 'down',
+        left: 'left',
+        right: 'right',
+        zoomIn: 'plus',
+        zoomOut: 'minus'
+    });
 
     this.add.image(gameW/2, gameH/2, 'gameboard').setDisplaySize(gameW, gameH)
     
@@ -134,16 +135,24 @@ export default class GameScene extends Phaser.Scene {
   public update() {
     var camera = this.cameras.main;
 
-    if (this.upKey.isDown) {
+    // Scroll updates
+    if (this.cameraKeys["up"].isDown) {
         camera.scrollY -= this.cameraScrollSpeed;
-    } else if (this.downKey.isDown) {
+    } else if (this.cameraKeys["down"].isDown) {
         camera.scrollY += this.cameraScrollSpeed;
     }
 
-    if (this.leftKey.isDown) {
+    if (this.cameraKeys["left"].isDown) {
         camera.scrollX -= this.cameraScrollSpeed;
-    } else if (this.rightKey.isDown) {
+    } else if (this.cameraKeys["right"].isDown) {
         camera.scrollX += this.cameraScrollSpeed;
+    }
+
+    // Zoom updates
+    if (this.cameraKeys["zoomIn"].isDown && camera.zoom<this.maxZoom) {
+      camera.zoom += this.zoomAmount;
+    } else if (this.cameraKeys["zoomOut"].isDown && camera.zoom>this.minZoom) {
+      camera.zoom -= this.zoomAmount;
     }
   }
 
