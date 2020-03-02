@@ -104,6 +104,7 @@ export default class ReadyScreenScene extends Phaser.Scene {
         item.setInteractive();
         var self = this;
         item.on('pointerdown', function () {
+            console.log(self.ready)
             if (!self.ready) {
                 self.selection.x = item.x;
                 self.gameController.bindHeroForSelf(item.name, function (availableHeros) {

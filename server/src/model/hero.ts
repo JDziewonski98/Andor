@@ -48,13 +48,8 @@ export class Hero {
         //this.region = r;
     }
 
-
-    //what is difference between these 2???????
     private pickupFarmer() {
-        //todo
-    }
-    private addFarmer(f) {
-        //todo
+        // TODO: Implement
     }
 
     private farmerSlotEmpty() {
@@ -62,7 +57,7 @@ export class Hero {
     }
 
     private dropGold(amount) {
-        //todo
+        // TODO: implement
     }
 
     private initializeResources() {
