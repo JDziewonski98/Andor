@@ -1,5 +1,6 @@
 import * as Phaser from 'phaser';
 import { Hero } from './hero';
+import { Farmer } from './farmer';
 
 /* 
 On the client, Tiles should definitely know what they have on them so that
@@ -12,12 +13,15 @@ export class Tile extends Phaser.GameObjects.Sprite {
     public adjacent: Tile[] = [];
     public id: number;
     public heroexist: boolean = false;
+    public farmerexist: boolean = false;
     public x: number;
     public y: number;
     private graphic;
     // Should support multiple heroes
     public hero: Hero;
+    public farmer: Array<Farmer>;
     public heroCoords;
+    public farmerCoords;
 
     constructor(id, scene, x, y, texture) {
         super(scene, x, y, 'tiles', texture);
@@ -25,6 +29,7 @@ export class Tile extends Phaser.GameObjects.Sprite {
         this.x = x;
         this.y = y;
         this.hero = null;
+        this.farmer = new Array(2);
         this.on('pointerdown', function (pointer) { this.printstuff() });
         this.on('pointerdown', function (pointer) { this.moveRequest() })
 
@@ -34,6 +39,11 @@ export class Tile extends Phaser.GameObjects.Sprite {
             [this.x+30, this.y-30],
             [this.x-30, this.y+30],
             [this.x+30, this.y+30]
+        ]
+
+        this.farmerCoords = [
+            [this.x-30, this.y-30],
+            [this.x+30, this.y-30]
         ]
     }
 

@@ -14,6 +14,11 @@ export function game(socket, model: Game) {
     callback();
   });
 
+  socket.on("pickupFarmer", function(heroId, callback){
+    
+
+  });
+
   socket.on('disconnect', function () {
     console.log('user disconnected', socket.conn.id, ' in game.');
   });

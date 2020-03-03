@@ -4,11 +4,13 @@ import { Hero } from '../objects/hero';
 import { HourTracker } from '../objects/hourTracker';
 import * as io from "socket.io-client";
 import { game } from '../api/game';
+import {Farmer} from '../objects/farmer';
 import {expandedWidth, expandedHeight, borderWidth, 
   fullWidth, fullHeight, htX, htY, scaleFactor} from '../constants'
 
 export default class GameScene extends Phaser.Scene {
   private hero: Hero;
+  private farmer: Array<Farmer>;
   public tiles: Tile[] = [];
   private hourTracker: HourTracker;
   private gameinstance: game;
@@ -21,6 +23,7 @@ export default class GameScene extends Phaser.Scene {
 
   constructor() {
     super({ key: 'Game' });
+    this.farmer = new Array(2)
   }
 
   public init(data) {
@@ -49,6 +52,7 @@ export default class GameScene extends Phaser.Scene {
 
     this.addMageMock();
     this.addDwarfMock();
+    this.addFarmerMock();
 
     this.hourTrackerSetup();
 
@@ -69,6 +73,42 @@ export default class GameScene extends Phaser.Scene {
         zoomIn: 'plus',
         zoomOut: 'minus'
     });
+  }
+
+  private addFarmerMock(){
+    // Demo tile for farmer 1 
+    var tile24X = 100*scaleFactor+borderWidth;
+    var tile24Y = 4150*scaleFactor+borderWidth;
+
+    // Demo tile for farmer 1 
+    var tile36X = 3600*scaleFactor+borderWidth;
+    var tile36Y = 3500*scaleFactor+borderWidth;
+
+    // Get the file name of the desired frame to pass as texture
+    var treeTile = this.textures.get('tiles').getFrameNames()[12];
+    var farmerOneStartTile = new Tile(24, this, tile24X, tile24Y, treeTile);
+    var farmerTwoStartTile = new Tile(36, this, tile36X, tile36Y, treeTile);
+
+    farmerOneStartTile.setInteractive();
+    this.add.existing(farmerOneStartTile);
+    farmerTwoStartTile.setInteractive();
+    this.add.existing(farmerTwoStartTile);
+
+    var farmerOneStartX = farmerOneStartTile.farmerCoords[1][0];
+    var farmerOneStartY = farmerOneStartTile.farmerCoords[1][1];
+    var farmerTwoStartX = farmerTwoStartTile.farmerCoords[1][0];
+    var farmerTwoStartY = farmerTwoStartTile.farmerCoords[1][1];
+
+    var farmerOne = this.add.sprite(farmerOneStartX, farmerOneStartY, 'dwarfmale').setDisplaySize(40, 40);
+    var farmerTwo = this.add.sprite(farmerTwoStartX, farmerTwoStartY, 'dwarfmale').setDisplaySize(40, 40);
+
+    this.farmer.push(new Farmer(0, this, farmerOne, 0, 0, farmerOneStartTile));
+    this.farmer.push(new Farmer(0, this, farmerTwo, 0, 0, farmerTwoStartTile));
+
+    farmerOneStartTile.farmer.push(this.farmer[0]);
+    farmerOneStartTile.farmerexist = true;
+    farmerTwoStartTile.farmer.push(this.farmer[1]);
+    farmerTwoStartTile.farmerexist = true;
   }
 
   private addMageMock() {
