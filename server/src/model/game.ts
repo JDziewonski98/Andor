@@ -2,7 +2,7 @@ import { GameDifficulty } from "./GameDifficulty"
 import { RietburgCastle } from "./RietburgCastle"
 import { Farmer } from "./Farmer"
 import { Region } from "./region"
-// import { map as tilesData } from "./tilemap"
+import { Monster } from './monster';
 
 export class Game {
     
@@ -28,12 +28,7 @@ export class Game {
         // Note that regions 73-79 and 83 are unused, but created anyways to preserve direct
         // indexing between regions array and region IDs
         var tilesData = require("./tilemap").map;
-        var currTileData;
-        for (currTileData of tilesData) {
-            var r = new Region(currTileData.id, currTileData.hasWell, null, currTileData.nextTile, 
-                                currTileData.adjacent, currTileData.hasMerchant);
-            this.regions.push(r);
-        }
+        this.regions = JSON.parse(JSON.stringify(tilesData));
         // console.log("regions sanity check:", this.regions);
     }
 

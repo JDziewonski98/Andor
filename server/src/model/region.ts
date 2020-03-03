@@ -2,8 +2,8 @@ import { Monster } from '.';
 
 export class Region {
     public adjRegionsIds: number[] = [];
-    public nextRegionId: number;
-    public id: number;
+    public nextRegionId;
+    public id;
     // public heroexist: boolean = false;
     //public x: number;
     //public y: number;
@@ -16,20 +16,20 @@ export class Region {
     private hasWell;
     private hasMerchant;
     private wellUsed: boolean = false;
-    private currMonster: Monster;
+    private currMonster;
     
-    constructor(id, hasWell, monster, nextRegion, adjRegions, hasMerchant) {
-        this.id = id;
-        //this.x = x;
-        //this.y = y;
-        // this.hero = null;
-        this.hasWell = hasWell;
-        this.hasMerchant = hasMerchant;
-        this.nextRegionId = nextRegion;
-        this.adjRegionsIds = adjRegions;
-        // this.currHero = hero;
-        this.currMonster = monster;
-    }
+    // constructor(id, hasWell, monster, nextRegion, adjRegions, hasMerchant) {
+    //     this.id = id;
+    //     //this.x = x;
+    //     //this.y = y;
+    //     // this.hero = null;
+    //     this.hasWell = hasWell;
+    //     this.hasMerchant = hasMerchant;
+    //     this.nextRegionId = nextRegion;
+    //     this.adjRegionsIds = adjRegions;
+    //     // this.currHero = hero;
+    //     this.currMonster = monster;
+    // }
 
     // public removeHero() {
     //     currHero = null;

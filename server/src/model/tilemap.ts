@@ -1,740 +1,740 @@
 export var map = [
     {
         "id" : 0,
-        "adjacent" : [
+        "adjRegionsIds" : [
             11, 7, 5, 4, 1, 2, 6
         ],
         "hasWell":false,
-        "nextTile":-1,
+        "nextRegionId":-1,
         "hasMerchant":false
     },
     {
         "id" : 1,
-        "adjacent" : [
+        "adjRegionsIds" : [
             0, 2, 3, 4
         ],
         "hasWell":false,
-        "nextTile":0,
+        "nextRegionId":0,
         "hasMerchant" : false
     },
     {
         "id" : 2,
-        "adjacent" : [
+        "adjRegionsIds" : [
             0, 1, 3, 14, 6
         ],
         "hasWell":false,
-        "nextTile":0,
+        "nextRegionId":0,
         "hasMerchant":false
     },
     {
         "id" : 3,
-        "adjacent" : [
+        "adjRegionsIds" : [
             1, 2, 14, 10, 19, 20, 4
         ],
         "hasWell":false,
-        "nextTile":1,
+        "nextRegionId":1,
         "hasMerchant":false
     },
     {
         "id" : 4,
-        "adjacent" : [
+        "adjRegionsIds" : [
             0, 1, 3, 20, 21, 5
         ],
         "hasWell":false,
-        "nextTile":0,
+        "nextRegionId":0,
         "hasMerchant":false
     },
     {
         "id" : 5,
-        "adjacent" : [
+        "adjRegionsIds" : [
             0, 4, 21
         ],
         "hasWell":true,
-        "nextTile":0,
+        "nextRegionId":0,
         "hasMerchant":false
     },
     {
         "id" : 6,
-        "adjacent" : [
+        "adjRegionsIds" : [
             0, 11, 13, 17, 14, 2
         ],
         "hasWell":false,
-        "nextTile":0,
+        "nextRegionId":0,
         "hasMerchant":false
     },
     {
         "id" : 7,
-        "adjacent" : [
+        "adjRegionsIds" : [
             15, 9, 8, 0, 11
         ],
         "hasWell":false,
-        "nextTile":0,
+        "nextRegionId":0,
         "hasMerchant":false
     },
     {
         "id" : 8,
-        "adjacent" : [
+        "adjRegionsIds" : [
             7, 9, 11
         ],
         "hasWell":false,
-        "nextTile":7,
+        "nextRegionId":7,
         "hasMerchant":false
     },
     {
         "id" : 9,
-        "adjacent" : [
+        "adjRegionsIds" : [
             15, 7, 8
         ],
         "hasWell":false,
-        "nextTile":7,
+        "nextRegionId":7,
         "hasMerchant":false
     },
     {
         "id" : 10,
-        "adjacent" : [
+        "adjRegionsIds" : [
             3, 14, 19, 18
         ],
         "hasWell":false,
-        "nextTile":3,
+        "nextRegionId":3,
         "hasMerchant":false
     },
     {
         "id" : 11,
-        "adjacent" : [
+        "adjRegionsIds" : [
             0, 7, 8, 12, 6, 13
         ],
         "hasWell":false,
-        "nextTile":0,
+        "nextRegionId":0,
         "hasMerchant":false
     },
     {
         "id" : 12,
-        "adjacent" : [
+        "adjRegionsIds" : [
             11, 13
         ],
         "hasWell":false,
-        "nextTile":11,
+        "nextRegionId":11,
         "hasMerchant":false
     },
     {
         "id" : 13,
-        "adjacent" : [
+        "adjRegionsIds" : [
             12, 11, 6, 17, 16
         ],
         "hasWell":false,
-        "nextTile":6,
+        "nextRegionId":6,
         "hasMerchant":false
     },
     {
         "id" : 14,
-        "adjacent" : [
+        "adjRegionsIds" : [
             2, 3, 6, 10, 17, 18
         ],
         "hasWell":false,
-        "nextTile":2,
+        "nextRegionId":2,
         "hasMerchant":false
     },
     {
         "id" : 15,
-        "adjacent" : [
+        "adjRegionsIds" : [
             9, 7
         ],
         "hasWell":false,
-        "nextTile":7,
+        "nextRegionId":7,
         "hasMerchant":false
     },
     {
         "id" : 16,
-        "adjacent" : [
+        "adjRegionsIds" : [
             13, 17, 36, 32, 38, 48
         ],
         "hasWell":false,
-        "nextTile":13,
+        "nextRegionId":13,
         "hasMerchant":false
     },
     {
         "id" : 17,
-        "adjacent" : [
+        "adjRegionsIds" : [
             16, 13, 6, 14, 18, 36
         ],
         "hasWell":false,
-        "nextTile":6,
+        "nextRegionId":6,
         "hasMerchant":false
     },
     {
         "id" : 18,
-        "adjacent" : [
+        "adjRegionsIds" : [
             10, 14, 17, 19, 72, 36, 28
         ],
         "hasWell":false,
-        "nextTile":14,
+        "nextRegionId":14,
         "hasMerchant":true
     },
     {
         "id" : 19,
-        "adjacent" : [
+        "adjRegionsIds" : [
             3, 10, 20, 22, 23, 72, 18
         ],
         "hasWell":false,
-        "nextTile":3,
+        "nextRegionId":3,
         "hasMerchant":false
     },
     {
         "id" : 20,
-        "adjacent" : [
+        "adjRegionsIds" : [
             3, 4, 21, 22, 19
         ],
         "hasWell":false,
-        "nextTile":3,
+        "nextRegionId":3,
         "hasMerchant":false
     },
     {
         "id" : 21,
-        "adjacent" : [
+        "adjRegionsIds" : [
             4, 5, 20, 22, 24
         ],
         "hasWell":false,
-        "nextTile":4,
+        "nextRegionId":4,
         "hasMerchant":false
     },
     {
         "id" : 22,
-        "adjacent" : [
+        "adjRegionsIds" : [
             19, 20, 21, 23, 24
         ],
         "hasWell":false,
-        "nextTile":19,
+        "nextRegionId":19,
         "hasMerchant":false
     },
     {
         "id" : 23,
-        "adjacent" : [
+        "adjRegionsIds" : [
             19, 22, 24, 25, 31, 34, 35, 72
         ],
         "hasWell":false,
-        "nextTile":19,
+        "nextRegionId":19,
         "hasMerchant":false
     },
     {
         "id" : 24,
-        "adjacent" : [
+        "adjRegionsIds" : [
             21, 22, 23, 25
         ],
         "hasWell":false,
-        "nextTile":21,
+        "nextRegionId":21,
         "hasMerchant":false
     },
     {
         "id" : 25,
-        "adjacent" : [
+        "adjRegionsIds" : [
             23, 24, 31, 27, 26
         ],
         "hasWell":false,
-        "nextTile":24,
+        "nextRegionId":24,
         "hasMerchant":false
     },
     {
         "id" : 26,
-        "adjacent" : [
+        "adjRegionsIds" : [
             25, 27
         ],
         "hasWell":false,
-        "nextTile":25,
+        "nextRegionId":25,
         "hasMerchant":false
     },
     {
         "id" : 27,
-        "adjacent" : [
+        "adjRegionsIds" : [
             25, 26, 31
         ],
         "hasWell":false,
-        "nextTile":25,
+        "nextRegionId":25,
         "hasMerchant":false
     },
     {
         "id" : 28,
-        "adjacent" : [
+        "adjRegionsIds" : [
             36, 38, 18, 29, 72
         ],
         "hasWell":false,
-        "nextTile":18,
+        "nextRegionId":18,
         "hasMerchant":false
     },
     {
         "id" : 29,
-        "adjacent" : [
+        "adjRegionsIds" : [
             28, 72, 34, 30
         ],
         "hasWell":false,
-        "nextTile":28,
+        "nextRegionId":28,
         "hasMerchant":false
     },
     {
         "id" : 30,
-        "adjacent" : [
+        "adjRegionsIds" : [
             29, 34, 33, 35
         ],
         "hasWell":false,
-        "nextTile":29,
+        "nextRegionId":29,
         "hasMerchant":false
     },
     {
         "id" : 31,
-        "adjacent" : [
+        "adjRegionsIds" : [
             27, 25, 23, 35, 33
         ],
         "hasWell":false,
-        "nextTile":23,
+        "nextRegionId":23,
         "hasMerchant":false
     },
     {
         "id" : 32,
-        "adjacent" : [
+        "adjRegionsIds" : [
             16, 38
         ],
         "hasWell":false,
-        "nextTile":16,
+        "nextRegionId":16,
         "hasMerchant":false
     },
     {
         "id" : 33,
-        "adjacent" : [
+        "adjRegionsIds" : [
             30, 35, 31
         ],
         "hasWell":false,
-        "nextTile":30,
+        "nextRegionId":30,
         "hasMerchant":false
     },
     {
         "id" : 34,
-        "adjacent" : [
+        "adjRegionsIds" : [
             72, 23, 35, 30, 29
         ],
         "hasWell":false,
-        "nextTile":23,
+        "nextRegionId":23,
         "hasMerchant":false
     },
     {
         "id" : 35,
-        "adjacent" : [
+        "adjRegionsIds" : [
             34, 23, 31, 33, 30
         ],
         "hasWell":true,
-        "nextTile":23,
+        "nextRegionId":23,
         "hasMerchant":false
     },
     {
         "id" : 36,
-        "adjacent" : [
+        "adjRegionsIds" : [
             16, 17, 18, 28, 38
         ],
         "hasWell":false,
-        "nextTile":16,
+        "nextRegionId":16,
         "hasMerchant":false
     },
     {
         "id" : 37,
-        "adjacent" : [
+        "adjRegionsIds" : [
             41
         ],
         "hasWell":false,
-        "nextTile":41,
+        "nextRegionId":41,
         "hasMerchant":false
     },
     {
         "id" : 38,
-        "adjacent" : [
+        "adjRegionsIds" : [
             32, 16, 36, 28, 39
         ],
         "hasWell":false,
-        "nextTile":16,
+        "nextRegionId":16,
         "hasMerchant":false
     },
     {
         "id" : 39,
-        "adjacent" : [
+        "adjRegionsIds" : [
             42, 40, 38, 43
         ],
         "hasWell":false,
-        "nextTile":38,
+        "nextRegionId":38,
         "hasMerchant":false
     },
     {
         "id" : 40,
-        "adjacent" : [
+        "adjRegionsIds" : [
             41, 39
         ],
         "hasWell":false,
-        "nextTile":39,
+        "nextRegionId":39,
         "hasMerchant":false
     },
     {
         "id" : 42,
-        "adjacent" : [
+        "adjRegionsIds" : [
             43, 44, 39
         ],
         "hasWell":false,
-        "nextTile":39,
+        "nextRegionId":39,
         "hasMerchant":false
     },
     {
         "id" : 43,
-        "adjacent" : [
+        "adjRegionsIds" : [
             39, 42, 44, 45, 71
         ],
         "hasWell":false,
-        "nextTile":39,
+        "nextRegionId":39,
         "hasMerchant":false
     },
     {
         "id" : 44,
-        "adjacent" : [
+        "adjRegionsIds" : [
             42, 43, 45, 46
         ],
         "hasWell":false,
-        "nextTile":42,
+        "nextRegionId":42,
         "hasMerchant":false
     },
     {
         "id" : 45,
-        "adjacent" : [
+        "adjRegionsIds" : [
             46, 44, 43, 65, 64
         ],
         "hasWell": true,
-        "nextTile": 43,
+        "nextRegionId": 43,
         "hasMerchant":false
     },
     {
         "id" : 46,
-        "adjacent" : [
+        "adjRegionsIds" : [
             64, 45, 44, 47
         ],
         "hasWell":false,
-        "nextTile":44,
+        "nextRegionId":44,
         "hasMerchant":false
     },
     {
         "id" : 47,
-        "adjacent" : [
+        "adjRegionsIds" : [
             48, 53, 54, 56, 46
         ],
         "hasWell":false,
-        "nextTile":46,
+        "nextRegionId":46,
         "hasMerchant":false
     },
     {
         "id" : 48,
-        "adjacent" : [
+        "adjRegionsIds" : [
             49, 50, 51, 53, 47, 16
         ],
         "hasWell":false,
-        "nextTile":16,
+        "nextRegionId":16,
         "hasMerchant":false
     },
     {
         "id" : 49,
-        "adjacent" : [
+        "adjRegionsIds" : [
             50, 48
         ],
         "hasWell":false,
-        "nextTile":48,
+        "nextRegionId":48,
         "hasMerchant":false
     },
     {
         "id" : 50,
-        "adjacent" : [
+        "adjRegionsIds" : [
             48, 49, 51, 52
         ],
         "hasWell":false,
-        "nextTile":48,
+        "nextRegionId":48,
         "hasMerchant":false
     },
     {
         "id" : 51,
-        "adjacent" : [
+        "adjRegionsIds" : [
             55, 52, 50, 48, 53
         ],
         "hasWell":false,
-        "nextTile":48,
+        "nextRegionId":48,
         "hasMerchant":false
     },
     {
         "id" : 52,
-        "adjacent" : [
+        "adjRegionsIds" : [
             55, 51, 50
         ],
         "hasWell":false,
-        "nextTile":50,
+        "nextRegionId":50,
         "hasMerchant":false
     },
     {
         "id" : 53,
-        "adjacent" : [
+        "adjRegionsIds" : [
             54, 51, 47, 48, 55
         ],
         "hasWell":false,
-        "nextTile":47,
+        "nextRegionId":47,
         "hasMerchant":false
     },
     {
         "id" : 54,
-        "adjacent" : [
+        "adjRegionsIds" : [
             55, 53, 47, 56, 57
         ],
         "hasWell":false,
-        "nextTile":47,
+        "nextRegionId":47,
         "hasMerchant":false
     },
     {
         "id" : 55,
-        "adjacent" : [
+        "adjRegionsIds" : [
             52, 51, 54, 57, 53
         ],
         "hasWell":true,
-        "nextTile":51,
+        "nextRegionId":51,
         "hasMerchant":false
     },
     {
         "id" : 56,
-        "adjacent" : [
+        "adjRegionsIds" : [
             47, 54, 57, 63
         ],
         "hasWell":false,
-        "nextTile":47,
+        "nextRegionId":47,
         "hasMerchant":false
     },
     {
         "id" : 57,
-        "adjacent" : [
+        "adjRegionsIds" : [
             55, 54, 56, 63, 58, 59
         ],
         "hasWell":false,
-        "nextTile":54,
+        "nextRegionId":54,
         "hasMerchant":true
     },
     {
         "id" : 58,
-        "adjacent" : [
+        "adjRegionsIds" : [
             62, 60, 59, 57, 63
         ],
         "hasWell":false,
-        "nextTile":57,
+        "nextRegionId":57,
         "hasMerchant":false
     },
     {
         "id" : 59,
-        "adjacent" : [
+        "adjRegionsIds" : [
             60, 58, 57
         ],
         "hasWell":false,
-        "nextTile":57,
+        "nextRegionId":57,
         "hasMerchant":false
     },
     {
         "id" : 60,
-        "adjacent" : [
+        "adjRegionsIds" : [
             58, 59, 62
         ],
         "hasWell":false,
-        "nextTile":59,
+        "nextRegionId":59,
         "hasMerchant":false
     },
     {
         "id" : 61,
-        "adjacent" : [
+        "adjRegionsIds" : [
             62, 58, 63, 64
         ],
         "hasWell":false,
-        "nextTile":58,
+        "nextRegionId":58,
         "hasMerchant":false
     },
     {
         "id" : 62,
-        "adjacent" : [
+        "adjRegionsIds" : [
             60, 58, 61
         ],
         "hasWell":false,
-        "nextTile":58,
+        "nextRegionId":58,
         "hasMerchant":false
     },
     {
         "id" : 63,
-        "adjacent" : [
+        "adjRegionsIds" : [
             61, 58, 57, 56, 64
         ],
         "hasWell":false,
-        "nextTile":56,
+        "nextRegionId":56,
         "hasMerchant":false
     },
     {
         "id" : 64,
-        "adjacent" : [
+        "adjRegionsIds" : [
             63, 61, 65, 45, 46
         ],
         "hasWell":false,
-        "nextTile":45,
+        "nextRegionId":45,
         "hasMerchant":false
     },
     {
         "id" : 65,
-        "adjacent" : [
+        "adjRegionsIds" : [
             64, 45, 66
         ],
         "hasWell":false,
-        "nextTile":45,
+        "nextRegionId":45,
         "hasMerchant":false
     },
     {
         "id" : 66,
-        "adjacent" : [
+        "adjRegionsIds" : [
             65, 67
         ],
         "hasWell":false,
-        "nextTile":65,
+        "nextRegionId":65,
         "hasMerchant":false
     },
     {
         "id" : 67,
-        "adjacent" : [
+        "adjRegionsIds" : [
             66, 68
         ],
         "hasWell":false,
-        "nextTile": 66,
+        "nextRegionId": 66,
         "hasMerchant":false
     },
     {
         "id" : 68,
-        "adjacent" : [
+        "adjRegionsIds" : [
             69, 67
         ],
         "hasWell":false,
-        "nextTile":67,
+        "nextRegionId":67,
         "hasMerchant":false
     },
     {
         "id" : 69,
-        "adjacent" : [
+        "adjRegionsIds" : [
             70, 68
         ],
         "hasWell":false,
-        "nextTile":68,
+        "nextRegionId":68,
         "hasMerchant":false
     },
     {
         "id" : 70,
-        "adjacent" : [
+        "adjRegionsIds" : [
             81, 69
         ],
         "hasWell":false,
-        "nextTile":69,
+        "nextRegionId":69,
         "hasMerchant":false
     },
     {
         "id" : 71,
-        "adjacent" : [
+        "adjRegionsIds" : [
             43
         ],
         "hasWell":false,
-        "nextTile":43,
+        "nextRegionId":43,
         "hasMerchant":true
     },
     {
         "id" : 72,
-        "adjacent" : [
+        "adjRegionsIds" : [
             18, 19, 23, 34, 29, 28
         ],
         "hasWell":false,
-        "nextTile":18,
+        "nextRegionId":18,
         "hasMerchant":false
     },
     {
         "id" : 73,
-        "adjacent" : [],
+        "adjRegionsIds" : [],
         "hasWell":false,
-        "nextTile":-1,
+        "nextRegionId":-1,
         "hasMerchant":false
     },
     {
         "id" : 74,
-        "adjacent" : [],
+        "adjRegionsIds" : [],
         "hasWell":false,
-        "nextTile":-1,
+        "nextRegionId":-1,
         "hasMerchant":false
     },
     {
         "id" : 75,
-        "adjacent" : [],
+        "adjRegionsIds" : [],
         "hasWell":false,
-        "nextTile":-1,
+        "nextRegionId":-1,
         "hasMerchant":false
     },
     {
         "id" : 76,
-        "adjacent" : [],
+        "adjRegionsIds" : [],
         "hasWell":false,
-        "nextTile":-1,
+        "nextRegionId":-1,
         "hasMerchant":false
     },
     {
         "id" : 77,
-        "adjacent" : [],
+        "adjRegionsIds" : [],
         "hasWell":false,
-        "nextTile":-1,
+        "nextRegionId":-1,
         "hasMerchant":false
     },
     {
         "id" : 78,
-        "adjacent" : [],
+        "adjRegionsIds" : [],
         "hasWell":false,
-        "nextTile":-1,
+        "nextRegionId":-1,
         "hasMerchant":false
     },
     {
         "id" : 79,
-        "adjacent" : [],
+        "adjRegionsIds" : [],
         "hasWell":false,
-        "nextTile":-1,
+        "nextRegionId":-1,
         "hasMerchant":false
     },
     {
         "id" : 80,
-        "adjacent" : [],
+        "adjRegionsIds" : [],
         "hasWell":false,
-        "nextTile":-1,
+        "nextRegionId":-1,
         "hasMerchant":false
     },
     {
         "id" : 81,
-        "adjacent" : [
+        "adjRegionsIds" : [
             70, 82
         ],
         "hasWell":false,
-        "nextTile":70,
+        "nextRegionId":70,
         "hasMerchant":false
     },
     {
         "id" : 82,
-        "adjacent" : [
+        "adjRegionsIds" : [
             84, 81
         ],
         "hasWell":false,
-        "nextTile":81,
+        "nextRegionId":81,
         "hasMerchant":false
     },
     {
         "id" : 83,
-        "adjacent" : [],
+        "adjRegionsIds" : [],
         "hasWell":false,
-        "nextTile":-1,
+        "nextRegionId":-1,
         "hasMerchant":false
     },
     {
         "id" : 84,
-        "adjacent" : [
+        "adjRegionsIds" : [
             82
         ],
         "hasWell":false,
-        "nextTile":82,
+        "nextRegionId":82,
         "hasMerchant":false
     }
 ]
