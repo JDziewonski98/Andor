@@ -1,4 +1,4 @@
-import { Game } from 'src/model';
+import { Game, HeroKind } from '../model';
 
 export function game(socket, model: Game) {
 
@@ -14,16 +14,25 @@ export function game(socket, model: Game) {
     callback();
   });
 
-  socket.on('bind hero', function (herotype, callback) {
-    let success = !false;
-    
-    console.log('player ', socket.conn.id, ' chose ', herotype)
-    let availableHeros = [];
-    if(success){
+  socket.on('bind hero', function (heroType, callback) {
+    let success = false;
+    let id = socket.conn.id;
+
+    if (heroType === "archer")
+      success = model.bindHero(id, HeroKind.Archer);
+    else if (heroType === "warrior")
+      success = model.bindHero(id, HeroKind.Warrior);
+    else if (heroType === "mage")
+      success = model.bindHero(id, HeroKind.Mage);
+    else if (heroType === "dwarf")
+      success = model.bindHero(id, HeroKind.Dwarf);
+
+    if (success) {
+      let availableHeros = []
       socket.broadcast.emit("updateHeroList", availableHeros)
       callback(availableHeros);
     }
-    
+
   });
 
   socket.on('disconnect', function () {

@@ -5,7 +5,6 @@ import { Region } from "./region"
 import { Player } from "./player"
 import { Hero } from "./hero"
 import { HeroKind } from './HeroKind'
-// import { map as tilesData } from "./tilemap"
 import { Monster } from './monster';
 
 export class Game {
@@ -48,21 +47,20 @@ export class Game {
     * @param id is player socket ID
     * @param heroType
     */
-    public bindHero(id: string, heroType: string): boolean {
-        // HeroKind h = HeroKind.Archer;
-        if (heroType === "archer")
-            this.heroList.set(id, new Hero(HeroKind.Archer));
-        else if (heroType === "warrior")
-            this.heroList.set(id, new Hero(HeroKind.Warrior));
-        else if (heroType === "mage")
-            this.heroList.set(id, new Hero(HeroKind.Mage));
-        else if (heroType === "dwarf")
-            this.heroList.set(id, new Hero(HeroKind.Dwarf));
-        else
-            return false;
-
+    public bindHero(id: string, heroType: HeroKind): boolean {
+        // Herokind already been taken
+        this.heroList.forEach((hero, key) => {
+            if (hero.getKind() === heroType) {
+                return false;
+            }
+        })
+        this.heroList.set(id, new Hero(heroType));
         return true;
 
+    }
+
+    public getHero(id: string): Hero | undefined {
+        return this.heroList.get(id);
     }
 
     public getNumOfDesiredPlayers(): number {

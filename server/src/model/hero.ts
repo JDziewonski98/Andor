@@ -16,6 +16,10 @@ export class Hero {
         this.initializeResources()
     }
 
+    public getKind(): HeroKind {
+        return this.hk;
+    }
+
     private moveTo(newTile) {
         //TODO
     }

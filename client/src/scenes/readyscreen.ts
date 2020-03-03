@@ -119,7 +119,7 @@ export default class ReadyScreenScene extends Phaser.Scene {
     }
 
     private updateHeroList(availableHeros){
-        console.log("Remining heros are: ")
+        console.log("Remining heros are: ", availableHeros);
     }
 
     public tween() {
