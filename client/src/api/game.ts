@@ -23,6 +23,10 @@ export class game {
         let t = this.socket.emit("send message", msg, callback);
         console.log(t)
     }
+
+    public pickupFarmer(heroID, callback){
+        this.socket.emit("pickupFarmer", heroID, callback);
+    }
     
     public recieve(callback) {
         this.socket.on("update messages", callback);
