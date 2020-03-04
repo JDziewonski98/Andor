@@ -65,8 +65,8 @@ export class Hero {
     }
 
     public pickupFarmer() {
-        if(this.region.farmers.length != 0){
-            var farmer = this.region.farmers.pop()!;
+        if(this.region.getFarmers().length != 0){
+            var farmer = this.region.getFarmers().pop()!;
             farmer.carriedBy = this;
             this.farmer = true;
             this.farmers.push(farmer);

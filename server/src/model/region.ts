@@ -6,7 +6,7 @@ export class Region {
     private id: number;
     private gold;
     // private wineskins: Wineskin[] = [];
-    public farmers: Array<Farmer>;
+    private farmers: Array<Farmer>;
     private hasWell: boolean;
     private hasMerchant: boolean;
     private wellUsed: boolean = false;
@@ -52,7 +52,7 @@ export class Region {
         return this.nextRegionId;
     }
 
-    public getFarmer(): Array<Farmer>{
+    public getFarmers(): Array<Farmer>{
         return this.farmers!;
     }
 
@@ -60,9 +60,6 @@ export class Region {
          this.farmers = [];
     }
     public addFarmer(f: Farmer) {
-        if(this.farmers === undefined){
-            this.farmers = new Array();
-        }
         this.farmers.push(f);
     }
 }

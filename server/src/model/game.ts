@@ -45,8 +45,8 @@ export class Game {
         //this.regions[24].farmers = new Array();
         //this.regions[24].farmers.push(this.farmers[0]);
         
-        //this.regions[24].addFarmer(new Farmer(this.regions[24]));
-        this.regions[24].farmers.push(this.farmers[0]);
+        this.regions[24].addFarmer(this.farmers[0]);
+        //this.regions[24].farmers.push(this.farmers[0]);
         console.log(this.regions[24])
        // this.regions[36].addFarmer(this.farmers[1]);
        
@@ -59,7 +59,7 @@ export class Game {
         tilesData.forEach(t => {
             this.regions.push(new Region(t.id, t.nextRegionId, t.adjRegionsIds, t.hasWell, t.hasMerchant))
         })
-        console.log(this.regions[2].getNextRegionId())
+        //console.log(this.regions[2].getNextRegionId())
         // console.log("regions sanity check:", this.regions);
     }
 
