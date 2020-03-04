@@ -23,13 +23,16 @@ export class game {
         let t = this.socket.emit("send message", msg, callback);
         console.log(t)
     }
-    
+
     public recieve(callback) {
         this.socket.on("update messages", callback);
     }
 
     public getChatLog(callback) {
         this.socket.emit('getChatLog', callback)
+    }
+    public dropGold(amount, callback) {
+        this.socket.emit("dropGold", amount, callback)
     }
 
 }

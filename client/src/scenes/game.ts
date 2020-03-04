@@ -4,11 +4,14 @@ import { Hero } from '../objects/hero';
 import { HourTracker } from '../objects/hourTracker';
 import * as io from "socket.io-client";
 import { game } from '../api/game';
-import {expandedWidth, expandedHeight, borderWidth, 
-  fullWidth, fullHeight, htX, htY, scaleFactor} from '../constants'
+import {
+  expandedWidth, expandedHeight, borderWidth,
+  fullWidth, fullHeight, htX, htY, scaleFactor
+} from '../constants'
+import { Game } from 'phaser';
 
 export default class GameScene extends Phaser.Scene {
-  private hero: Hero;
+  private heroes: Hero[] = [];
   public tiles: Tile[] = [];
   private hourTracker: HourTracker;
   private gameinstance: game;
@@ -38,9 +41,9 @@ export default class GameScene extends Phaser.Scene {
     this.cameraSetup();
 
     // Centered gameboard with border
-    this.add.image(fullWidth/2, fullHeight/2, 'gameboard')
-                  .setDisplaySize(expandedWidth, expandedHeight);
-    
+    this.add.image(fullWidth / 2, fullHeight / 2, 'gameboard')
+      .setDisplaySize(expandedWidth, expandedHeight);
+
     // Bring overlay scene to top
     this.sys.game.scene.bringToTop('BoardOverlay');
 
@@ -62,19 +65,19 @@ export default class GameScene extends Phaser.Scene {
     // Set keys for scrolling
     // Set keys for scrolling and zooming
     this.cameraKeys = this.input.keyboard.addKeys({
-        up: 'up',
-        down: 'down',
-        left: 'left',
-        right: 'right',
-        zoomIn: 'plus',
-        zoomOut: 'minus'
+      up: 'up',
+      down: 'down',
+      left: 'left',
+      right: 'right',
+      zoomIn: 'plus',
+      zoomOut: 'minus'
     });
   }
 
   private addMageMock() {
     // Demo tile for mage - Tiles should have better encapsulation lol
-    var tile9X = 1500*scaleFactor+borderWidth;
-    var tile9Y = 250*scaleFactor+borderWidth;
+    var tile9X = 1500 * scaleFactor + borderWidth;
+    var tile9Y = 250 * scaleFactor + borderWidth;
     console.log("mage", tile9X, tile9Y)
 
     // Get the file name of the desired frame to pass as texture
@@ -86,9 +89,18 @@ export default class GameScene extends Phaser.Scene {
     var mageStartX = mageStartTile.heroCoords[0][0];
     var mageStartY = mageStartTile.heroCoords[0][1];
     var mageHero = this.add.sprite(mageStartX, mageStartY, 'magemale').setDisplaySize(40, 40);
-    this.hero = new Hero(0, this, mageHero, 0, 0, mageStartTile);
-    mageStartTile.hero = this.hero;
+    this.heroes.push(new Hero(0, this, mageHero, 0, 0, mageStartTile));
+    mageStartTile.hero = this.heroes[0];
     mageStartTile.heroexist = true;
+
+    // Add adjacent tile for mock movement
+    var tile8X = 2010 * scaleFactor + borderWidth;
+    var tile8Y = 820 * scaleFactor + borderWidth;
+    var mageAdjTile = new Tile(8, this, tile8X, tile8Y, treeTile);
+    mageAdjTile.adjacent.push(mageStartTile);
+    mageStartTile.adjacent.push(mageAdjTile);
+    mageAdjTile.setInteractive();
+    this.add.existing(mageAdjTile);
 
     mageHero.depth = 5;// What is this for?
     // Deprecated code, "return to lobby" should be moved into overlay or options scene
@@ -101,9 +113,9 @@ export default class GameScene extends Phaser.Scene {
   }
 
   private addDwarfMock() {
-    // Demo tile for mage - Tiles should have better encapsulation lol
-    var tile43X = 6460*scaleFactor+borderWidth;
-    var tile43Y = 4360*scaleFactor+borderWidth;
+    // Demo tile for dwarf - Tiles should have better encapsulation lol
+    var tile43X = 6460 * scaleFactor + borderWidth;
+    var tile43Y = 4360 * scaleFactor + borderWidth;
 
     // Get the file name of the desired frame to pass as texture
     var treeTile = this.textures.get('tiles').getFrameNames()[12];
@@ -114,9 +126,18 @@ export default class GameScene extends Phaser.Scene {
     var dwarfStartX = dwarfStartTile.heroCoords[1][0];
     var dwarfStartY = dwarfStartTile.heroCoords[1][1];
     var dwarfHero = this.add.sprite(dwarfStartX, dwarfStartY, 'dwarfmale').setDisplaySize(40, 40);
-    this.hero = new Hero(0, this, dwarfHero, 0, 0, dwarfStartTile);
-    dwarfStartTile.hero = this.hero;
+    this.heroes.push(new Hero(1, this, dwarfHero, 0, 0, dwarfStartTile));
+    dwarfStartTile.hero = this.heroes[1];
     dwarfStartTile.heroexist = true;
+
+    // Add adjacent tile for mock movement
+    var tile39X = 5640 * scaleFactor + borderWidth;
+    var tile39Y = 4370 * scaleFactor + borderWidth;
+    var dwarfAdjTile = new Tile(39, this, tile39X, tile39Y, treeTile);
+    dwarfAdjTile.adjacent.push(dwarfStartTile);
+    dwarfStartTile.adjacent.push(dwarfAdjTile);
+    dwarfAdjTile.setInteractive();
+    this.add.existing(dwarfAdjTile);
 
     dwarfHero.depth = 5;// What is this for?
   }
@@ -127,7 +148,7 @@ export default class GameScene extends Phaser.Scene {
     var hty = htY;
     var mageHtIcon = this.add.sprite(htx, hty, 'magemale').setDisplaySize(40, 40);
     var dwarfHtIcon = this.add.sprite(htx, hty, 'dwarfmale').setDisplaySize(40, 40);
-    this.hourTracker = new HourTracker(this, htx, hty, [mageHtIcon, dwarfHtIcon], this.hero);
+    //this.hourTracker = new HourTracker(this, htx, hty, [mageHtIcon, dwarfHtIcon]);
     // Hero ids are hardcoded for now, need to be linked to game setup
     mageHtIcon.x = this.hourTracker.heroCoords[0][0];
     mageHtIcon.y = this.hourTracker.heroCoords[0][1];
@@ -136,16 +157,23 @@ export default class GameScene extends Phaser.Scene {
     // we're not actually adding the hourTracker, we're adding it's internal sprite
     this.hourTracker.depth = 5;
     this.hourTracker.depth = 0;
-    this.hero.hourTracker = this.hourTracker;
+    var h;
+    for (h of this.heroes) {
+      h.hourTracker = this.hourTracker;
+    }
+
     this.hourTracker.setInteractive();
   }
 
-  private escChat(){
+  private escChat() {
     WindowManager.destroy(this, 'chat');
   }
 
   private test() {
     var socket = io.connect("http://localhost:3000/game");
+  }
+  private dropGold() {
+
   }
 
   public update() {
@@ -153,21 +181,21 @@ export default class GameScene extends Phaser.Scene {
 
     // Scroll updates
     if (this.cameraKeys["up"].isDown) {
-        camera.scrollY -= this.cameraScrollSpeed;
+      camera.scrollY -= this.cameraScrollSpeed;
     } else if (this.cameraKeys["down"].isDown) {
-        camera.scrollY += this.cameraScrollSpeed;
+      camera.scrollY += this.cameraScrollSpeed;
     }
 
     if (this.cameraKeys["left"].isDown) {
-        camera.scrollX -= this.cameraScrollSpeed;
+      camera.scrollX -= this.cameraScrollSpeed;
     } else if (this.cameraKeys["right"].isDown) {
-        camera.scrollX += this.cameraScrollSpeed;
+      camera.scrollX += this.cameraScrollSpeed;
     }
 
     // Zoom updates
-    if (this.cameraKeys["zoomIn"].isDown && camera.zoom<this.maxZoom) {
+    if (this.cameraKeys["zoomIn"].isDown && camera.zoom < this.maxZoom) {
       camera.zoom += this.zoomAmount;
-    } else if (this.cameraKeys["zoomOut"].isDown && camera.zoom>this.minZoom) {
+    } else if (this.cameraKeys["zoomOut"].isDown && camera.zoom > this.minZoom) {
       camera.zoom -= this.zoomAmount;
     }
   }
