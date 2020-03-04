@@ -101,12 +101,12 @@ export default class GameScene extends Phaser.Scene {
 
     mageHero.depth = 5;// What is this for?
     // Deprecated code, "return to lobby" should be moved into overlay or options scene
-    mageHero.setInteractive();
-    mageHero.on('pointerdown', function (pointer) {
-      this.tiles = []
-      WindowManager.destroy(this, 'chat');
-      this.scene.start('Lobby');
-    }, this);
+    // mageHero.setInteractive();
+    // mageHero.on('pointerdown', function (pointer) {
+    //   this.tiles = []
+    //   WindowManager.destroy(this, 'chat');
+    //   this.scene.start('Lobby');
+    // }, this);
   }
 
   private addDwarfMock() {
@@ -139,18 +139,32 @@ export default class GameScene extends Phaser.Scene {
     dwarfHero.depth = 5;// What is this for?
   }
 
+  private addArcherMock() {
+  }
+  private addWarriorMock() {
+  }
+
+  // Creating the hour tracker
   private hourTrackerSetup() {
-    // Creating the hour tracker
+    //x, y coorindates
     var htx = htX;
     var hty = htY;
+    //Hero icons
     var mageHtIcon = this.add.sprite(htx, hty, 'magemale').setDisplaySize(40, 40);
     var dwarfHtIcon = this.add.sprite(htx, hty, 'dwarfmale').setDisplaySize(40, 40);
-    this.hourTracker = new HourTracker(this, htx, hty, [mageHtIcon, dwarfHtIcon]);
+    var archerHtIcon = this.add.sprite(htx, hty, 'archermale').setDisplaySize(40, 40);
+    var warriorHtIcon = this.add.sprite(htx, hty, 'warriormale').setDisplaySize(40, 40);
+
+    this.hourTracker = new HourTracker(this, htx, hty, [mageHtIcon, dwarfHtIcon, archerHtIcon, warriorHtIcon]);
     // Hero ids are hardcoded for now, need to be linked to game setup
     mageHtIcon.x = this.hourTracker.heroCoords[0][0];
     mageHtIcon.y = this.hourTracker.heroCoords[0][1];
     dwarfHtIcon.x = this.hourTracker.heroCoords[1][0];
     dwarfHtIcon.y = this.hourTracker.heroCoords[1][1];
+    archerHtIcon.x = this.hourTracker.heroCoords[2][0];
+    archerHtIcon.y = this.hourTracker.heroCoords[2][1];
+    warriorHtIcon.x = this.hourTracker.heroCoords[3][0];
+    warriorHtIcon.y = this.hourTracker.heroCoords[3][1];
     // we're not actually adding the hourTracker, we're adding it's internal sprite
     this.hourTracker.depth = 5;
     this.hourTracker.depth = 0;
