@@ -39,8 +39,7 @@ export function lobby(socket, model: Lobby, io) {
       let g: Game = <Game> games.get(gameName);
       if (g.getNumOfDesiredPlayers() > g.getPlayers().size) {
         g.addPlayer(<Player> model.getPlayers().get(socket.conn.id))
-        console.log("Added", socket.conn.io, " to ", g.getName())
-        console.log(g)
+        console.log("Added", socket.conn.id, " to ", g.getName())
       }
     }
   })
