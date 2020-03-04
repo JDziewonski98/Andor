@@ -16,15 +16,11 @@ export default class JoinGameScene extends Phaser.Scene {
 
     public init(data){
         this.lobbyController = data.controller;
+        this.games = []
         var self = this;
         this.lobbyController.getGames( function(games) {
-            setGames(games)
-        })
-
-        function setGames(games) {
-            console.log(games)
             self.games = games;
-        }
+        })
 
     }
 
@@ -73,6 +69,7 @@ export default class JoinGameScene extends Phaser.Scene {
         var element = this.add.dom(410, 200).createFromCache('joinscreen');
 
 
+        
         this.games.forEach(e => {
             let form = element.getChildByName("Choose Game")
             form.innerHTML = form.innerHTML + '<option value="'+ e + '">' + e + '</option>'

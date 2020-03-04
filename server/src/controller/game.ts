@@ -41,7 +41,7 @@ export function game(socket, model: Game) {
 
   socket.on('disconnect', function () {
     console.log('user disconnected', socket.conn.id, ' in game.');
-    model.removePlayer(socket.conn.id);
+    // model.removePlayer(socket.conn.id);
   });
 
 
