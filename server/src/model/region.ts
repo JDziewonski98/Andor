@@ -1,4 +1,4 @@
-import { Monster } from '.';
+import { Monster, Farmer } from '.';
 
 export class Region {
     public adjRegionsIds: number[] = [];
@@ -12,24 +12,20 @@ export class Region {
     // private fog: Fog;
     private gold;
     // private wineskins: Wineskin[] = [];
-    // private farmers: Farmer[] = [];
+    private farmers: Array<Farmer>;
     private hasWell;
     private hasMerchant;
     private wellUsed: boolean = false;
     private currMonster;
     
-    // constructor(id, hasWell, monster, nextRegion, adjRegions, hasMerchant) {
-    //     this.id = id;
-    //     //this.x = x;
-    //     //this.y = y;
-    //     // this.hero = null;
-    //     this.hasWell = hasWell;
-    //     this.hasMerchant = hasMerchant;
-    //     this.nextRegionId = nextRegion;
-    //     this.adjRegionsIds = adjRegions;
-    //     // this.currHero = hero;
-    //     this.currMonster = monster;
-    // }
+    constructor(id, hasWell, nextRegion, adjRegions, hasMerchant) {
+        this.id = id;
+        this.hasWell = hasWell;
+        this.hasMerchant = hasMerchant;
+        this.nextRegionId = nextRegion;
+        this.adjRegionsIds = adjRegions;
+        this.farmers = new Array();
+    }
 
     // public removeHero() {
     //     currHero = null;
@@ -62,10 +58,17 @@ export class Region {
         return this.nextRegionId;
     }
 
-    // public removeFarmer() {
-    //     this.farmers = [];
-    // }
-    // public addFarmer(f: Farmer) {
-    //     this.farmers.push(f);
-    // }
+    public getFarmer(): Array<Farmer>{
+        return this.farmers!;
+    }
+
+    public removeFarmer() {
+         this.farmers = [];
+    }
+    public addFarmer(f: Farmer) {
+        if(this.farmers === undefined){
+            this.farmers = new Array();
+        }
+        this.farmers.push(f);
+    }
 }

@@ -30,6 +30,10 @@ export class game {
     public pickupFarmer(heroID, callback){
         this.socket.emit("pickupFarmer", heroID, callback);
     }
+
+    public updateFarmer(callback){
+        this.socket.on("updateFarmer", callback);
+    }
     
     public recieve(callback) {
         this.socket.on("update messages", callback);

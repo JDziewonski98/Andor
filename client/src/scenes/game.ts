@@ -23,11 +23,11 @@ export default class GameScene extends Phaser.Scene {
 
   constructor() {
     super({ key: 'Game' });
-    this.farmer = new Array(2)
+    this.farmer = new Array(2);
   }
 
   public init(data) {
-    this.gameinstance = data.controller;
+    this.gameinstance = data.gameinstance;
   }
 
   public preload() {
@@ -102,13 +102,32 @@ export default class GameScene extends Phaser.Scene {
     var farmerOne = this.add.sprite(farmerOneStartX, farmerOneStartY, 'dwarfmale').setDisplaySize(40, 40);
     var farmerTwo = this.add.sprite(farmerTwoStartX, farmerTwoStartY, 'dwarfmale').setDisplaySize(40, 40);
 
-    this.farmer.push(new Farmer(0, this, farmerOne, 0, 0, farmerOneStartTile));
-    this.farmer.push(new Farmer(0, this, farmerTwo, 0, 0, farmerTwoStartTile));
+    farmerOne.setInteractive();
+    farmerTwo.setInteractive();
+    
+
+    this.farmer.push(new Farmer(this, farmerOne, 0, 0, farmerOneStartTile));
+    this.farmer.push(new Farmer(this, farmerTwo, 0, 0, farmerTwoStartTile));
 
     farmerOneStartTile.farmer.push(this.farmer[0]);
     farmerOneStartTile.farmerexist = true;
     farmerTwoStartTile.farmer.push(this.farmer[1]);
     farmerTwoStartTile.farmerexist = true;
+
+    var self = this;
+
+    farmerOne.on('pointerdown', function (pointer) {
+      if(self.hero.tile.id == self.farmer[0].tile.id){
+        self.gameinstance.pickupFarmer(self.hero.id, function(){
+          farmerOne.destroy();
+        });
+      }
+
+    }, this);
+
+    this.gameinstance.updateFarmer(function(){
+      farmerOne.destroy();
+    });
   }
 
   private addMageMock() {
@@ -119,7 +138,7 @@ export default class GameScene extends Phaser.Scene {
 
     // Get the file name of the desired frame to pass as texture
     var treeTile = this.textures.get('tiles').getFrameNames()[12];
-    var mageStartTile = new Tile(9, this, tile9X, tile9Y, treeTile);
+    var mageStartTile = new Tile(24, this, tile9X, tile9Y, treeTile);
     mageStartTile.setInteractive();
     this.add.existing(mageStartTile);
 

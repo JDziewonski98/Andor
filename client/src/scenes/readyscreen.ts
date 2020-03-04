@@ -9,7 +9,7 @@ export default class ReadyScreenScene extends Phaser.Scene {
     public dwarf: GameObjects.Image;
     public mage: GameObjects.Image;
     public selection: GameObjects.Sprite;
-    public ready: boolean = false
+    public ready: boolean = true;
     public playbutton: GameObjects.Sprite;
     public readytext: GameObjects.Text;
     public gameController: game;

@@ -17,6 +17,7 @@ export class Game {
     private chatlog: any;
     private heroList: Map<string, Hero>;
     private regions: Array<Region>;
+    private farmers: Array<Farmer>;
 
     constructor(name: string, numOfDesiredPlayers: number, difficulty: GameDifficulty) {
         this.name = name;
@@ -27,7 +28,16 @@ export class Game {
         this.players = new Set<Player>();
         this.heroList = new Map<string, Hero>();
         this.regions = new Array();
+        this.farmers = new Array();
         this.setRegions();
+    }
+
+    private setFarmers(){
+        this.farmers.push(new Farmer(this.regions[24]));
+        this.farmers.push(new Farmer(this.regions[36]));
+
+        this.regions[24].addFarmer(this.farmers[0]);
+        this.regions[36].addFarmer(this.farmers[1]);
     }
 
     private setRegions() {
@@ -59,8 +69,8 @@ export class Game {
 
     }
 
-    public getHero(id: string): Hero | undefined {
-        return this.heroList.get(id);
+    public getHero(id: string): Hero{
+        return this.heroList.get(id)!;
     }
 
     public getNumOfDesiredPlayers(): number {

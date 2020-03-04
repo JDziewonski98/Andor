@@ -23,6 +23,7 @@ export class Hero extends Phaser.GameObjects.Sprite {
         this.y = y;
         this.sprite = sprite;
         this.farmer = new Array(2);
+        this.tile = tile;
     }
 
     public move(newTile) {

@@ -1,4 +1,4 @@
-import { Game, HeroKind } from '../model';
+import { Game, HeroKind, Region} from '../model';
 
 export function game(socket, model: Game) {
 
@@ -14,7 +14,19 @@ export function game(socket, model: Game) {
     callback();
   });
 
-  socket.on("pickupFarmer", function(heroId, callback){});
+  socket.on("pickupFarmer", function(heroId, callback){
+    let success = false;
+    let hero = model.getHero(heroId);
+
+    if(typeof(hero) != undefined){
+      success = hero.pickupFarmer();
+    }
+
+    if(success){
+      socket.broadcast.emit("updateFarmer");
+      callback();
+    }
+  });
     
   socket.on('bind hero', function (heroType, callback) {
     let success = false;
