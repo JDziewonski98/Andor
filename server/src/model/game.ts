@@ -58,7 +58,6 @@ export class Game {
             }
         })
         this.heroList.set(id, new Hero(heroType));
-
         this.availableHeros = this.availableHeros.filter(h => h != heroType);
         return true;
 
