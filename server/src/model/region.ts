@@ -12,7 +12,7 @@ export class Region {
     // private fog: Fog;
     private gold;
     // private wineskins: Wineskin[] = [];
-    private farmers: Array<Farmer>;
+    public farmers: Array<Farmer>;
     private hasWell;
     private hasMerchant;
     private wellUsed: boolean = false;

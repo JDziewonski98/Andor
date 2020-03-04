@@ -13,8 +13,9 @@ export class Hero {
     private farmer: boolean = false;
     private farmers: Array<Farmer>;
 
-    constructor(hk: HeroKind) {
+    constructor(hk: HeroKind, region:Region) {
         this.hk = hk
+        this.region = region;
         this.farmers = new Array()
         this.initializeResources()
     }
@@ -59,9 +60,13 @@ export class Hero {
         return this.region;
     }
 
+    public getFarmers(){
+        return this.farmers
+    }
+
     public pickupFarmer() {
-        if(this.region.getFarmer().length != 0){
-            var farmer = this.region.getFarmer().pop()!;
+        if(this.region.farmers.length != 0){
+            var farmer = this.region.farmers.pop()!;
             farmer.carriedBy = this;
             this.farmer = true;
             this.farmers.push(farmer);
@@ -80,29 +85,26 @@ export class Hero {
 
     private initializeResources() {
         this.will = 7;
+        this.strength = 1;
 
         if (this.hk === HeroKind.Archer) {
             this.gold = 1
-            this.strength = 2
-            this.region = new Region(25, false, 24, [23, 24, 31, 27, 26], false)
+            //this.region = new Region(25, false, 24, [23, 24, 31, 27, 26], false)
         } else if (this.hk === HeroKind.Dwarf) {
             this.gold = 1
-            this.strength = 2
-            this.region = new Region(7, false, 0, [
-                15, 9, 8, 0, 11
-            ], false)
+           // this.region = new Region(7, false, 0, [
+             //   15, 9, 8, 0, 11
+            //], false)
         } else if (this.hk === HeroKind.Mage) {
             this.gold = 1
-            this.strength = 2
-            this.region = new Region(24, false, 23, [   //SHOULD BE 34!!!!!!
+            /* this.region = new Region(24, false, 23, [   //SHOULD BE 34!!!!!!
                 72, 23, 35, 30, 29
-            ], false)
+            ], false) */
         } else if (this.hk === HeroKind.Warrior) {
             this.gold = 1
-            this.strength = 2
-            this.region = new Region(14, false, 2, [
+            /* this.region = new Region(14, false, 2, [
                 2, 3, 6, 10, 17, 18
-            ], false)
+            ], false) */
         }
     }
 

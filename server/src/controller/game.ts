@@ -16,13 +16,17 @@ export function game(socket, model: Game) {
 
   socket.on("pickupFarmer", function(heroId, callback){
     let success = false;
+    heroId = socket.conn.id;
     let hero = model.getHero(heroId);
 
-    if(typeof(hero) != undefined){
+    console.log("hello",hero)
+    if(hero !== undefined){
       success = hero.pickupFarmer();
     }
 
     if(success){
+      console.log("pickedup", hero);
+
       socket.broadcast.emit("updateFarmer");
       callback();
     }

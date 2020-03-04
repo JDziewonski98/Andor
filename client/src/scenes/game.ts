@@ -23,11 +23,11 @@ export default class GameScene extends Phaser.Scene {
 
   constructor() {
     super({ key: 'Game' });
-    this.farmer = new Array(2);
+    this.farmer = new Array();
   }
 
   public init(data) {
-    this.gameinstance = data.gameinstance;
+    this.gameinstance = data.controller;
   }
 
   public preload() {
@@ -117,14 +117,16 @@ export default class GameScene extends Phaser.Scene {
     var self = this;
 
     farmerOne.on('pointerdown', function (pointer) {
-      if(self.hero.tile.id == self.farmer[0].tile.id){
+      console.log(this);
+      //if(self.hero.tile.id == self.farmer[0].tile.id){
         self.gameinstance.pickupFarmer(self.hero.id, function(){
           farmerOne.destroy();
         });
-      }
+      //}
 
     }, this);
 
+    
     this.gameinstance.updateFarmer(function(){
       farmerOne.destroy();
     });

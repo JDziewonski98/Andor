@@ -23,4 +23,4 @@ lobbynsp.on("connection", function (socket){
 	lobby(socket, l, io)
 });
 
-console.log(require('os').networkInterfaces()['en0'][1]['address'])
+// console.log(require('os').networkInterfaces()['eth0'][1]['address'])

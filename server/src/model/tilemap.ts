@@ -1,3 +1,5 @@
+import { Farmer } from '.';
+
 export var map = [
     {
         "id" : 0,
@@ -6,7 +8,8 @@ export var map = [
         ],
         "hasWell":false,
         "nextRegionId":-1,
-        "hasMerchant":false
+        "hasMerchant":false,
+        "farmers": new Array()
     },
     {
         "id" : 1,
@@ -222,7 +225,8 @@ export var map = [
         ],
         "hasWell":false,
         "nextRegionId":21,
-        "hasMerchant":false
+        "hasMerchant":false,
+        "farmers": new Array(),
     },
     {
         "id" : 25,

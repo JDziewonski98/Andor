@@ -33,14 +33,23 @@ export class Game {
         this.regions = new Array();
         this.farmers = new Array();
         this.setRegions();
+        this.setFarmers();
     }
 
     private setFarmers(){
+        //this.regions[24].initFarmer()
         this.farmers.push(new Farmer(this.regions[24]));
         this.farmers.push(new Farmer(this.regions[36]));
-
-        this.regions[24].addFarmer(this.farmers[0]);
-        this.regions[36].addFarmer(this.farmers[1]);
+        
+        
+        //this.regions[24].farmers = new Array();
+        //this.regions[24].farmers.push(this.farmers[0]);
+        
+        //this.regions[24].addFarmer(new Farmer(this.regions[24]));
+        this.regions[24].farmers.push(this.farmers[0]);
+        console.log(this.regions[24])
+       // this.regions[36].addFarmer(this.farmers[1]);
+       
     }
 
     private setRegions() {
@@ -67,7 +76,7 @@ export class Game {
                 return false;
             }
         })
-        this.heroList.set(id, new Hero(heroType));
+        this.heroList.set(id, new Hero(heroType, this.regions[24]));
         this.availableHeros = this.availableHeros.filter(h => h != heroType);
         return true;
 
