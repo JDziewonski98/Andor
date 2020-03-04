@@ -1,6 +1,6 @@
 export enum HeroKind {
-    Archer,
-    Dwarf,
-    Mage,
-    Warrior
+    Archer = "archer",
+    Dwarf = "dwarf",
+    Mage = "mage",
+    Warrior = "warrior"
 }

@@ -28,9 +28,13 @@ export function game(socket, model: Game) {
       success = model.bindHero(id, HeroKind.Dwarf);
 
     if (success) {
-      let availableHeros = []
-      socket.broadcast.emit("updateHeroList", availableHeros)
-      callback(availableHeros);
+      let remaining = model.getAvailableHeros();
+      let heros = {
+        taken: ["archer", "warrior", "mage", "dwarf"].filter(f => !remaining.toString().includes(f)),
+        remaining: remaining
+      } 
+      socket.broadcast.emit("updateHeroList", heros)
+      callback(heros);
     }
 
   });

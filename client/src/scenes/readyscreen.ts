@@ -96,31 +96,48 @@ export default class ReadyScreenScene extends Phaser.Scene {
 
         }, this);
 
-        this.gameController.updateHeroList(this.updateHeroList)
+        this.gameController.updateHeroList(function(heros){ 
+            heros.taken.forEach(hero => {
+                self[hero].setTint(0x404040)
+            });
+            heros.remaining.forEach(hero => {
+                self[hero].setTint()
+            })
+        })
 
+       
     }
 
     private attachHeroBinding(item) {
         item.setInteractive();
         var self = this;
         item.on('pointerdown', function () {
-            console.log(self.ready)
-            if (!self.ready) {
+            // if (!self.ready) {
                 self.selection.x = item.x;
-                self.gameController.bindHeroForSelf(item.name, function (availableHeros) {
+                self.gameController.bindHeroForSelf(item.name, function (heros) {
                     self.ready = true;
-                    self[item.name].setTint(0x404040);
-                    self.updateHeroList(availableHeros);
+                    // self[item.name].setTint(0x404040);
+                    self.updateHeroList(heros);
                 })
-            }
+            // }
 
         });
 
     }
 
-    private updateHeroList(availableHeros){
-        console.log("Remining heros are: ", availableHeros);
+    private updateHeroList(heros){
+        console.log("Remining heros are: ", heros);
+        var self = this;
+        console.log(self)
+        heros.taken.forEach(hero => {
+            self[hero].setTint(0x404040)
+        });
+        heros.remaining.forEach(hero => {
+            self[hero].setTint()
+        })
+        
     }
+    
 
     public tween() {
         //  Flash the prompt

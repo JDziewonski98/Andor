@@ -15,8 +15,11 @@ export class Game {
     private players: Set<Player>;
     private name: string;
     private chatlog: any;
+    // playerID mapping to Hero.
     private heroList: Map<string, Hero>;
     private regions: Array<Region>;
+
+    private availableHeros: Array<HeroKind> = new Array(HeroKind.Archer, HeroKind.Dwarf, HeroKind.Mage, HeroKind.Warrior);
 
     constructor(name: string, numOfDesiredPlayers: number, difficulty: GameDifficulty) {
         this.name = name;
@@ -55,12 +58,18 @@ export class Game {
             }
         })
         this.heroList.set(id, new Hero(heroType));
+
+        this.availableHeros = this.availableHeros.filter(h => h != heroType);
         return true;
 
     }
 
     public getHero(id: string): Hero | undefined {
         return this.heroList.get(id);
+    }
+
+    public getAvailableHeros() {
+        return this.availableHeros;
     }
 
     public getNumOfDesiredPlayers(): number {
@@ -81,6 +90,10 @@ export class Game {
                 return;
             }
         })
+        if (this.heroList.has(id)) {
+            this.availableHeros.push(this.heroList.get(id)!.getKind())
+            this.heroList.delete(id);
+        }
     }
 
     public removeFarmer(f: Farmer) {
