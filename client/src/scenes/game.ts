@@ -52,7 +52,6 @@ export default class GameScene extends Phaser.Scene {
 
     this.hourTrackerSetup();
 
-    this.test()
   }
 
   private cameraSetup() {
@@ -142,10 +141,6 @@ export default class GameScene extends Phaser.Scene {
 
   private escChat(){
     WindowManager.destroy(this, 'chat');
-  }
-
-  private test() {
-    var socket = io.connect("http://localhost:3000/game");
   }
 
   public update() {
