@@ -10,15 +10,16 @@ by a
 */
 export class Tile extends Phaser.GameObjects.Sprite {
     public adjacent: Tile[] = [];
+    public adjRegionsIds: number[] = [];
     public id: number;
     public heroexist: boolean = false;
-    public x: number;
-    public y: number;
-    private graphic;
+    public xcoord: number;
+    public ycoord: number;
+    public graphic;
     // Should support multiple heroes
     public hero: Hero;
     public heroCoords;
-
+  
     constructor(id, scene, x, y, texture) {
         super(scene, x, y, 'tiles', texture);
         this.id = id;
@@ -78,5 +79,9 @@ export class Tile extends Phaser.GameObjects.Sprite {
             catch (e) { console.log(e) }
         });
 
+    }
+
+    public setSprite(texture){
+        this.texture = texture
     }
 }
