@@ -22,3 +22,5 @@ var l = new Lobby()
 lobbynsp.on("connection", function (socket){
 	lobby(socket, l, io)
 });
+
+console.log(require('os').networkInterfaces()['en0'][1]['address'])

@@ -15,13 +15,16 @@ export class game {
         return io.connect(BASE_API + `/${name}`);
     }
 
-    public bindHero(herotype) {
-        this.socket.emit("bind hero", herotype)
+    public bindHeroForSelf(herotype, callback) {
+        this.socket.emit("bind hero", herotype, callback)
+    }
+
+    public updateHeroList(callback){
+        this.socket.on("updateHeroList", callback)
     }
 
     public send(msg, callback) {
-        let t = this.socket.emit("send message", msg, callback);
-        console.log(t)
+        this.socket.emit("send message", msg, callback);
     }
 
     public pickupFarmer(heroID, callback){

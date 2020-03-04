@@ -37,6 +37,9 @@ export default class CreateGameScene extends Phaser.Scene {
         element.on('click', function (event) {
 
             if (event.target.name === 'submitButton') {
+                var numPlayersSelect = this.getChildByName('numPlayers');
+                var numPlayers = numPlayersSelect.options[numPlayersSelect.selectedIndex].text
+                console.log(numPlayers);
                 var inputText = this.getChildByName('Game Name');
 
                 //  Have they entered anything?
@@ -44,7 +47,7 @@ export default class CreateGameScene extends Phaser.Scene {
                     //  Turn off the click events
                     this.removeListener('click')
 
-                    self.lobbyController.createGame(inputText.value, 4, "Easy");
+                    self.lobbyController.createGame(inputText.value, numPlayers, "Easy");
 
                     this.setVisible(false)
 

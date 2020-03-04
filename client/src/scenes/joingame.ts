@@ -78,6 +78,8 @@ export default class JoinGameScene extends Phaser.Scene {
             form.innerHTML = form.innerHTML + '<option value="'+ e + '">' + e + '</option>'
         });
 
+        var self = this;
+
         //for clicking, Join Game
         element.addListener('click');
         element.on('click', function (event) {
@@ -89,7 +91,8 @@ export default class JoinGameScene extends Phaser.Scene {
                 //  Have they entered anything?
                 if (selectedOption.value !== '')
                 {
-                    this.scene.scene.start('Ready', {name: gamename})
+                    self.lobbyController.addPlayerToGame(gamename, null);
+                    self.scene.start('Ready', {name: gamename})
                 }
             }
 

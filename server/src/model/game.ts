@@ -2,25 +2,31 @@ import { GameDifficulty } from "./GameDifficulty"
 import { RietburgCastle } from "./RietburgCastle"
 import { Farmer } from "./Farmer"
 import { Region } from "./region"
+import { Player } from "./player"
+import { Hero } from "./hero"
+import { HeroKind } from './HeroKind'
 import { Monster } from './monster';
 
 export class Game {
-    
+
     private numOfDesiredPlayers: number;
     private difficulty: GameDifficulty;
     private castle: RietburgCastle;
+    private players: Set<Player>;
     private name: string;
     private chatlog: any;
-    private regions: Region[] = [];
+    private heroList: Map<string, Hero>;
+    private regions: Array<Region>;
 
-    constructor(name: string, numOfDesiredPlayers: number, difficulty: GameDifficulty){
-        // console.log("Server game constructor");
+    constructor(name: string, numOfDesiredPlayers: number, difficulty: GameDifficulty) {
         this.name = name;
         this.numOfDesiredPlayers = numOfDesiredPlayers;
         this.difficulty = difficulty;
         this.castle = new RietburgCastle();
         this.chatlog = [];
-        this.regions = [];
+        this.players = new Set<Player>();
+        this.heroList = new Map<string, Hero>();
+        this.regions = new Array();
         this.setRegions();
     }
 
@@ -36,31 +42,72 @@ export class Game {
         return this.name;
     }
 
-    public removeFarmer(f: Farmer){
+    /*
+    * Attach player ID to hero if nobody else selected the same HeroType
+    * @param id is player socket ID
+    * @param heroType
+    */
+    public bindHero(id: string, heroType: HeroKind): boolean {
+        // Herokind already been taken
+        this.heroList.forEach((hero, key) => {
+            if (hero.getKind() === heroType) {
+                return false;
+            }
+        })
+        this.heroList.set(id, new Hero(heroType));
+        return true;
+
+    }
+
+    public getHero(id: string): Hero | undefined {
+        return this.heroList.get(id);
+    }
+
+    public getNumOfDesiredPlayers(): number {
+        return this.numOfDesiredPlayers;
+    }
+    public getPlayers(): Set<Player> {
+        return this.players;
+    }
+
+    public addPlayer(p: Player) {
+        this.players.add(p);
+    }
+
+    public removePlayer(id: string) {
+        this.players.forEach((player) => {
+            if (player.getID() === id) {
+                this.players.delete(player);
+                return;
+            }
+        })
+    }
+
+    public removeFarmer(f: Farmer) {
         //TO BE IMPLEMENTED
     }
 
-    private endGame(){
+    private endGame() {
         //TO BE IMPLEMENTED
     }
 
-    private checkMonsterInRietburg(){
+    private checkMonsterInRietburg() {
         //TO BE IMPLEMENTED
     }
 
-    private checkForFarmer(tile: Region){
+    private checkForFarmer(tile: Region) {
         //TO BE IMPLEMENTED
     }
 
-    private checkHeroOnWellTile(){
+    private checkHeroOnWellTile() {
         //TO BE IMPLEMENTED
     }
 
-    private replenishWell(){
+    private replenishWell() {
         //TO BE IMPLEMENTED
     }
 
-    private incrementNarratorPosition(){
+    private incrementNarratorPosition() {
         //TO BE IMPLEMENTED
     }
 
