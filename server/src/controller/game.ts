@@ -62,6 +62,11 @@ export function game(socket, model: Game) {
     callback(model.getChatLog())
   })
 
+  socket.on("dropGold", function (callback) {
+    //to do
+    callback()
+  })
+
   function getCurrentDate() {
     var currentDate = new Date();
     var day = (currentDate.getDate() < 10 ? '0' : '') + currentDate.getDate();

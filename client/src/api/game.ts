@@ -26,13 +26,16 @@ export class game {
     public send(msg, callback) {
         this.socket.emit("send message", msg, callback);
     }
-    
+
     public recieve(callback) {
         this.socket.on("update messages", callback);
     }
 
     public getChatLog(callback) {
         this.socket.emit('getChatLog', callback)
+    }
+    public dropGold(amount, callback) {
+        this.socket.emit("dropGold", amount, callback)
     }
 
 }
