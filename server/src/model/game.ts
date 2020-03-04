@@ -56,7 +56,10 @@ export class Game {
         // Note that regions 73-79 and 83 are unused, but created anyways to preserve direct
         // indexing between regions array and region IDs
         var tilesData = require("./tilemap").map;
-        this.regions = JSON.parse(JSON.stringify(tilesData));
+        tilesData.forEach(t => {
+            this.regions.push(new Region(t.id, t.nextRegionId, t.adjRegionsIds, t.hasWell, t.hasMerchant))
+        })
+        console.log(this.regions[2].getNextRegionId())
         // console.log("regions sanity check:", this.regions);
     }
 

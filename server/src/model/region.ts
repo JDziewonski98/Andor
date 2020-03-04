@@ -1,24 +1,18 @@
 import { Monster, Farmer } from '.';
 
 export class Region {
-    public adjRegionsIds: number[] = [];
-    public nextRegionId;
-    public id;
-    // public heroexist: boolean = false;
-    //public x: number;
-    //public y: number;
-    // private graphic;
-    // public currHero: Hero;
-    // private fog: Fog;
+    private adjRegionsIds: Array<number>;
+    private nextRegionId: number;
+    private id: number;
     private gold;
     // private wineskins: Wineskin[] = [];
     public farmers: Array<Farmer>;
-    private hasWell;
-    private hasMerchant;
+    private hasWell: boolean;
+    private hasMerchant: boolean;
     private wellUsed: boolean = false;
-    private currMonster;
+    private curMonster!: Monster;
     
-    constructor(id, hasWell, nextRegion, adjRegions, hasMerchant) {
+    constructor(id: number, nextRegion: number, adjRegions: Array<number>, hasWell: boolean = false, hasMerchant: boolean = false) {
         this.id = id;
         this.hasWell = hasWell;
         this.hasMerchant = hasMerchant;
@@ -44,10 +38,10 @@ export class Region {
 
     //deviates from design class diagrma
     public setMonster(m: Monster) {
-        this.currMonster = m;
+        this.curMonster = m;
     }
     public getMonster() {
-        return this.currMonster;
+        return this.curMonster;
     }
 
     // public addWineskin(w: Wineskin) {
