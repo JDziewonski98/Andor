@@ -25,6 +25,10 @@ export class lobby {
         this.socket.emit("getGames", callback)
     }
 
+    public addPlayerToGame(name, callback){
+        this.socket.emit("joinGame", name, callback)
+    }
+
     public recieveGames(callback) {
         this.socket.on('recieveGames', callback);
     }

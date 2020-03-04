@@ -4,7 +4,7 @@ import { HeroKind } from './HeroKind';
 export class Player {
     private readyToPlay: boolean;
     private id: string;
-    private hero;
+    private hero!: Hero;
 
     constructor(id: string){
         this.readyToPlay = false;
@@ -23,8 +23,8 @@ export class Player {
         this.readyToPlay = state;
     }
 
-    public createHero(herotype: HeroKind) {
-        this.hero = new Hero(herotype, 1, 3, 3, 3);
+    public attachHero(hero: Hero) {
+        this.hero = hero;
     }
 
     public getHero() {

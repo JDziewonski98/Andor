@@ -1,9 +1,9 @@
 export class WindowManager extends Phaser.Scene {
-    private chatlog
+    
     public static create(self, key: string, obj, data){
         if (key == 'chat') {
             //were making chat window
-            var win = new obj(key, data.gameinstance)
+            var win = new obj(key, data.controller)
         }
         else {
             //were making hero window
