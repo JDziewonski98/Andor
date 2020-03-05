@@ -30,8 +30,8 @@ export class Tile extends Phaser.GameObjects.Sprite {
         this.y = y;
         this.hero = null;
         this.farmer = new Array(2);
-        this.on('pointerdown', function (pointer) { this.printstuff() });
-        this.on('pointerdown', function (pointer) { this.moveRequest() })
+        //this.on('pointerdown', function (pointer) { this.printstuff() });
+        //this.on('pointerdown', function (pointer) { this.moveRequest() })
 
         // Set coordinates for hero representations as 2d array
         this.heroCoords = [
@@ -93,4 +93,22 @@ export class Tile extends Phaser.GameObjects.Sprite {
     public setSprite(texture){
         this.texture = texture
     }
+
+
+    // public getAdjecent(){
+
+    // }
+    
+    //  public adjacent: Tile[] = [];
+    // public adjRegionsIds: number[] = [];
+    // public id: number;
+    // public heroexist: boolean = false;
+    // public farmerexist: boolean = false;
+    // public x: number;
+    // public y: number;
+    // // Should support multiple heroes
+    // public hero: Hero;
+    // public farmer: Array<Farmer>;
+    // public heroCoords;
+    // public farmerCoords;
 }

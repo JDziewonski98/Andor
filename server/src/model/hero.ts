@@ -63,6 +63,9 @@ export class Hero {
     public getFarmers(){
         return this.farmers
     }
+    public canMoveTo(tile){
+       
+    }
 
     public pickupFarmer() {
         var r_farmers = this.region.getFarmers();

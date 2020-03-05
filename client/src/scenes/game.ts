@@ -53,10 +53,9 @@ export default class GameScene extends Phaser.Scene {
 
     this.setRegions();
 
-    this.addDwarfMock();
-    this.addMageMock();
-    this.addFarmerMock();
-
+    //this.addDwarfMock();
+    //this.addMageMock();
+    // this.addFarmerMock()
     this.hourTrackerSetup();
 
   }
@@ -92,6 +91,17 @@ export default class GameScene extends Phaser.Scene {
       //  console.log(element, data[element].xcoord, data[element].ycoord, treeTile);
       //  this.tiles[element.id] = new tile()
     }
+
+    /// for movement callback, ties pointerdown to move request
+    var that = this
+    this.tiles.map(function(tile){
+      tile.on('pointerdown', function(){
+        //tile.printstuff()
+        that.moveRequest(tile, function(){
+          console.log("callbackkk")
+        })
+      })
+    })
     // // Get the file name of the desired frame to pass as texture
     // var treeTile = this.textures.get('tiles').getFrameNames()[12];
     // var mageStartTile = new Tile(9, this, tile9X, tile9Y, treeTile);
@@ -171,44 +181,6 @@ export default class GameScene extends Phaser.Scene {
     });
   }
 
-  private addMageMock() {
-    // Demo tile for mage - Tiles should have better encapsulation lol
-    var tile9X = this.tiles[9].x * scaleFactor + borderWidth;
-    var tile9Y = this.tiles[9].y * scaleFactor + borderWidth;
-    console.log("mage", tile9X, tile9Y)
-
-    // Get the file name of the desired frame to pass as texture
-    var treeTile = this.textures.get('tiles').getFrameNames()[12];
-    var mageStartTile = new Tile(24, this, tile9X, tile9Y, treeTile);
-    mageStartTile.setInteractive();
-    this.add.existing(mageStartTile);
-
-    var mageStartX = mageStartTile.heroCoords[0][0];
-    var mageStartY = mageStartTile.heroCoords[0][1];
-    var mageHero = this.add.sprite(mageStartX, mageStartY, 'magemale').setDisplaySize(40, 40);
-    this.heroes.push(new Hero(0, this, mageHero, 0, 0, mageStartTile));
-    mageStartTile.hero = this.heroes[0];
-    mageStartTile.heroexist = true;
-
-    // Add adjacent tile for mock movement
-    var tile8X = 2010 * scaleFactor + borderWidth;
-    var tile8Y = 820 * scaleFactor + borderWidth;
-    var mageAdjTile = new Tile(8, this, tile8X, tile8Y, treeTile);
-    mageAdjTile.adjRegionsIds.push(mageStartTile.id);
-    mageStartTile.adjRegionsIds.push(mageAdjTile.id);
-    mageAdjTile.setInteractive();
-    this.add.existing(mageAdjTile);
-
-    mageHero.depth = 5;// What is this for?
-    // Deprecated code, "return to lobby" should be moved into overlay or options scene
-    // mageHero.setInteractive();
-    // mageHero.on('pointerdown', function (pointer) {
-    //   this.tiles = []
-    //   WindowManager.destroy(this, 'chat');
-    //   this.scene.start('Lobby');
-    // }, this);
-  }
-
   private addDwarfMock() {
     // Demo tile for dwarf - Tiles should have better encapsulation lol
     var tile43X = this.tiles[43].x * scaleFactor + borderWidth;
@@ -238,11 +210,15 @@ export default class GameScene extends Phaser.Scene {
 
     dwarfHero.depth = 5;// What is this for?
   }
-
+  
+  private addMageMock() {
+  }
   private addArcherMock() {
   }
   private addWarriorMock() {
   }
+
+
 
   // Creating the hour tracker
   private hourTrackerSetup() {
@@ -281,7 +257,9 @@ export default class GameScene extends Phaser.Scene {
   private escChat() {
     WindowManager.destroy(this, 'chat');
   }
-
+  private moveRequest(tile, callback){
+    this.gameinstance.moveTo(tile, callback)
+  }
   public update() {
     var camera = this.cameras.main;
 
