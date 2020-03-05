@@ -47,6 +47,9 @@ export class Region {
     // public addWineskin(w: Wineskin) {
     //     this.wineskins.push(w);
     // }
+    public getID(){
+        return this.id;
+    }
 
     public getNextRegionId() {
         return this.nextRegionId;

@@ -65,7 +65,8 @@ export class Hero {
     }
 
     public pickupFarmer() {
-        if(this.region.getFarmers().length != 0){
+        var r_farmers = this.region.getFarmers();
+        if(r_farmers.length != 0 && (this.region.getID() === r_farmers[r_farmers.length-1].tile.getID())){
             var farmer = this.region.getFarmers().pop()!;
             farmer.carriedBy = this;
             this.farmer = true;

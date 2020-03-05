@@ -41,14 +41,10 @@ export class Game {
         this.farmers.push(new Farmer(this.regions[24]));
         this.farmers.push(new Farmer(this.regions[36]));
         
-        
-        //this.regions[24].farmers = new Array();
-        //this.regions[24].farmers.push(this.farmers[0]);
-        
         this.regions[24].addFarmer(this.farmers[0]);
-        //this.regions[24].farmers.push(this.farmers[0]);
-        console.log(this.regions[24])
-       // this.regions[36].addFarmer(this.farmers[1]);
+        this.regions[36].addFarmer(this.farmers[1]);
+        
+        console.log(this.regions[36])
        
     }
 
@@ -79,7 +75,19 @@ export class Game {
                 return false;
             }
         })
-        this.heroList.set(id, new Hero(heroType, this.regions[24]));
+        if(heroType === HeroKind.Dwarf){
+            this.heroList.set(id, new Hero(heroType, this.regions[7]));
+        }
+        else if(heroType === HeroKind.Archer){
+            this.heroList.set(id, new Hero(heroType, this.regions[25]));
+        }
+        else if(heroType === HeroKind.Mage){
+            this.heroList.set(id, new Hero(heroType, this.regions[24]));//34!!!!!!!
+        }
+        else if(heroType === HeroKind.Warrior){
+            this.heroList.set(id, new Hero(heroType, this.regions[14]));
+        }
+
         this.availableHeros = this.availableHeros.filter(h => h != heroType);
         return true;
 

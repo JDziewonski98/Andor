@@ -50,8 +50,8 @@ export default class GameScene extends Phaser.Scene {
     // TODO: instantiate all tiles in GUI at start of game
     // Define JSON for this: each tile needs manual x,y set
 
-    this.addMageMock();
     this.addDwarfMock();
+    this.addMageMock();
     this.addFarmerMock();
 
     this.hourTrackerSetup();
@@ -117,18 +117,33 @@ export default class GameScene extends Phaser.Scene {
     var self = this;
 
     farmerOne.on('pointerdown', function (pointer) {
-      console.log(this);
-      //if(self.hero.tile.id == self.farmer[0].tile.id){
+      console.log(self.farmer[0].tile.id)
+      console.log(this.hero.tile.id)
+      if(self.hero.tile.id == self.farmer[0].tile.id){
         self.gameinstance.pickupFarmer(self.hero.id, function(){
           farmerOne.destroy();
+          //TODO: Add farmer to player inventory and display on player inventory card
         });
-      //}
+      }
+
+    }, this);
+
+    farmerTwo.on('pointerdown', function (pointer) {
+      if(self.hero.tile.id == self.farmer[1].tile.id){
+        self.gameinstance.pickupFarmer(self.hero.id, function(){
+          farmerTwo.destroy();
+        });
+      }
 
     }, this);
 
     
     this.gameinstance.updateFarmer(function(){
       farmerOne.destroy();
+    });
+
+    this.gameinstance.updateFarmer(function(){
+      farmerTwo.destroy();
     });
   }
 
