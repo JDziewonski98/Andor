@@ -1,11 +1,13 @@
-import { GameDifficulty } from "./GameDifficulty"
-import { RietburgCastle } from "./RietburgCastle"
-import { Farmer } from "./Farmer"
-import { Region } from "./region"
-import { Player } from "./player"
-import { Hero } from "./hero"
-import { HeroKind } from './HeroKind'
-import { Monster } from './monster';
+import { 
+    GameDifficulty, 
+    RietburgCastle, 
+    Farmer, 
+    Region, 
+    Player, 
+    Hero, 
+    HeroKind, 
+    Monster 
+} from "."
 
 export class Game {
 
@@ -14,7 +16,7 @@ export class Game {
     private castle: RietburgCastle;
     private players: Set<Player>;
     private name: string;
-    private chatlog: any;
+    private chatlog;
     // playerID mapping to Hero.
     private heroList: Map<string, Hero>;
     private regions: Array<Region>;
@@ -30,13 +32,13 @@ export class Game {
         this.chatlog = [];
         this.players = new Set<Player>();
         this.heroList = new Map<string, Hero>();
-        this.regions = new Array();
-        this.farmers = new Array();
+        this.regions = new Array<Region>();
+        this.farmers = new Array<Farmer>();
         this.setRegions();
         this.setFarmers();
     }
 
-    private setFarmers(){
+    private setFarmers() {
         //this.regions[24].initFarmer()
         this.farmers.push(new Farmer(this.regions[24]));
         this.farmers.push(new Farmer(this.regions[36]));
@@ -45,7 +47,7 @@ export class Game {
         this.regions[36].addFarmer(this.farmers[1]);
         
         console.log(this.regions[36])
-       
+
     }
 
     private setRegions() {
@@ -93,7 +95,7 @@ export class Game {
 
     }
 
-    public getHero(id: string): Hero{
+    public getHero(id: string): Hero {
         return this.heroList.get(id)!;
     }
 

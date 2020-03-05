@@ -30,8 +30,8 @@ export class Hero extends Phaser.GameObjects.Sprite {
         // All heroes use the same hour tracker, access with their id
         if (this.hourTracker.getCount(this.id) < 7) {
             this.tile = newTile;
-            this.x = newTile.x;
-            this.y = newTile.y;
+            this.x = newTile.heroCoords[this.id][0];
+            this.y = newTile.heroCoords[this.id][1];
             this.sprite.x = this.x;
             this.sprite.y = this.y;
             this.hourTracker.incHour(this.id);
@@ -43,4 +43,7 @@ export class Hero extends Phaser.GameObjects.Sprite {
         this.hourTracker.reset(this.id);
     }
 
+    public dropGold(amount) {
+
+    }
 }

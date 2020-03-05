@@ -53,6 +53,7 @@ export function game(socket, model: Game) {
       } 
       socket.broadcast.emit("updateHeroList", heros)
       callback(heros);
+      console.log(id, "chose: ", heroType)
     }
 
   });
@@ -78,6 +79,11 @@ export function game(socket, model: Game) {
 
   socket.on("getChatLog", function (callback) {
     callback(model.getChatLog())
+  })
+
+  socket.on("dropGold", function (callback) {
+    // TODO:
+    callback()
   })
 
   function getCurrentDate() {
