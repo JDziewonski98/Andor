@@ -407,8 +407,8 @@ export var map = [
         "hasWell": false,
         "nextRegionId": 16,
         "hasMerchant": false,
-        "xcoord": 2512,
-        "ycoord": 6064
+        "xcoord": 3696,
+        "ycoord": 3575
     },
     {
         "id": 37,
