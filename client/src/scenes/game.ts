@@ -53,9 +53,9 @@ export default class GameScene extends Phaser.Scene {
 
     this.setRegions();
 
-    //this.addMageMock();
-    //this.addDwarfMock();
-    // this.addFarmerMock();s
+    this.addDwarfMock();
+    this.addMageMock();
+    this.addFarmerMock();
 
     this.hourTrackerSetup();
 
@@ -141,18 +141,33 @@ export default class GameScene extends Phaser.Scene {
     var self = this;
 
     farmerOne.on('pointerdown', function (pointer) {
-      console.log(this);
-      //if(self.hero.tile.id == self.farmer[0].tile.id){
-        // self.gameinstance.pickupFarmer(self.hero.id, function(){
-        //   farmerOne.destroy();
-        // });
-      //}
+      console.log(self.farmers[0].tile.id)
+      console.log(this.hero.tile.id)
+      if(self.heroes[0].tile.id == self.farmers[0].tile.id){
+        self.gameinstance.pickupFarmer(self.heroes[0].id, function(){
+          farmerOne.destroy();
+          //TODO: Add farmer to player inventory and display on player inventory card
+        });
+      }
+
+    }, this);
+
+    farmerTwo.on('pointerdown', function (pointer) {
+      if(self.heroes[0].tile.id == self.farmers[1].tile.id){
+        self.gameinstance.pickupFarmer(self.heroes[0].id, function(){
+          farmerTwo.destroy();
+        });
+      }
 
     }, this);
 
     
     this.gameinstance.updateFarmer(function(){
       farmerOne.destroy();
+    });
+
+    this.gameinstance.updateFarmer(function(){
+      farmerTwo.destroy();
     });
   }
 
