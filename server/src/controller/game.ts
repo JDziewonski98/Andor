@@ -2,16 +2,29 @@ import { Game, HeroKind, Region} from '../model';
 
 export function game(socket, model: Game) {
 
-  socket.on("heroMove", function (heroId, callback) {
-    let successful: boolean = false
+  socket.on("moveRequest", function (tile, callback) {
+    console.log("Recieved moveRequest")
+    let canMove: boolean = false
+    /* currently does not work 
+    var heroId = socket.conn.id
+    let hero = model.getHero(heroId);
+    console.log(hero)
+    for(var id in hero.getRegion().getAdjRegionsIds()){
+      if(model.getRegions()[id] === tile){
+        console.log("Can move from tile: ", tile.id, " to tile: ", id)
+      }
+  }
+    /*
+    
     // any logic for movement here
 
-    if (successful) {
+    if (canMove) {
       socket.broadcast.emit("updateHeroMove", heroId);
     } else {
       // could emit event for handling failure move case here.
     }
     callback();
+   */
   });
 
   socket.on("pickupFarmer", function(heroId, callback){
@@ -38,6 +51,7 @@ export function game(socket, model: Game) {
 
     if (heroType === "archer")
       success = model.bindHero(id, HeroKind.Archer);
+
     else if (heroType === "warrior")
       success = model.bindHero(id, HeroKind.Warrior);
     else if (heroType === "mage")
