@@ -35,6 +35,7 @@ export function game(socket, model: Game) {
       } 
       socket.broadcast.emit("updateHeroList", heros)
       callback(heros);
+      console.log(id, "chose: ", heroType)
     }
 
   });
@@ -63,7 +64,7 @@ export function game(socket, model: Game) {
   })
 
   socket.on("dropGold", function (callback) {
-    //to do
+    // TODO:
     callback()
   })
 

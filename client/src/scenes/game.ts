@@ -2,8 +2,7 @@ import { Tile } from '../objects/tile';
 import { WindowManager } from "../utils/WindowManager";
 import { Hero } from '../objects/hero';
 import { HourTracker } from '../objects/hourTracker';
-import * as io from "socket.io-client";
-import { game } from '../api/game';
+import { game } from '../api';
 import {
   expandedWidth, expandedHeight, borderWidth,
   fullWidth, fullHeight, htX, htY, scaleFactor
@@ -11,8 +10,8 @@ import {
 
 
 export default class GameScene extends Phaser.Scene {
-  private heroes: Hero[] = [];
-  public tiles: Tile[] = [];
+  private heroes: Hero[];
+  public tiles: Tile[];
   private hourTracker: HourTracker;
   private gameinstance: game;
 
@@ -24,6 +23,9 @@ export default class GameScene extends Phaser.Scene {
 
   constructor() {
     super({ key: 'Game' });
+    this.heroes = Array<Hero>();
+    this.tiles = Array<Tile>();
+
   }
 
   public init(data) {
@@ -46,9 +48,6 @@ export default class GameScene extends Phaser.Scene {
 
     // Bring overlay scene to top
     this.sys.game.scene.bringToTop('BoardOverlay');
-
-    // TODO: instantiate all tiles in GUI at start of game
-    // Define JSON for this: each tile needs manual x,y set
 
     this.setRegions();
 
@@ -79,17 +78,15 @@ export default class GameScene extends Phaser.Scene {
     // Note that regions 73-79 and 83 are unused, but created anyways to preserve direct
     // indexing between regions array and region IDs
     var tilesData = require("../../assets/xycoords").map;
-    var data = JSON.parse(JSON.stringify(tilesData));
 
     // console.log("regions sanity check:", data);
     // console.log(data.type);
     var treeTile = this.textures.get('tiles').getFrameNames()[12];
-    for (var element in data) {
-      var tile = new Tile(element, this, data[element].xcoord * scaleFactor + borderWidth, data[element].ycoord * scaleFactor + borderWidth, treeTile);
+    for (var element in tilesData) {
+      var tile = new Tile(element, this, tilesData[element].xcoord * scaleFactor + borderWidth, tilesData[element].ycoord * scaleFactor + borderWidth, treeTile);
       this.tiles[element] = tile;
       tile.setInteractive();
       this.add.existing(tile);
-      console.log(tile.texture)
       //  console.log(element, data[element].xcoord, data[element].ycoord, treeTile);
       //  this.tiles[element.id] = new tile()
     }
@@ -102,8 +99,8 @@ export default class GameScene extends Phaser.Scene {
 
   private addMageMock() {
     // Demo tile for mage - Tiles should have better encapsulation lol
-    var tile9X = 1500 * scaleFactor + borderWidth;
-    var tile9Y = 250 * scaleFactor + borderWidth;
+    var tile9X = this.tiles[9].x * scaleFactor + borderWidth;
+    var tile9Y = this.tiles[9].y * scaleFactor + borderWidth;
     console.log("mage", tile9X, tile9Y)
 
     // Get the file name of the desired frame to pass as texture
@@ -140,8 +137,8 @@ export default class GameScene extends Phaser.Scene {
 
   private addDwarfMock() {
     // Demo tile for dwarf - Tiles should have better encapsulation lol
-    var tile43X = 6460 * scaleFactor + borderWidth;
-    var tile43Y = 4360 * scaleFactor + borderWidth;
+    var tile43X = this.tiles[43].x * scaleFactor + borderWidth;
+    var tile43Y = this.tiles[43].y * scaleFactor + borderWidth;
 
     // Get the file name of the desired frame to pass as texture
     var treeTile = this.textures.get('tiles').getFrameNames()[12];

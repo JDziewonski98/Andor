@@ -13,8 +13,8 @@ export class Tile extends Phaser.GameObjects.Sprite {
     public adjRegionsIds: number[] = [];
     public id: number;
     public heroexist: boolean = false;
-    public xcoord: number;
-    public ycoord: number;
+    public x: number;
+    public y: number;
     public graphic;
     // Should support multiple heroes
     public hero: Hero;
