@@ -141,8 +141,6 @@ export default class GameScene extends Phaser.Scene {
     var self = this;
 
     farmerOne.on('pointerdown', function (pointer) {
-      console.log(self.farmers[0].tile.id)
-      console.log(this.hero.tile.id)
       if(self.heroes[0].tile.id == self.farmers[0].tile.id){
         self.gameinstance.pickupFarmer(self.heroes[0].id, function(){
           farmerOne.destroy();
@@ -173,7 +171,7 @@ export default class GameScene extends Phaser.Scene {
 
   private addMageMock() {
     // Demo tile for mage - Tiles should have better encapsulation lol
-    var tile9X = this.tiles[9].x * scaleFactor + borderWidth;
+    /* var tile9X = this.tiles[9].x * scaleFactor + borderWidth;
     var tile9Y = this.tiles[9].y * scaleFactor + borderWidth;
     console.log("mage", tile9X, tile9Y)
 
@@ -181,7 +179,9 @@ export default class GameScene extends Phaser.Scene {
     var treeTile = this.textures.get('tiles').getFrameNames()[12];
     var mageStartTile = new Tile(24, this, tile9X, tile9Y, treeTile);
     mageStartTile.setInteractive();
-    this.add.existing(mageStartTile);
+    this.add.existing(mageStartTile); */
+    var treeTile = this.textures.get('tiles').getFrameNames()[12];
+    var mageStartTile = this.tiles[9]
 
     var mageStartX = mageStartTile.heroCoords[0][0];
     var mageStartY = mageStartTile.heroCoords[0][1];
