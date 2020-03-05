@@ -1,35 +1,25 @@
-import { Monster } from '.';
+import { Monster, Farmer } from '.';
 
 export class Region {
-    public adjRegionsIds: number[] = [];
-    public nextRegionId;
-    public id;
-    // public heroexist: boolean = false;
-    //public x: number;
-    //public y: number;
-    // private graphic;
-    // public currHero: Hero;
-    // private fog: Fog;
+    private adjRegionsIds: Array<number>;
+    private nextRegionId: number;
+    private id: number;
     private gold;
     // private wineskins: Wineskin[] = [];
-    // private farmers: Farmer[] = [];
-    private hasWell;
-    private hasMerchant;
+    private farmers: Array<Farmer>;
+    private hasWell: boolean;
+    private hasMerchant: boolean;
     private wellUsed: boolean = false;
-    private currMonster;
+    private curMonster!: Monster;
     
-    // constructor(id, hasWell, monster, nextRegion, adjRegions, hasMerchant) {
-    //     this.id = id;
-    //     //this.x = x;
-    //     //this.y = y;
-    //     // this.hero = null;
-    //     this.hasWell = hasWell;
-    //     this.hasMerchant = hasMerchant;
-    //     this.nextRegionId = nextRegion;
-    //     this.adjRegionsIds = adjRegions;
-    //     // this.currHero = hero;
-    //     this.currMonster = monster;
-    // }
+    constructor(id: number, nextRegion: number, adjRegions: Array<number>, hasWell: boolean = false, hasMerchant: boolean = false) {
+        this.id = id;
+        this.hasWell = hasWell;
+        this.hasMerchant = hasMerchant;
+        this.nextRegionId = nextRegion;
+        this.adjRegionsIds = adjRegions;
+        this.farmers = new Array();
+    }
 
     // public removeHero() {
     //     currHero = null;
@@ -48,10 +38,10 @@ export class Region {
 
     //deviates from design class diagrma
     public setMonster(m: Monster) {
-        this.currMonster = m;
+        this.curMonster = m;
     }
     public getMonster() {
-        return this.currMonster;
+        return this.curMonster;
     }
 
     // public addWineskin(w: Wineskin) {
@@ -62,10 +52,14 @@ export class Region {
         return this.nextRegionId;
     }
 
-    // public removeFarmer() {
-    //     this.farmers = [];
-    // }
-    // public addFarmer(f: Farmer) {
-    //     this.farmers.push(f);
-    // }
+    public getFarmers(): Array<Farmer>{
+        return this.farmers!;
+    }
+
+    public removeFarmer() {
+         this.farmers = [];
+    }
+    public addFarmer(f: Farmer) {
+        this.farmers.push(f);
+    }
 }

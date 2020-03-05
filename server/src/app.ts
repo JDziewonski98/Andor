@@ -14,7 +14,7 @@ app.use(express.urlencoded({ extended: true }));
 server.listen(port, '0.0.0.0');
 
 // import controllers that we need from here
-import { game, lobby } from "./controller";
+import { lobby } from "./controller";
 import { Lobby } from "./model"
 
 var lobbynsp = io.of("/lobby")
@@ -23,4 +23,8 @@ lobbynsp.on("connection", function (socket){
 	lobby(socket, l, io)
 });
 
-console.log(require('os').networkInterfaces()['en0'][1]['address'])
+// for mac users
+// console.log(require('os').networkInterfaces()['en0'][1]['address'])
+
+// for windows users
+// console.log(require('os').networkInterfaces()['eth0'][1]['address'])

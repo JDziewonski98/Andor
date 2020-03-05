@@ -1,4 +1,4 @@
-import { Game, HeroKind } from '../model';
+import { Game, HeroKind, Region} from '../model';
 
 export function game(socket, model: Game) {
 
@@ -14,6 +14,24 @@ export function game(socket, model: Game) {
     callback();
   });
 
+  socket.on("pickupFarmer", function(heroId, callback){
+    let success = false;
+    heroId = socket.conn.id;
+    let hero = model.getHero(heroId);
+
+    console.log("hello",hero)
+    if(hero !== undefined){
+      success = hero.pickupFarmer();
+    }
+
+    if(success){
+      console.log("pickedup", hero);
+
+      socket.broadcast.emit("updateFarmer");
+      callback();
+    }
+  });
+    
   socket.on('bind hero', function (heroType, callback) {
     let success = false;
     let id = socket.conn.id;
@@ -35,6 +53,7 @@ export function game(socket, model: Game) {
       } 
       socket.broadcast.emit("updateHeroList", heros)
       callback(heros);
+      console.log(id, "chose: ", heroType)
     }
 
   });
@@ -60,6 +79,11 @@ export function game(socket, model: Game) {
 
   socket.on("getChatLog", function (callback) {
     callback(model.getChatLog())
+  })
+
+  socket.on("dropGold", function (callback) {
+    // TODO:
+    callback()
   })
 
   function getCurrentDate() {
