@@ -8,7 +8,7 @@ import {
   expandedWidth, expandedHeight, borderWidth,
   fullWidth, fullHeight, htX, htY, scaleFactor
 } from '../constants'
-import { Game } from 'phaser';
+
 
 export default class GameScene extends Phaser.Scene {
   private heroes: Hero[] = [];
@@ -50,8 +50,10 @@ export default class GameScene extends Phaser.Scene {
     // TODO: instantiate all tiles in GUI at start of game
     // Define JSON for this: each tile needs manual x,y set
 
-    this.addMageMock();
-    this.addDwarfMock();
+    this.setRegions();
+
+    //this.addMageMock();
+    //this.addDwarfMock();
 
     this.hourTrackerSetup();
 
@@ -71,6 +73,31 @@ export default class GameScene extends Phaser.Scene {
       zoomIn: 'plus',
       zoomOut: 'minus'
     });
+  }
+
+  private setRegions() {
+    // Note that regions 73-79 and 83 are unused, but created anyways to preserve direct
+    // indexing between regions array and region IDs
+    var tilesData = require("../../assets/xycoords").map;
+    var data = JSON.parse(JSON.stringify(tilesData));
+
+    // console.log("regions sanity check:", data);
+    // console.log(data.type);
+    var treeTile = this.textures.get('tiles').getFrameNames()[12];
+    for (var element in data) {
+      var tile = new Tile(element, this, data[element].xcoord * scaleFactor + borderWidth, data[element].ycoord * scaleFactor + borderWidth, treeTile);
+      this.tiles[element] = tile;
+      tile.setInteractive();
+      this.add.existing(tile);
+      console.log(tile.texture)
+      //  console.log(element, data[element].xcoord, data[element].ycoord, treeTile);
+      //  this.tiles[element.id] = new tile()
+    }
+    // // Get the file name of the desired frame to pass as texture
+    // var treeTile = this.textures.get('tiles').getFrameNames()[12];
+    // var mageStartTile = new Tile(9, this, tile9X, tile9Y, treeTile);
+    // mageStartTile.setInteractive();
+    // this.add.existing(mageStartTile);
   }
 
   private addMageMock() {
@@ -96,19 +123,19 @@ export default class GameScene extends Phaser.Scene {
     var tile8X = 2010 * scaleFactor + borderWidth;
     var tile8Y = 820 * scaleFactor + borderWidth;
     var mageAdjTile = new Tile(8, this, tile8X, tile8Y, treeTile);
-    mageAdjTile.adjacent.push(mageStartTile);
-    mageStartTile.adjacent.push(mageAdjTile);
+    mageAdjTile.adjRegionsIds.push(mageStartTile.id);
+    mageStartTile.adjRegionsIds.push(mageAdjTile.id);
     mageAdjTile.setInteractive();
     this.add.existing(mageAdjTile);
 
     mageHero.depth = 5;// What is this for?
     // Deprecated code, "return to lobby" should be moved into overlay or options scene
-    mageHero.setInteractive();
-    mageHero.on('pointerdown', function (pointer) {
-      this.tiles = []
-      WindowManager.destroy(this, 'chat');
-      this.scene.start('Lobby');
-    }, this);
+    // mageHero.setInteractive();
+    // mageHero.on('pointerdown', function (pointer) {
+    //   this.tiles = []
+    //   WindowManager.destroy(this, 'chat');
+    //   this.scene.start('Lobby');
+    // }, this);
   }
 
   private addDwarfMock() {
@@ -141,18 +168,34 @@ export default class GameScene extends Phaser.Scene {
     dwarfHero.depth = 5;// What is this for?
   }
 
+  private addArcherMock() {
+  }
+  private addWarriorMock() {
+  }
+
+  // Creating the hour tracker
   private hourTrackerSetup() {
-    // Creating the hour tracker
+    //x, y coorindates
     var htx = htX;
     var hty = htY;
+    // Hero icons
     var mageHtIcon = this.add.sprite(htx, hty, 'magemale').setDisplaySize(40, 40);
     var dwarfHtIcon = this.add.sprite(htx, hty, 'dwarfmale').setDisplaySize(40, 40);
-    //this.hourTracker = new HourTracker(this, htx, hty, [mageHtIcon, dwarfHtIcon]);
+    var archerHtIcon = this.add.sprite(htx, hty, 'archermale').setDisplaySize(40, 40);
+    var warriorHtIcon = this.add.sprite(htx, hty, 'warriormale').setDisplaySize(40, 40);
+
+    this.hourTracker = new HourTracker(this, htx, hty, [mageHtIcon, dwarfHtIcon, archerHtIcon, warriorHtIcon]);
+
     // Hero ids are hardcoded for now, need to be linked to game setup
     mageHtIcon.x = this.hourTracker.heroCoords[0][0];
     mageHtIcon.y = this.hourTracker.heroCoords[0][1];
     dwarfHtIcon.x = this.hourTracker.heroCoords[1][0];
     dwarfHtIcon.y = this.hourTracker.heroCoords[1][1];
+    archerHtIcon.x = this.hourTracker.heroCoords[2][0];
+    archerHtIcon.y = this.hourTracker.heroCoords[2][1];
+    warriorHtIcon.x = this.hourTracker.heroCoords[3][0];
+    warriorHtIcon.y = this.hourTracker.heroCoords[3][1];
+
     // we're not actually adding the hourTracker, we're adding it's internal sprite
     this.hourTracker.depth = 5;
     this.hourTracker.depth = 0;
