@@ -1,3 +1,5 @@
+import { Farmer } from '.';
+
 export var map = [
     {
         "id": 0,
@@ -8,7 +10,8 @@ export var map = [
         "nextRegionId": -1,
         "hasMerchant": false,
         "xcoord": 1180,
-        "ycoord": 1680
+        "ycoord": 1680,
+        "farmers": []
     },
     {
         "id": 1,
@@ -272,7 +275,8 @@ export var map = [
         "nextRegionId": 21,
         "hasMerchant": false,
         "xcoord": 248,
-        "ycoord": 3960
+        "ycoord": 3960,
+        "farmers": []
     },
     {
         "id": 25,

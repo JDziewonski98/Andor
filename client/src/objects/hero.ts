@@ -1,6 +1,7 @@
 import * as Phaser from 'phaser';
 import { Tile } from './tile';
 import { HourTracker } from './hourTracker';
+import { Farmer } from './farmer';
 // import { boardScalingFactor } from '../scenes/game'
 
 // Why are Heroes Sprites and also take a Sprite as a constructor
@@ -13,6 +14,7 @@ export class Hero extends Phaser.GameObjects.Sprite {
     public y: number;
     public hourTracker: HourTracker;
     public sprite: Phaser.GameObjects.Sprite;
+    public farmer: Array<Farmer>;
 
     constructor(id, scene, sprite, x, y, tile) {
         super(scene, sprite, x, y);
@@ -20,6 +22,8 @@ export class Hero extends Phaser.GameObjects.Sprite {
         this.x = x;
         this.y = y;
         this.sprite = sprite;
+        this.farmer = new Array(2);
+        this.tile = tile;
     }
 
     public move(newTile) {

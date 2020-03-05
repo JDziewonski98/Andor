@@ -23,4 +23,8 @@ lobbynsp.on("connection", function (socket){
 	lobby(socket, l, io)
 });
 
+// for mac users
 // console.log(require('os').networkInterfaces()['en0'][1]['address'])
+
+// for windows users
+// console.log(require('os').networkInterfaces()['eth0'][1]['address'])

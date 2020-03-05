@@ -1,11 +1,13 @@
-import { GameDifficulty } from "./GameDifficulty"
-import { RietburgCastle } from "./RietburgCastle"
-import { Farmer } from "./Farmer"
-import { Region } from "./region"
-import { Player } from "./player"
-import { Hero } from "./hero"
-import { HeroKind } from './HeroKind'
-import { Monster } from './monster';
+import { 
+    GameDifficulty, 
+    RietburgCastle, 
+    Farmer, 
+    Region, 
+    Player, 
+    Hero, 
+    HeroKind, 
+    Monster 
+} from "."
 
 export class Game {
 
@@ -14,10 +16,11 @@ export class Game {
     private castle: RietburgCastle;
     private players: Set<Player>;
     private name: string;
-    private chatlog: any;
+    private chatlog;
     // playerID mapping to Hero.
     private heroList: Map<string, Hero>;
     private regions: Array<Region>;
+    private farmers: Array<Farmer>;
 
     private availableHeros: Array<HeroKind> = new Array(HeroKind.Archer, HeroKind.Dwarf, HeroKind.Mage, HeroKind.Warrior);
 
@@ -29,15 +32,35 @@ export class Game {
         this.chatlog = [];
         this.players = new Set<Player>();
         this.heroList = new Map<string, Hero>();
-        this.regions = new Array();
+        this.regions = new Array<Region>();
+        this.farmers = new Array<Farmer>();
         this.setRegions();
+        this.setFarmers();
+    }
+
+    private setFarmers() {
+        //this.regions[24].initFarmer()
+        this.farmers.push(new Farmer(this.regions[24]));
+        this.farmers.push(new Farmer(this.regions[36]));
+
+
+        //this.regions[24].farmers = new Array();
+        //this.regions[24].farmers.push(this.farmers[0]);
+
+        this.regions[24].addFarmer(this.farmers[0]);
+        //this.regions[24].farmers.push(this.farmers[0]);
+        // this.regions[36].addFarmer(this.farmers[1]);
+
     }
 
     private setRegions() {
         // Note that regions 73-79 and 83 are unused, but created anyways to preserve direct
         // indexing between regions array and region IDs
         var tilesData = require("./tilemap").map;
-        this.regions = JSON.parse(JSON.stringify(tilesData));
+        tilesData.forEach(t => {
+            this.regions.push(new Region(t.id, t.nextRegionId, t.adjRegionsIds, t.hasWell, t.hasMerchant))
+        })
+        //console.log(this.regions[2].getNextRegionId())
         // console.log("regions sanity check:", this.regions);
     }
 
@@ -57,14 +80,14 @@ export class Game {
                 return false;
             }
         })
-        this.heroList.set(id, new Hero(heroType));
+        this.heroList.set(id, new Hero(heroType, this.regions[24]));
         this.availableHeros = this.availableHeros.filter(h => h != heroType);
         return true;
 
     }
 
-    public getHero(id: string): Hero | undefined {
-        return this.heroList.get(id);
+    public getHero(id: string): Hero {
+        return this.heroList.get(id)!;
     }
 
     public getAvailableHeros() {

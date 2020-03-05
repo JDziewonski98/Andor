@@ -1,4 +1,5 @@
 import { Tile } from '../objects/tile';
+import { Farmer } from '../objects/farmer';
 import { WindowManager } from "../utils/WindowManager";
 import { Hero } from '../objects/hero';
 import { HourTracker } from '../objects/hourTracker';
@@ -11,7 +12,8 @@ import {
 
 export default class GameScene extends Phaser.Scene {
   private heroes: Hero[];
-  public tiles: Tile[];
+  private tiles: Tile[];
+  private farmers: Farmer[];
   private hourTracker: HourTracker;
   private gameinstance: game;
 
@@ -25,7 +27,7 @@ export default class GameScene extends Phaser.Scene {
     super({ key: 'Game' });
     this.heroes = Array<Hero>();
     this.tiles = Array<Tile>();
-
+    this.farmers = new Array<Farmer>();
   }
 
   public init(data) {
@@ -53,6 +55,7 @@ export default class GameScene extends Phaser.Scene {
 
     //this.addMageMock();
     //this.addDwarfMock();
+    // this.addFarmerMock();s
 
     this.hourTrackerSetup();
 
@@ -78,7 +81,6 @@ export default class GameScene extends Phaser.Scene {
     // Note that regions 73-79 and 83 are unused, but created anyways to preserve direct
     // indexing between regions array and region IDs
     var tilesData = require("../../assets/xycoords").map;
-
     // console.log("regions sanity check:", data);
     // console.log(data.type);
     var treeTile = this.textures.get('tiles').getFrameNames()[12];
@@ -97,6 +99,63 @@ export default class GameScene extends Phaser.Scene {
     // this.add.existing(mageStartTile);
   }
 
+  private addFarmerMock(){
+    // Demo tile for farmer 1 
+    var tile24X = 100*scaleFactor+borderWidth;
+    var tile24Y = 4150*scaleFactor+borderWidth;
+
+    // Demo tile for farmer 1 
+    var tile36X = 3600*scaleFactor+borderWidth;
+    var tile36Y = 3500*scaleFactor+borderWidth;
+
+    // Get the file name of the desired frame to pass as texture
+    var treeTile = this.textures.get('tiles').getFrameNames()[12];
+    var farmerOneStartTile = new Tile(24, this, tile24X, tile24Y, treeTile);
+    var farmerTwoStartTile = new Tile(36, this, tile36X, tile36Y, treeTile);
+
+    farmerOneStartTile.setInteractive();
+    this.add.existing(farmerOneStartTile);
+    farmerTwoStartTile.setInteractive();
+    this.add.existing(farmerTwoStartTile);
+
+    var farmerOneStartX = farmerOneStartTile.farmerCoords[1][0];
+    var farmerOneStartY = farmerOneStartTile.farmerCoords[1][1];
+    var farmerTwoStartX = farmerTwoStartTile.farmerCoords[1][0];
+    var farmerTwoStartY = farmerTwoStartTile.farmerCoords[1][1];
+
+    var farmerOne = this.add.sprite(farmerOneStartX, farmerOneStartY, 'dwarfmale').setDisplaySize(40, 40);
+    var farmerTwo = this.add.sprite(farmerTwoStartX, farmerTwoStartY, 'dwarfmale').setDisplaySize(40, 40);
+
+    farmerOne.setInteractive();
+    farmerTwo.setInteractive();
+    
+
+    this.farmers.push(new Farmer(this, farmerOne, 0, 0, farmerOneStartTile));
+    this.farmers.push(new Farmer(this, farmerTwo, 0, 0, farmerTwoStartTile));
+
+    farmerOneStartTile.farmer.push(this.farmers[0]);
+    farmerOneStartTile.farmerexist = true;
+    farmerTwoStartTile.farmer.push(this.farmers[1]);
+    farmerTwoStartTile.farmerexist = true;
+
+    var self = this;
+
+    farmerOne.on('pointerdown', function (pointer) {
+      console.log(this);
+      //if(self.hero.tile.id == self.farmer[0].tile.id){
+        // self.gameinstance.pickupFarmer(self.hero.id, function(){
+        //   farmerOne.destroy();
+        // });
+      //}
+
+    }, this);
+
+    
+    this.gameinstance.updateFarmer(function(){
+      farmerOne.destroy();
+    });
+  }
+
   private addMageMock() {
     // Demo tile for mage - Tiles should have better encapsulation lol
     var tile9X = this.tiles[9].x * scaleFactor + borderWidth;
@@ -105,7 +164,7 @@ export default class GameScene extends Phaser.Scene {
 
     // Get the file name of the desired frame to pass as texture
     var treeTile = this.textures.get('tiles').getFrameNames()[12];
-    var mageStartTile = new Tile(9, this, tile9X, tile9Y, treeTile);
+    var mageStartTile = new Tile(24, this, tile9X, tile9Y, treeTile);
     mageStartTile.setInteractive();
     this.add.existing(mageStartTile);
 

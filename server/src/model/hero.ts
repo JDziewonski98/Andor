@@ -1,18 +1,22 @@
 import { HeroKind } from "./HeroKind";
 import { Region } from './region';
+import { Farmer } from '.';
 
 export class Hero {
     private hk: HeroKind;
-    //private region: Region;
+    private region!: Region;
     private gold!: number;
     private strength!: number;
     private will!: number;
     private moveCompleted: boolean = false;
     private timeOfDay: number = 1;
     private farmer: boolean = false;
+    private farmers: Array<Farmer>;
 
-    constructor(hk: HeroKind) {
+    constructor(hk: HeroKind, region:Region) {
         this.hk = hk
+        this.region = region;
+        this.farmers = new Array()
         this.initializeResources()
     }
 
@@ -48,12 +52,27 @@ export class Hero {
         this.moveCompleted = b;
     }
 
-    private setRegion(r) {
-        //this.region = r;
+    public setRegion(r: Region) {
+        this.region = r;
     }
 
-    private pickupFarmer() {
-        // TODO: Implement
+    public getRegion(){
+        return this.region;
+    }
+
+    public getFarmers(){
+        return this.farmers
+    }
+
+    public pickupFarmer() {
+        if(this.region.getFarmers().length != 0){
+            var farmer = this.region.getFarmers().pop()!;
+            farmer.carriedBy = this;
+            this.farmer = true;
+            this.farmers.push(farmer);
+            return true;
+        }
+        return false;
     }
 
     private farmerSlotEmpty() {
@@ -65,22 +84,27 @@ export class Hero {
     }
 
     private initializeResources() {
+        this.will = 7;
+        this.strength = 1;
+
         if (this.hk === HeroKind.Archer) {
             this.gold = 1
-            this.strength = 2
-            this.will = 3
+            //this.region = new Region(25, false, 24, [23, 24, 31, 27, 26], false)
         } else if (this.hk === HeroKind.Dwarf) {
             this.gold = 1
-            this.strength = 2
-            this.will = 3
+           // this.region = new Region(7, false, 0, [
+             //   15, 9, 8, 0, 11
+            //], false)
         } else if (this.hk === HeroKind.Mage) {
             this.gold = 1
-            this.strength = 2
-            this.will = 3
+            /* this.region = new Region(24, false, 23, [   //SHOULD BE 34!!!!!!
+                72, 23, 35, 30, 29
+            ], false) */
         } else if (this.hk === HeroKind.Warrior) {
             this.gold = 1
-            this.strength = 2
-            this.will = 3
+            /* this.region = new Region(14, false, 2, [
+                2, 3, 6, 10, 17, 18
+            ], false) */
         }
     }
 
