@@ -80,6 +80,7 @@ export default class ReadyScreenScene extends Phaser.Scene {
         this.playbutton.on('pointerdown', function (pointer) {
             if (this.ready) {
                 this.scene.start('Game', { controller: self.gameController });
+                this.scene.start('BoardOverlay',{gameinstance:self.gameController});
             }
             else {
                 this.tween()
