@@ -46,6 +46,11 @@ export class game {
     public getChatLog(callback) {
         this.socket.emit('getChatLog', callback)
     }
+
+    // TODO movement
+    public moveTo(tile, callback){
+        this.socket.emit('moveRequest', tile, callback)
+    }
     
 }
 

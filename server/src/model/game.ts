@@ -60,7 +60,9 @@ export class Game {
         //console.log(this.regions[2].getNextRegionId())
         // console.log("regions sanity check:", this.regions);
     }
-
+    public getRegions() : Region[]{
+        return this.regions
+    }
     public getName(): string {
         return this.name;
     }
