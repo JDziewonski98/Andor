@@ -66,9 +66,6 @@ export default class ReadyScreenScene extends Phaser.Scene {
         this.selection.angle = 90
         this.readytext = this.add.text(200, 450, 'Ready?', { fontFamily: '"Roboto Condensed"', fontSize: "40px", color: "#E42168" })
 
-        // var heroselect = this.add.dom(400, 400).createFromCache('readyform')
-        // var readytable = this.add.dom(690, 420).createFromCache('readytable')
-
         // back button
         var backbutton = this.add.sprite(50, 550, 'backbutton').setInteractive()
         backbutton.flipX = true
@@ -78,12 +75,13 @@ export default class ReadyScreenScene extends Phaser.Scene {
         }, this);
 
         var self = this;
-
+        //callback
         function setRdy(num) {
             self.readyplayers = num
             console.log('rdyplayers ' , self.readyplayers)
         }
 
+        //advance to game button.
         this.playbutton = this.add.sprite(950, 550, 'playbutton').setInteractive()
         this.playbutton.on('pointerdown', function (pointer) {
             self.gameController.getReadyPlayers()
@@ -120,9 +118,8 @@ export default class ReadyScreenScene extends Phaser.Scene {
             })
         })
 
-
+        //callbacks
         function remListener(hero) {
-            console.log('xxxxxxxxxx')
             self[hero].removeListener('pointerdown')
         }
 
@@ -140,7 +137,6 @@ export default class ReadyScreenScene extends Phaser.Scene {
         var self = this;
         item.on('pointerdown', function () {
             if (!self.ready) {
-                self.gameController.getReadyPlayers()
                 self.selection.x = item.x;
                 self.gameController.bindHeroForSelf(item.name, function (heros) {
                     self.ready = true;
@@ -153,6 +149,7 @@ export default class ReadyScreenScene extends Phaser.Scene {
                 })
                 self.gameController.playerReady()
                 self.gameController.getDesiredPlayerCount()
+                self.gameController.getReadyPlayers()
             }
 
         });
