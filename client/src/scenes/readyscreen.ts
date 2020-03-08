@@ -90,6 +90,7 @@ export default class ReadyScreenScene extends Phaser.Scene {
             self.gameController.getDesiredPlayerCount()
             if (this.ready && this.readyplayers == this.desiredplayers) {
                 this.scene.start('Game', { controller: self.gameController });
+                this.scene.start('BoardOverlay',{gameinstance:self.gameController});
             }
             else {
                 this.tween()
