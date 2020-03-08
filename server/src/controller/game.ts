@@ -91,8 +91,29 @@ export function game(socket, model: Game) {
     callback(sent_msg);
   });
 
+  socket.on('removeListener', function (object) {
+    console.log('removing ', object)
+    socket.broadcast.emit('removeObjListener',object)
+  })
+
   socket.on("getChatLog", function (callback) {
     callback(model.getChatLog())
+  })
+
+  socket.on('playerReady', function () {
+    model.readyplayers += 1;
+    console.log('ready players: ', model.readyplayers)
+    socket.broadcast.emit('recieveDesiredPlayerCount', model.getNumOfDesiredPlayers())
+  })
+
+  socket.on('getReadyPlayers', function() {
+    socket.broadcast.emit('sendReadyPlayers', model.readyplayers)
+    socket.emit('sendReadyPlayers', model.readyplayers)
+  })
+
+  socket.on('getDesiredPlayerCount', function() {
+    socket.broadcast.emit('recieveDesiredPlayerCount', model.getNumOfDesiredPlayers())
+    socket.emit('recieveDesiredPlayerCount', model.getNumOfDesiredPlayers())
   })
 
   socket.on("dropGold", function (callback) {

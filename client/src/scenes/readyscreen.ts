@@ -14,6 +14,8 @@ export default class ReadyScreenScene extends Phaser.Scene {
     public readytext: GameObjects.Text;
     public gameController: game;
     private chatText: GameObjects.Text;
+    public readyplayers = -1;
+    public desiredplayers;
 
     constructor() {
         super({ key: 'Ready' });
@@ -76,9 +78,17 @@ export default class ReadyScreenScene extends Phaser.Scene {
         }, this);
 
         var self = this;
+
+        function setRdy(num) {
+            self.readyplayers = num
+            console.log('rdyplayers ' , self.readyplayers)
+        }
+
         this.playbutton = this.add.sprite(950, 550, 'playbutton').setInteractive()
         this.playbutton.on('pointerdown', function (pointer) {
-            if (this.ready) {
+            self.gameController.getReadyPlayers()
+            self.gameController.getDesiredPlayerCount()
+            if (this.ready && this.readyplayers == this.desiredplayers) {
                 this.scene.start('Game', { controller: self.gameController });
             }
             else {
@@ -102,6 +112,7 @@ export default class ReadyScreenScene extends Phaser.Scene {
         this.gameController.updateHeroList(function (heros) {
             heros.taken.forEach(hero => {
                 self[hero].setTint(0x404040)
+                self.gameController.removeListener(hero)
             });
             heros.remaining.forEach(hero => {
                 self[hero].setTint()
@@ -109,6 +120,18 @@ export default class ReadyScreenScene extends Phaser.Scene {
         })
 
 
+        function remListener(hero) {
+            console.log('xxxxxxxxxx')
+            self[hero].removeListener('pointerdown')
+        }
+
+        function setDesPlayers(n) {
+            self.desiredplayers = n
+        }
+
+        this.gameController.removeObjListener(remListener)
+        this.gameController.recieveReadyPlayers(setRdy)
+        this.gameController.recieveDesiredPlayerCount(setDesPlayers)
     }
 
     private attachHeroBinding(item) {
@@ -116,6 +139,7 @@ export default class ReadyScreenScene extends Phaser.Scene {
         var self = this;
         item.on('pointerdown', function () {
             if (!self.ready) {
+                self.gameController.getReadyPlayers()
                 self.selection.x = item.x;
                 self.gameController.bindHeroForSelf(item.name, function (heros) {
                     self.ready = true;
@@ -126,6 +150,8 @@ export default class ReadyScreenScene extends Phaser.Scene {
                         self[hero].setTint()
                     })
                 })
+                self.gameController.playerReady()
+                self.gameController.getDesiredPlayerCount()
             }
 
         });

@@ -32,6 +32,7 @@ export default class GameScene extends Phaser.Scene {
 
   public init(data) {
     this.gameinstance = data.controller;
+    this.sys.game.scene.bringToTop('BoardOverlay');
   }
 
   public preload() {
