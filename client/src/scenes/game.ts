@@ -14,6 +14,7 @@ import {
 export default class GameScene extends Phaser.Scene {
   private heroes: Hero[];
   private hero: Hero;
+  private ownHeroType: string;
   private tiles: Tile[];
   private farmers: Farmer[];
   private hourTracker: HourTracker;
@@ -30,15 +31,13 @@ export default class GameScene extends Phaser.Scene {
     this.heroes = Array<Hero>();
     this.tiles = Array<Tile>();
     this.farmers = new Array<Farmer>();
-    this.gameinstance.getHeros((heros) => {
-      
 
-    })
 
   }
 
   public init(data) {
     this.gameinstance = data.controller;
+    this.ownHeroType = data.heroType;
     this.sys.game.scene.bringToTop('BoardOverlay');
   }
 
@@ -61,10 +60,25 @@ export default class GameScene extends Phaser.Scene {
 
     this.setRegions();
 
-    this.addMage();
-    this.addDwarf();
-    this.addArcher();
-    this.addWarrior();
+    var self = this;
+    this.gameinstance.getHeros((herotypes) => {
+      console.log(herotypes)
+      herotypes.forEach(type => {
+        if (type === "archer")
+          self.addArcher();
+        else if (type === "mage")
+          self.addMage();
+        else if (type === "warrior")
+          self.addWarrior();
+        else if (type === "dwarf")
+          self.addDwarf();
+      });
+
+    })
+
+
+
+
     this.addFarmers()
     this.hourTrackerSetup();
 
@@ -119,7 +133,7 @@ export default class GameScene extends Phaser.Scene {
     // this.add.existing(mageStartTile);
   }
 
-  private addFarmers(){
+  private addFarmers() {
 
     const farmertile_0: Tile = this.tiles[24];
     const farmertile_1: Tile = this.tiles[36];
@@ -129,7 +143,7 @@ export default class GameScene extends Phaser.Scene {
 
     farmer_0.setInteractive();
     farmer_1.setInteractive();
-    
+
     this.farmers.push(farmer_0);
     this.farmers.push(farmer_1);
 
@@ -144,8 +158,8 @@ export default class GameScene extends Phaser.Scene {
     var self = this;
 
     farmer_0.on('pointerdown', function (pointer) {
-      if(self.hero.tile.id == self.farmers[0].tile.id){
-        self.gameinstance.pickupFarmer(self.heroes[0].id, function(){
+      if (self.hero.tile.id == self.farmers[0].tile.id) {
+        self.gameinstance.pickupFarmer(function () {
           farmer_0.destroy();
           //TODO: Add farmer to player inventory and display on player inventory card
         });
@@ -154,20 +168,20 @@ export default class GameScene extends Phaser.Scene {
     }, this);
 
     farmer_1.on('pointerdown', function (pointer) {
-      if(self.hero.tile.id == self.farmers[1].tile.id){
-        self.gameinstance.pickupFarmer(self.heroes[0].id, function(){
+      if (self.hero.tile.id == self.farmers[1].tile.id) {
+        self.gameinstance.pickupFarmer(function () {
           farmer_1.destroy();
         });
       }
 
     }, this);
 
-    
-    this.gameinstance.updateFarmer(function(){
+
+    this.gameinstance.updateFarmer(function () {
       farmer_0.destroy();
     });
 
-    this.gameinstance.updateFarmer(function(){
+    this.gameinstance.updateFarmer(function () {
       farmer_1.destroy();
     });
   }
@@ -180,16 +194,18 @@ export default class GameScene extends Phaser.Scene {
     tile.hero = hero;
     tile.heroexist = true;
     this.add.existing(hero);
+    if(this.ownHeroType === "dwarf") this.hero = hero;
   }
 
   private addMage() {
     const tile: Tile = this.tiles[mageTile]
-    let mage: Hero = new Hero(this, tile, 'magemale').setDisplaySize(40, 60);
-    this.heroes.push(mage);
+    let hero: Hero = new Hero(this, tile, 'magemale').setDisplaySize(40, 60);
+    this.heroes.push(hero);
 
-    tile.hero = mage;
+    tile.hero = hero;
     tile.heroexist = true;
-    this.add.existing(mage);
+    this.add.existing(hero);
+    if(this.ownHeroType === "mage") this.hero = hero;
   }
   private addArcher() {
     const tile: Tile = this.tiles[archerTile]
@@ -199,6 +215,7 @@ export default class GameScene extends Phaser.Scene {
     tile.hero = hero;
     tile.heroexist = true;
     this.add.existing(hero);
+    if(this.ownHeroType === "archer") this.hero = hero;
   }
   private addWarrior() {
     const tile: Tile = this.tiles[warriorTile]
@@ -208,6 +225,7 @@ export default class GameScene extends Phaser.Scene {
     tile.hero = hero;
     tile.heroexist = true;
     this.add.existing(hero);
+    if(this.ownHeroType === "warrior") this.hero = hero;
   }
 
 
