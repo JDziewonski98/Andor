@@ -54,8 +54,10 @@ export default class GameScene extends Phaser.Scene {
 
     this.setRegions();
 
-    //this.addDwarfMock();
-    //this.addMageMock();
+    this.addDwarf();
+    this.addMage();
+    this.addArcher();
+    this.addWarrior();
     // this.addFarmerMock()
     this.hourTrackerSetup();
 
@@ -94,11 +96,11 @@ export default class GameScene extends Phaser.Scene {
     }
 
     /// for movement callback, ties pointerdown to move request
-    var that = this
-    this.tiles.map(function(tile){
-      tile.on('pointerdown', function(){
+    var self = this
+    this.tiles.map(function (tile) {
+      tile.on('pointerdown', function () {
         //tile.printstuff()
-        that.moveRequest(tile, function(){
+        self.moveRequest(tile, function () {
           console.log("callbackkk")
         })
       })
@@ -110,19 +112,36 @@ export default class GameScene extends Phaser.Scene {
     // this.add.existing(mageStartTile);
   }
 
+<<<<<<< HEAD
   private addFarmerMock(){
 
     const farmertile_0: Tile = this.tiles[24];
     const farmertile_1: Tile = this.tiles[36];
+=======
+  private addFarmerMock() {
+    // Demo tile for farmer 1 
+    var tile24X = this.tiles[24].x * scaleFactor + borderWidth;
+    var tile24Y = this.tiles[24].y * scaleFactor + borderWidth;
+
+    // Demo tile for farmer 1 
+    var tile36X = 3600 * scaleFactor + borderWidth;
+    var tile36Y = 3500 * scaleFactor + borderWidth;
+>>>>>>> dbda4cd4d653ccd85834a0625d5945ba53f6bc46
 
     let farmer_0: Farmer = new Farmer(this, farmertile_0, 'dwarfmale').setDisplaySize(40, 40);
     let farmer_1: Farmer = new Farmer(this, farmertile_1, 'dwarfmale').setDisplaySize(40, 40);
 
+<<<<<<< HEAD
     farmer_0.setInteractive();
     farmer_1.setInteractive();
     
     this.farmers.push(farmer_0);
     this.farmers.push(farmer_1);
+=======
+    farmerOne.setInteractive();
+    farmerTwo.setInteractive();
+
+>>>>>>> dbda4cd4d653ccd85834a0625d5945ba53f6bc46
 
     farmertile_0.farmer.push(farmer_0);
     farmertile_0.farmerexist = true;
@@ -134,25 +153,40 @@ export default class GameScene extends Phaser.Scene {
 
     var self = this;
 
+<<<<<<< HEAD
     farmer_0.on('pointerdown', function (pointer) {
       if(self.heroes[0].tile.id == self.farmers[0].tile.id){
         self.gameinstance.pickupFarmer(self.heroes[0].id, function(){
           farmer_0.destroy();
+=======
+    farmerOne.on('pointerdown', function (pointer) {
+      if (self.heroes[0].tile.id == self.farmers[0].tile.id) {
+        self.gameinstance.pickupFarmer(self.heroes[0].id, function () {
+          farmerOne.destroy();
+>>>>>>> dbda4cd4d653ccd85834a0625d5945ba53f6bc46
           //TODO: Add farmer to player inventory and display on player inventory card
         });
       }
 
     }, this);
 
+<<<<<<< HEAD
     farmer_1.on('pointerdown', function (pointer) {
       if(self.heroes[0].tile.id == self.farmers[1].tile.id){
         self.gameinstance.pickupFarmer(self.heroes[0].id, function(){
           farmer_1.destroy();
+=======
+    farmerTwo.on('pointerdown', function (pointer) {
+      if (self.heroes[0].tile.id == self.farmers[1].tile.id) {
+        self.gameinstance.pickupFarmer(self.heroes[0].id, function () {
+          farmerTwo.destroy();
+>>>>>>> dbda4cd4d653ccd85834a0625d5945ba53f6bc46
         });
       }
 
     }, this);
 
+<<<<<<< HEAD
     
     this.gameinstance.updateFarmer(function(){
       farmer_0.destroy();
@@ -160,44 +194,54 @@ export default class GameScene extends Phaser.Scene {
 
     this.gameinstance.updateFarmer(function(){
       farmer_1.destroy();
+=======
+
+    this.gameinstance.updateFarmer(function () {
+      farmerOne.destroy();
+    });
+
+    this.gameinstance.updateFarmer(function () {
+      farmerTwo.destroy();
+>>>>>>> dbda4cd4d653ccd85834a0625d5945ba53f6bc46
     });
   }
 
-  private addDwarfMock() {
-    // Demo tile for dwarf - Tiles should have better encapsulation lol
-    var tile43X = this.tiles[43].x * scaleFactor + borderWidth;
-    var tile43Y = this.tiles[43].y * scaleFactor + borderWidth;
+  private addDwarf() {
+    const dwarfTile: Tile = this.tiles[7]
+    let dwarf: Hero = new Hero(1, this, dwarfTile, 'dwarfmale').setDisplaySize(40, 60);
+    this.heroes.push(dwarf);
 
-    // Get the file name of the desired frame to pass as texture
-    var treeTile = this.textures.get('tiles').getFrameNames()[12];
-    var dwarfStartTile = new Tile(43, this, tile43X, tile43Y, treeTile);
-    dwarfStartTile.setInteractive();
-    this.add.existing(dwarfStartTile);
-
-    var dwarfStartX = dwarfStartTile.heroCoords[1][0];
-    var dwarfStartY = dwarfStartTile.heroCoords[1][1];
-    var dwarfHero = this.add.sprite(dwarfStartX, dwarfStartY, 'dwarfmale').setDisplaySize(40, 40);
-    this.heroes.push(new Hero(1, this, dwarfHero, 0, 0, dwarfStartTile));
-    dwarfStartTile.hero = this.heroes[1];
-    dwarfStartTile.heroexist = true;
-
-    // Add adjacent tile for mock movement
-    var tile39X = 5640 * scaleFactor + borderWidth;
-    var tile39Y = 4370 * scaleFactor + borderWidth;
-    var dwarfAdjTile = new Tile(39, this, tile39X, tile39Y, treeTile);
-    dwarfAdjTile.adjacent.push(dwarfStartTile);
-    dwarfStartTile.adjacent.push(dwarfAdjTile);
-    dwarfAdjTile.setInteractive();
-    this.add.existing(dwarfAdjTile);
-
-    dwarfHero.depth = 5;// What is this for?
+    dwarfTile.hero = dwarf;
+    dwarfTile.heroexist = true;
+    this.add.existing(dwarf);
   }
-  
-  private addMageMock() {
+
+  private addMage() {
+    const mageTile: Tile = this.tiles[34]
+    let mage: Hero = new Hero(1, this, mageTile, 'magemale').setDisplaySize(40, 60);
+    this.heroes.push(mage);
+
+    mageTile.hero = mage;
+    mageTile.heroexist = true;
+    this.add.existing(mage);
   }
-  private addArcherMock() {
+  private addArcher() {
+    const archerTile: Tile = this.tiles[25]
+    let hero: Hero = new Hero(1, this, archerTile, 'archermale').setDisplaySize(40, 60);
+    this.heroes.push(hero);
+
+    archerTile.hero = hero;
+    archerTile.heroexist = true;
+    this.add.existing(hero);
   }
-  private addWarriorMock() {
+  private addWarrior() {
+    const tile: Tile = this.tiles[14]
+    let hero: Hero = new Hero(1, this, tile, 'warriormale').setDisplaySize(40, 60);
+    this.heroes.push(hero);
+
+    tile.hero = hero;
+    tile.heroexist = true;
+    this.add.existing(hero);
   }
 
 
@@ -228,8 +272,7 @@ export default class GameScene extends Phaser.Scene {
     // we're not actually adding the hourTracker, we're adding it's internal sprite
     this.hourTracker.depth = 5;
     this.hourTracker.depth = 0;
-    var h;
-    for (h of this.heroes) {
+    for (var h of this.heroes) {
       h.hourTracker = this.hourTracker;
     }
 
@@ -239,7 +282,8 @@ export default class GameScene extends Phaser.Scene {
   private escChat() {
     WindowManager.destroy(this, 'chat');
   }
-  private moveRequest(tile, callback){
+  private moveRequest(tile, callback) {
+    console.log("qoiwhuj requesting MOVEE", this.gameinstance)
     this.gameinstance.moveTo(tile, callback)
   }
   public update() {
