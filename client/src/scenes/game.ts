@@ -54,11 +54,11 @@ export default class GameScene extends Phaser.Scene {
 
     this.setRegions();
 
-    this.addDwarf();
     this.addMage();
+    this.addDwarf();
     this.addArcher();
     this.addWarrior();
-    // this.addFarmerMock()
+    this.addFarmers()
     this.hourTrackerSetup();
 
   }
@@ -112,36 +112,19 @@ export default class GameScene extends Phaser.Scene {
     // this.add.existing(mageStartTile);
   }
 
-<<<<<<< HEAD
-  private addFarmerMock(){
+  private addFarmers(){
 
     const farmertile_0: Tile = this.tiles[24];
     const farmertile_1: Tile = this.tiles[36];
-=======
-  private addFarmerMock() {
-    // Demo tile for farmer 1 
-    var tile24X = this.tiles[24].x * scaleFactor + borderWidth;
-    var tile24Y = this.tiles[24].y * scaleFactor + borderWidth;
-
-    // Demo tile for farmer 1 
-    var tile36X = 3600 * scaleFactor + borderWidth;
-    var tile36Y = 3500 * scaleFactor + borderWidth;
->>>>>>> dbda4cd4d653ccd85834a0625d5945ba53f6bc46
 
     let farmer_0: Farmer = new Farmer(this, farmertile_0, 'dwarfmale').setDisplaySize(40, 40);
     let farmer_1: Farmer = new Farmer(this, farmertile_1, 'dwarfmale').setDisplaySize(40, 40);
 
-<<<<<<< HEAD
     farmer_0.setInteractive();
     farmer_1.setInteractive();
     
     this.farmers.push(farmer_0);
     this.farmers.push(farmer_1);
-=======
-    farmerOne.setInteractive();
-    farmerTwo.setInteractive();
-
->>>>>>> dbda4cd4d653ccd85834a0625d5945ba53f6bc46
 
     farmertile_0.farmer.push(farmer_0);
     farmertile_0.farmerexist = true;
@@ -153,40 +136,25 @@ export default class GameScene extends Phaser.Scene {
 
     var self = this;
 
-<<<<<<< HEAD
     farmer_0.on('pointerdown', function (pointer) {
-      if(self.heroes[0].tile.id == self.farmers[0].tile.id){
+      if(self.hero.tile.id == self.farmers[0].tile.id){
         self.gameinstance.pickupFarmer(self.heroes[0].id, function(){
           farmer_0.destroy();
-=======
-    farmerOne.on('pointerdown', function (pointer) {
-      if (self.heroes[0].tile.id == self.farmers[0].tile.id) {
-        self.gameinstance.pickupFarmer(self.heroes[0].id, function () {
-          farmerOne.destroy();
->>>>>>> dbda4cd4d653ccd85834a0625d5945ba53f6bc46
           //TODO: Add farmer to player inventory and display on player inventory card
         });
       }
 
     }, this);
 
-<<<<<<< HEAD
     farmer_1.on('pointerdown', function (pointer) {
-      if(self.heroes[0].tile.id == self.farmers[1].tile.id){
+      if(self.hero.tile.id == self.farmers[1].tile.id){
         self.gameinstance.pickupFarmer(self.heroes[0].id, function(){
           farmer_1.destroy();
-=======
-    farmerTwo.on('pointerdown', function (pointer) {
-      if (self.heroes[0].tile.id == self.farmers[1].tile.id) {
-        self.gameinstance.pickupFarmer(self.heroes[0].id, function () {
-          farmerTwo.destroy();
->>>>>>> dbda4cd4d653ccd85834a0625d5945ba53f6bc46
         });
       }
 
     }, this);
 
-<<<<<<< HEAD
     
     this.gameinstance.updateFarmer(function(){
       farmer_0.destroy();
@@ -194,15 +162,6 @@ export default class GameScene extends Phaser.Scene {
 
     this.gameinstance.updateFarmer(function(){
       farmer_1.destroy();
-=======
-
-    this.gameinstance.updateFarmer(function () {
-      farmerOne.destroy();
-    });
-
-    this.gameinstance.updateFarmer(function () {
-      farmerTwo.destroy();
->>>>>>> dbda4cd4d653ccd85834a0625d5945ba53f6bc46
     });
   }
 
