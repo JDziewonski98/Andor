@@ -10,31 +10,27 @@ import { Farmer } from './farmer';
 export class Hero extends Phaser.GameObjects.Sprite {
     public id: number;
     public tile: Tile;
-    public x: number;
-    public y: number;
     public hourTracker: HourTracker;
-    public sprite: Phaser.GameObjects.Sprite;
     public farmer: Array<Farmer>;
 
-    constructor(id, scene, sprite, x, y, tile) {
-        super(scene, sprite, x, y);
+    constructor(id, scene, tile: Tile, texture: string) {
+        super(scene, tile.x, tile.y, texture);
         this.id = id;
-        this.x = x;
-        this.y = y;
-        this.sprite = sprite;
         this.farmer = new Array();
         this.tile = tile;
+        this.hourTracker = null;
+        
     }
 
     public move(newTile) {
         // All heroes use the same hour tracker, access with their id
         if (this.hourTracker.getCount(this.id) < 7) {
-            this.tile = newTile;
-            this.x = newTile.heroCoords[this.id][0];
-            this.y = newTile.heroCoords[this.id][1];
-            this.sprite.x = this.x;
-            this.sprite.y = this.y;
-            this.hourTracker.incHour(this.id);
+            // this.tile = newTile;
+            // this.x = newTile.heroCoords[this.id][0];
+            // this.y = newTile.heroCoords[this.id][1];
+            // this.sprite.x = this.tile.x;
+            // this.sprite.y = this.tile.y;
+            // this.hourTracker.incHour(this.id);
         }
         return this;
     }

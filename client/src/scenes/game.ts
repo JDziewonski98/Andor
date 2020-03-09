@@ -54,7 +54,7 @@ export default class GameScene extends Phaser.Scene {
 
     this.setRegions();
 
-    //this.addDwarfMock();
+    this.addDwarf();
     //this.addMageMock();
     // this.addFarmerMock()
     this.hourTrackerSetup();
@@ -94,11 +94,11 @@ export default class GameScene extends Phaser.Scene {
     }
 
     /// for movement callback, ties pointerdown to move request
-    var that = this
-    this.tiles.map(function(tile){
-      tile.on('pointerdown', function(){
+    var self = this
+    this.tiles.map(function (tile) {
+      tile.on('pointerdown', function () {
         //tile.printstuff()
-        that.moveRequest(tile, function(){
+        self.moveRequest(tile, function () {
           console.log("callbackkk")
         })
       })
@@ -110,14 +110,14 @@ export default class GameScene extends Phaser.Scene {
     // this.add.existing(mageStartTile);
   }
 
-  private addFarmerMock(){
+  private addFarmerMock() {
     // Demo tile for farmer 1 
-    var tile24X = 100*scaleFactor+borderWidth;
-    var tile24Y = 4150*scaleFactor+borderWidth;
+    var tile24X = this.tiles[24].x * scaleFactor + borderWidth;
+    var tile24Y = this.tiles[24].y * scaleFactor + borderWidth;
 
     // Demo tile for farmer 1 
-    var tile36X = 3600*scaleFactor+borderWidth;
-    var tile36Y = 3500*scaleFactor+borderWidth;
+    var tile36X = 3600 * scaleFactor + borderWidth;
+    var tile36Y = 3500 * scaleFactor + borderWidth;
 
     // Get the file name of the desired frame to pass as texture
     var treeTile = this.textures.get('tiles').getFrameNames()[12];
@@ -139,7 +139,7 @@ export default class GameScene extends Phaser.Scene {
 
     farmerOne.setInteractive();
     farmerTwo.setInteractive();
-    
+
 
     this.farmers.push(new Farmer(this, farmerOne, 0, 0, farmerOneStartTile));
     this.farmers.push(new Farmer(this, farmerTwo, 0, 0, farmerTwoStartTile));
@@ -152,10 +152,8 @@ export default class GameScene extends Phaser.Scene {
     var self = this;
 
     farmerOne.on('pointerdown', function (pointer) {
-      console.log(self.farmers[0].tile.id)
-      console.log(this.hero.tile.id)
-      if(self.heroes[0].tile.id == self.farmers[0].tile.id){
-        self.gameinstance.pickupFarmer(self.heroes[0].id, function(){
+      if (self.heroes[0].tile.id == self.farmers[0].tile.id) {
+        self.gameinstance.pickupFarmer(self.heroes[0].id, function () {
           farmerOne.destroy();
           //TODO: Add farmer to player inventory and display on player inventory card
         });
@@ -164,54 +162,64 @@ export default class GameScene extends Phaser.Scene {
     }, this);
 
     farmerTwo.on('pointerdown', function (pointer) {
-      if(self.heroes[0].tile.id == self.farmers[1].tile.id){
-        self.gameinstance.pickupFarmer(self.heroes[0].id, function(){
+      if (self.heroes[0].tile.id == self.farmers[1].tile.id) {
+        self.gameinstance.pickupFarmer(self.heroes[0].id, function () {
           farmerTwo.destroy();
         });
       }
 
     }, this);
 
-    
-    this.gameinstance.updateFarmer(function(){
+
+    this.gameinstance.updateFarmer(function () {
       farmerOne.destroy();
     });
 
-    this.gameinstance.updateFarmer(function(){
+    this.gameinstance.updateFarmer(function () {
       farmerTwo.destroy();
     });
   }
 
-  private addDwarfMock() {
-    // Demo tile for dwarf - Tiles should have better encapsulation lol
-    var tile43X = this.tiles[43].x * scaleFactor + borderWidth;
-    var tile43Y = this.tiles[43].y * scaleFactor + borderWidth;
+  private addDwarf() {
+    const dwarfTile: Tile = this.tiles[43]
+    let dwarf: Hero = new Hero(1, this, dwarfTile, 'dwarfmale').setDisplaySize(40, 60);
+    this.heroes.push(dwarf);
 
-    // Get the file name of the desired frame to pass as texture
-    var treeTile = this.textures.get('tiles').getFrameNames()[12];
-    var dwarfStartTile = new Tile(43, this, tile43X, tile43Y, treeTile);
-    dwarfStartTile.setInteractive();
-    this.add.existing(dwarfStartTile);
-
-    var dwarfStartX = dwarfStartTile.heroCoords[1][0];
-    var dwarfStartY = dwarfStartTile.heroCoords[1][1];
-    var dwarfHero = this.add.sprite(dwarfStartX, dwarfStartY, 'dwarfmale').setDisplaySize(40, 40);
-    this.heroes.push(new Hero(1, this, dwarfHero, 0, 0, dwarfStartTile));
-    dwarfStartTile.hero = this.heroes[1];
-    dwarfStartTile.heroexist = true;
-
-    // Add adjacent tile for mock movement
-    var tile39X = 5640 * scaleFactor + borderWidth;
-    var tile39Y = 4370 * scaleFactor + borderWidth;
-    var dwarfAdjTile = new Tile(39, this, tile39X, tile39Y, treeTile);
-    dwarfAdjTile.adjacent.push(dwarfStartTile);
-    dwarfStartTile.adjacent.push(dwarfAdjTile);
-    dwarfAdjTile.setInteractive();
-    this.add.existing(dwarfAdjTile);
-
-    dwarfHero.depth = 5;// What is this for?
+    dwarfTile.hero = dwarf;
+    dwarfTile.heroexist = true;
+    this.add.existing(dwarf);
+    console.log(this)
   }
-  
+
+  private addDwarfMock() {
+    // const tile43X = this.tiles[43].x * scaleFactor + borderWidth;
+    // const tile43Y = this.tiles[43].y * scaleFactor + borderWidth;
+
+    // // Get the file name of the desired frame to pass as texture
+    // var treeTile = this.textures.get('tiles').getFrameNames()[12];
+    // var dwarfStartTile = new Tile(43, this, tile43X, tile43Y, treeTile);
+    // dwarfStartTile.setInteractive();
+    // this.add.existing(dwarfStartTile);
+
+    // var dwarfStartX = dwarfStartTile.heroCoords[1][0];
+    // var dwarfStartY = dwarfStartTile.heroCoords[1][1];
+    // var dwarfHero = this.add.sprite(dwarfStartX, dwarfStartY, 'dwarfmale').setDisplaySize(40, 40);
+    // this.heroes.push(new Hero(1, this, dwarfHero, 0, 0, dwarfStartTile));
+    // dwarfStartTile.hero = this.heroes[1];
+    // dwarfStartTile.heroexist = true;
+
+    // // Add adjacent tile for mock movement
+    // var tile39X = 5640 * scaleFactor + borderWidth;
+    // var tile39Y = 4370 * scaleFactor + borderWidth;
+    // var dwarfAdjTile = new Tile(39, this, tile39X, tile39Y, treeTile);
+    // dwarfAdjTile.adjacent.push(dwarfStartTile);
+    // dwarfStartTile.adjacent.push(dwarfAdjTile);
+    // dwarfAdjTile.setInteractive();
+    // this.add.existing(dwarfAdjTile);
+
+    // dwarfHero.depth = 5;// What is this for?
+  }
+
   private addMageMock() {
   }
   private addArcherMock() {
@@ -247,8 +255,7 @@ export default class GameScene extends Phaser.Scene {
     // we're not actually adding the hourTracker, we're adding it's internal sprite
     this.hourTracker.depth = 5;
     this.hourTracker.depth = 0;
-    var h;
-    for (h of this.heroes) {
+    for (var h of this.heroes) {
       h.hourTracker = this.hourTracker;
     }
 
@@ -258,7 +265,8 @@ export default class GameScene extends Phaser.Scene {
   private escChat() {
     WindowManager.destroy(this, 'chat');
   }
-  private moveRequest(tile, callback){
+  private moveRequest(tile, callback) {
+    console.log("qoiwhuj requesting MOVEE", this.gameinstance)
     this.gameinstance.moveTo(tile, callback)
   }
   public update() {
