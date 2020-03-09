@@ -145,7 +145,7 @@ export default class GameScene extends Phaser.Scene {
 
     farmer_0.on('pointerdown', function (pointer) {
       if(self.hero.tile.id == self.farmers[0].tile.id){
-        self.gameinstance.pickupFarmer(self.heroes[0].id, function(){
+        self.gameinstance.pickupFarmer(self.heroes[0], function(){
           farmer_0.destroy();
           //TODO: Add farmer to player inventory and display on player inventory card
         });
@@ -155,7 +155,7 @@ export default class GameScene extends Phaser.Scene {
 
     farmer_1.on('pointerdown', function (pointer) {
       if(self.hero.tile.id == self.farmers[1].tile.id){
-        self.gameinstance.pickupFarmer(self.heroes[0].id, function(){
+        self.gameinstance.pickupFarmer(self.heroes[0], function(){
           farmer_1.destroy();
         });
       }
@@ -250,7 +250,7 @@ export default class GameScene extends Phaser.Scene {
   }
   private moveRequest(tile, callback) {
     console.log("qoiwhuj requesting MOVEE", this.gameinstance)
-    this.gameinstance.moveTo(tile, callback)
+    this.gameinstance.moveRequest(tile, callback)
   }
   public update() {
     var camera = this.cameras.main;

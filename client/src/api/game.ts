@@ -48,7 +48,7 @@ export class game {
     }
 
     // TODO movement
-    public moveTo(tile, callback){
+    public moveRequest(tile, callback){
         this.socket.emit('moveRequest', tile, callback)
     }
 
