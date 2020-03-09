@@ -23,8 +23,8 @@ export class game {
         this.socket.on("updateHeroList", callback)
     }
 
-    public pickupFarmer(heroID, callback){
-        this.socket.emit("pickupFarmer", heroID, callback);
+    public pickupFarmer(callback){
+        this.socket.emit("pickupFarmer", callback);
     }
 
     public updateFarmer(callback){
@@ -79,6 +79,10 @@ export class game {
 
     public recieveDesiredPlayerCount(callback) {
         this.socket.on('recieveDesiredPlayerCount', callback)
+    }
+
+    public getHeros(callback){
+        this.socket.emit("getHeros", callback)
     }
 }
 

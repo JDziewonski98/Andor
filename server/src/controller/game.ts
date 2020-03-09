@@ -27,9 +27,9 @@ export function game(socket, model: Game) {
    */
   });
 
-  socket.on("pickupFarmer", function(heroId, callback){
+  socket.on("pickupFarmer", function(callback){
     let success = false;
-    heroId = socket.conn.id;
+    let heroId = socket.conn.id;
     let hero = model.getHero(heroId);
     if(hero !== undefined){
       success = hero.pickupFarmer();
@@ -114,6 +114,14 @@ export function game(socket, model: Game) {
   socket.on("dropGold", function (callback) {
     // TODO:
     callback()
+  })
+
+  socket.on("getHeros", function(callback){
+    
+    let heros = model.getHeros().forEach((hero, key) => {return hero.hk});
+    console.log(heros)
+
+      callback(heros);
   })
 
   function getCurrentDate() {

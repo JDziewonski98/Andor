@@ -50,7 +50,7 @@ export class Tile extends Phaser.GameObjects.Sprite {
     // Unused
     public printHerodata() {
         if (this.heroexist) {
-            console.log("Tile id: " + this.id + " has a hero with id: " + this.hero.id + ".");
+            // console.log("Tile id: " + this.id + " has a hero with id: " + this.hero.id + ".");
         }
         else {
             console.log("Tile id: " + this.id + " does not have a hero.");
@@ -75,7 +75,7 @@ export class Tile extends Phaser.GameObjects.Sprite {
             try {
                 // This algorithm is deprecated and should exist in server side business logic anyways
                 if (element.heroexist == true) {
-                    console.log("Hero", element.hero.id, "exists on tile", element.id);
+                    // console.log("Hero", element.hero., "exists on tile", element.id);
                     this.hero = element.hero.move(this);
                     if (this.hero.tile === this) {
                         this.heroexist = true;
