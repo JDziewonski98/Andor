@@ -61,11 +61,11 @@ export default class GameScene extends Phaser.Scene {
 
     this.setRegions();
 
-    this.addDwarf();
     this.addMage();
+    this.addDwarf();
     this.addArcher();
     this.addWarrior();
-    // this.addFarmerMock()
+    this.addFarmers()
     this.hourTrackerSetup();
 
   }
@@ -119,73 +119,56 @@ export default class GameScene extends Phaser.Scene {
     // this.add.existing(mageStartTile);
   }
 
-  private addFarmerMock() {
-    // Demo tile for farmer 1 
-    var tile24X = this.tiles[24].x * scaleFactor + borderWidth;
-    var tile24Y = this.tiles[24].y * scaleFactor + borderWidth;
+  private addFarmers(){
 
-    // Demo tile for farmer 1 
-    var tile36X = 3600 * scaleFactor + borderWidth;
-    var tile36Y = 3500 * scaleFactor + borderWidth;
+    const farmertile_0: Tile = this.tiles[24];
+    const farmertile_1: Tile = this.tiles[36];
 
-    // Get the file name of the desired frame to pass as texture
-    var treeTile = this.textures.get('tiles').getFrameNames()[12];
-    var farmerOneStartTile = new Tile(24, this, tile24X, tile24Y, treeTile);
-    var farmerTwoStartTile = new Tile(36, this, tile36X, tile36Y, treeTile);
+    let farmer_0: Farmer = new Farmer(this, farmertile_0, 'dwarfmale').setDisplaySize(40, 40);
+    let farmer_1: Farmer = new Farmer(this, farmertile_1, 'dwarfmale').setDisplaySize(40, 40);
 
-    farmerOneStartTile.setInteractive();
-    this.add.existing(farmerOneStartTile);
-    farmerTwoStartTile.setInteractive();
-    this.add.existing(farmerTwoStartTile);
+    farmer_0.setInteractive();
+    farmer_1.setInteractive();
+    
+    this.farmers.push(farmer_0);
+    this.farmers.push(farmer_1);
 
-    var farmerOneStartX = farmerOneStartTile.farmerCoords[1][0];
-    var farmerOneStartY = farmerOneStartTile.farmerCoords[1][1];
-    var farmerTwoStartX = farmerTwoStartTile.farmerCoords[1][0];
-    var farmerTwoStartY = farmerTwoStartTile.farmerCoords[1][1];
+    farmertile_0.farmer.push(farmer_0);
+    farmertile_0.farmerexist = true;
+    farmertile_1.farmer.push(farmer_1);
+    farmertile_1.farmerexist = true;
 
-    var farmerOne = this.add.sprite(farmerOneStartX, farmerOneStartY, 'dwarfmale').setDisplaySize(40, 40);
-    var farmerTwo = this.add.sprite(farmerTwoStartX, farmerTwoStartY, 'dwarfmale').setDisplaySize(40, 40);
-
-    farmerOne.setInteractive();
-    farmerTwo.setInteractive();
-
-
-    this.farmers.push(new Farmer(this, farmerOne, 0, 0, farmerOneStartTile));
-    this.farmers.push(new Farmer(this, farmerTwo, 0, 0, farmerTwoStartTile));
-
-    farmerOneStartTile.farmer.push(this.farmers[0]);
-    farmerOneStartTile.farmerexist = true;
-    farmerTwoStartTile.farmer.push(this.farmers[1]);
-    farmerTwoStartTile.farmerexist = true;
+    this.add.existing(farmer_0);
+    this.add.existing(farmer_1);
 
     var self = this;
 
-    farmerOne.on('pointerdown', function (pointer) {
-      if (self.heroes[0].tile.id == self.farmers[0].tile.id) {
-        self.gameinstance.pickupFarmer(self.heroes[0].id, function () {
-          farmerOne.destroy();
+    farmer_0.on('pointerdown', function (pointer) {
+      if(self.hero.tile.id == self.farmers[0].tile.id){
+        self.gameinstance.pickupFarmer(self.heroes[0].id, function(){
+          farmer_0.destroy();
           //TODO: Add farmer to player inventory and display on player inventory card
         });
       }
 
     }, this);
 
-    farmerTwo.on('pointerdown', function (pointer) {
-      if (self.heroes[0].tile.id == self.farmers[1].tile.id) {
-        self.gameinstance.pickupFarmer(self.heroes[0].id, function () {
-          farmerTwo.destroy();
+    farmer_1.on('pointerdown', function (pointer) {
+      if(self.hero.tile.id == self.farmers[1].tile.id){
+        self.gameinstance.pickupFarmer(self.heroes[0].id, function(){
+          farmer_1.destroy();
         });
       }
 
     }, this);
 
-
-    this.gameinstance.updateFarmer(function () {
-      farmerOne.destroy();
+    
+    this.gameinstance.updateFarmer(function(){
+      farmer_0.destroy();
     });
 
-    this.gameinstance.updateFarmer(function () {
-      farmerTwo.destroy();
+    this.gameinstance.updateFarmer(function(){
+      farmer_1.destroy();
     });
   }
 
