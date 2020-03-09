@@ -17,6 +17,7 @@ export class Game {
     private players: Set<Player>;
     private name: string;
     private chatlog;
+    public readyplayers: number;
     // playerID mapping to Hero.
     private heroList: Map<string, Hero>;
     private regions: Array<Region>;
@@ -36,6 +37,7 @@ export class Game {
         this.farmers = new Array<Farmer>();
         this.setRegions();
         this.setFarmers();
+        this.readyplayers = 0;
     }
 
     private setFarmers() {
@@ -60,7 +62,9 @@ export class Game {
         //console.log(this.regions[2].getNextRegionId())
         // console.log("regions sanity check:", this.regions);
     }
-
+    public getRegions() : Region[]{
+        return this.regions
+    }
     public getName(): string {
         return this.name;
     }

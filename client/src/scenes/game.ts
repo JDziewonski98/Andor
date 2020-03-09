@@ -32,6 +32,7 @@ export default class GameScene extends Phaser.Scene {
 
   public init(data) {
     this.gameinstance = data.controller;
+    this.sys.game.scene.bringToTop('BoardOverlay');
   }
 
   public preload() {
@@ -54,9 +55,8 @@ export default class GameScene extends Phaser.Scene {
     this.setRegions();
 
     //this.addDwarfMock();
-    this.addMageMock();
-    this.addFarmerMock();
-
+    //this.addMageMock();
+    // this.addFarmerMock()
     this.hourTrackerSetup();
 
   }
@@ -92,6 +92,17 @@ export default class GameScene extends Phaser.Scene {
       //  console.log(element, data[element].xcoord, data[element].ycoord, treeTile);
       //  this.tiles[element.id] = new tile()
     }
+
+    /// for movement callback, ties pointerdown to move request
+    var that = this
+    this.tiles.map(function(tile){
+      tile.on('pointerdown', function(){
+        //tile.printstuff()
+        that.moveRequest(tile, function(){
+          console.log("callbackkk")
+        })
+      })
+    })
     // // Get the file name of the desired frame to pass as texture
     // var treeTile = this.textures.get('tiles').getFrameNames()[12];
     // var mageStartTile = new Tile(9, this, tile9X, tile9Y, treeTile);
@@ -100,63 +111,43 @@ export default class GameScene extends Phaser.Scene {
   }
 
   private addFarmerMock(){
-    /* // Demo tile for farmer 1 
-    var tile24X = 100*scaleFactor+borderWidth;
-    var tile24Y = 4150*scaleFactor+borderWidth;
 
-    // Demo tile for farmer 1 
-    var tile36X = 3600*scaleFactor+borderWidth;
-    var tile36Y = 3500*scaleFactor+borderWidth;
+    const farmertile_0: Tile = this.tiles[24];
+    const farmertile_1: Tile = this.tiles[36];
 
-    // Get the file name of the desired frame to pass as texture
-    var treeTile = this.textures.get('tiles').getFrameNames()[12];
-    var farmerOneStartTile = new Tile(24, this, tile24X, tile24Y, treeTile);
-    var farmerTwoStartTile = new Tile(36, this, tile36X, tile36Y, treeTile); */
+    let farmer_0: Farmer = new Farmer(this, farmertile_0, 'dwarfmale').setDisplaySize(40, 40);
+    let farmer_1: Farmer = new Farmer(this, farmertile_1, 'dwarfmale').setDisplaySize(40, 40);
 
-    var farmerOneStartTile = this.tiles[24];
-    var farmerTwoStartTile = this.tiles[36];
-
-    farmerOneStartTile.setInteractive();
-    this.add.existing(farmerOneStartTile);
-    farmerTwoStartTile.setInteractive();
-    this.add.existing(farmerTwoStartTile);
-
-    var farmerOneStartX = farmerOneStartTile.farmerCoords[1][0];
-    var farmerOneStartY = farmerOneStartTile.farmerCoords[1][1];
-    var farmerTwoStartX = farmerTwoStartTile.farmerCoords[1][0];
-    var farmerTwoStartY = farmerTwoStartTile.farmerCoords[1][1];
-
-    var farmerOne = this.add.sprite(farmerOneStartX, farmerOneStartY, 'dwarfmale').setDisplaySize(40, 40);
-    var farmerTwo = this.add.sprite(farmerTwoStartX, farmerTwoStartY, 'dwarfmale').setDisplaySize(40, 40);
-
-    farmerOne.setInteractive();
-    farmerTwo.setInteractive();
+    farmer_0.setInteractive();
+    farmer_1.setInteractive();
     
+    this.farmers.push(farmer_0);
+    this.farmers.push(farmer_1);
 
-    this.farmers.push(new Farmer(this, farmerOne, 0, 0, farmerOneStartTile));
-    this.farmers.push(new Farmer(this, farmerTwo, 0, 0, farmerTwoStartTile));
+    farmertile_0.farmer.push(farmer_0);
+    farmertile_0.farmerexist = true;
+    farmertile_1.farmer.push(farmer_1);
+    farmertile_1.farmerexist = true;
 
-    farmerOneStartTile.farmer.push(this.farmers[0]);
-    farmerOneStartTile.farmerexist = true;
-    farmerTwoStartTile.farmer.push(this.farmers[1]);
-    farmerTwoStartTile.farmerexist = true;
+    this.add.existing(farmer_0);
+    this.add.existing(farmer_1);
 
     var self = this;
 
-    farmerOne.on('pointerdown', function (pointer) {
+    farmer_0.on('pointerdown', function (pointer) {
       if(self.heroes[0].tile.id == self.farmers[0].tile.id){
         self.gameinstance.pickupFarmer(self.heroes[0].id, function(){
-          farmerOne.destroy();
+          farmer_0.destroy();
           //TODO: Add farmer to player inventory and display on player inventory card
         });
       }
 
     }, this);
 
-    farmerTwo.on('pointerdown', function (pointer) {
+    farmer_1.on('pointerdown', function (pointer) {
       if(self.heroes[0].tile.id == self.farmers[1].tile.id){
         self.gameinstance.pickupFarmer(self.heroes[0].id, function(){
-          farmerTwo.destroy();
+          farmer_1.destroy();
         });
       }
 
@@ -164,52 +155,12 @@ export default class GameScene extends Phaser.Scene {
 
     
     this.gameinstance.updateFarmer(function(){
-      farmerOne.destroy();
+      farmer_0.destroy();
     });
 
     this.gameinstance.updateFarmer(function(){
-      farmerTwo.destroy();
+      farmer_1.destroy();
     });
-  }
-
-  private addMageMock() {
-    // Demo tile for mage - Tiles should have better encapsulation lol
-    /* var tile9X = this.tiles[9].x * scaleFactor + borderWidth;
-    var tile9Y = this.tiles[9].y * scaleFactor + borderWidth;
-    console.log("mage", tile9X, tile9Y)
-
-    // Get the file name of the desired frame to pass as texture
-    var treeTile = this.textures.get('tiles').getFrameNames()[12];
-    var mageStartTile = new Tile(24, this, tile9X, tile9Y, treeTile);
-    mageStartTile.setInteractive();
-    this.add.existing(mageStartTile); */
-    var treeTile = this.textures.get('tiles').getFrameNames()[12];
-    var mageStartTile = this.tiles[24]
-
-    var mageStartX = mageStartTile.heroCoords[0][0];
-    var mageStartY = mageStartTile.heroCoords[0][1];
-    var mageHero = this.add.sprite(mageStartX, mageStartY, 'magemale').setDisplaySize(40, 40);
-    this.heroes.push(new Hero(0, this, mageHero, 0, 0, mageStartTile));
-    mageStartTile.hero = this.heroes[0];
-    mageStartTile.heroexist = true;
-
-    // Add adjacent tile for mock movement
-    var tile8X = 2010 * scaleFactor + borderWidth;
-    var tile8Y = 820 * scaleFactor + borderWidth;
-    var mageAdjTile = new Tile(8, this, tile8X, tile8Y, treeTile);
-    mageAdjTile.adjRegionsIds.push(mageStartTile.id);
-    mageStartTile.adjRegionsIds.push(mageAdjTile.id);
-    mageAdjTile.setInteractive();
-    this.add.existing(mageAdjTile);
-
-    mageHero.depth = 5;// What is this for?
-    // Deprecated code, "return to lobby" should be moved into overlay or options scene
-    // mageHero.setInteractive();
-    // mageHero.on('pointerdown', function (pointer) {
-    //   this.tiles = []
-    //   WindowManager.destroy(this, 'chat');
-    //   this.scene.start('Lobby');
-    // }, this);
   }
 
   private addDwarfMock() {
@@ -241,11 +192,15 @@ export default class GameScene extends Phaser.Scene {
 
     dwarfHero.depth = 5;// What is this for?
   }
-
+  
+  private addMageMock() {
+  }
   private addArcherMock() {
   }
   private addWarriorMock() {
   }
+
+
 
   // Creating the hour tracker
   private hourTrackerSetup() {
@@ -284,7 +239,9 @@ export default class GameScene extends Phaser.Scene {
   private escChat() {
     WindowManager.destroy(this, 'chat');
   }
-
+  private moveRequest(tile, callback){
+    this.gameinstance.moveTo(tile, callback)
+  }
   public update() {
     var camera = this.cameras.main;
 

@@ -46,6 +46,39 @@ export class game {
     public getChatLog(callback) {
         this.socket.emit('getChatLog', callback)
     }
-    
+
+    // TODO movement
+    public moveTo(tile, callback){
+        this.socket.emit('moveRequest', tile, callback)
+    }
+
+    public  removeListener(object){
+        console.log('removing ', object)
+        this.socket.emit('removeListener',object)
+    }
+
+    public removeObjListener(callback) {
+        this.socket.on('removeObjListener', callback)
+    }
+
+    public playerReady() {
+        this.socket.emit('playerReady')
+    }
+
+    public getReadyPlayers() {
+        this.socket.emit('getReadyPlayers')
+    }
+
+    public recieveReadyPlayers(callback) {
+        this.socket.on('sendReadyPlayers', callback)
+    }
+
+    public getDesiredPlayerCount() {
+        this.socket.emit('getDesiredPlayerCount')
+    }  
+
+    public recieveDesiredPlayerCount(callback) {
+        this.socket.on('recieveDesiredPlayerCount', callback)
+    }
 }
 

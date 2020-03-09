@@ -65,4 +65,8 @@ export class Region {
     public addFarmer(f: Farmer) {
         this.farmers.push(f);
     }
+
+    public getAdjRegionsIds(): number[]{
+        return this.adjRegionsIds
+    }
 }
