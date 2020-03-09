@@ -23,12 +23,16 @@ export class game {
         this.socket.on("updateHeroList", callback)
     }
 
-    public pickupFarmer(heroID, callback){
-        this.socket.emit("pickupFarmer", heroID, callback);
+    public pickupFarmer(callback){
+        this.socket.emit("pickupFarmer",  callback);
     }
 
     public updateFarmer(callback){
         this.socket.on("updateFarmer", callback);
+    }
+
+    public merchant(callback){
+        this.socket.emit("merchant", callback);
     }
     
     public dropGold(amount, callback) {

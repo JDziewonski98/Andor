@@ -27,9 +27,9 @@ export function game(socket, model: Game) {
    */
   });
 
-  socket.on("pickupFarmer", function(heroId, callback){
+  socket.on("pickupFarmer", function(callback){
     let success = false;
-    heroId = socket.conn.id;
+    var heroId = socket.conn.id;
     let hero = model.getHero(heroId);
     if(hero !== undefined){
       success = hero.pickupFarmer();
@@ -37,6 +37,21 @@ export function game(socket, model: Game) {
 
     if(success){
       socket.broadcast.emit("updateFarmer");
+      callback();
+    }
+  });
+
+  socket.on("merchant", function(callback){
+    let success = false;
+    var heroId = socket.conn.id;
+    let hero = model.getHero(heroId);
+
+    if(hero !== undefined){
+      success = hero.buyStrength();
+    }
+
+    if(success){
+      console.log(hero);
       callback();
     }
   });

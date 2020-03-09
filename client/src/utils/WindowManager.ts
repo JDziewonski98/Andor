@@ -11,6 +11,7 @@ export class WindowManager extends Phaser.Scene {
             //were making hero window
             var win = new obj(key, gameinstance, data);
         }
+        var win = new obj(key, gameinstance);
         self.scene.add(key, win, true);
         return win;
     }

@@ -44,6 +44,10 @@ export class Region {
         return this.curMonster;
     }
 
+    public getMerchant(){
+        return this.hasMerchant;
+    }
+
     // public addWineskin(w: Wineskin) {
     //     this.wineskins.push(w);
     // }
