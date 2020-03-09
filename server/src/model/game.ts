@@ -88,7 +88,7 @@ export class Game {
             this.heroList.set(id, new Hero(heroType, this.regions[25]));
         }
         else if(heroType === HeroKind.Mage){
-            this.heroList.set(id, new Hero(heroType, this.regions[24]));//34!!!!!!!
+            this.heroList.set(id, new Hero(heroType, this.regions[34]));
         }
         else if(heroType === HeroKind.Warrior){
             this.heroList.set(id, new Hero(heroType, this.regions[14]));
