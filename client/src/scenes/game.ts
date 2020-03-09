@@ -53,7 +53,7 @@ export default class GameScene extends Phaser.Scene {
 
     this.setRegions();
 
-    this.addDwarfMock();
+    //this.addDwarfMock();
     this.addMageMock();
     this.addFarmerMock();
 
@@ -100,7 +100,7 @@ export default class GameScene extends Phaser.Scene {
   }
 
   private addFarmerMock(){
-    // Demo tile for farmer 1 
+    /* // Demo tile for farmer 1 
     var tile24X = 100*scaleFactor+borderWidth;
     var tile24Y = 4150*scaleFactor+borderWidth;
 
@@ -111,7 +111,10 @@ export default class GameScene extends Phaser.Scene {
     // Get the file name of the desired frame to pass as texture
     var treeTile = this.textures.get('tiles').getFrameNames()[12];
     var farmerOneStartTile = new Tile(24, this, tile24X, tile24Y, treeTile);
-    var farmerTwoStartTile = new Tile(36, this, tile36X, tile36Y, treeTile);
+    var farmerTwoStartTile = new Tile(36, this, tile36X, tile36Y, treeTile); */
+
+    var farmerOneStartTile = this.tiles[24];
+    var farmerTwoStartTile = this.tiles[36];
 
     farmerOneStartTile.setInteractive();
     this.add.existing(farmerOneStartTile);
@@ -181,7 +184,7 @@ export default class GameScene extends Phaser.Scene {
     mageStartTile.setInteractive();
     this.add.existing(mageStartTile); */
     var treeTile = this.textures.get('tiles').getFrameNames()[12];
-    var mageStartTile = this.tiles[9]
+    var mageStartTile = this.tiles[24]
 
     var mageStartX = mageStartTile.heroCoords[0][0];
     var mageStartY = mageStartTile.heroCoords[0][1];
