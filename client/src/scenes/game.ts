@@ -55,7 +55,9 @@ export default class GameScene extends Phaser.Scene {
     this.setRegions();
 
     this.addDwarf();
-    //this.addMageMock();
+    this.addMage();
+    this.addArcher();
+    this.addWarrior();
     // this.addFarmerMock()
     this.hourTrackerSetup();
 
@@ -181,50 +183,41 @@ export default class GameScene extends Phaser.Scene {
   }
 
   private addDwarf() {
-    const dwarfTile: Tile = this.tiles[43]
+    const dwarfTile: Tile = this.tiles[7]
     let dwarf: Hero = new Hero(1, this, dwarfTile, 'dwarfmale').setDisplaySize(40, 60);
     this.heroes.push(dwarf);
 
     dwarfTile.hero = dwarf;
     dwarfTile.heroexist = true;
     this.add.existing(dwarf);
-    console.log(this)
   }
 
-  private addDwarfMock() {
-    // const tile43X = this.tiles[43].x * scaleFactor + borderWidth;
-    // const tile43Y = this.tiles[43].y * scaleFactor + borderWidth;
+  private addMage() {
+    const mageTile: Tile = this.tiles[34]
+    let mage: Hero = new Hero(1, this, mageTile, 'magemale').setDisplaySize(40, 60);
+    this.heroes.push(mage);
 
-    // // Get the file name of the desired frame to pass as texture
-    // var treeTile = this.textures.get('tiles').getFrameNames()[12];
-    // var dwarfStartTile = new Tile(43, this, tile43X, tile43Y, treeTile);
-    // dwarfStartTile.setInteractive();
-    // this.add.existing(dwarfStartTile);
-
-    // var dwarfStartX = dwarfStartTile.heroCoords[1][0];
-    // var dwarfStartY = dwarfStartTile.heroCoords[1][1];
-    // var dwarfHero = this.add.sprite(dwarfStartX, dwarfStartY, 'dwarfmale').setDisplaySize(40, 40);
-    // this.heroes.push(new Hero(1, this, dwarfHero, 0, 0, dwarfStartTile));
-    // dwarfStartTile.hero = this.heroes[1];
-    // dwarfStartTile.heroexist = true;
-
-    // // Add adjacent tile for mock movement
-    // var tile39X = 5640 * scaleFactor + borderWidth;
-    // var tile39Y = 4370 * scaleFactor + borderWidth;
-    // var dwarfAdjTile = new Tile(39, this, tile39X, tile39Y, treeTile);
-    // dwarfAdjTile.adjacent.push(dwarfStartTile);
-    // dwarfStartTile.adjacent.push(dwarfAdjTile);
-    // dwarfAdjTile.setInteractive();
-    // this.add.existing(dwarfAdjTile);
-
-    // dwarfHero.depth = 5;// What is this for?
+    mageTile.hero = mage;
+    mageTile.heroexist = true;
+    this.add.existing(mage);
   }
+  private addArcher() {
+    const archerTile: Tile = this.tiles[25]
+    let hero: Hero = new Hero(1, this, archerTile, 'archermale').setDisplaySize(40, 60);
+    this.heroes.push(hero);
 
-  private addMageMock() {
+    archerTile.hero = hero;
+    archerTile.heroexist = true;
+    this.add.existing(hero);
   }
-  private addArcherMock() {
-  }
-  private addWarriorMock() {
+  private addWarrior() {
+    const tile: Tile = this.tiles[14]
+    let hero: Hero = new Hero(1, this, tile, 'warriormale').setDisplaySize(40, 60);
+    this.heroes.push(hero);
+
+    tile.hero = hero;
+    tile.heroexist = true;
+    this.add.existing(hero);
   }
 
 

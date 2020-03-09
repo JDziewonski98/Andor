@@ -31,15 +31,11 @@ export function game(socket, model: Game) {
     let success = false;
     heroId = socket.conn.id;
     let hero = model.getHero(heroId);
-
-    console.log("hello",hero)
     if(hero !== undefined){
       success = hero.pickupFarmer();
     }
 
     if(success){
-      console.log("pickedup", hero);
-
       socket.broadcast.emit("updateFarmer");
       callback();
     }
@@ -67,7 +63,6 @@ export function game(socket, model: Game) {
       } 
       socket.broadcast.emit("updateHeroList", heros)
       callback(heros);
-      console.log(id, "chose: ", heroType)
     }
 
   });
