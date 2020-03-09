@@ -80,5 +80,9 @@ export class game {
     public recieveDesiredPlayerCount(callback) {
         this.socket.on('recieveDesiredPlayerCount', callback)
     }
+
+    public getHeros(callback){
+        this.socket.emit("getHeros", callback)
+    }
 }
 

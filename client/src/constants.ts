@@ -12,3 +12,10 @@ export var fullHeight = expandedHeight+borderWidth*2;
 export var htX = 4600*scaleFactor+borderWidth;
 export var htY = 250*scaleFactor+borderWidth;
 export var htShift = 415*scaleFactor;
+
+
+// SETUP
+export const dwarfTile = 7;
+export const archerTile = 25;
+export const warriorTile = 14;
+export const mageTile = 34;

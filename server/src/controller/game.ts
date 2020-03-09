@@ -116,6 +116,11 @@ export function game(socket, model: Game) {
     callback()
   })
 
+  socket.on("getHeros", function(callback){
+    let heros = model.getHeros();
+    callback(heros);
+  })
+
   function getCurrentDate() {
     var currentDate = new Date();
     var day = (currentDate.getDate() < 10 ? '0' : '') + currentDate.getDate();

@@ -99,6 +99,10 @@ export class Game {
 
     }
 
+    public getHeros(){
+        return this.heroList;
+    }
+
     public getHero(id: string): Hero {
         return this.heroList.get(id)!;
     }

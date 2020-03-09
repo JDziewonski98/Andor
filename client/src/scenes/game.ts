@@ -6,12 +6,14 @@ import { HourTracker } from '../objects/hourTracker';
 import { game } from '../api';
 import {
   expandedWidth, expandedHeight, borderWidth,
-  fullWidth, fullHeight, htX, htY, scaleFactor
+  fullWidth, fullHeight, htX, htY, scaleFactor,
+  mageTile, archerTile, warriorTile, dwarfTile
 } from '../constants'
 
 
 export default class GameScene extends Phaser.Scene {
   private heroes: Hero[];
+  private hero: Hero;
   private tiles: Tile[];
   private farmers: Farmer[];
   private hourTracker: HourTracker;
@@ -28,6 +30,11 @@ export default class GameScene extends Phaser.Scene {
     this.heroes = Array<Hero>();
     this.tiles = Array<Tile>();
     this.farmers = new Array<Farmer>();
+    this.gameinstance.getHeros((heros) => {
+      
+
+    })
+
   }
 
   public init(data) {
@@ -183,36 +190,36 @@ export default class GameScene extends Phaser.Scene {
   }
 
   private addDwarf() {
-    const dwarfTile: Tile = this.tiles[7]
-    let dwarf: Hero = new Hero(1, this, dwarfTile, 'dwarfmale').setDisplaySize(40, 60);
-    this.heroes.push(dwarf);
+    const tile: Tile = this.tiles[dwarfTile]
+    let hero: Hero = new Hero(this, tile, 'dwarfmale').setDisplaySize(40, 60);
+    this.heroes.push(hero);
 
-    dwarfTile.hero = dwarf;
-    dwarfTile.heroexist = true;
-    this.add.existing(dwarf);
+    tile.hero = hero;
+    tile.heroexist = true;
+    this.add.existing(hero);
   }
 
   private addMage() {
-    const mageTile: Tile = this.tiles[34]
-    let mage: Hero = new Hero(1, this, mageTile, 'magemale').setDisplaySize(40, 60);
+    const tile: Tile = this.tiles[mageTile]
+    let mage: Hero = new Hero(this, tile, 'magemale').setDisplaySize(40, 60);
     this.heroes.push(mage);
 
-    mageTile.hero = mage;
-    mageTile.heroexist = true;
+    tile.hero = mage;
+    tile.heroexist = true;
     this.add.existing(mage);
   }
   private addArcher() {
-    const archerTile: Tile = this.tiles[25]
-    let hero: Hero = new Hero(1, this, archerTile, 'archermale').setDisplaySize(40, 60);
+    const tile: Tile = this.tiles[archerTile]
+    let hero: Hero = new Hero(this, tile, 'archermale').setDisplaySize(40, 60);
     this.heroes.push(hero);
 
-    archerTile.hero = hero;
-    archerTile.heroexist = true;
+    tile.hero = hero;
+    tile.heroexist = true;
     this.add.existing(hero);
   }
   private addWarrior() {
-    const tile: Tile = this.tiles[14]
-    let hero: Hero = new Hero(1, this, tile, 'warriormale').setDisplaySize(40, 60);
+    const tile: Tile = this.tiles[warriorTile]
+    let hero: Hero = new Hero(this, tile, 'warriormale').setDisplaySize(40, 60);
     this.heroes.push(hero);
 
     tile.hero = hero;
