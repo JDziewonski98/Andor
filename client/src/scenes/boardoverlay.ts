@@ -2,6 +2,7 @@ import { Chat } from './chatwindow';
 import { HeroWindow } from './herowindow';
 import { WindowManager } from "../utils/WindowManager";
 import { game } from '../api/game';
+import { CollabWindow } from './collabwindow';
 
 export default class BoardOverlay extends Phaser.Scene {
     private gameText;
@@ -105,6 +106,17 @@ export default class BoardOverlay extends Phaser.Scene {
             }
         }, this);
 
+        // collab decision mock
+        this.gameText = this.add.text(600, 550, "COLLAB", style2).setOrigin(0.5)
+        this.gameText.setInteractive();
+        this.gameText.on('pointerdown', function (pointer) {
+            if (this.scene.isVisible('collab')) {
+                WindowManager.destroy(this, 'collab');
+            }
+            else {
+                WindowManager.create(this, 'collab', CollabWindow, { gameinstance: self.gameinstance }, null);
+            }
+        }, this);
 
     }
 }

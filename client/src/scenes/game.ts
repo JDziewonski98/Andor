@@ -12,6 +12,7 @@ import {
 
 export default class GameScene extends Phaser.Scene {
   private heroes: Hero[];
+  private hero: Hero; // remember to get rid of this later
   private tiles: Tile[];
   private farmers: Farmer[];
   private hourTracker: HourTracker;

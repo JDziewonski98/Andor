@@ -116,6 +116,19 @@ export function game(socket, model: Game) {
     callback()
   })
 
+  // Collaborative decision making
+  socket.on('collabDecisionAccept', function () {
+    model.numAccepts += 1;
+    console.log('number of players accepted decision: ', model.numAccepts)
+    // Tell the client that accepted to update their status
+    socket.emit('sendDecisionAccepted', model.numAccepts)
+  })
+
+  // socket.on('getReadyPlayers', function() {
+  //   socket.broadcast.emit('sendReadyPlayers', model.readyplayers)
+  //   socket.emit('sendReadyPlayers', model.readyplayers)
+  // })
+
   function getCurrentDate() {
     var currentDate = new Date();
     var day = (currentDate.getDate() < 10 ? '0' : '') + currentDate.getDate();

@@ -75,11 +75,6 @@ export default class ReadyScreenScene extends Phaser.Scene {
         }, this);
 
         var self = this;
-        //callback
-        function setRdy(num) {
-            self.readyplayers = num
-            console.log('rdyplayers ' , self.readyplayers)
-        }
 
         //advance to game button.
         this.playbutton = this.add.sprite(950, 550, 'playbutton').setInteractive()
@@ -121,6 +116,11 @@ export default class ReadyScreenScene extends Phaser.Scene {
         //callbacks
         function remListener(hero) {
             self[hero].removeListener('pointerdown')
+        }
+        //ready players callback
+        function setRdy(num) {
+            self.readyplayers = num
+            console.log('Retrieved num players from server: ' , self.readyplayers)
         }
 
         function setDesPlayers(n) {
