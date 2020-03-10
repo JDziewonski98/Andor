@@ -24,7 +24,11 @@ export class game {
     }
 
     public pickupFarmer(callback){
+<<<<<<< HEAD
         this.socket.emit("pickupFarmer",  callback);
+=======
+        this.socket.emit("pickupFarmer", callback);
+>>>>>>> 1e050a8d17306356a06a47961ec00f4806a3b62f
     }
 
     public updateFarmer(callback){
@@ -83,6 +87,19 @@ export class game {
 
     public recieveDesiredPlayerCount(callback) {
         this.socket.on('recieveDesiredPlayerCount', callback)
+    }
+
+    public getHeros(callback){
+        this.socket.emit("getHeros", callback)
+    }
+
+    // Collaborative decision making
+    public collabDecisionAccept() {
+        this.socket.emit('collabDecisionAccept')
+    }
+
+    public receiveDecisionAccepted(callback) {
+        this.socket.on('sendDecisionAccepted', callback)
     }
 }
 

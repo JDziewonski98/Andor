@@ -3,7 +3,7 @@ import { Region } from './region';
 import { Farmer } from '.';
 
 export class Hero {
-    private hk: HeroKind;
+    public hk: HeroKind;
     private region!: Region;
     private gold!: number;
     private strength!: number;

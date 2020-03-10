@@ -1,6 +1,7 @@
 import { HeroWindow } from "../scenes/herowindow";
 
 export class WindowManager extends Phaser.Scene {
+<<<<<<< HEAD
     private chatlog
     public static create(self, key: string, obj, gameinstance, data=null) {
         if (key == 'chat') {
@@ -12,6 +13,10 @@ export class WindowManager extends Phaser.Scene {
             var win = new obj(key, gameinstance, data);
         }
         var win = new obj(key, gameinstance);
+=======
+    public static create(self, key: string, obj, data={}) {
+        var win = new obj(key, data);
+>>>>>>> 1e050a8d17306356a06a47961ec00f4806a3b62f
         self.scene.add(key, win, true);
         return win;
     }

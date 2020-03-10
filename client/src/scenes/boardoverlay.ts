@@ -2,6 +2,7 @@ import { Chat } from './chatwindow';
 import { HeroWindow } from './herowindow';
 import { WindowManager } from "../utils/WindowManager";
 import { game } from '../api/game';
+import { CollabWindow } from './collabwindow';
 
 export default class BoardOverlay extends Phaser.Scene {
     private gameText;
@@ -41,7 +42,7 @@ export default class BoardOverlay extends Phaser.Scene {
                 WindowManager.destroy(this, 'heroCard');
             } else {
                 console.log(self.gameinstance)
-                WindowManager.create(this, 'heroCard', HeroWindow, self.gameinstance, { icon: 'weed' });
+                WindowManager.create(this, 'heroCard', HeroWindow, { icon: 'weed', controller: self.gameinstance });
                 let window = WindowManager.get(this, 'heroCard')
                 window.setName('You!!')
             }
@@ -54,7 +55,7 @@ export default class BoardOverlay extends Phaser.Scene {
             if (this.scene.isVisible('heroCard2')) {
                 WindowManager.destroy(this, 'heroCard2');
             } else {
-                WindowManager.create(this, 'heroCard2', HeroWindow, self.gameinstance, { icon: 'playbutton' });
+                WindowManager.create(this, 'heroCard2', HeroWindow, { icon: 'playbutton', controller: self.gameinstance });
                 let window = WindowManager.get(this, 'heroCard2')
                 window.setName('Player 2')
             }
@@ -66,7 +67,7 @@ export default class BoardOverlay extends Phaser.Scene {
             if (this.scene.isVisible('heroCard3')) {
                 WindowManager.destroy(this, 'heroCard3');
             } else {
-                WindowManager.create(this, 'heroCard3', HeroWindow, self.gameinstance, { icon: 'playbutton' });
+                WindowManager.create(this, 'heroCard3', HeroWindow, { icon: 'playbutton', controller: self.gameinstance });
                 let window = WindowManager.get(this, 'heroCard3')
                 window.setName('Player 3')
             }
@@ -78,7 +79,7 @@ export default class BoardOverlay extends Phaser.Scene {
             if (this.scene.isVisible('heroCard4')) {
                 WindowManager.destroy(this, 'heroCard4');
             } else {
-                WindowManager.create(this, 'heroCard4', HeroWindow, self.gameinstance, { icon: 'playbutton' });
+                WindowManager.create(this, 'heroCard4', HeroWindow, { icon: 'playbutton', controller: self.gameinstance });
                 let window = WindowManager.get(this, 'heroCard4')
                 window.setName('Player 4')
             }
@@ -101,10 +102,21 @@ export default class BoardOverlay extends Phaser.Scene {
                 WindowManager.destroy(this, 'chat');
             }
             else {
-                WindowManager.create(this, 'chat', Chat, { gameinstance: self.gameinstance }, null);
+                WindowManager.create(this, 'chat', Chat, { controller: self.gameinstance });
             }
         }, this);
 
+        // collab decision mock
+        this.gameText = this.add.text(600, 550, "COLLAB", style2).setOrigin(0.5)
+        this.gameText.setInteractive();
+        this.gameText.on('pointerdown', function (pointer) {
+            if (this.scene.isVisible('collab')) {
+                WindowManager.destroy(this, 'collab');
+            }
+            else {
+                WindowManager.create(this, 'collab', CollabWindow, { controller: self.gameinstance });
+            }
+        }, this);
 
     }
 }

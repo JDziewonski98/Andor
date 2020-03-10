@@ -75,11 +75,6 @@ export default class ReadyScreenScene extends Phaser.Scene {
         }, this);
 
         var self = this;
-        //callback
-        function setRdy(num) {
-            self.readyplayers = num
-            console.log('rdyplayers ' , self.readyplayers)
-        }
 
         //advance to game button.
         this.playbutton = this.add.sprite(950, 550, 'playbutton').setInteractive()
@@ -87,8 +82,8 @@ export default class ReadyScreenScene extends Phaser.Scene {
             self.gameController.getReadyPlayers()
             self.gameController.getDesiredPlayerCount()
             if (this.ready && this.readyplayers == this.desiredplayers) {
-                this.scene.start('Game', { controller: self.gameController });
-                this.scene.start('BoardOverlay',{gameinstance:self.gameController});
+                this.scene.start('Game', { controller: self.gameController, heroType: this.selection.name });
+                this.scene.start('BoardOverlay',{gameinstance:self.gameController, heroType: this.selection.name});
             }
             else {
                 this.tween()
@@ -103,6 +98,7 @@ export default class ReadyScreenScene extends Phaser.Scene {
                 WindowManager.destroy(this, 'chat');
             }
             else {
+                console.log(this)
                 WindowManager.create(this, 'chat', Chat, { controller: self.gameController });
             }
 
@@ -122,6 +118,11 @@ export default class ReadyScreenScene extends Phaser.Scene {
         function remListener(hero) {
             self[hero].removeListener('pointerdown')
         }
+        //ready players callback
+        function setRdy(num) {
+            self.readyplayers = num
+            console.log('Retrieved num players from server: ' , self.readyplayers)
+        }
 
         function setDesPlayers(n) {
             self.desiredplayers = n
@@ -140,6 +141,7 @@ export default class ReadyScreenScene extends Phaser.Scene {
                 self.selection.x = item.x;
                 self.gameController.bindHeroForSelf(item.name, function (heros) {
                     self.ready = true;
+                    self.selection.name = item.name;
                     heros.taken.forEach(hero => {
                         self[hero].setTint(0x404040)
                     });
