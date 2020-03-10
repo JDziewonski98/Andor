@@ -1,4 +1,4 @@
-import { Game, HeroKind, Region } from '../model';
+import { Game, HeroKind, Region, Hero } from '../model';
 
 export function game(socket, model: Game) {
 
@@ -79,8 +79,15 @@ export function game(socket, model: Game) {
   socket.on("send message", function (sent_msg, callback) {
     console.log(socket.conn.id, "said: ", sent_msg)
     let raw_sent_msg = sent_msg
-    let datestamp = getCurrentDate()
-    sent_msg = "[ " + datestamp + " ]: " + sent_msg;
+    let name = ""
+    let heroID = socket.conn.id;
+    let hero: Hero = model.getHero(heroID);
+    if(hero !== undefined){
+      name = hero.hk;
+    } else {
+      name = getCurrentDate()
+    }
+    sent_msg = "[ " + name + " ]: " + sent_msg;
     //model.pushToLog({ author: socket.conn.id, datestamp: datestamp, content: raw_sent_msg })
     socket.broadcast.emit("update messages", sent_msg);
     callback(sent_msg);
