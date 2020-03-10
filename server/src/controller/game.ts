@@ -41,6 +41,23 @@ export function game(socket, model: Game) {
     }
   });
 
+    socket.on("useWell", function (callback) {
+        let success_well = false;
+
+        let heroId = socket.conn.id;
+        let hero = model.getHero(heroId);
+        if (hero !== undefined) {
+            success_well = hero.useWell();
+
+        }
+
+        if (success_well) {
+            socket.broadcast.emit("updateWell");
+            callback();
+
+        }
+    });
+
   socket.on('bind hero', function (heroType, callback) {
     let success = false;
     let id = socket.conn.id;

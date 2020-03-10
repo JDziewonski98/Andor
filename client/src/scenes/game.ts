@@ -6,7 +6,8 @@ import { game } from '../api';
 import {
   expandedWidth, expandedHeight, borderWidth,
   fullWidth, fullHeight, htX, htY, scaleFactor,
-  mageTile, archerTile, warriorTile, dwarfTile
+    mageTile, archerTile, warriorTile, dwarfTile,
+    wellTile1, wellTile2, wellTile3, wellTile4
 } from '../constants'
 
 
@@ -46,6 +47,7 @@ export default class GameScene extends Phaser.Scene {
     this.load.multiatlas('tiles', './assets/tilesheet.json', 'assets')
     // TODO: Create a sprite sheet for heroes as well so they don't need an 
     // internal sprite to render their image
+    this.load.image("well", "../assets/well.png");
   }
 
   public create() {
@@ -77,6 +79,11 @@ export default class GameScene extends Phaser.Scene {
 
     this.addFarmers()
     // this.hourTrackerSetup();
+
+      this.addWell(wellTile1, "well1")
+      this.addWell(wellTile2, "well2")
+      this.addWell(wellTile3, "well3")
+      this.addWell(wellTile4, "well4")
 
   }
 
@@ -183,6 +190,39 @@ export default class GameScene extends Phaser.Scene {
     this.add.existing(hero);
     if (this.ownHeroType === type) this.hero = hero;
   }
+
+    private addWell(tileNumber: number, wellName: string) {
+        const tile: Tile = this.tiles[tileNumber]
+        const well = this.add.image(tile.x, tile.y, "well").setDisplaySize(60, 40)
+        well.name = wellName;
+
+        well.setInteractive()
+        var self = this
+
+        well.on("pointerdown", function () {
+
+            self.gameinstance.useWell(function () {
+                self[wellName].setTint(0x404040)
+                if (tile.hero.getWillPower() <= 17) {
+                    tile.hero.setwillPower(3)
+                }
+                else if (tile.hero.getWillPower() <= 20 && tile.hero.getWillPower() > 17) {
+                    tile.hero.setwillPower(20 - tile.hero.getWillPower())
+                }
+
+            });
+        });
+
+        this.gameinstance.updateWell(function () {
+            self[wellName].setTint(0x404040)
+            if (tile.hero.getWillPower() <= 17) {
+                tile.hero.setwillPower(3)
+            }
+            else if (tile.hero.getWillPower() <= 20 && tile.hero.getWillPower() > 17) {
+                tile.hero.setwillPower(20 - tile.hero.getWillPower())
+            }
+        });
+    }
 
   // Creating the hour tracker
   private hourTrackerSetup() {
