@@ -102,13 +102,15 @@ export default class ReadyScreenScene extends Phaser.Scene {
         this.chatText.setInteractive();
         this.chatText.on('pointerdown', function (pointer) {
             if (this.scene.isVisible('chat')) {
-                this.scene.sendToBack('chat')
-                this.scene.sleep('chat')
+                WindowManager.destroy(this, "chat")
+                // this.scene.sendToBack('chat')
+                // this.scene.sleep('chat')
             }
             else {
-                this.sys.game.scene.bringToTop('chat')
-                this.sys.game.scene.getScene('chat').scene.setVisible(true, 'chat')
-                this.scene.resume('chat')
+                WindowManager.create(this, "chat", Chat, { controller: self.gameController})
+                // this.sys.game.scene.bringToTop('chat')
+                // this.sys.game.scene.getScene('chat').scene.setVisible(true, 'chat')
+                // this.scene.resume('chat')
             }
 
         }, this);

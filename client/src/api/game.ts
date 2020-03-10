@@ -41,7 +41,9 @@ export class game {
     }
 
     public recieve(callback) {
-        this.socket.on("update messages", callback);
+        // prevent registering event again and creating double callbacks.
+        if(!this.socket._callbacks["$update messages"])
+            this.socket.on("update messages", callback);
     }
 
     public getChatLog() {
