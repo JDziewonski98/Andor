@@ -9,6 +9,7 @@ export class game {
     constructor(name) {
         this.name = name
         this.socket = this.connect(this.name)
+        this.chatlog = []
     }
 
     private connect(name) {
@@ -43,10 +44,13 @@ export class game {
         this.socket.on("update messages", callback);
     }
 
-    public getChatLog(callback) {
-        this.socket.emit('getChatLog', callback)
+    public getChatLog() {
+        return this.chatlog
     }
 
+    public appendToChatLog(msg) {
+        this.chatlog.push(msg)
+    }
     // TODO movement
     public moveTo(tile, callback){
         this.socket.emit('moveRequest', tile, callback)
