@@ -140,6 +140,7 @@ export class Game {
     }
 
     public moveHeroTo(hero, tile){
+        console.log("Passed method call")
         hero.moveTo(tile)
     }
     private endGame() {
