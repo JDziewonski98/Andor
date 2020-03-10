@@ -2,33 +2,42 @@ import { Game, HeroKind, Region } from '../model';
 
 export function game(socket, model: Game) {
 
-  socket.on("moveRequest", function (tile, callback) {
-    console.log("Recieved moveRequest")
-    let canMove: boolean = false
-    /* currently does not work 
+  socket.on("moveRequest", function (id, callback) {
+    console.log("Received moveRequest")
+    let isAdjacent: boolean = false
+
     var heroId = socket.conn.id
     let hero = model.getHero(heroId);
-    console.log(hero)
-    for(var id in hero.getRegion().getAdjRegionsIds()){
-      if(model.getRegions()[id] === tile){
-        console.log("Can move from tile: ", tile.id, " to tile: ", id)
-        canMove = true
+
+    var newRegion = model.getRegions()[id]
+    var currRegion = hero.getRegion()
+
+    //currently does not work 
+    var adjRegions = currRegion.getAdjRegionsIds()
+
+    for(var index in adjRegions){
+      var regionID = adjRegions[index]
+      if(model.getRegions()[regionID] === newRegion){
+        console.log("Can move from tile: ", currRegion.getID(), " to tile: ", regionID)
+        isAdjacent = true
       }
-  }
-    /*
+    }
+    
     
     // any logic for movement here
-
-    if (canMove) {
-      this.model.moveHeroTo(hero, tile)
-      socket.broadcast.emit("updateHeroMove", heroId, tile);
+    var timeLeft = hero.getTimeOfDay() <= 7 || (hero.getTimeOfDay() <= 10 && hero.getWill() >=2)
+    if (isAdjacent && timeLeft ) {
+      console.log("You can move!")
+      model.moveHeroTo(hero, newRegion)
+      //socket.broadcast.emit("moveHeroTo", heroId, newRegion.getID());
       
     } else {
+      console.log("you cannot move here")
       // could emit event for handling failure move case here.
-      socket.emit("moveError")
+      //socket.emit("moveError")
     }
-    callback();
-   */
+    //callback();
+   
   });
 
   socket.on("pickupFarmer", function (callback) {
