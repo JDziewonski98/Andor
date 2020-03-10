@@ -114,7 +114,8 @@ export default class BoardOverlay extends Phaser.Scene {
                 WindowManager.destroy(this, 'collab');
             }
             else {
-                WindowManager.create(this, 'collab', CollabWindow, { gameinstance: self.gameinstance }, null);
+                //remember to revert this to how gameinstance was being passed before
+                WindowManager.create(this, 'collab', CollabWindow, self.gameinstance, null);
             }
         }, this);
 

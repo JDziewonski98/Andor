@@ -15,6 +15,7 @@ export class CollabWindow extends Window {
     }
 
     protected initialize() {
+        var self = this
 
         var bg = this.add.image(0, 0, 'scrollbg').setOrigin(0.5)
         this.add.text(20, 20, 'Collaboration bitches', { backgroundColor: 'fx00' })
@@ -22,17 +23,14 @@ export class CollabWindow extends Window {
         // submit decision
         this.submitText = this.add.text(20, 70, 'Submit decision', { backgroundColor: 'fx00' })
         this.submitText.setInteractive()
-        var self = this
         this.submitText.on('pointerdown', function (pointer) {
-            // that.gameinstance.dropGold(1, function () {
-
-            // })
+            self.gameinstance.collabDecisionSubmit();
         });
         // accept decision
         this.acceptText = this.add.text(200, 70, 'Accept decision', { backgroundColor: 'fx00' })
         this.acceptText.setInteractive()
         this.acceptText.on('pointerdown', function (pointer) {
-            if (this.hasAccepted) {
+            if (self.hasAccepted) {
                 console.log("You have already accepted this decision");
                 return;
             }
@@ -53,11 +51,23 @@ export class CollabWindow extends Window {
             }
         });
 
+        // Callbacks
+        // Submitting decision callback
+        this.gameinstance.receiveDecisionSubmitSuccess(submitSuccess);
+        this.gameinstance.receiveDecisionSubmitFailure(submitFailure);
+        // Accepting decision callback
+        this.gameinstance.receiveDecisionAccepted(setAccepted);
+
+        function submitSuccess() {
+            self.hasAccepted = false;
+            console.log("Callback: successfully submitted decision")
+        }
+        function submitFailure() {
+            console.log("Callback: submit decision failed")
+        }
         function setAccepted(numAccepted) {
             self.hasAccepted = true;
             console.log("Callback: successfully accepted decision, numAccepted: ", numAccepted)
         }
-        // Callbacks
-        this.gameinstance.receiveDecisionAccepted(setAccepted);
     }
 }
