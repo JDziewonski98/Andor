@@ -13,6 +13,8 @@ export class Hero {
     private farmer: boolean = false;
     private farmers: Array<Farmer>;
 
+    private wineskin: boolean = false;
+
     constructor(hk: HeroKind, region:Region) {
         this.hk = hk
         this.region = region;
