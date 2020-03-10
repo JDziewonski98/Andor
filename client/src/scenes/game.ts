@@ -77,6 +77,7 @@ export default class GameScene extends Phaser.Scene {
       });
     })
 
+    this.addMerchants();
     //this.addFarmers()
     // this.hourTrackerSetup();
 
