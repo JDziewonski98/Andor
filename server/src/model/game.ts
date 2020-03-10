@@ -23,6 +23,9 @@ export class Game {
     private regions: Array<Region>;
     private farmers: Array<Farmer>;
 
+    // collab decision related state
+    public numAccepts: number;
+
     private availableHeros: Array<HeroKind> = new Array(HeroKind.Archer, HeroKind.Dwarf, HeroKind.Mage, HeroKind.Warrior);
 
     constructor(name: string, numOfDesiredPlayers: number, difficulty: GameDifficulty) {
@@ -38,6 +41,8 @@ export class Game {
         this.setRegions();
         this.setFarmers();
         this.readyplayers = 0;
+
+        this.numAccepts = 0;
     }
 
     private setFarmers() {
