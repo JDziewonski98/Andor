@@ -112,8 +112,9 @@ export default class GameScene extends Phaser.Scene {
     var self = this
     this.tiles.map(function (tile) {
       tile.on('pointerdown', function () {
-        //tile.printstuff()
-        self.moveRequest(tile)
+        self.gameinstance.moveRequest(tile.id, tile.id, function(){
+          
+        })
       })
     })
   }
@@ -215,11 +216,7 @@ export default class GameScene extends Phaser.Scene {
     this.hourTracker.setInteractive();
   }
 
-  private moveRequest(tile) {
-    this.gameinstance.moveRequest(tile.id, tile.id, function(tileId){
-      console.log("player requested to move to tile: ", tileId)
-    })
-  }
+ 
 
   public update() {
     var camera = this.cameras.main;
