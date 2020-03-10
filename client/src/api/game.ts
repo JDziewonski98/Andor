@@ -89,8 +89,12 @@ export class game {
         this.socket.emit("getHeros", callback)
     }
 
-    public getHeroAttributes(callback){
-        this.socket.emit("getHeroAttributes", callback)
+    public getHerosBorder(callback){
+        this.socket.emit("getHerosBorder", callback)
+    }
+
+    public getHeroAttributes(type, callback){
+        this.socket.emit("getHeroAttributes", type, callback)
     }
 
     // Collaborative decision making

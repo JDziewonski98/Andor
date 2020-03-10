@@ -1,4 +1,4 @@
-import { Game, HeroKind, Region } from '../model';
+import { Game, HeroKind, Region, Hero } from '../model';
 
 export function game(socket, model: Game) {
 
@@ -138,13 +138,42 @@ export function game(socket, model: Game) {
       callback(heros);
   })
 
-  socket.on("getHeroAttributes", function(callback){
-    let data = {};
-    var heroId = socket.conn.id;
-    let hero = model.getHero(heroId);
+  socket.on("getHerosBorder", function(callback){
+    let heros = {}
+    var myHeroID = socket.conn.id;
+    model.getHeros().forEach((hero, key) => {
+      if(myHeroID === key && hero !== undefined){
+        heros["myHero"] = hero.hk
+      }
+      else if(hero.hk === HeroKind.Archer && hero !== undefined){
+        heros["Archer"] = hero.hk
+      }
+      else if(hero.hk === HeroKind.Mage && hero !== undefined){
+        heros["Mage"] = hero.hk
+      }
+      else if(hero.hk === HeroKind.Dwarf && hero !== undefined){
+        heros["Dwarf"] = hero.hk
+      }
+      else if(hero.hk === HeroKind.Warrior && hero !== undefined){
+        heros["Warrior"] = hero.hk
+      }
+    });
 
-    if(hero !== undefined){
-      data = hero.getData();
+    callback(heros);
+
+  })
+
+  socket.on("getHeroAttributes", function(type, callback){
+    let data = {};
+    let hero:Hero;
+
+    if(type === "myHero"){
+      var heroId = socket.conn.id;
+      hero = model.getHero(heroId);
+
+      if(hero !== undefined){
+        data = hero.getData();
+      }
     }
 
     callback(data)

@@ -33,14 +33,17 @@ export default class BoardOverlay extends Phaser.Scene {
             backgroundColor: '#f00'
         }
 
-        //
+        this.gameinstance.getHerosBorder((heros) =>{
+
+        })
 
         // Your profile.
         this.gameText = this.add.text(400, 10, "You: 5g / 3 str / 8 will", style2)
         this.gameText.setInteractive();
         this.gameText.on('pointerdown', function (pointer) {
 
-            this.gameinstance.getHeroAttributes((herodata) => {
+            this.gameinstance.getHeroAttributes("myHero", (herodata) => {
+                this.gameText = this.add.text(400, 10, "You: 5g / 3 str / 8 will", style2)
                 
                 if (this.scene.isVisible('heroCard')) {
                     WindowManager.destroy(this, 'heroCard');
