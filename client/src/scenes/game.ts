@@ -62,15 +62,6 @@ export default class GameScene extends Phaser.Scene {
 
     this.setRegions();
 
-<<<<<<< HEAD
-    this.addMage();
-    this.addDwarf();
-    this.addArcher();
-    this.addWarrior();
-    //this.addFarmers()
-    this.addMerchants();
-    this.hourTrackerSetup();
-=======
     var self = this;
     this.gameinstance.getHeros((herotypes) => {
       herotypes.forEach(type => {
@@ -86,9 +77,8 @@ export default class GameScene extends Phaser.Scene {
       });
     })
 
-    this.addFarmers()
+    //this.addFarmers()
     // this.hourTrackerSetup();
->>>>>>> 1e050a8d17306356a06a47961ec00f4806a3b62f
 
   }
 

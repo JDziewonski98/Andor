@@ -20,6 +20,11 @@ export class Hero {
         this.initializeResources()
     }
 
+    public getData(){
+        let data = {hk: this.hk, gold: this.gold, strength: this.strength, will: this.will, farmers: this.farmers.length};
+        return data;
+    }
+
     public getKind(): HeroKind {
         return this.hk;
     }

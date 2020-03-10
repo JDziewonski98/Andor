@@ -138,6 +138,19 @@ export function game(socket, model: Game) {
       callback(heros);
   })
 
+  socket.on("getHeroAttributes", function(callback){
+    let data = {};
+    var heroId = socket.conn.id;
+    let hero = model.getHero(heroId);
+
+    if(hero !== undefined){
+      data = hero.getData();
+    }
+
+    callback(data)
+
+  });
+
   // Collaborative decision making
   socket.on('collabDecisionAccept', function () {
     model.numAccepts += 1;
