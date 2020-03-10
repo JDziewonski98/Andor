@@ -19,3 +19,8 @@ export const dwarfTile = 7;
 export const archerTile = 25;
 export const warriorTile = 14;
 export const mageTile = 34;
+
+export const wellTile1 = 5;
+export const wellTile2 = 35;
+export const wellTile3 = 45;
+export const wellTile4 = 55;

@@ -31,6 +31,14 @@ export class game {
     public updateFarmer(callback){
         this.socket.on("updateFarmer", callback);
     }
+
+    public useWell(callback) {
+        this.socket.emit("useWell", callback);
+    }
+
+    public updateWell(callback) {
+        this.socket.on("updateWell", callback)
+    }
     
     public dropGold(amount, callback) {
         this.socket.emit("dropGold", amount, callback)
