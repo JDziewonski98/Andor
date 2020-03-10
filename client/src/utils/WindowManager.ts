@@ -1,20 +1,8 @@
 import { HeroWindow } from "../scenes/herowindow";
 
 export class WindowManager extends Phaser.Scene {
-    private chatlog
-    public static create(self, key: string, obj, gameinstance, data=null) {
-        if (key == 'chat') {
-            //were making chat window
-            var win = new obj(key, gameinstance)
-        }
-        if (key == 'collab') {
-            //were making collab window
-            var win = new obj(key, gameinstance)
-        }
-        else if(typeof obj === typeof HeroWindow){
-            //were making hero window
-            var win = new obj(key, gameinstance, data);
-        }
+    public static create(self, key: string, obj, data={}) {
+        var win = new obj(key, data);
         self.scene.add(key, win, true);
         return win;
     }

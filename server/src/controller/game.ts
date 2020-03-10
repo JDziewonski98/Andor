@@ -1,4 +1,4 @@
-import { Game, HeroKind, Region} from '../model';
+import { Game, HeroKind, Region } from '../model';
 
 export function game(socket, model: Game) {
 
@@ -27,20 +27,20 @@ export function game(socket, model: Game) {
    */
   });
 
-  socket.on("pickupFarmer", function(heroId, callback){
+  socket.on("pickupFarmer", function (callback) {
     let success = false;
-    heroId = socket.conn.id;
+    let heroId = socket.conn.id;
     let hero = model.getHero(heroId);
-    if(hero !== undefined){
+    if (hero !== undefined) {
       success = hero.pickupFarmer();
     }
 
-    if(success){
+    if (success) {
       socket.broadcast.emit("updateFarmer");
       callback();
     }
   });
-    
+
   socket.on('bind hero', function (heroType, callback) {
     let success = false;
     let id = socket.conn.id;
@@ -60,7 +60,7 @@ export function game(socket, model: Game) {
       let heros = {
         taken: ["archer", "warrior", "mage", "dwarf"].filter(f => !remaining.toString().includes(f)),
         remaining: remaining
-      } 
+      }
       socket.broadcast.emit("updateHeroList", heros)
       callback(heros);
     }
@@ -88,7 +88,7 @@ export function game(socket, model: Game) {
 
   socket.on('removeListener', function (object) {
     console.log('removing ', object)
-    socket.broadcast.emit('removeObjListener',object)
+    socket.broadcast.emit('removeObjListener', object)
   })
 
   socket.on("getChatLog", function (callback) {
@@ -101,12 +101,12 @@ export function game(socket, model: Game) {
     socket.broadcast.emit('recieveDesiredPlayerCount', model.getNumOfDesiredPlayers())
   })
 
-  socket.on('getReadyPlayers', function() {
+  socket.on('getReadyPlayers', function () {
     socket.broadcast.emit('sendReadyPlayers', model.readyplayers)
     socket.emit('sendReadyPlayers', model.readyplayers)
   })
 
-  socket.on('getDesiredPlayerCount', function() {
+  socket.on('getDesiredPlayerCount', function () {
     socket.broadcast.emit('recieveDesiredPlayerCount', model.getNumOfDesiredPlayers())
     socket.emit('recieveDesiredPlayerCount', model.getNumOfDesiredPlayers())
   })
@@ -114,6 +114,13 @@ export function game(socket, model: Game) {
   socket.on("dropGold", function (callback) {
     // TODO:
     callback()
+  })
+
+  socket.on("getHeros", function (callback) {
+    let heros = new Array<HeroKind>();
+    model.getHeros().forEach((hero, key) => { heros.push(hero.hk) });
+    if (heros.length !== 0)
+      callback(heros);
   })
 
   // Collaborative decision making

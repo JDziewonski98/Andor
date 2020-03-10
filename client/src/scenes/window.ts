@@ -10,7 +10,6 @@ export abstract class Window extends Phaser.Scene {
     } 
  
     create () {
-        console.log("parent window create", this.windowData)
         this.parent = this.add.zone(this.windowData.x, this.windowData.y, this.windowData.width, this.windowData.height).setOrigin(0);
         this.parent.setInteractive()
         this.input.setDraggable(this.parent);

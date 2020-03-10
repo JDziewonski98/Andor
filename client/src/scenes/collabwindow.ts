@@ -9,9 +9,9 @@ export class CollabWindow extends Window {
 
     private gameinstance: game;
 
-    public constructor(key: string, gameinstance: game, windowData = { x: 500, y: 400, width: 300, height: 100 }) {
+    public constructor(key: string, data, windowData = { x: 500, y: 400, width: 300, height: 100 }) {
         super(key, windowData);
-        this.gameinstance = gameinstance
+        this.gameinstance = data.controller
     }
 
     protected initialize() {

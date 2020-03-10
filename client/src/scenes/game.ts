@@ -1,18 +1,19 @@
 import { Tile } from '../objects/tile';
 import { Farmer } from '../objects/farmer';
-import { WindowManager } from "../utils/WindowManager";
 import { Hero } from '../objects/hero';
 import { HourTracker } from '../objects/hourTracker';
 import { game } from '../api';
 import {
   expandedWidth, expandedHeight, borderWidth,
-  fullWidth, fullHeight, htX, htY, scaleFactor
+  fullWidth, fullHeight, htX, htY, scaleFactor,
+  mageTile, archerTile, warriorTile, dwarfTile
 } from '../constants'
 
 
 export default class GameScene extends Phaser.Scene {
   private heroes: Hero[];
-  private hero: Hero; // remember to get rid of this later
+  private hero: Hero;
+  private ownHeroType: string;
   private tiles: Tile[];
   private farmers: Farmer[];
   private hourTracker: HourTracker;
@@ -26,18 +27,22 @@ export default class GameScene extends Phaser.Scene {
 
   constructor() {
     super({ key: 'Game' });
-    this.heroes = Array<Hero>();
+    this.heroes = Array<Hero>(4);
     this.tiles = Array<Tile>();
     this.farmers = new Array<Farmer>();
+    this.ownHeroType = "dwarf";
+
   }
 
   public init(data) {
+    console.log(data.heroType)
     this.gameinstance = data.controller;
+    this.ownHeroType = data.heroType;
     this.sys.game.scene.bringToTop('BoardOverlay');
   }
 
   public preload() {
-    // Loading the tiles sprite sheet for use of textures for Sprites
+    this.load.image("farmer", "../assets/farmer.png");
     this.load.multiatlas('tiles', './assets/tilesheet.json', 'assets')
     // TODO: Create a sprite sheet for heroes as well so they don't need an 
     // internal sprite to render their image
@@ -55,12 +60,23 @@ export default class GameScene extends Phaser.Scene {
 
     this.setRegions();
 
-    this.addMage();
-    this.addDwarf();
-    this.addArcher();
-    this.addWarrior();
+    var self = this;
+    this.gameinstance.getHeros((herotypes) => {
+      herotypes.forEach(type => {
+        if (type === "archer") {
+          self.addHero("archer", archerTile, "archermale");
+        } else if (type === "mage") {
+          self.addHero("mage", mageTile, "magemale");
+        } else if (type === "warrior") {
+          self.addHero("warrior", warriorTile, "warriormale");
+        } else if (type === "dwarf") {
+          self.addHero("dwarf", dwarfTile, "dwarfmale");
+        }
+      });
+    })
+
     this.addFarmers()
-    this.hourTrackerSetup();
+    // this.hourTrackerSetup();
 
   }
 
@@ -84,16 +100,12 @@ export default class GameScene extends Phaser.Scene {
     // Note that regions 73-79 and 83 are unused, but created anyways to preserve direct
     // indexing between regions array and region IDs
     var tilesData = require("../../assets/xycoords").map;
-    // console.log("regions sanity check:", data);
-    // console.log(data.type);
     var treeTile = this.textures.get('tiles').getFrameNames()[12];
     for (var element in tilesData) {
       var tile = new Tile(element, this, tilesData[element].xcoord * scaleFactor + borderWidth, tilesData[element].ycoord * scaleFactor + borderWidth, treeTile);
       this.tiles[element] = tile;
       tile.setInteractive();
       this.add.existing(tile);
-      //  console.log(element, data[element].xcoord, data[element].ycoord, treeTile);
-      //  this.tiles[element.id] = new tile()
     }
 
     /// for movement callback, ties pointerdown to move request
@@ -106,24 +118,19 @@ export default class GameScene extends Phaser.Scene {
         })
       })
     })
-    // // Get the file name of the desired frame to pass as texture
-    // var treeTile = this.textures.get('tiles').getFrameNames()[12];
-    // var mageStartTile = new Tile(9, this, tile9X, tile9Y, treeTile);
-    // mageStartTile.setInteractive();
-    // this.add.existing(mageStartTile);
   }
 
-  private addFarmers(){
+  private addFarmers() {
 
     const farmertile_0: Tile = this.tiles[24];
     const farmertile_1: Tile = this.tiles[36];
 
-    let farmer_0: Farmer = new Farmer(this, farmertile_0, 'dwarfmale').setDisplaySize(40, 40);
-    let farmer_1: Farmer = new Farmer(this, farmertile_1, 'dwarfmale').setDisplaySize(40, 40);
+    let farmer_0: Farmer = new Farmer(this, farmertile_0, 'farmer').setDisplaySize(40, 40);
+    let farmer_1: Farmer = new Farmer(this, farmertile_1, 'farmer').setDisplaySize(40, 40);
 
     farmer_0.setInteractive();
     farmer_1.setInteractive();
-    
+
     this.farmers.push(farmer_0);
     this.farmers.push(farmer_1);
 
@@ -138,8 +145,8 @@ export default class GameScene extends Phaser.Scene {
     var self = this;
 
     farmer_0.on('pointerdown', function (pointer) {
-      if(self.hero.tile.id == self.farmers[0].tile.id){
-        self.gameinstance.pickupFarmer(self.heroes[0].id, function(){
+      if (self.hero.tile.id == self.farmers[0].tile.id) {
+        self.gameinstance.pickupFarmer(function () {
           farmer_0.destroy();
           //TODO: Add farmer to player inventory and display on player inventory card
         });
@@ -148,63 +155,34 @@ export default class GameScene extends Phaser.Scene {
     }, this);
 
     farmer_1.on('pointerdown', function (pointer) {
-      if(self.hero.tile.id == self.farmers[1].tile.id){
-        self.gameinstance.pickupFarmer(self.heroes[0].id, function(){
+      if (self.hero.tile.id == self.farmers[1].tile.id) {
+        self.gameinstance.pickupFarmer(function () {
           farmer_1.destroy();
         });
       }
 
     }, this);
 
-    
-    this.gameinstance.updateFarmer(function(){
+
+    this.gameinstance.updateFarmer(function () {
       farmer_0.destroy();
     });
 
-    this.gameinstance.updateFarmer(function(){
+    this.gameinstance.updateFarmer(function () {
       farmer_1.destroy();
     });
   }
 
-  private addDwarf() {
-    const dwarfTile: Tile = this.tiles[7]
-    let dwarf: Hero = new Hero(1, this, dwarfTile, 'dwarfmale').setDisplaySize(40, 60);
-    this.heroes.push(dwarf);
-
-    dwarfTile.hero = dwarf;
-    dwarfTile.heroexist = true;
-    this.add.existing(dwarf);
-  }
-
-  private addMage() {
-    const mageTile: Tile = this.tiles[34]
-    let mage: Hero = new Hero(1, this, mageTile, 'magemale').setDisplaySize(40, 60);
-    this.heroes.push(mage);
-
-    mageTile.hero = mage;
-    mageTile.heroexist = true;
-    this.add.existing(mage);
-  }
-  private addArcher() {
-    const archerTile: Tile = this.tiles[25]
-    let hero: Hero = new Hero(1, this, archerTile, 'archermale').setDisplaySize(40, 60);
-    this.heroes.push(hero);
-
-    archerTile.hero = hero;
-    archerTile.heroexist = true;
-    this.add.existing(hero);
-  }
-  private addWarrior() {
-    const tile: Tile = this.tiles[14]
-    let hero: Hero = new Hero(1, this, tile, 'warriormale').setDisplaySize(40, 60);
+  private addHero(type: string, tileNumber: number, texture: string){
+    const tile: Tile = this.tiles[tileNumber]
+    let hero: Hero = new Hero(this, tile, texture).setDisplaySize(40, 60);
     this.heroes.push(hero);
 
     tile.hero = hero;
     tile.heroexist = true;
     this.add.existing(hero);
+    if (this.ownHeroType === type) this.hero = hero;
   }
-
-
 
   // Creating the hour tracker
   private hourTrackerSetup() {
@@ -239,13 +217,10 @@ export default class GameScene extends Phaser.Scene {
     this.hourTracker.setInteractive();
   }
 
-  private escChat() {
-    WindowManager.destroy(this, 'chat');
-  }
   private moveRequest(tile, callback) {
-    console.log("qoiwhuj requesting MOVEE", this.gameinstance)
     this.gameinstance.moveTo(tile, callback)
   }
+
   public update() {
     var camera = this.cameras.main;
 
