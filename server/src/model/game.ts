@@ -189,9 +189,10 @@ export class Game {
 
             }
         }
+    }
 
     private incrementNarratorPosition() {
-        //TO BE IMPLEMENTED
+        //TO BE IMPLEMENTED      
     }
 
     public pushToLog(item) {
