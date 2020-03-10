@@ -8,6 +8,7 @@ import {
   fullWidth, fullHeight, htX, htY, scaleFactor,
   mageTile, archerTile, warriorTile, dwarfTile
 } from '../constants'
+import { Monster } from '../objects/monster';
 
 
 export default class GameScene extends Phaser.Scene {
@@ -18,6 +19,7 @@ export default class GameScene extends Phaser.Scene {
   private farmers: Farmer[];
   private hourTracker: HourTracker;
   private gameinstance: game;
+  private monsters: Monster[]
 
   private cameraKeys;
   private cameraScrollSpeed = 15;
@@ -31,6 +33,7 @@ export default class GameScene extends Phaser.Scene {
     this.tiles = Array<Tile>();
     this.farmers = new Array<Farmer>();
     this.ownHeroType = "dwarf";
+    this.monsters = new Array<Monster>();
 
   }
 
@@ -42,6 +45,9 @@ export default class GameScene extends Phaser.Scene {
   }
 
   public preload() {
+    this.load.image("gor", "../assets/gor.PNG")
+    this.load.image("skral", "../assets/skral.PNG")
+    this.load.image("wardrak", "../assets/wardrak.PNG")
     this.load.image("farmer", "../assets/farmer.png");
     this.load.multiatlas('tiles', './assets/tilesheet.json', 'assets')
     // TODO: Create a sprite sheet for heroes as well so they don't need an 
@@ -76,7 +82,7 @@ export default class GameScene extends Phaser.Scene {
     })
 
     this.addFarmers()
-    // this.hourTrackerSetup();
+    this.addMonsters()
 
   }
 
@@ -118,6 +124,44 @@ export default class GameScene extends Phaser.Scene {
         })
       })
     })
+  }
+
+  private addMonsters() {
+
+    const gortile1: Tile = this.tiles[8];
+    const gortile2: Tile = this.tiles[20];
+    const gortile3: Tile = this.tiles[21];
+    const gortile4: Tile = this.tiles[26];
+    const gortile5: Tile = this.tiles[48];
+    const skraltile: Tile = this.tiles[19];
+
+    let gor1: Monster = new Monster(this, gortile1, 'gor').setInteractive().setScale(.5);
+    let gor2: Monster = new Monster(this, gortile2, 'gor').setInteractive().setScale(.5);
+    let gor3: Monster = new Monster(this, gortile3, 'gor').setInteractive().setScale(.5);
+    let gor4: Monster = new Monster(this, gortile4, 'gor').setInteractive().setScale(.5);
+    let gor5: Monster = new Monster(this, gortile5, 'gor').setInteractive().setScale(.5);
+    let skral: Monster = new Monster(this, skraltile, 'skral').setInteractive().setScale(.5);
+
+    this.monsters.push(gor1);
+    this.monsters.push(gor2);
+    this.monsters.push(gor3);
+    this.monsters.push(gor4);
+    this.monsters.push(gor5);
+    this.monsters.push(skral);
+
+    gortile1.monster = gor1
+    gortile2.monster = gor2
+    gortile3.monster = gor3
+    gortile4.monster = gor4
+    gortile5.monster = gor5
+    skraltile.monster = skral
+
+    let self = this;
+    this.monsters.forEach(monster =>
+        self.add.existing(monster)
+      );
+
+
   }
 
   private addFarmers() {
