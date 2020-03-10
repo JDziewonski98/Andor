@@ -12,11 +12,11 @@ export class HeroWindow extends Window {
     private name
     private gameinstance: game;
 
-    public constructor(key: string, gameinstance: game, data, windowData = { x: 350, y: 30, width: 350, height: 150 }) {
+    public constructor(key: string, data, windowData = { x: 350, y: 30, width: 350, height: 150 }) {
         super(key, windowData);
         this.icon = data.icon
         this.name = data.name
-        this.gameinstance = gameinstance
+        this.gameinstance = data.controller
 
         this.gold = 5
         this.will = 5
