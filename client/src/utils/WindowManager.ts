@@ -7,6 +7,10 @@ export class WindowManager extends Phaser.Scene {
             //were making chat window
             var win = new obj(key, gameinstance)
         }
+        if (key == 'collab') {
+            //were making collab window
+            var win = new obj(key, gameinstance)
+        }
         else if(typeof obj === typeof HeroWindow){
             //were making hero window
             var win = new obj(key, gameinstance, data);
