@@ -119,6 +119,31 @@ export function game(socket, model: Game) {
       callback(heros);
   })
 
+  // Collaborative decision making
+  
+  // Submitting a decision
+  socket.on('collabDecisionSubmit', function() {
+    // Check that numAccepts equals total num of players-1
+    if (model.numAccepts == model.getNumOfDesiredPlayers()-1) {
+      // Success: distribute accordingly
+      // Reset decision related state
+      model.numAccepts = 0;
+      socket.broadcast.emit('sendDecisionSubmitSuccess')
+      socket.emit('sendDecisionSubmitSuccess')
+    } else {
+      // Failure: need more accepts before valid submit
+      socket.emit('sendDecisionSubmitFailure')
+    }
+  })
+
+  // Accepting a decision
+  socket.on('collabDecisionAccept', function () {
+    model.numAccepts += 1;
+    console.log('number of players accepted decision: ', model.numAccepts)
+    // Tell the client that accepted to update their status
+    socket.emit('sendDecisionAccepted', model.numAccepts)
+  })
+
   function getCurrentDate() {
     var currentDate = new Date();
     var hour = (currentDate.getHours() < 10 ? '0' : '') + currentDate.getHours();

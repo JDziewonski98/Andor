@@ -9,11 +9,12 @@ export class Chat extends Window {
     //private chatlog: any;
     //private populated: boolean;
 
-    public constructor(key, gameinstance, windowData = { x: 10, y: 10, width: 350, height: 250 }) {
+    public constructor(key, data, windowData = { x: 10, y: 10, width: 350, height: 250 }) {
         super(key, windowData);
-        this.gameinstance = gameinstance.controller
-        //this.chatlog = this.gameinstance.getChatLog()
-        //this.populated = false;
+        this.gameinstance = data.controller
+        // this.chatlog = []
+        // this.populated = false;
+        console.log('in constructo')
     }
 
 

@@ -88,5 +88,24 @@ export class game {
     public getHeros(callback){
         this.socket.emit("getHeros", callback)
     }
+
+    // Collaborative decision making
+    // Submitting a decision
+    public collabDecisionSubmit() {
+        this.socket.emit('collabDecisionSubmit')
+    }
+    public receiveDecisionSubmitSuccess(callback) {
+        this.socket.on('sendDecisionSubmitSuccess', callback)
+    }
+    public receiveDecisionSubmitFailure(callback) {
+        this.socket.on('sendDecisionSubmitFailure', callback)
+    }
+    // Accepting a decision
+    public collabDecisionAccept() {
+        this.socket.emit('collabDecisionAccept')
+    }
+    public receiveDecisionAccepted(callback) {
+        this.socket.on('sendDecisionAccepted', callback)
+    }
 }
 
