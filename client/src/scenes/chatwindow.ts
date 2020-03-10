@@ -6,40 +6,31 @@ export class Chat extends Window {
     private element;
     private gameinstance: game;
     private chatwindow: any;
-    private chatlog: any;
-    private populated: boolean;
+    //private chatlog: any;
+    //private populated: boolean;
 
     public constructor(key, gameinstance, windowData = { x: 10, y: 10, width: 350, height: 250 }) {
         super(key, windowData);
-        this.gameinstance = gameinstance
-        this.chatlog = []
-        this.populated = false;
-        console.log('in constructo')
+        this.gameinstance = gameinstance.controller
+        //this.chatlog = this.gameinstance.getChatLog()
+        //this.populated = false;
     }
 
-    public init() {
-        var self = this;
-        this.gameinstance.getChatLog( function(chatlog) {
-            setChatLog(chatlog)
-        });
-        function setChatLog(chatlog) {
-            self.chatlog = chatlog;
-        }
-    }
 
     public preload() {
         this.load.html('chatform', './assets/chat.html');
     }
 
     protected initialize() {
-        
+        console.log(this)
         var self = this;
         this.text = "";
         this.cameras.main.setBackgroundColor(0xffffff)
 
         this.element = this.add.dom(200, 140).createFromCache('chatform');
-
-        if (!this.element._events.click) { // only add click event if doesnt exist
+        
+        if (this.gameinstance.getChatLog().length == 0) { // only add click event if doesnt exist
+            console.log(this.gameinstance.getChatLog().length)
             this.element.addListener('click');
         }
 
@@ -49,13 +40,10 @@ export class Chat extends Window {
                 var inputText = this.getChildByName('nameField');
                 //  Have they entered anything?
                 if (inputText.value !== '') {
-                    if (self.populated == false) {
-                        self.populate();
-                        self.populated = true;
-                    }
                     event.preventDefault();
                     //self.gameinstance.chatlog.push({})
-                    console.log(self.chatlog)
+                    //console.log(self.chatlog)
+                    //self.gameinstance.appendToChatLog(inputText.value)
                     self.gameinstance.send(inputText.value, function (msg) {
                         inputText.value = "";
                         update(msg)
@@ -65,27 +53,34 @@ export class Chat extends Window {
         });
 
         function update(msg){
+            
             console.log(msg)
+            self.gameinstance.appendToChatLog(msg)
             var paragraph = document.createElement('p');
             paragraph.append(msg);
-            document.getElementById("history").append(paragraph);
+            try{
+                document.getElementById("history").append(paragraph);
+            }
+            catch {
+                console.log('error?')
+            }
+            
         }
 
+
+
+
+        this.gameinstance.getChatLog().forEach(element => {
+            let p = document.createElement('p')
+            p.append(element)
+            document.getElementById("history").append(p)
+        });
 
         this.gameinstance.recieve(update)
         //this.populate()
 
     }
 
-    private populate() {
-        //when window is reopened, populate it with the chatlog.
-        console.log('populating')
-        this.chatlog.forEach(element => {
-            console.log(element)
-            let p = document.createElement('p')
-            p.append(element.author + ': ' + element.content)
-            document.getElementById("history").append(p)
-        });
-    }
+
 
 }
