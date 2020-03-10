@@ -139,6 +139,9 @@ export class Game {
         //TO BE IMPLEMENTED
     }
 
+    public moveHeroTo(hero, tile){
+        hero.moveTo(tile)
+    }
     private endGame() {
         //TO BE IMPLEMENTED
     }

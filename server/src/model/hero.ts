@@ -25,6 +25,8 @@ export class Hero {
     }
 
     private moveTo(newTile) {
+        this.region = newTile
+        this.timeOfDay ++
         //TODO
     }
 

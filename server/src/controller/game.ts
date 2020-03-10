@@ -12,6 +12,7 @@ export function game(socket, model: Game) {
     for(var id in hero.getRegion().getAdjRegionsIds()){
       if(model.getRegions()[id] === tile){
         console.log("Can move from tile: ", tile.id, " to tile: ", id)
+        canMove = true
       }
   }
     /*
@@ -19,9 +20,12 @@ export function game(socket, model: Game) {
     // any logic for movement here
 
     if (canMove) {
-      socket.broadcast.emit("updateHeroMove", heroId);
+      this.model.moveHeroTo(hero, tile)
+      socket.broadcast.emit("updateHeroMove", heroId, tile);
+      
     } else {
       // could emit event for handling failure move case here.
+      socket.emit("moveError")
     }
     callback();
    */
