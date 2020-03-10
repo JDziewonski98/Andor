@@ -175,7 +175,7 @@ export default class GameScene extends Phaser.Scene {
 
   private addHero(type: string, tileNumber: number, texture: string){
     const tile: Tile = this.tiles[tileNumber]
-    let hero: Hero = new Hero(this, tile, texture).setDisplaySize(40, 60);
+    let hero: Hero = new Hero(this, tile, texture).setDisplaySize(40, 40);
     this.heroes.push(hero);
 
     tile.hero = hero;
