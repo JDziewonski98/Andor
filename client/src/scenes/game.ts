@@ -10,8 +10,10 @@ import {
   fullWidth, fullHeight, htX, htY, scaleFactor,
   mageTile, archerTile, warriorTile, dwarfTile,
   reducedWidth, reducedHeight,
-  collabTextHeight, collabColWidth, collabRowHeight
+  collabTextHeight, collabColWidth, collabRowHeight,
+  wellTile1, wellTile2, wellTile3, wellTile4
 } from '../constants'
+import { Monster } from '../objects/monster';
 
 
 export default class GameScene extends Phaser.Scene {
@@ -22,6 +24,7 @@ export default class GameScene extends Phaser.Scene {
   private farmers: Farmer[];
   private hourTracker: HourTracker;
   private gameinstance: game;
+  private monsters: Monster[]
 
   private gameText;
 
@@ -38,6 +41,7 @@ export default class GameScene extends Phaser.Scene {
     this.tiles = Array<Tile>();
     this.farmers = new Array<Farmer>();
     this.ownHeroType = "dwarf";
+    this.monsters = new Array<Monster>();
 
   }
 
@@ -49,10 +53,14 @@ export default class GameScene extends Phaser.Scene {
   }
 
   public preload() {
+    this.load.image("gor", "../assets/gor.PNG")
+    this.load.image("skral", "../assets/skral.PNG")
+    this.load.image("wardrak", "../assets/wardrak.PNG")
     this.load.image("farmer", "../assets/farmer.png");
     this.load.multiatlas('tiles', './assets/tilesheet.json', 'assets')
     // TODO: Create a sprite sheet for heroes as well so they don't need an 
     // internal sprite to render their image
+    this.load.image("well", "../assets/well.png");
   }
 
   public create() {
@@ -83,7 +91,12 @@ export default class GameScene extends Phaser.Scene {
     })
 
     this.addFarmers()
-    // this.hourTrackerSetup();
+    this.addMonsters()
+
+      this.addWell(wellTile1, "well1")
+      this.addWell(wellTile2, "well2")
+      this.addWell(wellTile3, "well3")
+      this.addWell(wellTile4, "well4")
 
     var style2 = {
       fontFamily: '"Roboto Condensed"',
@@ -164,6 +177,44 @@ export default class GameScene extends Phaser.Scene {
     })
   }
 
+  private addMonsters() {
+
+    const gortile1: Tile = this.tiles[8];
+    const gortile2: Tile = this.tiles[20];
+    const gortile3: Tile = this.tiles[21];
+    const gortile4: Tile = this.tiles[26];
+    const gortile5: Tile = this.tiles[48];
+    const skraltile: Tile = this.tiles[19];
+
+    let gor1: Monster = new Monster(this, gortile1, 'gor').setInteractive().setScale(.5);
+    let gor2: Monster = new Monster(this, gortile2, 'gor').setInteractive().setScale(.5);
+    let gor3: Monster = new Monster(this, gortile3, 'gor').setInteractive().setScale(.5);
+    let gor4: Monster = new Monster(this, gortile4, 'gor').setInteractive().setScale(.5);
+    let gor5: Monster = new Monster(this, gortile5, 'gor').setInteractive().setScale(.5);
+    let skral: Monster = new Monster(this, skraltile, 'skral').setInteractive().setScale(.5);
+
+    this.monsters.push(gor1);
+    this.monsters.push(gor2);
+    this.monsters.push(gor3);
+    this.monsters.push(gor4);
+    this.monsters.push(gor5);
+    this.monsters.push(skral);
+
+    gortile1.monster = gor1
+    gortile2.monster = gor2
+    gortile3.monster = gor3
+    gortile4.monster = gor4
+    gortile5.monster = gor5
+    skraltile.monster = skral
+
+    let self = this;
+    this.monsters.forEach(monster =>
+        self.add.existing(monster)
+      );
+
+
+  }
+
   private addFarmers() {
 
     const farmertile_0: Tile = this.tiles[24];
@@ -227,6 +278,39 @@ export default class GameScene extends Phaser.Scene {
     this.add.existing(hero);
     if (this.ownHeroType === type) this.hero = hero;
   }
+
+    private addWell(tileNumber: number, wellName: string) {
+        const tile: Tile = this.tiles[tileNumber]
+        const well = this.add.image(tile.x, tile.y, "well").setDisplaySize(60, 40)
+        well.name = wellName;
+
+        well.setInteractive()
+        var self = this
+
+        well.on("pointerdown", function () {
+
+            self.gameinstance.useWell(function () {
+                self[wellName].setTint(0x404040)
+                if (tile.hero.getWillPower() <= 17) {
+                    tile.hero.setwillPower(3)
+                }
+                else if (tile.hero.getWillPower() <= 20 && tile.hero.getWillPower() > 17) {
+                    tile.hero.setwillPower(20 - tile.hero.getWillPower())
+                }
+
+            });
+        });
+
+        this.gameinstance.updateWell(function () {
+            self[wellName].setTint(0x404040)
+            if (tile.hero.getWillPower() <= 17) {
+                tile.hero.setwillPower(3)
+            }
+            else if (tile.hero.getWillPower() <= 20 && tile.hero.getWillPower() > 17) {
+                tile.hero.setwillPower(20 - tile.hero.getWillPower())
+            }
+        });
+    }
 
   // Creating the hour tracker
   private hourTrackerSetup() {

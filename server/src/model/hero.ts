@@ -89,6 +89,33 @@ export class Hero {
         // TODO: implement
     }
 
+    public setWill(willValueToChange: number) {
+        this.will += willValueToChange
+    }
+
+    public useWell() {
+        var reg = this.region
+        if (reg.getHaswell() && !reg.getWellUsed()) {
+            //increase 3 will power
+            if (this.will <= 17) {
+                this.setWill(3)
+            }
+            else if (this.will <= 20 && this.will > 17) {
+                this.will = 20
+            }
+            //set the boolean of whether a well was used
+            reg.setWellUsed(true)
+
+            //inform front-end that a well has been used
+            return true
+        }
+        return false
+    }
+
+    public getWill() {
+        return this.will
+    }
+
     private initializeResources() {
         this.will = 7;
         this.strength = 1;

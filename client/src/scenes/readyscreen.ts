@@ -41,6 +41,9 @@ export default class ReadyScreenScene extends Phaser.Scene {
             x: 160,
             y: 200
         }
+
+        //quickly isntantiating chat log
+
         this.add.image(500, 300, 'andordude').setDisplaySize(1000, 600)
         this.archer = this.add.image(200, 200, 'archer').setDisplaySize(heroSize.x, heroSize.y)
         this.add.text(176, 320, "Archer");
@@ -82,8 +85,11 @@ export default class ReadyScreenScene extends Phaser.Scene {
             self.gameController.getReadyPlayers()
             self.gameController.getDesiredPlayerCount()
             if (this.ready && this.readyplayers == this.desiredplayers) {
-                this.scene.start('Game', { controller: self.gameController, heroType: this.selection.name });
-                this.scene.start('BoardOverlay',{gameinstance:self.gameController, heroType: this.selection.name});
+                if (this.scene.isVisible('chat')) {
+                    WindowManager.destroy(this, 'chat');
+                }
+                this.scene.start('Game', { controller: self.gameController });
+                this.scene.start('BoardOverlay',{gameinstance:self.gameController});
             }
             else {
                 this.tween()
@@ -91,15 +97,20 @@ export default class ReadyScreenScene extends Phaser.Scene {
         }, this);
 
         // chat window
+        WindowManager.create(this, 'chat', Chat, { controller: self.gameController });
         this.chatText = this.add.text(800, 550, "CHAT").setOrigin(0.5)
         this.chatText.setInteractive();
         this.chatText.on('pointerdown', function (pointer) {
             if (this.scene.isVisible('chat')) {
-                WindowManager.destroy(this, 'chat');
+                WindowManager.destroy(this, "chat")
+                // this.scene.sendToBack('chat')
+                // this.scene.sleep('chat')
             }
             else {
-                console.log(this)
-                WindowManager.create(this, 'chat', Chat, { controller: self.gameController });
+                WindowManager.create(this, "chat", Chat, { controller: self.gameController})
+                // this.sys.game.scene.bringToTop('chat')
+                // this.sys.game.scene.getScene('chat').scene.setVisible(true, 'chat')
+                // this.scene.resume('chat')
             }
 
         }, this);

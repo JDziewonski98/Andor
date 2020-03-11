@@ -27,3 +27,9 @@ export const mageTile = 34;
 export const collabTextHeight = 12;
 export const collabRowHeight = 50;
 export const collabColWidth = 70;
+
+export const wellTile1 = 5;
+export const wellTile2 = 35;
+export const wellTile3 = 45;
+export const wellTile4 = 55;
+
