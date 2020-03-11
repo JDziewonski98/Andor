@@ -1,4 +1,5 @@
 import { lobby } from "../api";
+import { reducedWidth, reducedHeight } from '../constants'
 
 export default class LobbyScene extends Phaser.Scene {
     private welcomeText;
@@ -44,8 +45,6 @@ export default class LobbyScene extends Phaser.Scene {
         // scenes (lobby, load, join, etc). This has the effect of keeping desired
         // behaviour of Phaser Game autoscaling, while keeping the actual game size
         // larger.
-        var reducedWidth = 1000;
-        var reducedHeight = 600;
         this.scale.setGameSize(reducedWidth, reducedHeight);
         
         // Initially hide Options and BoardOverlay scenes
