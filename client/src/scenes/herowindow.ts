@@ -6,21 +6,24 @@ export class HeroWindow extends Window {
     public gold: number
     public will: number
     public str: number
+    public farmers: number
     private goldtext
     private willtext
     private nametext
+    private strtext
+    private farmtext
     private name
     private gameinstance: game;
 
-    public constructor(key: string, gameinstance: game, data, windowData = { x: 350, y: 30, width: 350, height: 150 }) {
+    public constructor(key: string, data, windowData = { x: 350, y: 30, width: 400, height: 250 }) {
         super(key, windowData);
         this.icon = data.icon
         this.name = data.name
-        this.gameinstance = gameinstance
-
-        this.gold = 5
-        this.will = 5
-        this.str = 5
+        this.gameinstance = data.controller
+        this.gold = data.gold
+        this.will = data.will
+        this.str = data.strength
+        this.farmers = data.farmers
 
     }
 
@@ -28,11 +31,13 @@ export class HeroWindow extends Window {
 
         var bg = this.add.image(0, 0, 'scrollbg').setOrigin(0.5)
         var weed = this.add.sprite(50, 50, this.icon);
-        this.goldtext = this.add.text(50, 100, 'Gold: ' + this.gold, { backgroundColor: 'fx00' })
-        this.willtext = this.add.text(50, 120, 'Willpower: ' + this.will, { backgroundColor: 'fx00' })
-        this.nametext = this.add.text(30, 10, "", { color: '#2c03fc' })
-        this.add.text(150, 50, 'Special ability text ....', { backgroundColor: 'fx00' })
-        this.add.text(150, 70, 'Items ....', { backgroundColor: 'fx00' })
+        this.goldtext = this.add.text(25, 100, 'Gold: ' + this.gold, { backgroundColor: 'fx00' })
+        this.willtext = this.add.text(25, 120, 'Willpower: ' + this.will, { backgroundColor: 'fx00' })
+        this.strtext = this.add.text(25, 140, 'Strength: ' + this.str, { backgroundColor: 'fx00' })
+        this.farmtext = this.add.text(25, 160, 'Farmers: ' + this.farmers, { backgroundColor: 'fx00' })
+        this.add.text(25, 180, 'Items ....', { backgroundColor: 'fx00' })
+        this.add.text(25, 200, 'Special ability text ....', { backgroundColor: 'fx00' })
+
         bg.setInteractive()
         this.input.setDraggable(bg)
         //This drag is pretty f'd up.

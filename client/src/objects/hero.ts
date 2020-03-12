@@ -7,7 +7,9 @@ export class Hero extends Phaser.GameObjects.Sprite {
     public tile: Tile;
     public hourTracker: HourTracker;
     public farmer: Array<Farmer>;
-    private hour:  number;
+    private hour: number;
+    private willPower: number;
+    private strength: number;
 
     constructor(scene, tile: Tile, texture: string) {
         super(scene, tile.x, tile.y, texture);
@@ -15,6 +17,28 @@ export class Hero extends Phaser.GameObjects.Sprite {
         this.tile = tile;
         this.hourTracker = null;
         this.hour = 1;
+        this.initializeResources();
+    }
+
+    private initializeResources() {
+        this.willPower = 7;
+        this.strength = 1;
+
+        /**
+        if (this.hk === HeroKind.Archer) {
+            this.gold = 1
+            
+        } else if (this.hk === HeroKind.Dwarf) {
+            this.gold = 1
+            
+        } else if (this.hk === HeroKind.Mage) {
+            this.gold = 1
+            
+        } else if (this.hk === HeroKind.Warrior) {
+            this.gold = 1
+            
+        }
+        */
     }
 
     public move(newTile) {
@@ -36,5 +60,13 @@ export class Hero extends Phaser.GameObjects.Sprite {
 
     public dropGold(amount) {
 
+    }
+
+    public setwillPower(willValToChange) {
+        this.willPower += willValToChange;
+    }
+
+    public getWillPower() {
+        return this.willPower;
     }
 }

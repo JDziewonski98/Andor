@@ -9,6 +9,7 @@ export class game {
     constructor(name) {
         this.name = name
         this.socket = this.connect(this.name)
+        this.chatlog = []
     }
 
     private connect(name) {
@@ -24,11 +25,23 @@ export class game {
     }
 
     public pickupFarmer(callback){
-        this.socket.emit("pickupFarmer", callback);
+        this.socket.emit("pickupFarmer",  callback);
     }
 
     public updateFarmer(callback){
         this.socket.on("updateFarmer", callback);
+    }
+
+    public merchant(callback){
+        this.socket.emit("merchant", callback);
+    }
+    
+    public useWell(callback) {
+        this.socket.emit("useWell", callback);
+    }
+
+    public updateWell(callback) {
+        this.socket.on("updateWell", callback)
     }
     
     public dropGold(amount, callback) {
@@ -40,13 +53,18 @@ export class game {
     }
 
     public recieve(callback) {
-        this.socket.on("update messages", callback);
+        // prevent registering event again and creating double callbacks.
+        if(!this.socket._callbacks["$update messages"])
+            this.socket.on("update messages", callback);
     }
 
-    public getChatLog(callback) {
-        this.socket.emit('getChatLog', callback)
+    public getChatLog() {
+        return this.chatlog
     }
 
+    public appendToChatLog(msg) {
+        this.chatlog.push(msg)
+    }
     // TODO movement
     public moveRequest( tileID, callback){
         this.socket.emit('moveRequest', tileID, callback)
@@ -84,8 +102,32 @@ export class game {
     public getHeros(callback){
         this.socket.emit("getHeros", callback)
     }
-    public moveHeroTo(heroId, tileId, callback){
-        this.socket.on("moveHeroTo", callback)
+
+    public getHerosBorder(callback){
+        this.socket.emit("getHerosBorder", callback)
+    }
+
+    public getHeroAttributes(type, callback){
+        this.socket.emit("getHeroAttributes", type, callback)
+    }
+
+    // Collaborative decision making
+    // Submitting a decision
+    public collabDecisionSubmit() {
+        this.socket.emit('collabDecisionSubmit')
+    }
+    public receiveDecisionSubmitSuccess(callback) {
+        this.socket.on('sendDecisionSubmitSuccess', callback)
+    }
+    public receiveDecisionSubmitFailure(callback) {
+        this.socket.on('sendDecisionSubmitFailure', callback)
+    }
+    // Accepting a decision
+    public collabDecisionAccept() {
+        this.socket.emit('collabDecisionAccept')
+    }
+    public receiveDecisionAccepted(callback) {
+        this.socket.on('sendDecisionAccepted', callback)
     }
 }
 

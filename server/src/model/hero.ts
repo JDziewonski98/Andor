@@ -13,11 +13,18 @@ export class Hero {
     private farmer: boolean = false;
     private farmers: Array<Farmer>;
 
+    private wineskin: boolean = false;
+
     constructor(hk: HeroKind, region:Region) {
         this.hk = hk
         this.region = region;
         this.farmers = new Array()
         this.initializeResources()
+    }
+
+    public getData(){
+        let data = {hk: this.hk, gold: this.gold, strength: this.strength, will: this.will, farmers: this.farmers.length};
+        return data;
     }
 
     public getKind(): HeroKind {
@@ -74,6 +81,23 @@ export class Hero {
        
     }
 
+    public buyStrength(){
+        //If hero is the Dwarf, strength costs 1 gold at the Dwarf mine on tile 71
+        if(this.gold >= 1 && this.hk === HeroKind.Dwarf && this.region.getID() === 71){
+            this.gold -= 1;
+            this.strength++;
+            return true;
+        //Strength costs 2 for all heros everywhere else exceopt tile 71
+        }else if(this.gold >= 2 && this.region.getMerchant() === true){
+            this.gold -= 2;
+            this.strength++;
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
     public pickupFarmer() {
         var r_farmers = this.region.getFarmers();
         if(r_farmers.length != 0 && (this.region.getID() === r_farmers[r_farmers.length-1].tile.getID())){
@@ -94,6 +118,29 @@ export class Hero {
         // TODO: implement
     }
 
+    public setWill(willValueToChange: number) {
+        this.will += willValueToChange
+    }
+
+    public useWell() {
+        var reg = this.region
+        if (reg.getHaswell() && !reg.getWellUsed()) {
+            //increase 3 will power
+            if (this.will <= 17) {
+                this.setWill(3)
+            }
+            else if (this.will <= 20 && this.will > 17) {
+                this.will = 20
+            }
+            //set the boolean of whether a well was used
+            reg.setWellUsed(true)
+
+            //inform front-end that a well has been used
+            return true
+        }
+        return false
+    }
+
     private initializeResources() {
         this.will = 7;
         this.strength = 1;
@@ -102,12 +149,12 @@ export class Hero {
             this.gold = 1
             //this.region = new Region(25, false, 24, [23, 24, 31, 27, 26], false)
         } else if (this.hk === HeroKind.Dwarf) {
-            this.gold = 1
+            this.gold = 2
            // this.region = new Region(7, false, 0, [
              //   15, 9, 8, 0, 11
             //], false)
         } else if (this.hk === HeroKind.Mage) {
-            this.gold = 1
+            this.gold = 4;
             /* this.region = new Region(24, false, 23, [   //SHOULD BE 34!!!!!!
                 72, 23, 35, 30, 29
             ], false) */
