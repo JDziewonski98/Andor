@@ -104,14 +104,17 @@ export class Hero {
 
     public dropFarmer() {
         var r_farmers = this.region.getFarmers();
+        var result = new Array()
         if(r_farmers.length < 2 && this.farmers.length > 0){
             var farmer = this.farmers.pop()!;
             farmer.carriedBy = undefined;
             farmer.tile = this.region;
             this.region.getFarmers().push(farmer);
-            return this.region;
+            result.push(farmer.id)
+            result.push(this.region.getID())
+            return result;
         }
-        return this.region;
+        return result;
     }
 
     private farmerSlotEmpty() {

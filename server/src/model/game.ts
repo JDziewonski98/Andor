@@ -49,8 +49,8 @@ export class Game {
 
     private setFarmers() {
         //this.regions[24].initFarmer()
-        this.farmers.push(new Farmer(this.regions[24]));
-        this.farmers.push(new Farmer(this.regions[36]));
+        this.farmers.push(new Farmer(0, this.regions[24]));
+        this.farmers.push(new Farmer(1, this.regions[36]));
         
         this.regions[24].addFarmer(this.farmers[0]);
         this.regions[36].addFarmer(this.farmers[1]);
@@ -104,10 +104,10 @@ export class Game {
             this.heroList.set(id, new Hero(heroType, this.regions[25]));
         }
         else if(heroType === HeroKind.Mage){
-            this.heroList.set(id, new Hero(heroType, this.regions[24]));
+            this.heroList.set(id, new Hero(heroType, this.regions[24]));    //34!!!!
         }
         else if(heroType === HeroKind.Warrior){
-            this.heroList.set(id, new Hero(heroType, this.regions[14]));
+            this.heroList.set(id, new Hero(heroType, this.regions[24]));//14!!!!!
         }
 
         this.availableHeros = this.availableHeros.filter(h => h != heroType);

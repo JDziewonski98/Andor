@@ -6,14 +6,14 @@ import { Farmer } from './farmer';
 export class Hero extends Phaser.GameObjects.Sprite {
     public tile: Tile;
     public hourTracker: HourTracker;
-    public farmer: Array<Farmer>;
+    public farmers: Array<Farmer>;
     private hour: number;
     private willPower: number;
     private strength: number;
 
     constructor(scene, tile: Tile, texture: string) {
         super(scene, tile.x, tile.y, texture);
-        this.farmer = new Array();
+        this.farmers = new Array();
         this.tile = tile;
         this.hourTracker = null;
         this.hour = 1;

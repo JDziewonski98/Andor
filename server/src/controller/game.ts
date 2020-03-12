@@ -42,16 +42,16 @@ export function game(socket, model: Game, io) {
   });
 
   socket.on("dropFarmer", function(callback){
-    var region: Region;
+    var result = new Array()
     let heroId = socket.conn.id;
     let hero = model.getHero(heroId);
     if (hero !== undefined) {
-      region = hero.dropFarmer();
+      result = hero.dropFarmer();
 
-      if (region !== undefined) {
+      if (result !== undefined) {
         console.log(hero)
-        io.of("/"+model.getName()).emit("addFarmer", region.getID())
-        callback(region.getID());
+        io.of("/"+model.getName()).emit("addFarmer", result[1], result[0])
+        callback(result[1]);
       }
     }
   });

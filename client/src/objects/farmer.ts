@@ -8,14 +8,16 @@ import { Hero } from './hero';
 // param? Why not just use the Sprite texture - then we don't have
 // to update two things all the time
 export class Farmer extends Phaser.GameObjects.Sprite {
+    public id: number
     public tile: Tile;
     public x: number;
     public y: number;
     public sprite: Phaser.GameObjects.Sprite;
     public carriedBy: Hero;
 
-    constructor(scene, tile: Tile, texture:string) {
+    constructor(id,scene, tile: Tile, texture:string) {
         super(scene, tile.x, tile.y, texture);
+        this.id = id;
         this.x = tile.x;
         this.y = tile.y;
         this.carriedBy = null;

@@ -277,8 +277,8 @@ export default class GameScene extends Phaser.Scene {
     const farmertile_0: Tile = this.tiles[24];
     const farmertile_1: Tile = this.tiles[36];
 
-    let farmer_0: Farmer = new Farmer(this, farmertile_0, 'farmer').setDisplaySize(40, 40);
-    let farmer_1: Farmer = new Farmer(this, farmertile_1, 'farmer').setDisplaySize(40, 40);
+    let farmer_0: Farmer = new Farmer(0,this, farmertile_0, 'farmer').setDisplaySize(40, 40);
+    let farmer_1: Farmer = new Farmer(1, this, farmertile_1, 'farmer').setDisplaySize(40, 40);
 
     farmer_0.setInteractive();
     farmer_1.setInteractive();
@@ -301,14 +301,14 @@ export default class GameScene extends Phaser.Scene {
         self.gameinstance.pickupFarmer(function (tileid) {
           let pickedFarmer:Farmer = self.tiles[tileid].farmer.pop();
           for( var i = 0; i < 2; i++){
-            if(self.farmers[i] === pickedFarmer){
+            if(self.farmers[i].id === pickedFarmer.id){
               self.farmers[i].tile = undefined;
-              console.log(self.farmers[i].tile)
+              self.hero.farmers.push(pickedFarmer)
               break;
             }
           }
           pickedFarmer.destroy()
-          //console.log(self.farmers[0].carriedBy)
+          console.log(self.hero.farmers)
        });
       //}
 
@@ -337,8 +337,36 @@ export default class GameScene extends Phaser.Scene {
       
     });
 
-    this.gameinstance.addFarmer(function (tileid) {
-      let newFarmer = new Farmer(self, self.tiles[tileid], 'farmer').setDisplaySize(40,40);
+    this.gameinstance.addFarmer(function (tileid, farmerid) {
+      let newFarmer = self.hero.farmers.pop()
+      
+      if(farmerid === 0){
+        newFarmer = new Farmer(0, self, self.tiles[tileid], 'farmer').setDisplaySize(40,40)
+      }else if(farmerid === 1){
+        newFarmer = new Farmer(1, self, self.tiles[tileid], 'farmer').setDisplaySize(40,40)
+      }
+
+      self.tiles[tileid].farmer.push(newFarmer)
+
+      newFarmer.setInteractive()
+
+      newFarmer.on('pointerdown', function (pointer) {
+        //if (self.hero.tile.id == self.farmers[0].tile.id) {
+          self.gameinstance.pickupFarmer(function (tileid) {
+            let pickedFarmer:Farmer = self.tiles[tileid].farmer.pop();
+            for( var i = 0; i < 2; i++){
+              if(self.farmers[i].id === pickedFarmer.id){
+                self.farmers[i].tile = undefined;
+                self.hero.farmers.push(pickedFarmer)
+                break;
+              }
+            }
+            pickedFarmer.destroy()
+            console.log(self.hero.farmers)
+         });
+        //}
+  
+      }, this);
       self.add.existing(newFarmer)
     });
   }
@@ -351,7 +379,12 @@ export default class GameScene extends Phaser.Scene {
     tile.hero = hero;
     tile.heroexist = true;
     this.add.existing(hero);
-    if (this.ownHeroType === type) this.hero = hero;
+    console.log(this.ownHeroType, type)
+    if(type === "mage"){
+    //if (this.ownHeroType === type) {
+      this.hero = hero;
+      console.log(this.hero)
+    }
   }
 
     private addWell(tileNumber: number, wellName: string) {

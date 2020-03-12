@@ -7,14 +7,16 @@ import { Region, Hero } from '.';
 // param? Why not just use the Sprite texture - then we don't have
 // to update two things all the time
 export class Farmer{
+    public id:number
     public tile: Region;
     //public x: number;
     //public y: number;
     public carriedBy!: Hero | undefined;
 
-    constructor(tile) {
+    constructor(id, tile) {
         //this.x = x;
         //this.y = y;
+        this.id = id;
         this.tile = tile;
     }
 
