@@ -134,8 +134,8 @@ export class game {
         this.socket.on('sendDecisionAccepted', callback)
     }
 
-    public rollMonsterDice(monstername) {
-        this.socket.emit('monsterRoll', monstername)
+    public rollMonsterDice(monstername, callback) {
+        this.socket.emit('monsterRoll', monstername, callback)
     }
 }
 

@@ -1,4 +1,5 @@
-import { Game, HeroKind, Region, Hero } from '../model';
+import { Game, HeroKind, Region, Hero, Monster } from '../model';
+import { callbackify } from 'util';
 
 export function game(socket, model: Game) {
 
@@ -231,9 +232,12 @@ export function game(socket, model: Game) {
     socket.emit('sendDecisionAccepted', model.numAccepts)
   })
 
-  socket.on('monsterRoll', function (m) {
+  socket.on('monsterRoll', function (m, callback) {
+    console.log(model.getMonsters())
+    console.log(model.getMonsters().get(m))
     let monster = model.getMonsters().get(m)
-    
+    let roll = monster!.rollDice()
+    callback(roll)
   })
 
   function getCurrentDate() {
