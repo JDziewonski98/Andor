@@ -95,10 +95,10 @@ export default class GameScene extends Phaser.Scene {
     this.addFarmers()
     this.addMonsters()
 
-      this.addWell(wellTile1, "well1")
-      this.addWell(wellTile2, "well2")
-      this.addWell(wellTile3, "well3")
-      this.addWell(wellTile4, "well4")
+      this.addWell(209,2244,wellTile1, "well1")
+      this.addWell(1353,4873, wellTile2, "well2")
+      this.addWell(7073, 3333, wellTile3, "well3")
+      this.addWell(5962, 770, wellTile4, "well4")
 
     var style2 = {
       fontFamily: '"Roboto Condensed"',
@@ -336,9 +336,9 @@ export default class GameScene extends Phaser.Scene {
     if (this.ownHeroType === type) this.hero = hero;
   }
 
-    private addWell(tileNumber: number, wellName: string) {
+    private addWell(x, y, tileNumber: number, wellName: string) {
         const tile: Tile = this.tiles[tileNumber]
-        const well = this.add.image(tile.x, tile.y, "well").setDisplaySize(60, 40)
+        const well = this.add.image(x * scaleFactor + borderWidth, y * scaleFactor + borderWidth, "well").setDisplaySize(50, 40)
         well.name = wellName;
 
         well.setInteractive()
@@ -370,9 +370,6 @@ export default class GameScene extends Phaser.Scene {
         });
     }
 
-   /* private addButtonForDropGold(tileNumber: number) {
-
-    }*/
 
   // Creating the hour tracker
   private hourTrackerSetup() {

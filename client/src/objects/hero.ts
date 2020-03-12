@@ -24,6 +24,7 @@ export class Hero extends Phaser.GameObjects.Sprite {
     private initializeResources() {
         this.willPower = 7;
         this.strength = 1;
+        this.gold = 5;
 
         /**
         if (this.hk === HeroKind.Archer) {

@@ -63,7 +63,6 @@ export function game(socket, model: Game) {
         let hero = model.getHero(heroId);
         if (hero !== undefined) {
             success_well = hero.useWell();
-
         }
 
         if (success_well) {
@@ -75,7 +74,7 @@ export function game(socket, model: Game) {
 
     socket.on("dropGold", function (callback) {
 
-        //console.log("here3") //printed
+        console.log("here3") //printed
         let success_dropGold = false;
         let heroId = socket.conn.id;
         let hero = model.getHero(heroId);
@@ -163,10 +162,10 @@ export function game(socket, model: Game) {
     socket.emit('recieveDesiredPlayerCount', model.getNumOfDesiredPlayers())
   })
 
-  socket.on("dropGold", function (callback) {
+ /* socket.on("dropGold", function (callback) {
     // TODO:
     callback()
-  })
+  })*/
 
   socket.on("getHeros", function (callback) {
     let heros = new Array<HeroKind>();

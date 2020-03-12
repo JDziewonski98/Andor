@@ -49,7 +49,7 @@ export class game {
     }
 
     public dropGold(callback) {
-        //console.log("hereeeee2") //is printed
+        console.log("here2") //is printed
         this.socket.emit("dropGold", callback)
     }
 

@@ -203,7 +203,8 @@ export class Game {
         }
     }
 
-    }
+
+
 
     private incrementNarratorPosition() {
         //TO BE IMPLEMENTED      
