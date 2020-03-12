@@ -100,7 +100,7 @@ export default class GameScene extends Phaser.Scene {
       });
 
       // Need to wait for heroes to be created before creating collab decision
-      self.startingCollabDecisionSetup();
+      //self.startingCollabDecisionSetup();
     })
 
     this.addMerchants();
@@ -372,11 +372,8 @@ export default class GameScene extends Phaser.Scene {
     this.heroes.push(hero);
     tile.hero = hero;
     this.add.existing(hero);
-    console.log(this.ownHeroType, type)
-    if(type === "mage"){
-    //if (this.ownHeroType === type) {
+    if (this.ownHeroType === type) {
       this.hero = hero;
-      console.log(this.hero)
     }
   }
 

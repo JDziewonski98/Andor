@@ -17,7 +17,7 @@ export class Farmer extends Phaser.GameObjects.Sprite {
     constructor(id,scene, tile: Tile, texture:string) {
         super(scene, tile.x, tile.y, texture);
         this.id = id;
-        this.x = tile.x;
+        this.x = tile.x + 10;
         this.y = tile.y;
         this.carriedBy = null;
         this.tile = tile;
