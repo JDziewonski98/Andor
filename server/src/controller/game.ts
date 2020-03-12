@@ -2,30 +2,46 @@ import { Game, HeroKind, Region, Hero } from '../model';
 
 export function game(socket, model: Game) {
 
-  socket.on("moveRequest", function (tile, callback) {
-    console.log("Recieved moveRequest")
-    let canMove: boolean = false
-    /* currently does not work 
-    var heroId = socket.conn.id
-    let hero = model.getHero(heroId);
-    console.log(hero)
-    for(var id in hero.getRegion().getAdjRegionsIds()){
-      if(model.getRegions()[id] === tile){
-        console.log("Can move from tile: ", tile.id, " to tile: ", id)
-      }
-  }
-    /*
-    
-    // any logic for movement here
+  socket.on("moveRequest", function (id, callback) {
+    console.log("Received moveRequest")
+    let isAdjacent: boolean = false
 
-    if (canMove) {
-      socket.broadcast.emit("updateHeroMove", heroId);
-    } else {
-      // could emit event for handling failure move case here.
+    var heroID = socket.conn.id
+    let hero = model.getHero(heroID);
+
+    var newRegion = model.getRegions()[id]
+    var currRegion = hero.getRegion() 
+    var adjRegions = currRegion.getAdjRegionsIds()
+
+    for(var index in adjRegions){
+      var regionID = adjRegions[index]
+      if(model.getRegions()[regionID] === newRegion){
+        console.log("Can move from tile: ", currRegion.getID(), " to tile: ", regionID)
+        isAdjacent = true
+      }
     }
-    callback();
-   */
+
+    // any logic for movement here
+    var timeLeft = hero.getTimeOfDay() <= 7 || (hero.getTimeOfDay() <= 10 && hero.getWill() >=2)
+    if (isAdjacent && timeLeft ) {
+      console.log("You can move!")
+      model.moveHeroTo(hero, newRegion)
+      socket.broadcast.emit("moveHeroTo", heroID, newRegion.getID())
+      callback(model.getHero(heroID).getKind(), (isAdjacent && timeLeft))
+      
+    } else {
+      console.log("you cannot move here")
+      // could emit event for handling failure move case here.
+      //socket.emit("moveError")
+    }
+    //callback();
+   
   });
+
+  socket.on("moveHeroTo", function(heroType, tile, callback){
+    console.log("yoink")
+    callback(heroType, tile);
+  })
 
   socket.on("pickupFarmer", function (callback) {
     let success = false;
@@ -34,7 +50,6 @@ export function game(socket, model: Game) {
     if (hero !== undefined) {
       success = hero.pickupFarmer();
     }
-
     if (success) {
       socket.broadcast.emit("updateFarmer");
       callback();

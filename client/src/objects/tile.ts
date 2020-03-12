@@ -72,6 +72,7 @@ export class Tile extends Phaser.GameObjects.Sprite {
     }
 
     public moveRequest() {
+        /*
         console.log("New request for hero to move to tile", this.id);
         this.adjacent.forEach(element => {
             try {
@@ -89,7 +90,7 @@ export class Tile extends Phaser.GameObjects.Sprite {
             }
             catch (e) { console.log(e) }
         });
-
+        */
     }
 
     public setSprite(texture){
