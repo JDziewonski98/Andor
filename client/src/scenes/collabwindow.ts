@@ -74,16 +74,18 @@ export class CollabWindow extends Window {
 
         function submitSuccess() {
             self.hasAccepted = false;
-            // TODO collab: close window for all clients on successful submission
-            console.log("Callback: successfully submitted decision")
-            self.scene.remove('collab')
+            console.log("Callback: successfully submitted decision");
+
+            // Resume main game scene when collab decision is complete
+            self.scene.resume('Game');
+            self.scene.remove('collab');
         }
         function submitFailure() {
-            console.log("Callback: submit decision failed - not enough accepts")
+            console.log("Callback: submit decision failed - not enough accepts");
         }
         function setAccepted(numAccepted) {
             self.hasAccepted = true;
-            console.log("Callback: successfully accepted decision, numAccepted: ", numAccepted)
+            console.log("Callback: successfully accepted decision, numAccepted: ", numAccepted);
         }
     }
 

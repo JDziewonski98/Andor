@@ -419,6 +419,8 @@ export default class GameScene extends Phaser.Scene {
       h: 100
     }
     WindowManager.create(this, 'collab', CollabWindow, collabWindowData);
+    // Freeze main game while collab window is active
+    this.scene.pause();
 }
 
   // Creating the hour tracker
