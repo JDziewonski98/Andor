@@ -160,6 +160,11 @@ export default class GameScene extends Phaser.Scene {
     this.monsters.forEach(monster =>
         self.add.existing(monster)
       );
+    this.monsters.forEach(monster =>
+        monster.on('click', function(pointer) {
+          
+        })
+      );
 
 
   }
