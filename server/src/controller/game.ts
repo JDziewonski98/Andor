@@ -58,6 +58,23 @@ export function game(socket, model: Game) {
         }
     });
 
+    socket.on("dropGold", function (callback) {
+
+        //console.log("here3") //printed
+        let success_dropGold = false;
+        let heroId = socket.conn.id;
+        let hero = model.getHero(heroId);
+        
+        if (hero !== undefined) {
+            success_dropGold = hero.dropGold();
+        }
+        if (success_dropGold) {
+            console.log("dropped") //printed
+            socket.broadcast.emit("updateDropGold");
+            callback()
+        }
+    });   
+
   socket.on('bind hero', function (heroType, callback) {
     let success = false;
     let id = socket.conn.id;

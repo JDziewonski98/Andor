@@ -200,9 +200,10 @@ export default class GameScene extends Phaser.Scene {
         var self = this
 
         well.on("pointerdown", function () {
-
+            //console.log(tile.hero.getWillPower())
             self.gameinstance.useWell(function () {
-                self[wellName].setTint(0x404040)
+                self[wellName].setTint(0x404040)                
+
                 if (tile.hero.getWillPower() <= 17) {
                     tile.hero.setwillPower(3)
                 }
@@ -223,6 +224,10 @@ export default class GameScene extends Phaser.Scene {
             }
         });
     }
+
+   /* private addButtonForDropGold(tileNumber: number) {
+
+    }*/
 
   // Creating the hour tracker
   private hourTrackerSetup() {

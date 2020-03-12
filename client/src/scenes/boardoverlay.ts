@@ -3,6 +3,7 @@ import { HeroWindow } from './herowindow';
 import { WindowManager } from "../utils/WindowManager";
 import { game } from '../api/game';
 import { CollabWindow } from './collabwindow';
+import { dropgoldwindow } from './dropgoldwindow';
 
 export default class BoardOverlay extends Phaser.Scene {
     private gameText;
@@ -118,5 +119,18 @@ export default class BoardOverlay extends Phaser.Scene {
             }
         }, this);
 
+
+        /*// dropGold
+        this.gameText = this.add.text(400, 550, "Drop Gold", style2).setOrigin(0.5)
+        this.gameText.setInteractive();
+        this.gameText.on('pointerdown', function (pointer) {
+            if (this.scene.isVisible('dropGold')) {
+                WindowManager.destroy(this, 'dropGold');
+            }
+            else {
+                WindowManager.create(this, 'dropGold', dropgoldwindow, { controller: self.gameinstance });
+            }
+        }, this);
+*/
     }
 }

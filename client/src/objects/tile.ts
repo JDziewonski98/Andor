@@ -22,6 +22,7 @@ export class Tile extends Phaser.GameObjects.Sprite {
     public farmer: Array<Farmer>;
     public heroCoords;
     public farmerCoords;
+    public gold: number;
 
     constructor(id, scene, x, y, texture) {
         super(scene, x, y, 'tiles', texture);
@@ -45,6 +46,8 @@ export class Tile extends Phaser.GameObjects.Sprite {
             [this.x-30, this.y-30],
             [this.x+30, this.y-30]
         ]
+
+        this.gold = 0;
     }
 
     // Unused
@@ -94,6 +97,12 @@ export class Tile extends Phaser.GameObjects.Sprite {
         this.texture = texture
     }
 
+    public setGold(amount: number) {
+        this.gold = amount;
+    }
+    public getGold() {
+        return this.gold;
+    }
 
     // public getAdjecent(){
 

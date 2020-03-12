@@ -50,12 +50,29 @@ export class HeroWindow extends Window {
         });
         this.goldtext.setInteractive()
         var that = this
-        this.goldtext.on('pointerdown', function (pointer) {
-            that.gameinstance.dropGold(1, function () {
-                console.log("we droppin the gold")
-            })
+        this.goldtext.on('pointerdown', function () {            
+            console.log("we droppin the gold")
+            console.log(that.gold)
+            if (that.gold > 0) {
+                that.gold -= 1
+                that.refreshText()
+                console.log(that.gold)
+                that.gameinstance.dropGold(function () {
+
+                })
+            }           
 
         });
+
+
+        this.gameinstance.updateDropGold(function () {
+            //console.log("here4")// is printed
+            that.gold -= 1
+            that.refreshText()
+        })
+
+
+
     }
 
     public setGold(amt: number) {
