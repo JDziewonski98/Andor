@@ -138,45 +138,46 @@ export function game(socket, model: Game) {
       callback(heros);
   })
 
-  socket.on("getHerosBorder", function(callback){
-    let heros = {}
-    var myHeroID = socket.conn.id;
-    model.getHeros().forEach((hero, key) => {
-      if(myHeroID === key && hero !== undefined){
-        heros["myHero"] = hero.hk
-      }
-      else if(hero.hk === HeroKind.Archer && hero !== undefined){
-        heros["Archer"] = hero.hk
-      }
-      else if(hero.hk === HeroKind.Mage && hero !== undefined){
-        heros["Mage"] = hero.hk
-      }
-      else if(hero.hk === HeroKind.Dwarf && hero !== undefined){
-        heros["Dwarf"] = hero.hk
-      }
-      else if(hero.hk === HeroKind.Warrior && hero !== undefined){
-        heros["Warrior"] = hero.hk
-      }
-    });
-
-    callback(heros);
-
-  })
 
   socket.on("getHeroAttributes", function(type, callback){
     let data = {};
     let hero:Hero;
 
-    if(type === "myHero"){
-      var heroId = socket.conn.id;
-      hero = model.getHero(heroId);
+    model.getHeros().forEach((hero, key) => { 
+      if(type === "Mage" && hero.hk === HeroKind.Mage){
+        hero = model.getHero(key);
 
-      if(hero !== undefined){
-        data = hero.getData();
+        if(hero !== undefined){
+          data = hero.getData();
+          callback(data)
+        }
+      }else if(type === "Archer" && hero.hk === HeroKind.Archer){
+        hero = model.getHero(key);
+
+        if(hero !== undefined){
+          data = hero.getData();
+          callback(data)
+        }
+
+      }else if(type === "Warrior" && hero.hk === HeroKind.Warrior){
+        hero = model.getHero(key);
+
+        if(hero !== undefined){
+          data = hero.getData();
+          callback(data)
+        }
+
+      }else if(type === "Dwarf" && hero.hk === HeroKind.Dwarf){
+        hero = model.getHero(key);
+
+        if(hero !== undefined){
+          data = hero.getData();
+          callback(data)
+        }
+
       }
-    }
 
-    callback(data)
+    });
 
   });
 

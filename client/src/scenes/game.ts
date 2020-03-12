@@ -78,7 +78,7 @@ export default class GameScene extends Phaser.Scene {
     })
 
     this.addMerchants();
-    //this.addFarmers()
+    this.addFarmers()
     // this.hourTrackerSetup();
 
   }
@@ -131,7 +131,7 @@ export default class GameScene extends Phaser.Scene {
     var self  = this;
 
     merchtile_18.on('pointerdown', function (pointer) {
-      //if(self.hero.tile.id == merchtile_18.id){
+      if(self.hero.tile.id == merchtile_18.id){
 
         if (this.scene.isVisible('merchant1')) {
           WindowManager.destroy(self, 'merchant1');
@@ -141,12 +141,12 @@ export default class GameScene extends Phaser.Scene {
           window.setName('Merchant')
         }
         
-      //}
+      }
 
     }, this);
 
     merchtile_57.on('pointerdown', function (pointer) {
-      //if(self.hero.tile.id == merchtile_18.id){
+      if(self.hero.tile.id == merchtile_18.id){
 
         if (this.scene.isVisible('merchant2')) {
           WindowManager.destroy(self, 'merchant2');
@@ -156,12 +156,12 @@ export default class GameScene extends Phaser.Scene {
           window.setName('Merchant')
         }
         
-      //}
+      }
 
     }, this);
 
     merchtile_71.on('pointerdown', function (pointer) {
-      //if(self.hero.tile.id == merchtile_18.id){
+      if(self.hero.tile.id == merchtile_18.id){
 
         if (this.scene.isVisible('merchant3')) {
           WindowManager.destroy(self, 'merchant3');
@@ -171,13 +171,13 @@ export default class GameScene extends Phaser.Scene {
           window.setName('Merchant')
         }
         
-      //}
+      }
 
     }, this);
 
   }
 
-  /*private addFarmers(){
+  private addFarmers(){
 
     const farmertile_0: Tile = this.tiles[24];
     const farmertile_1: Tile = this.tiles[36];
@@ -228,7 +228,7 @@ export default class GameScene extends Phaser.Scene {
     this.gameinstance.updateFarmer(function () {
       farmer_1.destroy();
     });
-  }*/
+  }
 
   private addHero(type: string, tileNumber: number, texture: string){
     const tile: Tile = this.tiles[tileNumber]
