@@ -177,6 +177,7 @@ export class Game {
     }
     private endGame() {
         //TO BE IMPLEMENTED
+        this.replenishWell()
     }
 
     private checkMonsterInRietburg() {
@@ -221,6 +222,9 @@ export class Game {
             }
         }
     }
+
+
+
 
     private incrementNarratorPosition() {
         //TO BE IMPLEMENTED      
