@@ -13,7 +13,14 @@ export class Farmer extends Phaser.GameObjects.Sprite {
     public y: number;
     public carriedBy: Hero;
 
-    constructor(scene, tile: Tile, texture:string) {
+    constructor(scene, tile: Tile, texture: string) {
+        //for offsetting coordinates
+        // switch (tile.getID()) {
+        //     case 24:
+        //         super(scene, tile.x, tile.y + 30, texture);
+        //     case 36:
+        //         super(scene, tile.x, tile.y - 30, texture);
+        // }
         super(scene, tile.x, tile.y, texture);
         this.x = tile.x;
         this.y = tile.y;
@@ -21,7 +28,7 @@ export class Farmer extends Phaser.GameObjects.Sprite {
         this.tile = tile;
     }
 
-    public destoryFarmer(){
+    public destoryFarmer() {
         this.destroy();
     }
 
