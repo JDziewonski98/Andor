@@ -2,6 +2,7 @@ import * as Phaser from 'phaser';
 import { Tile } from './tile';
 import { HourTracker } from './hourTracker';
 import { Farmer } from './farmer';
+import { HeroKind } from './HeroKind';
 
 export class Hero extends Phaser.GameObjects.Sprite {
     public tile: Tile;
@@ -10,13 +11,15 @@ export class Hero extends Phaser.GameObjects.Sprite {
     private hour: number;
     private willPower: number;
     private strength: number;
+    private heroKind: HeroKind
 
-    constructor(scene, tile: Tile, texture: string) {
+    constructor(scene, tile: Tile, texture: string, kind: HeroKind) {
         super(scene, tile.x, tile.y, texture);
         this.farmer = new Array();
         this.tile = tile;
         this.hourTracker = null;
         this.hour = 1;
+        this.heroKind = kind;
         this.initializeResources();
     }
 

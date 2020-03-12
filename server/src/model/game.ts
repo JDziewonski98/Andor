@@ -6,9 +6,9 @@ import {
     Player, 
     Hero, 
     HeroKind, 
-    Monster 
+    Monster,
+    MonsterKind
 } from "."
-import { MonsterKind } from './MonsterKind';
 
 export class Game {
 

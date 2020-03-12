@@ -14,12 +14,13 @@ import {
   wellTile1, wellTile2, wellTile3, wellTile4
 } from '../constants'
 import { Monster } from '../objects/monster';
+import { HeroKind } from '../objects/HeroKind';
 
 
 export default class GameScene extends Phaser.Scene {
   private heroes: Hero[];
   private hero: Hero;
-  private ownHeroType: string;
+  private ownHeroType: HeroKind;
   private tiles: Tile[];
   private farmers: Farmer[];
   private hourTracker: HourTracker;
@@ -40,7 +41,7 @@ export default class GameScene extends Phaser.Scene {
     this.heroes = Array<Hero>();
     this.tiles = Array<Tile>();
     this.farmers = new Array<Farmer>();
-    this.ownHeroType = "dwarf";
+    this.ownHeroType = HeroKind.Dwarf;
     this.monsters = new Array<Monster>();
 
   }
@@ -48,7 +49,15 @@ export default class GameScene extends Phaser.Scene {
   public init(data) {
     console.log(data.heroType)
     this.gameinstance = data.controller;
-    this.ownHeroType = data.heroType;
+    let type = data.heroType;
+    if (type === "dwarf")
+      this.ownHeroType = HeroKind.Dwarf
+    else if (type === "warrior")
+      this.ownHeroType = HeroKind.Warrior
+    else if (type === "mage")
+      this.ownHeroType = HeroKind.Mage
+    else if (type === "archer")
+      this.ownHeroType = HeroKind.Archer
     this.sys.game.scene.bringToTop('BoardOverlay');
   }
 
@@ -79,13 +88,13 @@ export default class GameScene extends Phaser.Scene {
     this.gameinstance.getHeros((herotypes) => {
       herotypes.forEach(type => {
         if (type === "archer") {
-          self.addHero("archer", archerTile, "archermale");
+          self.addHero(HeroKind.Archer, archerTile, "archermale");
         } else if (type === "mage") {
-          self.addHero("mage", mageTile, "magemale");
+          self.addHero(HeroKind.Mage, mageTile, "magemale");
         } else if (type === "warrior") {
-          self.addHero("warrior", warriorTile, "warriormale");
+          self.addHero(HeroKind.Warrior, warriorTile, "warriormale");
         } else if (type === "dwarf") {
-          self.addHero("dwarf", dwarfTile, "dwarfmale");
+          self.addHero(HeroKind.Dwarf, dwarfTile, "dwarfmale");
         }
       });
     })
@@ -268,9 +277,9 @@ export default class GameScene extends Phaser.Scene {
     });
   }
 
-  private addHero(type: string, tileNumber: number, texture: string){
+  private addHero(type: HeroKind, tileNumber: number, texture: string){
     const tile: Tile = this.tiles[tileNumber]
-    let hero: Hero = new Hero(this, tile, texture).setDisplaySize(40, 60);
+    let hero: Hero = new Hero(this, tile, texture, type).setDisplaySize(40, 60);
     this.heroes.push(hero);
 
     tile.hero = hero;
