@@ -281,17 +281,71 @@ export function game(socket, model: Game, io) {
     socket.emit('sendDecisionAccepted', model.numAccepts)
   })
 
-  socket.on('monsterRoll', function (m, callback) {
-    console.log(model.getMonsters())
+  socket.on('getMonsterStats', function (monstername, callback) {
     try {
-      console.log(model.getMonsters().get(m))
-      let monster = model.getMonsters().get(m)
-      let roll = monster!.rollDice()
-      callback(roll)
+      let monster = model.getMonsters().get(monstername)
+      callback({str:monster!.getStrength(), will:monster!.getWill(), reward:monster!.getGold(), type:monster!.getType()})
     }
+    catch {
+      console.log("invalid monster name!")
+    }
+  })
+
+  socket.on('monsterRoll', function (m, callback) {
+
+    try {
+
+      var heroId = socket.conn.id;
+      let hero = model.getHero(heroId);
+      let heroregion = hero.getRegion().getID()
+      let monster = model.getMonsters().get(m)
+      let monsterregion = monster!.getTile()
+
+      if (hero.getTimeOfDay() > 9) {
+        callback('notime', null, null)
+      }
+      else if (heroregion == monsterregion) {
+        let monsterroll = monster!.rollDice()
+        let heroroll = hero.roll()
+        var winner = ''
+        var dmg = 0
+
+        if (monsterroll > heroroll) {
+          winner = 'monster'
+          dmg = monsterroll - heroroll
+          hero.setWill(-dmg)
+          //TODO project new hero will to client
+          if (hero.getWill() < 1) {
+            //TODO: handle DEATH!!!
+          }
+        }
+
+        else if (monsterroll < heroroll) {
+          winner = 'hero'
+          dmg = heroroll - monsterroll
+          monster!.setWill(monster!.getWill() - dmg)
+          //TODO project new monster will to client...
+          if (monster!.getWill() < 1) {
+            //monster dead logic...
+          }
+        }
+
+        else {
+          winner = 'tie'
+        }
+
+        callback(monsterroll, heroroll, winner)
+      }
+
+      else {
+        callback('outofrange', null,null)
+      }
+    }
+
     catch {
       console.log('no such monster name exists!')
     }
+
   })
 
   function getCurrentDate() {

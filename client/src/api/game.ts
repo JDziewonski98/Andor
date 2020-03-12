@@ -151,5 +151,9 @@ export class game {
     public rollMonsterDice(monstername, callback) {
         this.socket.emit('monsterRoll', monstername, callback)
     }
+
+    public getMonsterStats(monstername, callback) {
+        this.socket.emit('getMonsterStats', monstername, callback)
+    }
 }
 
