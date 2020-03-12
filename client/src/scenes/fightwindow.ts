@@ -24,6 +24,8 @@ export class Fight extends Window {
     private monstergoldtxt
     private monstertypetxt
 
+    private monster
+
     public constructor(key, data, windowData = { x: 10, y: 10, width: 350, height: 250 }) {
         super(key, windowData);
         console.log(data)
@@ -32,9 +34,11 @@ export class Fight extends Window {
         this.monstername = data.monstername
         this.herostr = data.hero.getStrength()
         this.herowill = data.hero.getWillPower()
+        this.monster = data.monster
     }
 
     protected initialize() {
+
         var self = this
         var bg = this.add.image(0, 0, 'scrollbg').setOrigin(0.5)
         bg.tint = 0xff0000
@@ -77,6 +81,9 @@ export class Fight extends Window {
                     self.tween()
                     self.monsterwill = self.monsterwill - (heroroll - monsterroll)
                     self.monsterwilltxt.setText('Will: ' + self.monsterwill)
+                    if (self.monsterwill < 1) {
+                        self.victory()
+                    }
                 }
                 else {
                     //tie
@@ -101,5 +108,9 @@ export class Fight extends Window {
         this.monstericon.clearTint()
     }
 
+    private victory() {
+        this.monster.destroy()
+
+    }
 
 }

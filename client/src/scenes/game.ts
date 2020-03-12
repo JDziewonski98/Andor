@@ -296,7 +296,7 @@ export default class GameScene extends Phaser.Scene {
         }
         else {
             WindowManager.create(this, this.monsters[i].name, Fight, { controller: this.gameinstance, monstertexture:this.monsters[i].texture,
-                                hero:this.hero, monstername:this.monsters[i].name});
+                                hero:this.hero, monstername:this.monsters[i].name, monster:this.monsters[i]});
         }
       }, this)
     }

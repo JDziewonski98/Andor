@@ -35,7 +35,7 @@ export class CollabWindow extends Window {
         this.resources = data.resources;
         this.textOptions = data.textOptions;
 
-        this.x = data.x;
+        this.x = data.x; 
         this.y = data.y;
         this.width = data.w;
         this.height = data.h;
