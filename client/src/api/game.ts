@@ -130,9 +130,8 @@ export class game {
 
     // Collaborative decision making
     // Submitting a decision
-    public collabDecisionSubmit(resAllocated) {
-        console.log(resAllocated);
-        this.socket.emit('collabDecisionSubmit', resAllocated)
+    public collabDecisionSubmit(resAllocated, resNames) {
+        this.socket.emit('collabDecisionSubmit', resAllocated, resNames)
     }
     public receiveDecisionSubmitSuccess(callback) {
         this.socket.on('sendDecisionSubmitSuccess', callback)
