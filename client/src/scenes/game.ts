@@ -23,6 +23,7 @@ export default class GameScene extends Phaser.Scene {
   private hero: Hero;
   private ownHeroType: HeroKind;
   private tiles: Tile[];
+  private welltiles: Tile[];
   private farmers: Farmer[];
   private hourTracker: HourTracker;
   private gameinstance: game;
@@ -48,7 +49,6 @@ export default class GameScene extends Phaser.Scene {
   }
 
   public init(data) {
-    console.log(data.heroType)
     this.gameinstance = data.controller;
     let type = data.heroType;
     console.log("GameScene created, client hero type: ", type);
@@ -81,21 +81,10 @@ export default class GameScene extends Phaser.Scene {
     this.add.image(fullWidth / 2, fullHeight / 2, 'gameboard')
       .setDisplaySize(expandedWidth, expandedHeight);
 
-    // Bring overlay scene to top
     this.sys.game.scene.bringToTop('BoardOverlay');
 
     this.setRegions();
-    //probably need to remove this
-    // this.gameinstance.moveHeroTo(function(heroType, tile){
-    //   console.log("hah")
-    //   for(var index in self.heroes){
-    //     var hero = self.heroes[index]
-    //     if(hero.getKind() == heroType){
-    //      hero.moveTo(tile)
-    //     }
-    //     //self.gameinstance.getHeros[heroType].moveTo(tile.id)
-    //   }
-    // })
+
     var self = this;
     this.gameinstance.getHeros((herotypes) => {
       herotypes.forEach(type => {
@@ -145,7 +134,7 @@ export default class GameScene extends Phaser.Scene {
   private setRegions() {
     // Note that regions 73-79 and 83 are unused, but created anyways to preserve direct
     // indexing between regions array and region IDs
-    var tilesData = require("../../assets/xycoords").map;
+    var tilesData = require("../utils/xycoords").map;
     var treeTile = this.textures.get('tiles').getFrameNames()[12];
     for (var element in tilesData) {
       var tile = new Tile(element, this, tilesData[element].xcoord * scaleFactor + borderWidth, tilesData[element].ycoord * scaleFactor + borderWidth, treeTile);
@@ -158,24 +147,21 @@ export default class GameScene extends Phaser.Scene {
     var self = this
     this.tiles.map(function (tile) {
       tile.on('pointerdown', function () {
-        self.gameinstance.moveRequest(tile.id, function (heroType, moveSuccessful) {
-          if (moveSuccessful) {
-            console.log(heroType)
-            for (var index in self.heroes) {
-              var hero = self.heroes[index]
-              if (hero.getKind() == heroType) {
-                hero.moveTo(tile)
-              }
-              //self.gameinstance.getHeros[heroType].moveTo(tile.id)
-
-            }
-            console.log("aha")
-
-          }
-
-        })
+        self.gameinstance.moveRequest(tile.id, updateMoveRequest)
       })
     })
+
+    this.gameinstance.updateMoveRequest(updateMoveRequest)
+
+    function updateMoveRequest(heroKind, tileID) {
+      self.heroes.forEach((hero: Hero) => {
+        if (hero.getKind().toString() === heroKind) {
+          hero.moveTo(self.tiles[tileID])
+        }
+      })
+    }
+
+
   }
 
   private addMerchants() {
@@ -192,8 +178,8 @@ export default class GameScene extends Phaser.Scene {
           WindowManager.destroy(self, 'merchant1');
         } else {
           WindowManager.create(self, 'merchant1', MerchantWindow, self.gameinstance);
-          let window = WindowManager.get(this, 'merchant1')
-          window.setName('Merchant')
+          let window = WindowManager.get(self, 'merchant1')
+          
         }
 
       }
@@ -207,8 +193,7 @@ export default class GameScene extends Phaser.Scene {
           WindowManager.destroy(self, 'merchant2');
         } else {
           WindowManager.create(self, 'merchant2', MerchantWindow, self.gameinstance);
-          let window = WindowManager.get(this, 'merchant2')
-          window.setName('Merchant')
+          let window = WindowManager.get(self, 'merchant2')
         }
 
       }
@@ -222,8 +207,7 @@ export default class GameScene extends Phaser.Scene {
           WindowManager.destroy(self, 'merchant3');
         } else {
           WindowManager.create(self, 'merchant3', MerchantWindow, self.gameinstance);
-          let window = WindowManager.get(this, 'merchant3')
-          window.setName('Merchant')
+          let window = WindowManager.get(self, 'merchant3')
         }
 
       }
@@ -279,6 +263,18 @@ export default class GameScene extends Phaser.Scene {
     let farmer_0: Farmer = new Farmer(this, farmertile_0, 'farmer').setDisplaySize(40, 40);
     let farmer_1: Farmer = new Farmer(this, farmertile_1, 'farmer').setDisplaySize(40, 40);
 
+    // var gridX1 = farmertile_0.farmerCoords[0][0];
+    // var gridY1 = farmertile_0.farmerCoords[0][1];
+
+    // var gridX2 = farmertile_1.farmerCoords[1][0];
+    // var gridY2 = farmertile_1.farmerCoords[1][1];
+
+    // var farmerIcon1 = this.add.sprite(gridX1, gridY1, 'farmer').setDisplaySize(40, 40);
+    // var farmerIcon2 = this.add.sprite(gridX2, gridY2, 'farmer').setDisplaySize(40, 40);
+
+    // let farmer_0: Farmer = new Farmer(this, farmertile_0, farmerIcon1).setDisplaySize(40, 40);
+    // let farmer_1: Farmer = new Farmer(this, farmertile_1, farmerIcon2).setDisplaySize(40, 40);
+
     farmer_0.setInteractive();
     farmer_1.setInteractive();
 
@@ -326,18 +322,16 @@ export default class GameScene extends Phaser.Scene {
 
   private addHero(type: HeroKind, tileNumber: number, texture: string) {
     const tile: Tile = this.tiles[tileNumber]
-    let hero: Hero = new Hero(this, tile, texture, type).setDisplaySize(40, 60);
+    let hero: Hero = new Hero(this, tile, texture, type).setDisplaySize(40, 40);
     this.heroes.push(hero);
-
     tile.hero = hero;
-    tile.heroexist = true;
     this.add.existing(hero);
     if (this.ownHeroType === type) this.hero = hero;
   }
 
   private addWell(tileNumber: number, wellName: string) {
     const tile: Tile = this.tiles[tileNumber]
-    const well = this.add.image(tile.x, tile.y, "well").setDisplaySize(60, 40)
+    const well = this.add.image(tile.x, tile.y, "well").setDisplaySize(40, 45)
     well.name = wellName;
 
     well.setInteractive()
@@ -459,7 +453,6 @@ export default class GameScene extends Phaser.Scene {
 
     this.hourTracker.setInteractive();
   }
-
 
 
   public update() {

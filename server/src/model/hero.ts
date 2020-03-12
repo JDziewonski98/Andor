@@ -33,9 +33,7 @@ export class Hero {
 
     public moveTo(newTile: Region) {
         this.region = newTile
-        this.timeOfDay ++
-        console.log(this.hk, " moved to ", newTile.getID(), " and now is at ", this.timeOfDay)
-        //TODO
+        this.timeOfDay++
     }
 
     public useItem(item) {
@@ -131,6 +129,10 @@ export class Hero {
         this.will += willValueToChange
     }
 
+    public getWill(){
+        return this.will;
+    }
+
     public useWell() {
         var reg = this.region
         if (reg.getHaswell() && !reg.getWellUsed()) {
@@ -148,10 +150,6 @@ export class Hero {
             return true
         }
         return false
-    }
-
-    public getWill() {
-        return this.will
     }
 
     private initializeResources() {

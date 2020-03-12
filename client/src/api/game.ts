@@ -70,8 +70,8 @@ export class game {
         this.socket.emit('moveRequest', tileID, callback)
     }
 
-    public moveHeroTo(heroType, tileID, callback){
-        this.socket.on("moveHeroTo", heroType, tileID, callback)
+    public updateMoveRequest(callback){
+        this.socket.on("updateMoveRequest", callback);
     }
 
     public  removeListener(object){

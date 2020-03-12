@@ -44,19 +44,10 @@ export class Hero extends Phaser.GameObjects.Sprite {
         */
     }
 
-    public moveTo(newTile) {
+    public moveTo(newTile: Tile) {
         this.tile = newTile 
         this.x = newTile.x
         this.y = newTile.y
-        console.log(this.tile)
-        // All heroes use the same hour tracker, access with their id
-            // this.tile = newTile;
-            // this.x = newTile.heroCoords[this.id][0];
-            // this.y = newTile.heroCoords[this.id][1];
-            // this.sprite.x = this.tile.x;
-            // this.sprite.y = this.tile.y;
-            // this.hourTracker.incHour(this.id);
-        return this;
     }
 
     public resetHours() {
