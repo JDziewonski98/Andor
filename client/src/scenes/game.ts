@@ -350,7 +350,7 @@ export default class GameScene extends Phaser.Scene {
 
   private addWell(x, y, tileNumber: number, wellName: string) {
     const tile: Tile = this.tiles[tileNumber]
-    const well = this.add.image(x * scaleFactor + borderWidth, y * scaleFactor + borderWidth, "well").setDisplaySize(50, 40)
+    const well = this.add.image(x * scaleFactor + borderWidth, y * scaleFactor + borderWidth, "well").setDisplaySize(40, 45)
     well.name = wellName;
 
 
