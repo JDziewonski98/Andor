@@ -3,42 +3,32 @@ import { Game, HeroKind, Region, Hero } from '../model';
 export function game(socket, model: Game) {
 
   socket.on("moveRequest", function (id, callback) {
-    console.log("Received moveRequest")
-    let isAdjacent: boolean = false
-
+    id = +id // turning Id from string to number
     var heroID = socket.conn.id
     let hero = model.getHero(heroID);
 
-    var newRegion = model.getRegions()[id]
-    var currRegion = hero.getRegion() 
-    var adjRegions = currRegion.getAdjRegionsIds()
+    if (hero !== undefined) {
+      var currRegion: Region = hero.getRegion()
+      var adjRegions: Array<number> = currRegion.getAdjRegionsIds()
 
-    for(var index in adjRegions){
-      var regionID = adjRegions[index]
-      if(model.getRegions()[regionID] === newRegion){
-        console.log("Can move from tile: ", currRegion.getID(), " to tile: ", regionID)
-        isAdjacent = true
+      for (var regionID of adjRegions) {
+        var timeLeft = hero.getTimeOfDay() <= 7 || (hero.getTimeOfDay() <= 10 && hero.getWill() >= 2)
+        if (regionID === id && timeLeft) { // successful move
+          console.log("You can move!")
+          let targetRegion: Region = model.getRegions()[id];
+          hero.moveTo(targetRegion)
+
+          socket.broadcast.emit("updateMoveRequest", hero.getKind(), id)
+          callback(hero.getKind(), id)
+
+        }
       }
+
     }
 
-    // any logic for movement here
-    var timeLeft = hero.getTimeOfDay() <= 7 || (hero.getTimeOfDay() <= 10 && hero.getWill() >=2)
-    if (isAdjacent && timeLeft ) {
-      console.log("You can move!")
-      model.moveHeroTo(hero, newRegion)
-      socket.broadcast.emit("moveHeroTo", heroID, newRegion.getID())
-      callback(model.getHero(heroID).getKind(), (isAdjacent && timeLeft))
-      
-    } else {
-      console.log("you cannot move here")
-      // could emit event for handling failure move case here.
-      //socket.emit("moveError")
-    }
-    //callback();
-   
   });
 
-  socket.on("moveHeroTo", function(heroType, tile, callback){
+  socket.on("moveHeroTo", function (heroType, tile, callback) {
     console.log("yoink")
     callback(heroType, tile);
   })
@@ -56,37 +46,37 @@ export function game(socket, model: Game) {
     }
   });
 
-  socket.on("merchant", function(callback){
+  socket.on("merchant", function (callback) {
     let success = false;
     var heroId = socket.conn.id;
     let hero = model.getHero(heroId);
 
-    if(hero !== undefined){
+    if (hero !== undefined) {
       success = hero.buyStrength();
     }
 
-    if(success){
+    if (success) {
       console.log(hero);
       callback();
     }
   });
-    
-    socket.on("useWell", function (callback) {
-        let success_well = false;
 
-        let heroId = socket.conn.id;
-        let hero = model.getHero(heroId);
-        if (hero !== undefined) {
-            success_well = hero.useWell();
+  socket.on("useWell", function (callback) {
+    let success_well = false;
 
-        }
+    let heroId = socket.conn.id;
+    let hero = model.getHero(heroId);
+    if (hero !== undefined) {
+      success_well = hero.useWell();
 
-        if (success_well) {
-            socket.broadcast.emit("updateWell");
-            callback();
+    }
 
-        }
-    });
+    if (success_well) {
+      socket.broadcast.emit("updateWell");
+      callback();
+
+    }
+  });
 
   socket.on('bind hero', function (heroType, callback) {
     let success = false;
@@ -129,7 +119,7 @@ export function game(socket, model: Game) {
     let name = ""
     let heroID = socket.conn.id;
     let hero: Hero = model.getHero(heroID);
-    if(hero !== undefined){
+    if (hero !== undefined) {
       name = hero.hk;
     } else {
       name = getCurrentDate()
@@ -174,38 +164,38 @@ export function game(socket, model: Game) {
   })
 
 
-  socket.on("getHeroAttributes", function(type, callback){
+  socket.on("getHeroAttributes", function (type, callback) {
     let data = {};
-    let hero:Hero;
+    let hero: Hero;
 
-    model.getHeros().forEach((hero, key) => { 
-      if(type === "Mage" && hero.hk === HeroKind.Mage){
+    model.getHeros().forEach((hero, key) => {
+      if (type === "Mage" && hero.hk === HeroKind.Mage) {
         hero = model.getHero(key);
 
-        if(hero !== undefined){
+        if (hero !== undefined) {
           data = hero.getData();
           callback(data)
         }
-      }else if(type === "Archer" && hero.hk === HeroKind.Archer){
+      } else if (type === "Archer" && hero.hk === HeroKind.Archer) {
         hero = model.getHero(key);
 
-        if(hero !== undefined){
-          data = hero.getData();
-          callback(data)
-        }
-
-      }else if(type === "Warrior" && hero.hk === HeroKind.Warrior){
-        hero = model.getHero(key);
-
-        if(hero !== undefined){
+        if (hero !== undefined) {
           data = hero.getData();
           callback(data)
         }
 
-      }else if(type === "Dwarf" && hero.hk === HeroKind.Dwarf){
+      } else if (type === "Warrior" && hero.hk === HeroKind.Warrior) {
         hero = model.getHero(key);
 
-        if(hero !== undefined){
+        if (hero !== undefined) {
+          data = hero.getData();
+          callback(data)
+        }
+
+      } else if (type === "Dwarf" && hero.hk === HeroKind.Dwarf) {
+        hero = model.getHero(key);
+
+        if (hero !== undefined) {
           data = hero.getData();
           callback(data)
         }
@@ -217,11 +207,11 @@ export function game(socket, model: Game) {
   });
 
   // Collaborative decision making
-  
+
   // Submitting a decision
-  socket.on('collabDecisionSubmit', function() {
+  socket.on('collabDecisionSubmit', function () {
     // Check that numAccepts equals total num of players-1
-    if (model.numAccepts == model.getNumOfDesiredPlayers()-1) {
+    if (model.numAccepts == model.getNumOfDesiredPlayers() - 1) {
       // Success: distribute accordingly
       // Reset decision related state
       model.numAccepts = 0;
