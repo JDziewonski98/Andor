@@ -122,6 +122,7 @@ export default class BoardOverlay extends Phaser.Scene {
         this.gameText = this.add.text(800, 550, "CHAT", style2).setOrigin(0.5)
         this.gameText.setInteractive();
         this.gameText.on('pointerdown', function (pointer) {
+            console.log(this.scene, ' in overlay')
             if (this.scene.isVisible('chat')) {
                 WindowManager.destroy(this, 'chat');
             }

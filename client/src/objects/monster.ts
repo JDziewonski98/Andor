@@ -10,9 +10,11 @@ export class Monster extends Phaser.GameObjects.Sprite {
     public tile: Tile;
     public x: number;
     public y: number;
+    public name: string;
 
-    constructor(scene, tile: Tile, texture:string) {
+    constructor(scene, tile: Tile, texture:string, name: string) {
         super(scene, tile.x, tile.y, texture);
+        this.name = name;
         this.x = tile.x - 40;
         this.y = tile.y;
         this.tile = tile;
