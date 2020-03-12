@@ -54,6 +54,7 @@ export class game {
     }
 
     public pickupGold(callback) {
+        console.log("api pickupGold()") //is printed
         this.socket.emit("pickupGold", callback)
     }
 

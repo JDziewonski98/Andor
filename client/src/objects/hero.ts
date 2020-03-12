@@ -59,7 +59,7 @@ export class Hero extends Phaser.GameObjects.Sprite {
         return this.heroKind;
     }
 
-    public dropGold(amount) {
+    /*public dropGold(amount) {
         if (this.gold < amount) {
             return false
         }
@@ -73,11 +73,14 @@ export class Hero extends Phaser.GameObjects.Sprite {
 
             return true
         }
-    }
+    }*/
 
-    public pickupGold() {
-
-    }
+    /*public pickupGold() {
+        if (this.tile.getGold() === 0) {
+            return false
+        }
+        this.tile.setGold(this.tile.getGold() - 1)
+    }*/
 
     public setwillPower(willValToChange) {
         this.willPower += willValToChange;

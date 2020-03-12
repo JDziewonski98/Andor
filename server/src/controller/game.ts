@@ -70,7 +70,7 @@ export function game(socket, model: Game) {
 
   socket.on("useWell", function (callback) {
     let success_well = false;
-
+    //console.log("api game.ts")
     let heroId = socket.conn.id;
     let hero = model.getHero(heroId);
     if (hero !== undefined) {
@@ -103,7 +103,7 @@ export function game(socket, model: Game) {
     });   
 
     socket.on("pickupGold", function (callback) {
-        console.log("picking up gold")
+        console.log("picking up gold on server") //is printed
         let success_pickupGold = false;
         let heroId = socket.conn.id;
         let hero = model.getHero(heroId);
@@ -113,7 +113,7 @@ export function game(socket, model: Game) {
         }
 
         if (success_pickupGold) {
-            console.log("pickupGold successful")
+            console.log("pickupGold successful") //is printed
             socket.broadcast.emit("updatePickupGold");
             callback()
 

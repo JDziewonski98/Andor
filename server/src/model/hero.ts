@@ -159,6 +159,7 @@ export class Hero {
     }
 
     public useWell() {
+        //console.log("server.hero.useWell")
         var reg = this.region
         if (reg.getHaswell() && !reg.getWellUsed()) {
             //increase 3 will power

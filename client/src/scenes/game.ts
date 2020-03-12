@@ -50,7 +50,6 @@ export default class GameScene extends Phaser.Scene {
     this.farmers = new Array<Farmer>();
     this.ownHeroType = HeroKind.Dwarf;
     this.monsters = new Array<Monster>();
-      
   }
 
   public init(data) {
@@ -170,6 +169,7 @@ export default class GameScene extends Phaser.Scene {
         }
       })
     }
+
   }
 
   private addMerchants() {
@@ -351,16 +351,18 @@ export default class GameScene extends Phaser.Scene {
 
     private addWell(x, y, tileNumber: number, wellName: string) {
         const tile: Tile = this.tiles[tileNumber]
-        const well = this.add.image(x * scaleFactor + borderWidth, y * scaleFactor + borderWidth, "well").setDisplaySize(50, 40)
+        var well = this.add.image(x * scaleFactor + borderWidth, y * scaleFactor + borderWidth, "well").setDisplaySize(50, 40)
         well.name = wellName;
 
         well.setInteractive()
-        var self = this
+        this.add.existing(well);
+        var self = this        
 
-        well.on("pointerdown", function () {
+        well.on("pointerdown", function (pointer) {
             //console.log(tile.hero.getWillPower())
             self.gameinstance.useWell(function () {
-                self[wellName].setTint(0x404040)                
+                                             
+                well.setTint(0x404040)                
 
                 if (tile.hero.getWillPower() <= 17) {
                     tile.hero.setwillPower(3)
@@ -369,9 +371,9 @@ export default class GameScene extends Phaser.Scene {
                     tile.hero.setwillPower(20 - tile.hero.getWillPower())
                 }
             });
-        });
+        }, this);
 
-        this.gameinstance.updateWell(function () {
+        this.gameinstance.updateWell(function (pointer) {           
           self[wellName].setTint(0x404040)
           if (tile.hero.getWillPower() <= 17) {
             tile.hero.setwillPower(3)
@@ -379,31 +381,59 @@ export default class GameScene extends Phaser.Scene {
           else if (tile.hero.getWillPower() <= 20 && tile.hero.getWillPower() > 17) {
             tile.hero.setwillPower(20 - tile.hero.getWillPower())
           }
-        });
+        }, this);
     }
 
-    private addGold() {
+    private addGold() {       
         var self = this
+
+        //console.log(this)
+
         for (var id in self.tiles) {
+            console.log(id, this)
+
             if (self.tiles[id].getGold() !== 0) {
                 //create a text Sprite indicating the number of gold. 
-                var goldText = this.add.text(50, 50, String(self.tiles[id].getGold()), { color: "#fff52e" }).setX(self.tiles[id].x + 15).setY(self.tiles[id].y + 15)
+                var goldText = this.add.text(50, 50, "" + self.tiles[id].getGold(), { color: "#fff52e" }).setX(self.tiles[id].x + 20).setY(self.tiles[id].y + 20)
                 //set to interactive
-                goldText.setInteractive()
+                goldText.setInteractive() 
+                this.add.existing(goldText);
+                var arg = this
+                
 
-                goldText.on("pointerdown", function () {
+                goldText.on("pointerdown", function (pointer) {   
+                    /*console.log("pickup attempt") //is printed
+                    console.log(goldText)
+                    console.log(self.tiles[id].getGold())*/
+                    self.gameinstance.pickupGold(function () {
+                        if (self.tiles[id].getGold() === 1) {
+                            self.tiles[id].setGold(self.tiles[id].getGold() - 1)
+                            goldText.destroy()
+                        }
+                        else if (self.tiles[id].getGold() > 1) {
+                            console.log(self.tiles[id].getGold())
+                            self.tiles[id].setGold(self.tiles[id].getGold() - 1)
+                      
+                            //const newString = String()
+                            goldText.setText("" + self.tiles[id].getGold())
+                            
+                            
 
+                        }
+                    })                                                
+                   
+                },this)
+
+                self.gameinstance.updatePickupGold(function (pointer) {
                     if (self.tiles[id].getGold() === 1) {
+                        self.tiles[id].setGold(self.tiles[id].getGold() - 1)
                         goldText.destroy()
-                        self.tiles[id].hero.pickupGold()
-                        
                     }
                     else if (self.tiles[id].getGold() > 1) {
                         self.tiles[id].setGold(self.tiles[id].getGold() - 1)
-                        self.tiles[id].hero.pickupGold()
-                        
+                        goldText.setText(String(self.tiles[id].getGold()))
                     }
-                })
+                }, this)
             }
         }
     }

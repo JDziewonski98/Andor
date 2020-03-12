@@ -52,38 +52,37 @@ export class HeroWindow extends Window {
                 this.scene.parent.y = dragY;
                 this.scene.refresh()
             }
-        });
+        },this);
 
 
         this.goldtext.setInteractive()
+        this.add.existing(this.goldtext);
+
         var that = this
         this.goldtext.on('pointerdown', function () {
-            //need to make it so that I cannot drop other people's gold from heroWindow
-            if (true ) {
-                console.log("we droppin the gold")
-                console.log(that.gold)
-                if (that.gold > 0) {
-                    that.gold -= 1
-                    that.refreshText()
+            that.gameinstance.dropGold(function () {
+                //need to make it so that I cannot drop other people's gold from heroWindow
+                if (true) {
+                    console.log("we droppin the gold")
                     console.log(that.gold)
-                    that.gameinstance.dropGold(function () {
-                        //create a token on the tile 
-                        //indicate the amount of gold on tile
+                    if (that.gold > 0) {
+                        that.gold -= 1
+                        that.refreshText()
+                        console.log(that.gold)
 
-                    })
+                    }
                 }
-            }
+            })
+            
         });
 
 
         this.gameinstance.updateDropGold(function () {
-            console.log("here4")// is printed
+            console.log("here4")// is printed for other clients
             that.gold -= 1
             that.refreshText()
             //same code as above to show gold being dropped
         })
-
-
 
     }
 
