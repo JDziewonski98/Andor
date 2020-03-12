@@ -12,6 +12,7 @@ export class Hero {
     private timeOfDay: number = 1;
     private farmer: boolean = false;
     private farmers: Array<Farmer>;
+    private dice
 
     private wineskin: boolean = false;
 
@@ -139,25 +140,59 @@ export class Hero {
         return this.will
     }
 
+    public roll() {
+
+        this.timeOfDay = this.timeOfDay + 1;
+        
+        var dicefaces = [1, 2, 3, 4, 5, 6]
+        var rollamt = 0
+        var rolls: number[] = []
+
+        if (this.will < 7) {
+            rollamt = this.dice[0]
+        }
+        else if (this.will < 14) {
+            rollamt = this.dice[1]
+        }
+        else {
+            rollamt = this.dice[2]
+        }
+
+        for (let i = 0; i < rollamt; i++) {
+            let roll = dicefaces[Math.floor(Math.random() * dicefaces.length)]
+            rolls.push(roll)
+        }
+
+        var max = Math.max(...rolls)
+        var attack = this.strength + max
+        console.log('str', this.strength, 'max', max)
+        return attack
+
+    }
+
     private initializeResources() {
         this.will = 7;
         this.strength = 1;
 
         if (this.hk === HeroKind.Archer) {
             this.gold = 1
+            this.dice = [3,4,5]
             //this.region = new Region(25, false, 24, [23, 24, 31, 27, 26], false)
         } else if (this.hk === HeroKind.Dwarf) {
             this.gold = 2
+            this.dice = [1,2,3]
            // this.region = new Region(7, false, 0, [
              //   15, 9, 8, 0, 11
             //], false)
         } else if (this.hk === HeroKind.Mage) {
             this.gold = 4;
+            this.dice = [1,1,1]
             /* this.region = new Region(24, false, 23, [   //SHOULD BE 34!!!!!!
                 72, 23, 35, 30, 29
             ], false) */
         } else if (this.hk === HeroKind.Warrior) {
             this.gold = 1
+            this.dice = [2,3,4]
             /* this.region = new Region(14, false, 2, [
                 2, 3, 6, 10, 17, 18
             ], false) */
