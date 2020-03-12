@@ -9,6 +9,7 @@ export class game {
     constructor(name) {
         this.name = name
         this.socket = this.connect(this.name)
+        this.chatlog = []
     }
 
     private connect(name) {
@@ -35,6 +36,14 @@ export class game {
         this.socket.emit("merchant", callback);
     }
     
+    public useWell(callback) {
+        this.socket.emit("useWell", callback);
+    }
+
+    public updateWell(callback) {
+        this.socket.on("updateWell", callback)
+    }
+    
     public dropGold(amount, callback) {
         this.socket.emit("dropGold", amount, callback)
     }
@@ -44,13 +53,18 @@ export class game {
     }
 
     public recieve(callback) {
-        this.socket.on("update messages", callback);
+        // prevent registering event again and creating double callbacks.
+        if(!this.socket._callbacks["$update messages"])
+            this.socket.on("update messages", callback);
     }
 
-    public getChatLog(callback) {
-        this.socket.emit('getChatLog', callback)
+    public getChatLog() {
+        return this.chatlog
     }
 
+    public appendToChatLog(msg) {
+        this.chatlog.push(msg)
+    }
     // TODO movement
     public moveTo(tile, callback){
         this.socket.emit('moveRequest', tile, callback)
@@ -98,10 +112,20 @@ export class game {
     }
 
     // Collaborative decision making
+    // Submitting a decision
+    public collabDecisionSubmit() {
+        this.socket.emit('collabDecisionSubmit')
+    }
+    public receiveDecisionSubmitSuccess(callback) {
+        this.socket.on('sendDecisionSubmitSuccess', callback)
+    }
+    public receiveDecisionSubmitFailure(callback) {
+        this.socket.on('sendDecisionSubmitFailure', callback)
+    }
+    // Accepting a decision
     public collabDecisionAccept() {
         this.socket.emit('collabDecisionAccept')
     }
-
     public receiveDecisionAccepted(callback) {
         this.socket.on('sendDecisionAccepted', callback)
     }

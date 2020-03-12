@@ -32,6 +32,18 @@ export class Region {
         return this.gold;
     }
 
+    public getHaswell() {
+        return this.hasWell
+    }
+
+    public getWellUsed() {
+        return this.wellUsed
+    }
+
+    public setWellUsed(boolean) {
+        this.wellUsed = boolean
+    }
+
     // public getFog() {
     //     return this.fog;
     // }

@@ -8,6 +8,16 @@ export class WindowManager extends Phaser.Scene {
     }
 
     public static toggle(self, key: string) {
+        if (self.scene.isVisible(key)) {
+            self.scene.setVisible(false, key)
+            self.scene.sendToBack(key)
+            self.scene.sleep(key)
+        }
+        else {
+            self.scene.bringToTop(key)
+            self.scene.setVisible(true, key)
+            self.scene.resume(key)
+        }
         self.scene.setVisible(!self.scene.isVisible(key), key);
     }
 

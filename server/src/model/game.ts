@@ -8,6 +8,7 @@ import {
     HeroKind, 
     Monster 
 } from "."
+import { MonsterKind } from './MonsterKind';
 
 export class Game {
 
@@ -40,6 +41,7 @@ export class Game {
         this.farmers = new Array<Farmer>();
         this.setRegions();
         this.setFarmers();
+        this.setMonsters()
         this.readyplayers = 0;
 
         this.numAccepts = 0;
@@ -55,6 +57,15 @@ export class Game {
         
         console.log(this.regions[36])
 
+    }
+
+    private setMonsters() {
+        this.regions[8].setMonster(new Monster(MonsterKind.Gor, 8))
+        this.regions[20].setMonster(new Monster(MonsterKind.Gor, 20))
+        this.regions[21].setMonster(new Monster(MonsterKind.Gor, 21))
+        this.regions[26].setMonster(new Monster(MonsterKind.Gor, 26))
+        this.regions[48].setMonster(new Monster(MonsterKind.Gor, 48))
+        this.regions[19].setMonster(new Monster(MonsterKind.Skral, 19))
     }
 
     private setRegions() {
@@ -162,10 +173,37 @@ export class Game {
 
     private replenishWell() {
         //TO BE IMPLEMENTED
+        var region
+        var idRegion
+        var idRegionOfHero
+        var flag = true
+
+        for (region in this.regions) { // for every region
+            if (region.getHasWell()) { // if region has a well
+                flag = true
+                idRegion = region.getID()
+
+                // check there are no heros on this tile
+                for (let h of this.heroList.values()) {
+                    idRegionOfHero = h.getRegion().getID()
+
+                    if (idRegionOfHero === idRegion) {
+                        flag = false //found a hero on well tile
+                    }
+                }
+                //if no one standing on well tile, replenish well
+                if (flag) {
+                    region.setWellUsed(false)
+
+                    //TODO: inform front-end that a well has been replenished 
+                }
+
+            }
+        }
     }
 
     private incrementNarratorPosition() {
-        //TO BE IMPLEMENTED
+        //TO BE IMPLEMENTED      
     }
 
     public pushToLog(item) {
