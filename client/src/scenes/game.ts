@@ -15,7 +15,7 @@ import {
 } from '../constants'
 import { MerchantWindow } from './merchantwindow';
 import { Monster } from '../objects/monster';
-import { Fight} from './fightwindow';
+import { Fight } from './fightwindow';
 import { HeroKind } from '../objects/HeroKind';
 
 
@@ -24,6 +24,7 @@ export default class GameScene extends Phaser.Scene {
   private hero: Hero;
   private ownHeroType: HeroKind;
   private tiles: Tile[];
+  private welltiles: Tile[];
   private farmers: Farmer[];
   private hourTracker: HourTracker;
   private gameinstance: game;
@@ -100,56 +101,23 @@ export default class GameScene extends Phaser.Scene {
           self.addHero(HeroKind.Dwarf, dwarfTile, "dwarfmale");
         }
       });
+
+      // Need to wait for heroes to be created before creating collab decision
+      self.startingCollabDecisionSetup();
     })
 
     this.addMerchants();
     this.addFarmers()
     this.addMonsters()
 
-    
 
-    this.addWell(wellTile1, "well1")
-    this.addWell(wellTile2, "well2")
-    this.addWell(wellTile3, "well3")
-    this.addWell(wellTile4, "well4")
+    this.addWell(209, 2244, wellTile1, "well1")
+    this.addWell(1353, 4873, wellTile2, "well2")
+    this.addWell(7073, 3333, wellTile3, "well3")
+    this.addWell(5962, 770, wellTile4, "well4")
 
-    var style2 = {
-      fontFamily: '"Roboto Condensed"',
-      fontSize: "20px",
-      backgroundColor: '#f00'
-    }
 
-    // start of game collab decision mock
-    // TODO collab: automatically add this window when game starts instead of triggering on pointerdown
-    this.gameText = this.add.text(600, 550, "COLLAB", style2).setOrigin(0.5)
-    this.gameText.setInteractive();
-    this.gameText.on('pointerdown', function (pointer) {
-      if (this.scene.isVisible('collab')) {
-        WindowManager.destroy(this, 'collab');
-        return;
-      }
-
-      // TODO collab: Replace all this hardcoding UI shit with something nicer
-      var res = { "gold": 5, "wineskin": 2 };
-      // Determine width of the window based on how many resources are being distributed
-      var width = (Object.keys(res).length + 1) * collabColWidth // Not sure if there's a better way of getting size of ts obj
-      // Determine height of the window based on number of players involved
-      var height = self.heroes.length * collabRowHeight + 24
-      console.log(self.heroes.length, width, height)
-      var collabWindowData = {
-        controller: self.gameinstance,
-        owner: self.heroes[0],
-        heroes: self.heroes,
-        resources: res,
-        textOptions: null,
-        x: reducedWidth / 2 - width / 2,
-        y: reducedHeight / 2 - height / 2,
-        w: width,
-        h: height
-      }
-      WindowManager.create(this, 'collab', CollabWindow, collabWindowData);
-    }, this);
-
+    // self.startingCollabDecisionSetup();
   }
 
   private cameraSetup() {
@@ -171,7 +139,7 @@ export default class GameScene extends Phaser.Scene {
   private setRegions() {
     // Note that regions 73-79 and 83 are unused, but created anyways to preserve direct
     // indexing between regions array and region IDs
-    var tilesData = require("../../assets/xycoords").map;
+    var tilesData = require("../utils/xycoords").map;
     var treeTile = this.textures.get('tiles').getFrameNames()[12];
     for (var element in tilesData) {
       var tile = new Tile(element, this, tilesData[element].xcoord * scaleFactor + borderWidth, tilesData[element].ycoord * scaleFactor + borderWidth, treeTile);
@@ -216,7 +184,7 @@ export default class GameScene extends Phaser.Scene {
         } else {
           WindowManager.create(self, 'merchant1', MerchantWindow, self.gameinstance);
           let window = WindowManager.get(self, 'merchant1')
-          
+
         }
 
       }
@@ -264,11 +232,11 @@ export default class GameScene extends Phaser.Scene {
     const skraltile: Tile = this.tiles[19];
 
     let gor1: Monster = new Monster(this, gortile1, 'gor', 'gor1').setInteractive().setScale(.5);
-    let gor2: Monster = new Monster(this, gortile2, 'gor','gor2').setInteractive().setScale(.5);
-    let gor3: Monster = new Monster(this, gortile3, 'gor','gor3').setInteractive().setScale(.5);
-    let gor4: Monster = new Monster(this, gortile4, 'gor','gor4').setInteractive().setScale(.5);
-    let gor5: Monster = new Monster(this, gortile5, 'gor','gor5').setInteractive().setScale(.5);
-    let skral: Monster = new Monster(this, skraltile, 'skral','skral1').setInteractive().setScale(.5);
+    let gor2: Monster = new Monster(this, gortile2, 'gor', 'gor2').setInteractive().setScale(.5);
+    let gor3: Monster = new Monster(this, gortile3, 'gor', 'gor3').setInteractive().setScale(.5);
+    let gor4: Monster = new Monster(this, gortile4, 'gor', 'gor4').setInteractive().setScale(.5);
+    let gor5: Monster = new Monster(this, gortile5, 'gor', 'gor5').setInteractive().setScale(.5);
+    let skral: Monster = new Monster(this, skraltile, 'skral', 'skral1').setInteractive().setScale(.5);
 
     this.monsters.push(gor1);
     this.monsters.push(gor2);
@@ -287,12 +255,12 @@ export default class GameScene extends Phaser.Scene {
     this.monsters.forEach(monster =>
       this.add.existing(monster)
     );
-  
+
     for (let i = 0; i < this.monsters.length; i++) {
 
-      this.monsters[i].on('pointerdown', function (pointer)  {  
+      this.monsters[i].on('pointerdown', function (pointer) {
         if (this.scene.isVisible(this.monsters[i].name)) {
-            WindowManager.destroy(this, this.monsters[i].name);
+          WindowManager.destroy(this, this.monsters[i].name);
         }
         else {
             WindowManager.create(this, this.monsters[i].name, Fight, { controller: this.gameinstance, monstertexture:this.monsters[i].texture,
@@ -308,8 +276,20 @@ export default class GameScene extends Phaser.Scene {
     const farmertile_0: Tile = this.tiles[24];
     const farmertile_1: Tile = this.tiles[36];
 
-    let farmer_0: Farmer = new Farmer(this, farmertile_0, 'farmer').setDisplaySize(40, 40);
-    let farmer_1: Farmer = new Farmer(this, farmertile_1, 'farmer').setDisplaySize(40, 40);
+    let farmer_0: Farmer = new Farmer(0,this, farmertile_0, 'farmer').setDisplaySize(40, 40);
+    let farmer_1: Farmer = new Farmer(1, this, farmertile_1, 'farmer').setDisplaySize(40, 40);
+
+    // var gridX1 = farmertile_0.farmerCoords[0][0];
+    // var gridY1 = farmertile_0.farmerCoords[0][1];
+
+    // var gridX2 = farmertile_1.farmerCoords[1][0];
+    // var gridY2 = farmertile_1.farmerCoords[1][1];
+
+    // var farmerIcon1 = this.add.sprite(gridX1, gridY1, 'farmer').setDisplaySize(40, 40);
+    // var farmerIcon2 = this.add.sprite(gridX2, gridY2, 'farmer').setDisplaySize(40, 40);
+
+    // let farmer_0: Farmer = new Farmer(this, farmertile_0, farmerIcon1).setDisplaySize(40, 40);
+    // let farmer_1: Farmer = new Farmer(this, farmertile_1, farmerIcon2).setDisplaySize(40, 40);
 
     farmer_0.setInteractive();
     farmer_1.setInteractive();
@@ -328,12 +308,20 @@ export default class GameScene extends Phaser.Scene {
     var self = this;
 
     farmer_0.on('pointerdown', function (pointer) {
-      if (self.hero.tile.id == self.farmers[0].tile.id) {
-        self.gameinstance.pickupFarmer(self.heroes[0], function () {
-          farmer_0.destroy();
-          //TODO: Add farmer to player inventory and display on player inventory card
-        });
-      }
+      //if (self.hero.tile.id == self.farmers[0].tile.id) {
+        self.gameinstance.pickupFarmer(function (tileid) {
+          let pickedFarmer:Farmer = self.tiles[tileid].farmer.pop();
+          for( var i = 0; i < 2; i++){
+            if(self.farmers[i].id === pickedFarmer.id){
+              self.farmers[i].tile = undefined;
+              self.hero.farmers.push(pickedFarmer)
+              break;
+            }
+          }
+          pickedFarmer.destroy()
+          console.log(self.hero.farmers)
+       });
+      //}
 
     }, this);
 
@@ -347,44 +335,87 @@ export default class GameScene extends Phaser.Scene {
     }, this);
 
 
-    this.gameinstance.updateFarmer(function () {
-      farmer_0.destroy();
+    this.gameinstance.destroyFarmer(function (tileid) {
+      let pickedFarmer:Farmer = self.tiles[tileid].farmer.pop();
+      for( var i = 0; i < 2; i++){
+        if(self.farmers[i] === pickedFarmer){
+          self.farmers[i].tile = undefined;
+          console.log(self.farmers[i].tile)
+          break;
+        }
+      }
+      pickedFarmer.destroy()
+      
     });
 
-    this.gameinstance.updateFarmer(function () {
-      farmer_1.destroy();
+    this.gameinstance.addFarmer(function (tileid, farmerid) {
+      let newFarmer = self.hero.farmers.pop()
+      
+      if(farmerid === 0){
+        newFarmer = new Farmer(0, self, self.tiles[tileid], 'farmer').setDisplaySize(40,40)
+      }else if(farmerid === 1){
+        newFarmer = new Farmer(1, self, self.tiles[tileid], 'farmer').setDisplaySize(40,40)
+      }
+
+      self.tiles[tileid].farmer.push(newFarmer)
+
+      newFarmer.setInteractive()
+
+      newFarmer.on('pointerdown', function (pointer) {
+        //if (self.hero.tile.id == self.farmers[0].tile.id) {
+          self.gameinstance.pickupFarmer(function (tileid) {
+            let pickedFarmer:Farmer = self.tiles[tileid].farmer.pop();
+            for( var i = 0; i < 2; i++){
+              if(self.farmers[i].id === pickedFarmer.id){
+                self.farmers[i].tile = undefined;
+                self.hero.farmers.push(pickedFarmer)
+                break;
+              }
+            }
+            pickedFarmer.destroy()
+            console.log(self.hero.farmers)
+         });
+        //}
+  
+      }, this);
+      self.add.existing(newFarmer)
     });
   }
 
   private addHero(type: HeroKind, tileNumber: number, texture: string) {
     const tile: Tile = this.tiles[tileNumber]
-    let hero: Hero = new Hero(this, tile, texture, type).setDisplaySize(40, 60);
+    let hero: Hero = new Hero(this, tile, texture, type).setDisplaySize(40, 40);
     this.heroes.push(hero);
-
     tile.hero = hero;
-    tile.heroexist = true;
     this.add.existing(hero);
-    if (this.ownHeroType === type) this.hero = hero;
+    if (this.ownHeroType === type) {
+      this.hero = hero;
+    }
   }
 
-  private addWell(tileNumber: number, wellName: string) {
+
+  private addWell(x, y, tileNumber: number, wellName: string) {
     const tile: Tile = this.tiles[tileNumber]
-    const well = this.add.image(tile.x, tile.y, "well").setDisplaySize(60, 40)
+    const well = this.add.image(x * scaleFactor + borderWidth, y * scaleFactor + borderWidth, "well").setDisplaySize(50, 40)
     well.name = wellName;
+
 
     well.setInteractive()
     var self = this
 
-    well.on("pointerdown", function () {
 
+    well.on("pointerdown", function () {
+      //console.log(tile.hero.getWillPower())
       self.gameinstance.useWell(function () {
         self[wellName].setTint(0x404040)
+
         if (tile.hero.getWillPower() <= 17) {
           tile.hero.setwillPower(3)
         }
         else if (tile.hero.getWillPower() <= 20 && tile.hero.getWillPower() > 17) {
           tile.hero.setwillPower(20 - tile.hero.getWillPower())
         }
+
 
       });
     });
@@ -398,6 +429,71 @@ export default class GameScene extends Phaser.Scene {
         tile.hero.setwillPower(20 - tile.hero.getWillPower())
       }
     });
+  }
+
+  private startingCollabDecisionSetup() {
+    var self = this;
+
+    var style2 = {
+      fontFamily: '"Roboto Condensed"',
+      fontSize: "20px",
+      backgroundColor: '#f00'
+    }
+
+    // Start of game collab decision
+    /* For testing purposes: open and close a collab window using interactive text on game
+    this.gameText = this.add.text(600, 550, "COLLAB", style2).setOrigin(0.5)
+    this.gameText.setInteractive();
+    this.gameText.on('pointerdown', function (pointer) {
+      if (this.scene.isVisible('collab')) {
+        WindowManager.destroy(this, 'collab');
+        return;
+      }
+
+      // Move definition and creation of collab window here for testing
+    }, this);
+    */
+
+    // TODO collab: Replace all this hardcoding UI shit with something nicer
+    // var res = { "gold": 5, "wineskin": 2 };
+    var res = new Map([
+      ["gold", 5], 
+      ["wineskin", 2]
+    ])
+    // Determine width of the window based on how many resources are being distributed
+    var width = (res.size + 1) * collabColWidth; // Not sure if there's a better way of getting size of ts obj
+    // Determine height of the window based on number of players involved
+    var height = (self.heroes.length + 2) * collabRowHeight;
+    // Set data depending on whether the client is the owner of the decision
+    // Get hero of lowest rank, based on their starting tile
+    var heroRanks = [];
+    for (let hero of self.heroes) { heroRanks.push(hero.tile.id); }
+    console.log(heroRanks);
+    var startingHeroRank = Math.min(...heroRanks);
+    console.log("starting hero rank is", startingHeroRank);
+    var collabWindowData = (self.hero.tile.id == startingHeroRank) ?
+      {
+        controller: self.gameinstance,
+        isOwner: true,
+        heroes: self.heroes,
+        resources: res,
+        textOptions: null,
+        x: reducedWidth / 2 - width / 2,
+        y: reducedHeight / 2 - height / 2,
+        w: width,
+        h: height
+      } :
+      {
+        controller: self.gameinstance,
+        isOwner: false,
+        x: reducedWidth / 2 - width / 2,
+        y: reducedHeight / 2 - height / 2,
+        w: 200,
+        h: 100
+      }
+    WindowManager.create(this, 'collab', CollabWindow, collabWindowData);
+    // Freeze main game while collab window is active
+    this.scene.pause();
   }
 
   // Creating the hour tracker
@@ -432,7 +528,6 @@ export default class GameScene extends Phaser.Scene {
 
     this.hourTracker.setInteractive();
   }
-
 
 
   public update() {

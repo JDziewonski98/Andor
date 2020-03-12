@@ -7,15 +7,26 @@ import { HeroKind } from './HeroKind';
 export class Hero extends Phaser.GameObjects.Sprite {
     public tile: Tile;
     public hourTracker: HourTracker;
-    public farmer: Array<Farmer>;
+    public farmers: Array<Farmer>;
     private hour: number;
     private willPower: number;
     private strength: number;
+    private gold: number;
     private heroKind: HeroKind
 
     constructor(scene, tile: Tile, texture: string, kind: HeroKind) {
         super(scene, tile.x, tile.y, texture);
-        this.farmer = new Array();
+        this.farmers = new Array();
+        switch (kind) {
+            case "archer":
+                super(scene, tile.x - 30, tile.y - 30, texture);
+            case "dwarf":
+                super(scene, tile.x + 30, tile.y - 30, texture);
+            case "mage":
+                super(scene, tile.x - 30, tile.y + 30, texture);
+            case "warrior":
+                super(scene, tile.x + 30, tile.y + 30, texture);
+        }
         this.tile = tile;
         this.hourTracker = null;
         this.hour = 1;
@@ -26,6 +37,7 @@ export class Hero extends Phaser.GameObjects.Sprite {
     private initializeResources() {
         this.willPower = 7;
         this.strength = 1;
+        this.gold = 5;
 
         /**
         if (this.hk === HeroKind.Archer) {
@@ -45,20 +57,44 @@ export class Hero extends Phaser.GameObjects.Sprite {
     }
 
     public moveTo(newTile: Tile) {
-        this.tile = newTile 
-        this.x = newTile.x
-        this.y = newTile.y
+        switch (this.heroKind) {
+            case "archer":
+                this.x = newTile.x - 30
+                this.y = newTile.y - 30
+            case "dwarf":
+                this.x = newTile.x + 30
+                this.y = newTile.y - 30
+            case "mage":
+                this.x = newTile.x - 30
+                this.y = newTile.y + 30
+            case "warrior":
+                this.x = newTile.x + 30
+                this.y = newTile.y + 30
+        }
+        this.tile = newTile
     }
 
     public resetHours() {
         // this.hourTracker.reset(this.id);
     }
-    public getKind(){
+    public getKind() {
         return this.heroKind;
     }
 
     public dropGold(amount) {
+        if (this.gold < amount) {
+            return false
+        }
+        else {
+            var reg = this.tile
 
+            //decrease the amount you have
+            this.setGold(this.gold - amount)
+            //increase the amount on tile
+            reg.setGold(reg.getGold() + amount)
+
+            return true
+        }
     }
 
     public setwillPower(willValToChange) {
@@ -69,7 +105,11 @@ export class Hero extends Phaser.GameObjects.Sprite {
         return this.willPower;
     }
 
-    public getStrength() {
-        return this.strength;
+    public getGold() {
+        return this.gold;
+    }
+
+    public setGold(amount) {
+        this.gold = amount;
     }
 }

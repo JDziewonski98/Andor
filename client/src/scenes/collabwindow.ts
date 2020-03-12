@@ -1,7 +1,9 @@
 import { Window } from "./window";
 import { WindowManager } from "../utils/WindowManager";
+import { Hero } from '../objects/hero';
 import { game } from '../api/game';
 import { collabTextHeight, collabColWidth, collabRowHeight } from '../constants'
+import { ResourceToggle } from "../widgets/ResourceToggle";
 
 export class CollabWindow extends Window {
     private submitText;
@@ -11,10 +13,10 @@ export class CollabWindow extends Window {
     // Should know what resources are being distributed, how many of each there are
     // to distribute, what heroes are participating in the decision, and which hero
     // is the owner of the decision. Pass into constructor
-    private involvedHeroes;
-    private ownerHero;
-    private resources; // some kind of dictionary (itemType: quantity)
-    private allocated; // track what has been allocated to who
+    private involvedHeroes: Hero[];
+    private isOwner: boolean;
+    private resources: Map<string, number>;
+    private resAllocated: Map<string, number[]> = new Map(); // track what has been allocated to who
     
     private textOptions; // for some event cards, null if this is a resource split
     private selected; // current selected textOption
@@ -28,17 +30,19 @@ export class CollabWindow extends Window {
 
     public constructor(key: string, data) {
         super(key, {x: data.x, y: data.y, width: data.w, height: data.h});
+
         this.gameinstance = data.controller;
-
-        this.ownerHero = data.owner;
-        this.involvedHeroes = data.heroes;
-        this.resources = data.resources;
-        this.textOptions = data.textOptions;
-
-        this.x = data.x; 
+        this.isOwner = data.isOwner;
+        this.x = data.x;
         this.y = data.y;
         this.width = data.w;
         this.height = data.h;
+
+        if (this.isOwner) {
+            this.involvedHeroes = data.heroes;
+            this.resources = data.resources;
+            this.textOptions = data.textOptions;
+        }
     }
 
     protected initialize() {
@@ -46,20 +50,6 @@ export class CollabWindow extends Window {
 
         var bg = this.add.image(0, 0, 'scrollbg').setOrigin(0.5);
         this.populateWindow();
-
-        // Collab related actions
-        this.acceptText.setInteractive()
-        this.acceptText.on('pointerdown', function (pointer) {
-            if (self.hasAccepted) {
-                console.log("You have already accepted this decision");
-                return;
-            }
-            self.gameinstance.collabDecisionAccept();
-        });
-        this.submitText.setInteractive()
-        this.submitText.on('pointerdown', function (pointer) {
-            self.gameinstance.collabDecisionSubmit();
-        });
 
         //This drag is pretty f'd up.
         bg.on('drag', function (pointer, dragX, dragY) {
@@ -84,15 +74,18 @@ export class CollabWindow extends Window {
 
         function submitSuccess() {
             self.hasAccepted = false;
-            // WindowManager.destroy(this, 'collab');
-            console.log("Callback: successfully submitted decision")
+            console.log("Callback: successfully submitted decision");
+
+            // Resume main game scene when collab decision is complete
+            self.scene.resume('Game');
+            self.scene.remove('collab');
         }
         function submitFailure() {
-            console.log("Callback: submit decision failed")
+            console.log("Callback: submit decision failed - not enough accepts");
         }
         function setAccepted(numAccepted) {
             self.hasAccepted = true;
-            console.log("Callback: successfully accepted decision, numAccepted: ", numAccepted)
+            console.log("Callback: successfully accepted decision, numAccepted: ", numAccepted);
         }
     }
 
@@ -104,25 +97,101 @@ export class CollabWindow extends Window {
             backgroundColor: 'fx00',
             fontSize: collabTextHeight
         }
-        this.add.text(0, 0, 'Collab', textStyle)
-        this.submitText = this.add.text(0, this.height-collabTextHeight, 'Submit decision', textStyle)
-        this.acceptText = this.add.text(this.width/2, this.height-collabTextHeight, 'Accept decision', textStyle)
+        
+        // Done populating if this is just an accept window
+        if (!this.isOwner) {
+            this.acceptText = this.add.text(this.width/2, this.height-collabTextHeight, 'Accept', textStyle)
 
-        // Add hero "rows"
-        var currY = 20;
-        for (var h in this.involvedHeroes) {
-            // TODO collab: Replace text with hero kind
-            this.add.text(0, currY, 'Hero', textStyle);
-            currY += collabRowHeight;
+            this.acceptText.setInteractive()
+            this.acceptText.on('pointerdown', function (pointer) {
+                console.log("Current distribution", self.resAllocated);
+                if (self.hasAccepted) {
+                    console.log("You have already accepted this decision");
+                    return;
+                }
+                self.gameinstance.collabDecisionAccept();
+            });
+
+            return;
         }
 
-        // Add resource "columns"
-        if (this.resources != null) {
-            Object.keys(self.resources).forEach(function(key, index) {
-                self.add.text((index+1)*collabColWidth, 0, key, textStyle);
-            })
+        this.submitText = this.add.text(0, this.height-collabTextHeight, 'Submit', textStyle)
+
+        this.submitText.setInteractive()
+        this.submitText.on('pointerdown', function (pointer) {
+            // Check that resAllocated corresponds with specified quantities from data.resources
+            if (self.verifyAllocated()) {
+                // Need to convert map TS object to send to server
+                let convMap = {};
+                self.resAllocated.forEach((val: number[], key: string) => {
+                    convMap[key] = val;
+                });
+                self.gameinstance.collabDecisionSubmit(convMap);
+            } else {
+                console.log("Allocated quantities do not match those specified");
+            }
+        });
+
+        // For resource splitting collabs
+        if (this.resources) {
+            var numResources = this.resources.size;
+
+            for (let i=0; i<this.involvedHeroes.length; i++) {
+                // initiate all allocated resources to 0 for all heroes
+                let heroKindString = this.involvedHeroes[i].getKind().toString();
+                let initialResources = [];
+                initialResources.length = numResources;
+                initialResources.fill(0);
+                this.resAllocated.set(heroKindString, initialResources);
+            }
+
+            // Populate window with resource grid
+            for (let row=0; row<this.involvedHeroes.length; row++) {
+                for (let col=0; col<numResources+1; col++) {
+                    let heroKindString = this.involvedHeroes[row].getKind().toString();
+                    if (col == 0) {
+                        // Name of hero
+                        this.add.text(0, (row+1)*collabRowHeight, heroKindString, textStyle);
+                        continue;
+                    }
+                    // this.resources.get(Array.from(this.resources.keys())[col-1]) used to get the total amount of the resource
+                    // available to allocate, passed through data.resources in constructor
+                    new ResourceToggle(this, col*collabColWidth, (row+1)*collabRowHeight, 
+                        heroKindString, col-1, this.resources.get(Array.from(this.resources.keys())[col-1]),this.resAllocated);
+                }
+            }
+        }
+        // Add resource "columns" headers
+        if (this.resources) {
+            let col = 1;
+            Array.from(this.resources.keys()).forEach( key =>
+                self.add.text((col++)*collabColWidth, 0, key, textStyle)
+            );
         } else if (this.textOptions != null) {
             // Not used for this milestone
         }
+    }
+
+    private verifyAllocated() {
+        var self = this;
+        
+        var currTotals = [];
+        currTotals.length = this.resources.size;
+        currTotals.fill(0);
+        Array.from(this.resAllocated.values()).forEach( counts => {
+            for (let i=0; i<counts.length; i++) {
+                currTotals[i] += counts[i];
+            }
+        });
+        console.log(currTotals);
+
+        var resMaxes = Array.from(this.resources.values());
+        for (let i=0; i<resMaxes.length; i++) {
+            if (resMaxes[i] != currTotals[i]) {
+                console.log("resource", i, "count did not match");
+                return false;
+            }
+        }
+        return true;
     }
 }

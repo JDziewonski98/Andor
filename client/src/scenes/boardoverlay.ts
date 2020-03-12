@@ -2,6 +2,8 @@ import { Chat } from './chatwindow';
 import { HeroWindow } from './herowindow';
 import { WindowManager } from "../utils/WindowManager";
 import { game } from '../api/game';
+import { CollabWindow } from './collabwindow';
+//import { dropgoldwindow } from './dropgoldwindow';
 
 export default class BoardOverlay extends Phaser.Scene {
     private gameText;
@@ -128,7 +130,6 @@ export default class BoardOverlay extends Phaser.Scene {
                 WindowManager.create(this, 'chat', Chat, { gameinstance: self.gameinstance });
             }
         }, this);
-
 
     }
 }

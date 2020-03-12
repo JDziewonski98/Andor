@@ -28,8 +28,16 @@ export class game {
         this.socket.emit("pickupFarmer",  callback);
     }
 
-    public updateFarmer(callback){
-        this.socket.on("updateFarmer", callback);
+    public destroyFarmer(callback){
+        this.socket.on("destroyFarmer", callback);
+    }
+
+    public addFarmer(callback){
+        this.socket.on("addFarmer", callback);
+    }
+
+    public dropFarmer(callback){
+        this.socket.emit("dropFarmer", callback);
     }
 
     public merchant(callback){
@@ -41,11 +49,16 @@ export class game {
     }
 
     public updateWell(callback) {
-        this.socket.on("updateWell", callback)
+        this.socket.on("updateWell", callback);
     }
-    
-    public dropGold(amount, callback) {
-        this.socket.emit("dropGold", amount, callback)
+
+    public updateDropGold(callback) {       
+        this.socket.on("updateDropGold", callback);       
+    }
+
+    public dropGold(callback) {
+        console.log("here2") //is printed
+        this.socket.emit("dropGold", callback)
     }
 
     public send(msg, callback) {
@@ -117,8 +130,9 @@ export class game {
 
     // Collaborative decision making
     // Submitting a decision
-    public collabDecisionSubmit() {
-        this.socket.emit('collabDecisionSubmit')
+    public collabDecisionSubmit(resAllocated) {
+        console.log(resAllocated);
+        this.socket.emit('collabDecisionSubmit', resAllocated)
     }
     public receiveDecisionSubmitSuccess(callback) {
         this.socket.on('sendDecisionSubmitSuccess', callback)

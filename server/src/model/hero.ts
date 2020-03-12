@@ -49,6 +49,19 @@ export class Hero {
         this.gold = amount;
     }
 
+    public updateGold(goldDelta) {
+        this.gold += goldDelta;
+    }
+
+    // TODO: actual wineskin implementation instead of boolean flag
+    public getWineskin() {
+        return this.wineskin;
+    }
+
+    public setWineskin(hasWineskin) {
+        this.wineskin = hasWineskin;
+    }
+
     private setTimeOfDay(time) {
         this.timeOfDay = time;
     }
@@ -98,19 +111,46 @@ export class Hero {
         if(r_farmers.length != 0 && (this.region.getID() === r_farmers[r_farmers.length-1].tile.getID())){
             var farmer = this.region.getFarmers().pop()!;
             farmer.carriedBy = this;
-            this.farmer = true;
             this.farmers.push(farmer);
-            return true;
+            return this.region;
         }
-        return false;
+        return this.region;
+    }
+
+    public dropFarmer() {
+        var r_farmers = this.region.getFarmers();
+        var result = new Array()
+        if(r_farmers.length < 2 && this.farmers.length > 0){
+            var farmer = this.farmers.pop()!;
+            farmer.carriedBy = undefined;
+            farmer.tile = this.region;
+            this.region.getFarmers().push(farmer);
+            result.push(farmer.id)
+            result.push(this.region.getID())
+            return result;
+        }
+        return result;
     }
 
     private farmerSlotEmpty() {
         //what does this do?
     }
 
-    private dropGold(amount) {
-        // TODO: implement
+    public dropGold() {
+        
+
+        if (this.gold < 1) {
+            return false
+        }
+        else {            
+            var reg = this.region
+            //decrease the amount you have
+            this.setGold(this.gold - 1)
+            //increase the amount on tile
+            reg.setGold(reg.getGold() + 1)
+            
+            return true
+        }       
     }
 
     public setWill(willValueToChange: number) {
