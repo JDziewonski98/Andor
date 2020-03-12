@@ -1,6 +1,6 @@
 import { Game, HeroKind, Region, Hero } from '../model';
 
-export function game(socket, model: Game) {
+export function game(socket, model: Game, io) {
 
   socket.on("moveRequest", function (tile, callback) {
     console.log("Recieved moveRequest")
@@ -28,16 +28,16 @@ export function game(socket, model: Game) {
   });
 
   socket.on("pickupFarmer", function (callback) {
-    let success = false;
+    var region:Region;
     let heroId = socket.conn.id;
     let hero = model.getHero(heroId);
     if (hero !== undefined) {
-      success = hero.pickupFarmer();
-    }
+      region = hero.pickupFarmer();
 
-    if (success) {
-      socket.broadcast.emit("updateFarmer");
-      callback();
+      if (region !== undefined) {
+        socket.broadcast.emit("destroyFarmer", region.getID());
+        callback(region.getID());
+      }
     }
   });
 
@@ -50,8 +50,8 @@ export function game(socket, model: Game) {
 
       if (region !== undefined) {
         console.log(hero)
-        socket.broadcast.emit("updateFarmer");
-        callback(region.getID);
+        io.of("/"+model.getName()).emit("addFarmer", region.getID())
+        callback(region.getID());
       }
     }
   });

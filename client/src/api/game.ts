@@ -28,8 +28,12 @@ export class game {
         this.socket.emit("pickupFarmer",  callback);
     }
 
-    public updateFarmer(callback){
-        this.socket.on("updateFarmer", callback);
+    public destroyFarmer(callback){
+        this.socket.on("destroyFarmer", callback);
+    }
+
+    public addFarmer(callback){
+        this.socket.on("addFarmer", callback);
     }
 
     public dropFarmer(callback){

@@ -22,6 +22,12 @@ export class Farmer extends Phaser.GameObjects.Sprite {
         this.tile = tile;
     }
 
+    public setTile(newTile: Tile){
+        this.tile = newTile;
+        this.x = newTile.x
+        this.y = newTile.y
+    }
+
     public destoryFarmer(){
         this.destroy();
     }

@@ -61,11 +61,8 @@ export class HeroWindow extends Window {
         this.farmtext.setInteractive()
         this.farmtext.on('pointerdown', function (pointer) {
             self.gameinstance.dropFarmer(function (tilenum) {
-                console.log("dropped", self)
-                let droppedFarmer = new Farmer(this.scene.parent, this.scene.parent.tiles[tilenum], 'farmer');
-                this.scene.parent.add.existing(droppedFarmer);
-                this.scene.parent.tiles[tilenum].farmer.push(droppedFarmer);
-
+                self.farmers--;
+                self.farmtext = self.add.text(25, 160, 'Farmers: ' + self.farmers, { backgroundColor: 'fx00' })
             })
 
         }, this);

@@ -298,8 +298,17 @@ export default class GameScene extends Phaser.Scene {
 
     farmer_0.on('pointerdown', function (pointer) {
       //if (self.hero.tile.id == self.farmers[0].tile.id) {
-        self.gameinstance.pickupFarmer(function () {
-          farmer_0.destroy();
+        self.gameinstance.pickupFarmer(function (tileid) {
+          let pickedFarmer:Farmer = self.tiles[tileid].farmer.pop();
+          for( var i = 0; i < 2; i++){
+            if(self.farmers[i] === pickedFarmer){
+              self.farmers[i].tile = undefined;
+              console.log(self.farmers[i].tile)
+              break;
+            }
+          }
+          pickedFarmer.destroy()
+          //console.log(self.farmers[0].carriedBy)
        });
       //}
 
@@ -315,12 +324,22 @@ export default class GameScene extends Phaser.Scene {
     }, this);
 
 
-    this.gameinstance.updateFarmer(function () {
-      farmer_0.destroy();
+    this.gameinstance.destroyFarmer(function (tileid) {
+      let pickedFarmer:Farmer = self.tiles[tileid].farmer.pop();
+      for( var i = 0; i < 2; i++){
+        if(self.farmers[i] === pickedFarmer){
+          self.farmers[i].tile = undefined;
+          console.log(self.farmers[i].tile)
+          break;
+        }
+      }
+      pickedFarmer.destroy()
+      
     });
 
-    this.gameinstance.updateFarmer(function () {
-      farmer_1.destroy();
+    this.gameinstance.addFarmer(function (tileid) {
+      let newFarmer = new Farmer(self, self.tiles[tileid], 'farmer').setDisplaySize(40,40);
+      self.add.existing(newFarmer)
     });
   }
 

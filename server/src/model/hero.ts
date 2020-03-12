@@ -97,9 +97,9 @@ export class Hero {
             var farmer = this.region.getFarmers().pop()!;
             farmer.carriedBy = this;
             this.farmers.push(farmer);
-            return true;
+            return this.region;
         }
-        return false;
+        return this.region;
     }
 
     public dropFarmer() {
