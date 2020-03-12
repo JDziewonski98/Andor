@@ -50,6 +50,7 @@ export default class GameScene extends Phaser.Scene {
   public init(data) {
     this.gameinstance = data.controller;
     let type = data.heroType;
+    console.log("GameScene created, client hero type: ", type);
     if (type === "dwarf")
       this.ownHeroType = HeroKind.Dwarf
     else if (type === "warrior")
