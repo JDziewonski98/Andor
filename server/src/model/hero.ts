@@ -31,8 +31,9 @@ export class Hero {
         return this.hk;
     }
 
-    private moveTo(newTile) {
-        //TODO
+    public moveTo(newTile: Region) {
+        this.region = newTile
+        this.timeOfDay++
     }
 
     public useItem(item) {
