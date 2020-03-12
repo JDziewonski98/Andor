@@ -22,6 +22,7 @@ export default class GameScene extends Phaser.Scene {
   private hero: Hero;
   private ownHeroType: string;
   private tiles: Tile[];
+  private welltiles: Tile[];
   private farmers: Farmer[];
   private hourTracker: HourTracker;
   private gameinstance: game;
@@ -95,10 +96,10 @@ export default class GameScene extends Phaser.Scene {
     this.addFarmers()
     this.addMonsters()
 
-      this.addWell(wellTile1, "well1")
-      this.addWell(wellTile2, "well2")
-      this.addWell(wellTile3, "well3")
-      this.addWell(wellTile4, "well4")
+    this.addWell(wellTile1, "well1")
+    this.addWell(wellTile2, "well2")
+    this.addWell(wellTile3, "well3")
+    this.addWell(wellTile4, "well4")
 
     var style2 = {
       fontFamily: '"Roboto Condensed"',
@@ -111,30 +112,30 @@ export default class GameScene extends Phaser.Scene {
     this.gameText = this.add.text(600, 550, "COLLAB", style2).setOrigin(0.5)
     this.gameText.setInteractive();
     this.gameText.on('pointerdown', function (pointer) {
-        if (this.scene.isVisible('collab')) {
-            WindowManager.destroy(this, 'collab');
-            return;
-        }
+      if (this.scene.isVisible('collab')) {
+        WindowManager.destroy(this, 'collab');
+        return;
+      }
 
-        // TODO collab: Replace all this hardcoding UI shit with something nicer
-        var res = { "gold": 5, "wineskin": 2 };
-        // Determine width of the window based on how many resources are being distributed
-        var width = (Object.keys(res).length+1) * collabColWidth // Not sure if there's a better way of getting size of ts obj
-        // Determine height of the window based on number of players involved
-        var height = self.heroes.length * collabRowHeight + 24
-        console.log(self.heroes.length, width, height)
-        var collabWindowData = {
-            controller: self.gameinstance,
-            owner: self.heroes[0],
-            heroes: self.heroes,
-            resources: res,
-            textOptions: null,
-            x: reducedWidth/2 - width/2,
-            y: reducedHeight/2 - height/2,
-            w: width,
-            h: height
-        }
-        WindowManager.create(this, 'collab', CollabWindow, collabWindowData);
+      // TODO collab: Replace all this hardcoding UI shit with something nicer
+      var res = { "gold": 5, "wineskin": 2 };
+      // Determine width of the window based on how many resources are being distributed
+      var width = (Object.keys(res).length + 1) * collabColWidth // Not sure if there's a better way of getting size of ts obj
+      // Determine height of the window based on number of players involved
+      var height = self.heroes.length * collabRowHeight + 24
+      console.log(self.heroes.length, width, height)
+      var collabWindowData = {
+        controller: self.gameinstance,
+        owner: self.heroes[0],
+        heroes: self.heroes,
+        resources: res,
+        textOptions: null,
+        x: reducedWidth / 2 - width / 2,
+        y: reducedHeight / 2 - height / 2,
+        w: width,
+        h: height
+      }
+      WindowManager.create(this, 'collab', CollabWindow, collabWindowData);
     }, this);
 
   }
@@ -158,7 +159,7 @@ export default class GameScene extends Phaser.Scene {
   private setRegions() {
     // Note that regions 73-79 and 83 are unused, but created anyways to preserve direct
     // indexing between regions array and region IDs
-    var tilesData = require("../../assets/xycoords").map;
+    var tilesData = require("../utils/xycoords").map;
     var treeTile = this.textures.get('tiles').getFrameNames()[12];
     for (var element in tilesData) {
       var tile = new Tile(element, this, tilesData[element].xcoord * scaleFactor + borderWidth, tilesData[element].ycoord * scaleFactor + borderWidth, treeTile);
@@ -177,15 +178,15 @@ export default class GameScene extends Phaser.Scene {
     })
   }
 
-  private addMerchants(){
+  private addMerchants() {
     const merchtile_18: Tile = this.tiles[18];
     const merchtile_57: Tile = this.tiles[57];
     const merchtile_71: Tile = this.tiles[71];
 
-    var self  = this;
+    var self = this;
 
     merchtile_18.on('pointerdown', function (pointer) {
-      if(self.hero.tile.id == merchtile_18.id){
+      if (self.hero.tile.id == merchtile_18.id) {
 
         if (this.scene.isVisible('merchant1')) {
           WindowManager.destroy(self, 'merchant1');
@@ -194,13 +195,13 @@ export default class GameScene extends Phaser.Scene {
           let window = WindowManager.get(this, 'merchant1')
           window.setName('Merchant')
         }
-        
+
       }
 
     }, this);
 
     merchtile_57.on('pointerdown', function (pointer) {
-      if(self.hero.tile.id == merchtile_18.id){
+      if (self.hero.tile.id == merchtile_18.id) {
 
         if (this.scene.isVisible('merchant2')) {
           WindowManager.destroy(self, 'merchant2');
@@ -209,13 +210,13 @@ export default class GameScene extends Phaser.Scene {
           let window = WindowManager.get(this, 'merchant2')
           window.setName('Merchant')
         }
-        
+
       }
 
     }, this);
 
     merchtile_71.on('pointerdown', function (pointer) {
-      if(self.hero.tile.id == merchtile_18.id){
+      if (self.hero.tile.id == merchtile_18.id) {
 
         if (this.scene.isVisible('merchant3')) {
           WindowManager.destroy(self, 'merchant3');
@@ -224,7 +225,7 @@ export default class GameScene extends Phaser.Scene {
           let window = WindowManager.get(this, 'merchant3')
           window.setName('Merchant')
         }
-        
+
       }
 
     }, this);
@@ -264,8 +265,8 @@ export default class GameScene extends Phaser.Scene {
 
     let self = this;
     this.monsters.forEach(monster =>
-        self.add.existing(monster)
-      );
+      self.add.existing(monster)
+    );
 
 
   }
@@ -307,8 +308,8 @@ export default class GameScene extends Phaser.Scene {
     var self = this;
 
     farmer_0.on('pointerdown', function (pointer) {
-      if(self.hero.tile.id == self.farmers[0].tile.id){
-        self.gameinstance.pickupFarmer(self.heroes[0], function(){
+      if (self.hero.tile.id == self.farmers[0].tile.id) {
+        self.gameinstance.pickupFarmer(self.heroes[0], function () {
           farmer_0.destroy();
           //TODO: Add farmer to player inventory and display on player inventory card
         });
@@ -317,8 +318,8 @@ export default class GameScene extends Phaser.Scene {
     }, this);
 
     farmer_1.on('pointerdown', function (pointer) {
-      if(self.hero.tile.id == self.farmers[1].tile.id){
-        self.gameinstance.pickupFarmer(self.heroes[0], function(){
+      if (self.hero.tile.id == self.farmers[1].tile.id) {
+        self.gameinstance.pickupFarmer(self.heroes[0], function () {
           farmer_1.destroy();
         });
       }
@@ -335,7 +336,7 @@ export default class GameScene extends Phaser.Scene {
     });
   }
 
-  private addHero(type: string, tileNumber: number, texture: string){
+  private addHero(type: string, tileNumber: number, texture: string) {
     const tile: Tile = this.tiles[tileNumber]
     // var gridX;
     // var gridY;
@@ -373,38 +374,50 @@ export default class GameScene extends Phaser.Scene {
     if (this.ownHeroType === type) this.hero = hero;
   }
 
-    private addWell(tileNumber: number, wellName: string) {
-        const tile: Tile = this.tiles[tileNumber]
-        const well = this.add.image(tile.x, tile.y, "well").setDisplaySize(60, 40)
-        well.name = wellName;
+  private addWell(tileNumber: number, wellName: string) {
 
-        well.setInteractive()
-        var self = this
+    // var welltilesData = require("../utils/xywells").map;
+    // for (var element in welltilesData) {
+    //   var well = this.add.image(welltilesData[element].xcoord * scaleFactor + borderWidth, welltilesData[element].ycoord * scaleFactor + borderWidth, "well").setDisplaySize(40, 45)
+    //   // var well = new Tile(element, this, welltilesData[element].xcoord * scaleFactor + borderWidth, welltilesData[element].ycoord * scaleFactor + borderWidth, wellpic);
+    //   this.welltiles[element] = well;
+    //   well.setInteractive();
+    //   this.add.existing(well);
+    //   well.name = wellName;
+    //   well.setInteractive()
+    //   this.add.existing(well);
+    // }
 
-        well.on("pointerdown", function () {
+    const tile: Tile = this.tiles[tileNumber]
+    const well = this.add.image(tile.x, tile.y, "well").setDisplaySize(40, 45)
+    well.name = wellName;
+    well.setInteractive()
 
-            self.gameinstance.useWell(function () {
-                self[wellName].setTint(0x404040)
-                if (tile.hero.getWillPower() <= 17) {
-                    tile.hero.setwillPower(3)
-                }
-                else if (tile.hero.getWillPower() <= 20 && tile.hero.getWillPower() > 17) {
-                    tile.hero.setwillPower(20 - tile.hero.getWillPower())
-                }
 
-            });
-        });
+    var self = this
+    well.on("pointerdown", function () {
+      self.gameinstance.useWell(function () {
+        self[wellName].setTint(0x404040)
+        if (tile.hero.getWillPower() <= 17) {
+          tile.hero.setwillPower(3)
+        }
+        else if (tile.hero.getWillPower() <= 20 && tile.hero.getWillPower() > 17) {
+          tile.hero.setwillPower(20 - tile.hero.getWillPower())
+        }
 
-        this.gameinstance.updateWell(function () {
-            self[wellName].setTint(0x404040)
-            if (tile.hero.getWillPower() <= 17) {
-                tile.hero.setwillPower(3)
-            }
-            else if (tile.hero.getWillPower() <= 20 && tile.hero.getWillPower() > 17) {
-                tile.hero.setwillPower(20 - tile.hero.getWillPower())
-            }
-        });
-    }
+      });
+    });
+
+    this.gameinstance.updateWell(function () {
+      self[wellName].setTint(0x404040)
+      if (tile.hero.getWillPower() <= 17) {
+        tile.hero.setwillPower(3)
+      }
+      else if (tile.hero.getWillPower() <= 20 && tile.hero.getWillPower() > 17) {
+        tile.hero.setwillPower(20 - tile.hero.getWillPower())
+      }
+    });
+  }
 
   // Creating the hour tracker
   private hourTrackerSetup() {
@@ -440,7 +453,7 @@ export default class GameScene extends Phaser.Scene {
   }
 
   private moveRequest(tile) {
-    this.gameinstance.moveRequest(tile.id, tile.id, function(tileId){
+    this.gameinstance.moveRequest(tile.id, tile.id, function (tileId) {
       console.log("player requested to move to tile: ", tileId)
     })
   }
