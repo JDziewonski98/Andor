@@ -15,12 +15,13 @@ import {
 } from '../constants'
 import { MerchantWindow } from './merchantwindow';
 import { Monster } from '../objects/monster';
+import { HeroKind } from '../objects/HeroKind';
 
 
 export default class GameScene extends Phaser.Scene {
   private heroes: Hero[];
   private hero: Hero;
-  private ownHeroType: string;
+  private ownHeroType: HeroKind;
   private tiles: Tile[];
   private welltiles: Tile[];
   private farmers: Farmer[];
@@ -42,15 +43,23 @@ export default class GameScene extends Phaser.Scene {
     this.heroes = Array<Hero>();
     this.tiles = Array<Tile>();
     this.farmers = new Array<Farmer>();
-    this.ownHeroType = "dwarf";
+    this.ownHeroType = HeroKind.Dwarf;
     this.monsters = new Array<Monster>();
 
   }
 
   public init(data) {
-    console.log(data.heroType)
     this.gameinstance = data.controller;
-    this.ownHeroType = data.heroType;
+    let type = data.heroType;
+    console.log("GameScene created, client hero type: ", type);
+    if (type === "dwarf")
+      this.ownHeroType = HeroKind.Dwarf
+    else if (type === "warrior")
+      this.ownHeroType = HeroKind.Warrior
+    else if (type === "mage")
+      this.ownHeroType = HeroKind.Mage
+    else if (type === "archer")
+      this.ownHeroType = HeroKind.Archer
     this.sys.game.scene.bringToTop('BoardOverlay');
   }
 
@@ -72,7 +81,6 @@ export default class GameScene extends Phaser.Scene {
     this.add.image(fullWidth / 2, fullHeight / 2, 'gameboard')
       .setDisplaySize(expandedWidth, expandedHeight);
 
-    // Bring overlay scene to top
     this.sys.game.scene.bringToTop('BoardOverlay');
 
     this.setRegions();
@@ -81,13 +89,13 @@ export default class GameScene extends Phaser.Scene {
     this.gameinstance.getHeros((herotypes) => {
       herotypes.forEach(type => {
         if (type === "archer") {
-          self.addHero("archer", archerTile, "archermale");
+          self.addHero(HeroKind.Archer, archerTile, "archermale");
         } else if (type === "mage") {
-          self.addHero("mage", mageTile, "magemale");
+          self.addHero(HeroKind.Mage, mageTile, "magemale");
         } else if (type === "warrior") {
-          self.addHero("warrior", warriorTile, "warriormale");
+          self.addHero(HeroKind.Warrior, warriorTile, "warriormale");
         } else if (type === "dwarf") {
-          self.addHero("dwarf", dwarfTile, "dwarfmale");
+          self.addHero(HeroKind.Dwarf, dwarfTile, "dwarfmale");
         }
       });
     })
@@ -172,10 +180,21 @@ export default class GameScene extends Phaser.Scene {
     var self = this
     this.tiles.map(function (tile) {
       tile.on('pointerdown', function () {
-        //tile.printstuff()
-        self.moveRequest(tile)
+        self.gameinstance.moveRequest(tile.id, updateMoveRequest)
       })
     })
+
+    this.gameinstance.updateMoveRequest(updateMoveRequest)
+
+    function updateMoveRequest(heroKind, tileID) {
+      self.heroes.forEach((hero: Hero) => {
+        if (hero.getKind().toString() === heroKind) {
+          hero.moveTo(self.tiles[tileID])
+        }
+      })
+    }
+
+
   }
 
   private addMerchants() {
@@ -192,8 +211,8 @@ export default class GameScene extends Phaser.Scene {
           WindowManager.destroy(self, 'merchant1');
         } else {
           WindowManager.create(self, 'merchant1', MerchantWindow, self.gameinstance);
-          let window = WindowManager.get(this, 'merchant1')
-          window.setName('Merchant')
+          let window = WindowManager.get(self, 'merchant1')
+          
         }
 
       }
@@ -207,8 +226,7 @@ export default class GameScene extends Phaser.Scene {
           WindowManager.destroy(self, 'merchant2');
         } else {
           WindowManager.create(self, 'merchant2', MerchantWindow, self.gameinstance);
-          let window = WindowManager.get(this, 'merchant2')
-          window.setName('Merchant')
+          let window = WindowManager.get(self, 'merchant2')
         }
 
       }
@@ -222,8 +240,7 @@ export default class GameScene extends Phaser.Scene {
           WindowManager.destroy(self, 'merchant3');
         } else {
           WindowManager.create(self, 'merchant3', MerchantWindow, self.gameinstance);
-          let window = WindowManager.get(this, 'merchant3')
-          window.setName('Merchant')
+          let window = WindowManager.get(self, 'merchant3')
         }
 
       }
@@ -336,38 +353,9 @@ export default class GameScene extends Phaser.Scene {
     });
   }
 
-  private addHero(type: string, tileNumber: number, texture: string) {
+  private addHero(type: HeroKind, tileNumber: number, texture: string) {
     const tile: Tile = this.tiles[tileNumber]
-    // var gridX;
-    // var gridY;
-
-    // switch (type) {
-    //   case "archer":
-    //     gridX = tile.heroCoords[2][0];
-    //     gridY = tile.heroCoords[2][1];
-    //     break;
-    //   case "mage":
-    //     gridX = tile.heroCoords[0][0];
-    //     gridY = tile.heroCoords[0][1];
-    //     break;
-    //   case "warrior":
-    //     gridX = tile.heroCoords[3][0];
-    //     gridY = tile.heroCoords[3][1];
-    //     break;
-    //   case "dwarf":
-    //     gridX = tile.heroCoords[1][0];
-    //     gridY = tile.heroCoords[1][1];
-    //     break;
-    //   default:
-    //     //default behavior if herotype invalid
-    // }
-
-    // var heroIcon = this.add.sprite(gridX, gridY, texture).setDisplaySize(40, 40);    
-    // this.heroes.push(new Hero(this, tile, heroIcon);
-    // tile.hero = this.heroes[this.heroes.length-1];
-    // tile.heroexist = true;
-
-    let hero: Hero = new Hero(this, tile, texture).setDisplaySize(40, 40);
+    let hero: Hero = new Hero(this, tile, texture, type).setDisplaySize(40, 60);
     this.heroes.push(hero);
     tile.hero = hero;
     this.add.existing(hero);
@@ -375,27 +363,15 @@ export default class GameScene extends Phaser.Scene {
   }
 
   private addWell(tileNumber: number, wellName: string) {
-
-    // var welltilesData = require("../utils/xywells").map;
-    // for (var element in welltilesData) {
-    //   var well = this.add.image(welltilesData[element].xcoord * scaleFactor + borderWidth, welltilesData[element].ycoord * scaleFactor + borderWidth, "well").setDisplaySize(40, 45)
-    //   // var well = new Tile(element, this, welltilesData[element].xcoord * scaleFactor + borderWidth, welltilesData[element].ycoord * scaleFactor + borderWidth, wellpic);
-    //   this.welltiles[element] = well;
-    //   well.setInteractive();
-    //   this.add.existing(well);
-    //   well.name = wellName;
-    //   well.setInteractive()
-    //   this.add.existing(well);
-    // }
-
     const tile: Tile = this.tiles[tileNumber]
-    const well = this.add.image(tile.x, tile.y, "well").setDisplaySize(40, 45)
+    const well = this.add.image(tile.x, tile.y, "well").setDisplaySize(60, 40)
     well.name = wellName;
+
     well.setInteractive()
-
-
     var self = this
+
     well.on("pointerdown", function () {
+
       self.gameinstance.useWell(function () {
         self[wellName].setTint(0x404040)
         if (tile.hero.getWillPower() <= 17) {
@@ -452,11 +428,15 @@ export default class GameScene extends Phaser.Scene {
     this.hourTracker.setInteractive();
   }
 
+<<<<<<< HEAD
   private moveRequest(tile) {
     this.gameinstance.moveRequest(tile.id, tile.id, function (tileId) {
       console.log("player requested to move to tile: ", tileId)
     })
   }
+=======
+
+>>>>>>> master
 
   public update() {
     var camera = this.cameras.main;

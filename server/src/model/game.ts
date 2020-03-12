@@ -1,14 +1,14 @@
-import {
-    GameDifficulty,
-    RietburgCastle,
-    Farmer,
-    Region,
-    Player,
-    Hero,
-    HeroKind,
-    Monster
+import { 
+    GameDifficulty, 
+    RietburgCastle, 
+    Farmer, 
+    Region, 
+    Player, 
+    Hero, 
+    HeroKind, 
+    Monster,
+    MonsterKind
 } from "."
-import { MonsterKind } from './MonsterKind';
 
 export class Game {
 
