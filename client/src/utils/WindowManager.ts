@@ -1,8 +1,9 @@
 import { HeroWindow } from "../scenes/herowindow";
-
+import { Fight } from "../scenes/fightwindow"
 export class WindowManager extends Phaser.Scene {
     public static create(self, key: string, obj, data={}) {
         var win = new obj(key, data);
+        console.log(self.scene, 'in window manageru')
         self.scene.add(key, win, true);
         return win;
     }

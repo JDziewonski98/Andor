@@ -1,4 +1,5 @@
-import { Game, HeroKind, Region, Hero } from '../model';
+import { Game, HeroKind, Region, Hero, Monster } from '../model';
+import { callbackify } from 'util';
 
 export function game(socket, model: Game) {
 
@@ -61,6 +62,8 @@ export function game(socket, model: Game) {
     }
   });
 
+
+
   socket.on("useWell", function (callback) {
     let success_well = false;
 
@@ -77,6 +80,23 @@ export function game(socket, model: Game) {
 
     }
   });
+
+    socket.on("dropGold", function (callback) {
+
+        console.log("here3") //printed
+        let success_dropGold = false;
+        let heroId = socket.conn.id;
+        let hero = model.getHero(heroId);
+        
+        if (hero !== undefined) {
+            success_dropGold = hero.dropGold();
+        }
+        if (success_dropGold) {
+            console.log("dropped") //printed
+            socket.broadcast.emit("updateDropGold");
+            callback()
+        }
+    });   
 
   socket.on('bind hero', function (heroType, callback) {
     let success = false;
@@ -151,10 +171,10 @@ export function game(socket, model: Game) {
     socket.emit('recieveDesiredPlayerCount', model.getNumOfDesiredPlayers())
   })
 
-  socket.on("dropGold", function (callback) {
+ /* socket.on("dropGold", function (callback) {
     // TODO:
     callback()
-  })
+  })*/
 
   socket.on("getHeros", function (callback) {
     let heros = new Array<HeroKind>();
@@ -243,6 +263,19 @@ export function game(socket, model: Game) {
     console.log('number of players accepted decision: ', model.numAccepts)
     // Tell the client that accepted to update their status
     socket.emit('sendDecisionAccepted', model.numAccepts)
+  })
+
+  socket.on('monsterRoll', function (m, callback) {
+    console.log(model.getMonsters())
+    try {
+      console.log(model.getMonsters().get(m))
+      let monster = model.getMonsters().get(m)
+      let roll = monster!.rollDice()
+      callback(roll)
+    }
+    catch {
+      console.log('no such monster name exists!')
+    }
   })
 
   function getCurrentDate() {

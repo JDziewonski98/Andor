@@ -121,8 +121,21 @@ export class Hero {
         //what does this do?
     }
 
-    private dropGold(amount) {
-        // TODO: implement
+    public dropGold() {
+        
+
+        if (this.gold < 1) {
+            return false
+        }
+        else {            
+            var reg = this.region
+            //decrease the amount you have
+            this.setGold(this.gold - 1)
+            //increase the amount on tile
+            reg.setGold(reg.getGold() + 1)
+            
+            return true
+        }       
     }
 
     public setWill(willValueToChange: number) {
