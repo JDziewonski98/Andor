@@ -48,8 +48,12 @@ export class game {
     }
 
     // TODO movement
-    public moveRequest( tileID, callback){
+    public moveRequest(tileID, callback){
         this.socket.emit('moveRequest', tileID, callback)
+    }
+
+    public moveHeroTo(heroType, tileID, callback){
+        this.socket.on("moveHeroTo", heroType, tileID, callback)
     }
 
     public  removeListener(object){
@@ -84,8 +88,6 @@ export class game {
     public getHeros(callback){
         this.socket.emit("getHeros", callback)
     }
-    public moveHeroTo(heroId, tileId, callback){
-        this.socket.on("moveHeroTo", callback)
-    }
+   
 }
 

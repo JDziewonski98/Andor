@@ -59,7 +59,17 @@ export default class GameScene extends Phaser.Scene {
     this.sys.game.scene.bringToTop('BoardOverlay');
 
     this.setRegions();
-
+    //probably need to remove this
+    // this.gameinstance.moveHeroTo(function(heroType, tile){
+    //   console.log("hah")
+    //   for(var index in self.heroes){
+    //     var hero = self.heroes[index]
+    //     if(hero.getKind() == heroType){
+    //      hero.moveTo(tile)
+    //     }
+    //     //self.gameinstance.getHeros[heroType].moveTo(tile.id)
+    //   }
+    // })
     var self = this;
     this.gameinstance.getHeros((herotypes) => {
       herotypes.forEach(type => {
@@ -112,13 +122,29 @@ export default class GameScene extends Phaser.Scene {
     var self = this
     this.tiles.map(function (tile) {
       tile.on('pointerdown', function () {
-        self.gameinstance.moveRequest(tile.id, tile.id, function(){
+        self.gameinstance.moveRequest(tile.id, function(heroType, moveSuccessful){
+          if(moveSuccessful){
+            console.log(heroType)
+            for(var index in self.heroes){
+              var hero = self.heroes[index]
+              if(hero.getKind() == heroType){
+               hero.moveTo(tile)
+              }
+              //self.gameinstance.getHeros[heroType].moveTo(tile.id)
+              
+            }
+            console.log("aha")
+            
+          }
           
         })
       })
     })
-  }
 
+  }
+  public moveHeroTo(){
+   
+  }
   private addFarmers() {
 
     const farmertile_0: Tile = this.tiles[24];
@@ -174,7 +200,7 @@ export default class GameScene extends Phaser.Scene {
 
   private addHero(type: string, tileNumber: number, texture: string){
     const tile: Tile = this.tiles[tileNumber]
-    let hero: Hero = new Hero(this, tile, texture).setDisplaySize(40, 60);
+    let hero: Hero = new Hero(this, tile, texture, type).setDisplaySize(40, 60);
     this.heroes.push(hero);
 
     tile.hero = hero;

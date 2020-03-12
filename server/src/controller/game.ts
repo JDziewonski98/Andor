@@ -1,4 +1,5 @@
 import { Game, HeroKind, Region } from '../model';
+import { callbackify } from 'util';
 
 export function game(socket, model: Game) {
 
@@ -6,13 +7,11 @@ export function game(socket, model: Game) {
     console.log("Received moveRequest")
     let isAdjacent: boolean = false
 
-    var heroId = socket.conn.id
-    let hero = model.getHero(heroId);
+    var heroID = socket.conn.id
+    let hero = model.getHero(heroID);
 
     var newRegion = model.getRegions()[id]
-    var currRegion = hero.getRegion()
-
-    //currently does not work 
+    var currRegion = hero.getRegion() 
     var adjRegions = currRegion.getAdjRegionsIds()
 
     for(var index in adjRegions){
@@ -22,14 +21,16 @@ export function game(socket, model: Game) {
         isAdjacent = true
       }
     }
-    
-    
+
     // any logic for movement here
     var timeLeft = hero.getTimeOfDay() <= 7 || (hero.getTimeOfDay() <= 10 && hero.getWill() >=2)
     if (isAdjacent && timeLeft ) {
       console.log("You can move!")
       model.moveHeroTo(hero, newRegion)
-      //socket.broadcast.emit("moveHeroTo", heroId, newRegion.getID());
+      socket.broadcast.emit("moveHeroTo", heroID, newRegion.getID(), function(heroID, tileID){
+          
+      });
+      callback(model.getHero(heroID).getKind(), (isAdjacent && timeLeft))
       
     } else {
       console.log("you cannot move here")
@@ -40,6 +41,11 @@ export function game(socket, model: Game) {
    
   });
 
+  socket.on("moveHeroTo", function(heroType, tile, callback){
+    console.log("yoink")
+    callback(heroType, tile);
+  })
+
   socket.on("pickupFarmer", function (callback) {
     let success = false;
     let heroId = socket.conn.id;
@@ -47,7 +53,6 @@ export function game(socket, model: Game) {
     if (hero !== undefined) {
       success = hero.pickupFarmer();
     }
-
     if (success) {
       socket.broadcast.emit("updateFarmer");
       callback();
