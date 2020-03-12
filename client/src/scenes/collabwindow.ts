@@ -1,7 +1,9 @@
 import { Window } from "./window";
 import { WindowManager } from "../utils/WindowManager";
+import { Hero } from '../objects/hero';
 import { game } from '../api/game';
 import { collabTextHeight, collabColWidth, collabRowHeight } from '../constants'
+import { ResourceToggle } from "../widgets/ResourceToggle";
 
 export class CollabWindow extends Window {
     private submitText;
@@ -11,10 +13,10 @@ export class CollabWindow extends Window {
     // Should know what resources are being distributed, how many of each there are
     // to distribute, what heroes are participating in the decision, and which hero
     // is the owner of the decision. Pass into constructor
-    private involvedHeroes;
+    private involvedHeroes: Hero[];
     private ownerHero;
     private resources; // some kind of dictionary (itemType: quantity)
-    private allocated; // track what has been allocated to who
+    private allocated = {}; // track what has been allocated to who
     
     private textOptions; // for some event cards, null if this is a resource split
     private selected; // current selected textOption
@@ -50,6 +52,7 @@ export class CollabWindow extends Window {
         // Collab related actions
         this.acceptText.setInteractive()
         this.acceptText.on('pointerdown', function (pointer) {
+            console.log("Current distribution", self.allocated);
             if (self.hasAccepted) {
                 console.log("You have already accepted this decision");
                 return;
@@ -84,6 +87,7 @@ export class CollabWindow extends Window {
 
         function submitSuccess() {
             self.hasAccepted = false;
+            // TODO collab: close window for all clients on successful submission
             // WindowManager.destroy(this, 'collab');
             console.log("Callback: successfully submitted decision")
         }
@@ -104,33 +108,40 @@ export class CollabWindow extends Window {
             backgroundColor: 'fx00',
             fontSize: collabTextHeight
         }
-        this.add.text(0, 0, 'Collab', textStyle)
-        this.submitText = this.add.text(0, this.height-collabTextHeight, 'Submit decision', textStyle)
-        this.acceptText = this.add.text(this.width/2, this.height-collabTextHeight, 'Accept decision', textStyle)
+        
+        this.submitText = this.add.text(0, this.height-collabTextHeight, 'Submit', textStyle)
+        this.acceptText = this.add.text(this.width/2, this.height-collabTextHeight, 'Accept', textStyle)
 
-        // If resource splitting collab, initiate all allocated resources to 0 for all heroes
+        // For resource splitting collabs
         if (this.resources) {
             var numResources = Object.keys(this.resources).length;
-            var initialResources = [];
-            initialResources.length = numResources;
-            initialResources.fill(0);
 
-            for (var i=0; i<this.involvedHeroes.length; i++) {
-                // TODO: replace i with heroType
-                var allocRow = {i: initialResources};
-                this.allocated.push(allocRow);
+            for (let i=0; i<this.involvedHeroes.length; i++) {
+                // initiate all allocated resources to 0 for all heroes
+                let heroKindString = this.involvedHeroes[i].getKind().toString();
+                let initialResources = [];
+                initialResources.length = numResources;
+                initialResources.fill(0);
+                this.allocated[heroKindString] = initialResources;
+            }
+
+            // Populate window with resource grid
+            for (let row=0; row<this.involvedHeroes.length; row++) {
+                for (let col=0; col<numResources+1; col++) {
+                    let heroKindString = this.involvedHeroes[row].getKind().toString();
+                    if (col == 0) {
+                        // Name of hero
+                        this.add.text(0, (row+1)*collabRowHeight, heroKindString, textStyle);
+                        continue;
+                    }
+                    // For col > 0, display current allocation for hero at row of resource at col
+                    // TODO collab: these text fields all need to be saved as state so they can be updated
+                    new ResourceToggle(this, col*collabColWidth, (row+1)*collabRowHeight, heroKindString, col-1, this.allocated);
+                    // this.add.text(col*collabColWidth, (row+1)*collabRowHeight, this.allocated[heroKindString][col-1]);
+                }
             }
         }
-
-        // Add hero "rows"
-        var currY = 20;
-        for (var h in this.involvedHeroes) {
-            // TODO collab: Replace text with hero kind
-            this.add.text(0, currY, 'Hero', textStyle);
-            currY += collabRowHeight;
-        }
-
-        // Add resource "columns"
+        // Add resource "columns". TODO collab: 
         if (this.resources != null) {
             Object.keys(self.resources).forEach(function(key, index) {
                 self.add.text((index+1)*collabColWidth, 0, key, textStyle);

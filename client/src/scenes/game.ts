@@ -139,10 +139,10 @@ export default class GameScene extends Phaser.Scene {
       // TODO collab: Replace all this hardcoding UI shit with something nicer
       var res = { "gold": 5, "wineskin": 2 };
       // Determine width of the window based on how many resources are being distributed
-      var width = (Object.keys(res).length + 1) * collabColWidth // Not sure if there's a better way of getting size of ts obj
+      var width = (Object.keys(res).length + 1) * collabColWidth; // Not sure if there's a better way of getting size of ts obj
       // Determine height of the window based on number of players involved
-      var height = self.heroes.length * collabRowHeight + 24
-      console.log(self.heroes.length, width, height)
+      var height = (self.heroes.length + 2) * collabRowHeight;
+      console.log(self.heroes.length, width, height);
       var collabWindowData = {
         controller: self.gameinstance,
         owner: self.heroes[0],
@@ -153,7 +153,7 @@ export default class GameScene extends Phaser.Scene {
         y: reducedHeight / 2 - height / 2,
         w: width,
         h: height
-      }
+      };
       WindowManager.create(this, 'collab', CollabWindow, collabWindowData);
     }, this);
 
