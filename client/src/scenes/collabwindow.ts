@@ -15,8 +15,8 @@ export class CollabWindow extends Window {
     // is the owner of the decision. Pass into constructor
     private involvedHeroes: Hero[];
     private isOwner: boolean;
-    private resources; // some kind of dictionary (itemType: quantity)
-    private resAllocated = {}; // track what has been allocated to who
+    private resources: Map<string, number>;
+    private resAllocated: Map<string, number[]> = new Map(); // track what has been allocated to who
     
     private textOptions; // for some event cards, null if this is a resource split
     private selected; // current selected textOption
@@ -119,12 +119,22 @@ export class CollabWindow extends Window {
 
         this.submitText.setInteractive()
         this.submitText.on('pointerdown', function (pointer) {
-            self.gameinstance.collabDecisionSubmit(self.resAllocated);
+            // Check that resAllocated corresponds with specified quantities from data.resources
+            if (self.verifyAllocated()) {
+                // Need to convert map TS object to send to server
+                let convMap = {};
+                self.resAllocated.forEach((val: number[], key: string) => {
+                    convMap[key] = val;
+                });
+                self.gameinstance.collabDecisionSubmit(convMap);
+            } else {
+                console.log("Allocated quantities do not match those specified");
+            }
         });
 
         // For resource splitting collabs
         if (this.resources) {
-            var numResources = Object.keys(this.resources).length;
+            var numResources = this.resources.size;
 
             for (let i=0; i<this.involvedHeroes.length; i++) {
                 // initiate all allocated resources to 0 for all heroes
@@ -132,7 +142,7 @@ export class CollabWindow extends Window {
                 let initialResources = [];
                 initialResources.length = numResources;
                 initialResources.fill(0);
-                this.resAllocated[heroKindString] = initialResources;
+                this.resAllocated.set(heroKindString, initialResources);
             }
 
             // Populate window with resource grid
@@ -144,17 +154,44 @@ export class CollabWindow extends Window {
                         this.add.text(0, (row+1)*collabRowHeight, heroKindString, textStyle);
                         continue;
                     }
-                    new ResourceToggle(this, col*collabColWidth, (row+1)*collabRowHeight, heroKindString, col-1, this.resAllocated);
+                    // this.resources.get(Array.from(this.resources.keys())[col-1]) used to get the total amount of the resource
+                    // available to allocate, passed through data.resources in constructor
+                    new ResourceToggle(this, col*collabColWidth, (row+1)*collabRowHeight, 
+                        heroKindString, col-1, this.resources.get(Array.from(this.resources.keys())[col-1]),this.resAllocated);
                 }
             }
         }
         // Add resource "columns" headers
-        if (this.resources != null) {
-            Object.keys(self.resources).forEach(function(key, index) {
-                self.add.text((index+1)*collabColWidth, 0, key, textStyle);
-            })
+        if (this.resources) {
+            let col = 1;
+            Array.from(this.resources.keys()).forEach( key =>
+                self.add.text((col++)*collabColWidth, 0, key, textStyle)
+            );
         } else if (this.textOptions != null) {
             // Not used for this milestone
         }
+    }
+
+    private verifyAllocated() {
+        var self = this;
+        
+        var currTotals = [];
+        currTotals.length = this.resources.size;
+        currTotals.fill(0);
+        Array.from(this.resAllocated.values()).forEach( counts => {
+            for (let i=0; i<counts.length; i++) {
+                currTotals[i] += counts[i];
+            }
+        });
+        console.log(currTotals);
+
+        var resMaxes = Array.from(this.resources.values());
+        for (let i=0; i<resMaxes.length; i++) {
+            if (resMaxes[i] != currTotals[i]) {
+                console.log("resource", i, "count did not match");
+                return false;
+            }
+        }
+        return true;
     }
 }

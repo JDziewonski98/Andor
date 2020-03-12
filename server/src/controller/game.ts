@@ -230,30 +230,31 @@ export function game(socket, model: Game) {
 
   // Submitting a decision
   socket.on('collabDecisionSubmit', function(resAllocated) {
+    console.log(resAllocated);
     // Check that numAccepts equals total num of players-1
-    if (model.numAccepts == model.getNumOfDesiredPlayers() - 1) {
-      // Success: distribute accordingly
-      let modelHeros = model.getHeros();
-      for (let hero of modelHeros.values()) {
-        let heroTypeString = hero.getKind().toString();
-        // if the hero was involved in the collab decision, update their resources
-        if (resAllocated[heroTypeString]) {
-          let currHero = hero;
-          // TODO collab: change hardcoding of resource index
-          currHero?.updateGold(resAllocated[heroTypeString][0]);
-          currHero?.setWineskin(resAllocated[heroTypeString][1]>0);
-          console.log("Updated", heroTypeString, "gold:", currHero?.getGold(), "wineskin:", currHero?.getWineskin())
-        }
-      }
-      // Reset decision related state
-      model.numAccepts = 0;
-
-      socket.broadcast.emit('sendDecisionSubmitSuccess')
-      socket.emit('sendDecisionSubmitSuccess')
-    } else {
+    if (model.numAccepts != model.getNumOfDesiredPlayers() - 1) {
       // Failure: need more accepts before valid submit
-      socket.emit('sendDecisionSubmitFailure')
+      socket.emit('sendDecisionSubmitFailure');
+      return;
     }
+    // Success: distribute accordingly
+    let modelHeros = model.getHeros();
+    for (let hero of modelHeros.values()) {
+      let heroTypeString = hero.getKind().toString();
+      // if the hero was involved in the collab decision, update their resources
+      if (resAllocated[heroTypeString]) {
+        let currHero = hero;
+        // TODO collab: change hardcoding of resource index
+        currHero?.updateGold(resAllocated[heroTypeString][0]);
+        currHero?.setWineskin(resAllocated[heroTypeString][1]>0);
+        console.log("Updated", heroTypeString, "gold:", currHero?.getGold(), "wineskin:", currHero?.getWineskin())
+      }
+    }
+    // Reset decision related state
+    model.numAccepts = 0;
+
+    socket.broadcast.emit('sendDecisionSubmitSuccess')
+    socket.emit('sendDecisionSubmitSuccess')
   })
 
   // Accepting a decision
