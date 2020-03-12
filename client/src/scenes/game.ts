@@ -355,7 +355,7 @@ export default class GameScene extends Phaser.Scene {
 
   private addHero(type: HeroKind, tileNumber: number, texture: string) {
     const tile: Tile = this.tiles[tileNumber]
-    let hero: Hero = new Hero(this, tile, texture, type).setDisplaySize(40, 60);
+    let hero: Hero = new Hero(this, tile, texture, type).setDisplaySize(40, 40);
     this.heroes.push(hero);
     tile.hero = hero;
     this.add.existing(hero);
@@ -364,7 +364,7 @@ export default class GameScene extends Phaser.Scene {
 
   private addWell(tileNumber: number, wellName: string) {
     const tile: Tile = this.tiles[tileNumber]
-    const well = this.add.image(tile.x, tile.y, "well").setDisplaySize(60, 40)
+    const well = this.add.image(tile.x, tile.y, "well").setDisplaySize(40, 45)
     well.name = wellName;
 
     well.setInteractive()
@@ -428,15 +428,6 @@ export default class GameScene extends Phaser.Scene {
     this.hourTracker.setInteractive();
   }
 
-<<<<<<< HEAD
-  private moveRequest(tile) {
-    this.gameinstance.moveRequest(tile.id, tile.id, function (tileId) {
-      console.log("player requested to move to tile: ", tileId)
-    })
-  }
-=======
-
->>>>>>> master
 
   public update() {
     var camera = this.cameras.main;

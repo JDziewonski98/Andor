@@ -116,6 +116,10 @@ export class Hero {
         this.will += willValueToChange
     }
 
+    public getWill(){
+        return this.will;
+    }
+
     public useWell() {
         var reg = this.region
         if (reg.getHaswell() && !reg.getWellUsed()) {
