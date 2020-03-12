@@ -294,11 +294,11 @@ export default class GameScene extends Phaser.Scene {
 
       this.monsters[i].on('pointerdown', function (pointer)  {  
         if (this.scene.isVisible(this.monsters[i].name)) {
-            console.log('1')
             WindowManager.destroy(this, this.monsters[i].name);
         }
         else {
-            WindowManager.create(this, this.monsters[i].name, Fight, { controller: this.gameinstance, monster:this.monsters[i]});
+            WindowManager.create(this, this.monsters[i].name, Fight, { controller: this.gameinstance, monstertexture:this.monsters[i].texture,
+                                hero:this.hero});
         }
       }, this)
     }

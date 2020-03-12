@@ -231,6 +231,11 @@ export function game(socket, model: Game) {
     socket.emit('sendDecisionAccepted', model.numAccepts)
   })
 
+  socket.on('monsterRoll', function (m) {
+    let monster = model.getMonsters().get(m)
+    
+  })
+
   function getCurrentDate() {
     var currentDate = new Date();
     var hour = (currentDate.getHours() < 10 ? '0' : '') + currentDate.getHours();

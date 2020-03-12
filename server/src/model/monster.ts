@@ -9,8 +9,10 @@ export class Monster {
     private tile: number;
     //reward amount of gold and willpower are always same.
     private gold: number = 0;
+    public name
 
-    constructor(kind: MonsterKind, tile: number, numplayers: number = 0) {
+    constructor(kind: MonsterKind, tile: number, numplayers: number = 0, name: string) {
+        this.name = name
         this.type = kind;
         this.tile = tile;
         switch (kind) {
@@ -91,7 +93,7 @@ export class Monster {
                 else {
                     attack = (roll1 > roll2) ? roll1 : roll2;
                 }
-                return attack
+                return attack + this.strength
             }
 
             else if (this.willpower > 6 && this.willpower < 14) {
@@ -113,7 +115,7 @@ export class Monster {
                 else {
                     attack = (roll1 > roll2) ? roll1 : roll2;
                 }
-                return attack
+                return attack + this.strength
             }
 
             else if (this.willpower > 6 && this.willpower < 14) {
