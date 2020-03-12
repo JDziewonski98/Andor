@@ -106,21 +106,6 @@ export default class GameScene extends Phaser.Scene {
     this.addFarmers()
     this.addMonsters()
 
-    this.monsters.forEach(monster =>
-        self.add.existing(monster)
-      );
-    console.log(this.monsters)
-
-    this.monsters.forEach(function (m) {
-      
-      if (this.scene.isVisible('gor1')) {
-          console.log('1')
-          WindowManager.destroy(this, m.name);
-      }
-      else {
-          WindowManager.create(this, 'gor1', Fight, { controller: self.gameinstance, monster:m});
-      }
-    })
     
 
     this.addWell(wellTile1, "well1")
@@ -300,6 +285,23 @@ export default class GameScene extends Phaser.Scene {
     gortile4.monster = gor4
     gortile5.monster = gor5
     skraltile.monster = skral
+
+    this.monsters.forEach(monster =>
+      this.add.existing(monster)
+    );
+  
+    for (let i = 0; i < this.monsters.length; i++) {
+
+      this.monsters[i].on('pointerdown', function (pointer)  {  
+        if (this.scene.isVisible(this.monsters[i].name)) {
+            console.log('1')
+            WindowManager.destroy(this, this.monsters[i].name);
+        }
+        else {
+            WindowManager.create(this, this.monsters[i].name, Fight, { controller: this.gameinstance, monster:this.monsters[i]});
+        }
+      }, this)
+    }
 
   }
 
