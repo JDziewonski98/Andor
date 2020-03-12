@@ -87,6 +87,6 @@ export class HeroWindow extends Window {
         console.log('refeshing')
         this.goldtext.setText('Gold: ' + this.gold)
         this.willtext.setText('Willpower: ' + this.will)
-        this.nametext.setText(this.name)
+        //this.nametext.setText(this.name)
     }
 }

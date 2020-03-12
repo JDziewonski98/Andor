@@ -210,8 +210,8 @@ export default class GameScene extends Phaser.Scene {
           WindowManager.destroy(self, 'merchant1');
         } else {
           WindowManager.create(self, 'merchant1', MerchantWindow, self.gameinstance);
-          let window = WindowManager.get(this, 'merchant1')
-          window.setName('Merchant')
+          let window = WindowManager.get(self, 'merchant1')
+          
         }
 
       }
@@ -225,8 +225,7 @@ export default class GameScene extends Phaser.Scene {
           WindowManager.destroy(self, 'merchant2');
         } else {
           WindowManager.create(self, 'merchant2', MerchantWindow, self.gameinstance);
-          let window = WindowManager.get(this, 'merchant2')
-          window.setName('Merchant')
+          let window = WindowManager.get(self, 'merchant2')
         }
 
       }
@@ -240,8 +239,7 @@ export default class GameScene extends Phaser.Scene {
           WindowManager.destroy(self, 'merchant3');
         } else {
           WindowManager.create(self, 'merchant3', MerchantWindow, self.gameinstance);
-          let window = WindowManager.get(this, 'merchant3')
-          window.setName('Merchant')
+          let window = WindowManager.get(self, 'merchant3')
         }
 
       }
