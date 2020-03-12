@@ -48,7 +48,6 @@ export default class GameScene extends Phaser.Scene {
   }
 
   public init(data) {
-    console.log(data.heroType)
     this.gameinstance = data.controller;
     let type = data.heroType;
     console.log("GameScene created, client hero type: ", type);
@@ -81,21 +80,10 @@ export default class GameScene extends Phaser.Scene {
     this.add.image(fullWidth / 2, fullHeight / 2, 'gameboard')
       .setDisplaySize(expandedWidth, expandedHeight);
 
-    // Bring overlay scene to top
     this.sys.game.scene.bringToTop('BoardOverlay');
 
     this.setRegions();
-    //probably need to remove this
-    // this.gameinstance.moveHeroTo(function(heroType, tile){
-    //   console.log("hah")
-    //   for(var index in self.heroes){
-    //     var hero = self.heroes[index]
-    //     if(hero.getKind() == heroType){
-    //      hero.moveTo(tile)
-    //     }
-    //     //self.gameinstance.getHeros[heroType].moveTo(tile.id)
-    //   }
-    // })
+
     var self = this;
     this.gameinstance.getHeros((herotypes) => {
       herotypes.forEach(type => {
@@ -191,24 +179,21 @@ export default class GameScene extends Phaser.Scene {
     var self = this
     this.tiles.map(function (tile) {
       tile.on('pointerdown', function () {
-        self.gameinstance.moveRequest(tile.id, function (heroType, moveSuccessful) {
-          if (moveSuccessful) {
-            console.log(heroType)
-            for (var index in self.heroes) {
-              var hero = self.heroes[index]
-              if (hero.getKind() == heroType) {
-                hero.moveTo(tile)
-              }
-              //self.gameinstance.getHeros[heroType].moveTo(tile.id)
-
-            }
-            console.log("aha")
-
-          }
-
-        })
+        self.gameinstance.moveRequest(tile.id, updateMoveRequest)
       })
     })
+
+    this.gameinstance.updateMoveRequest(updateMoveRequest)
+
+    function updateMoveRequest(heroKind, tileID) {
+      self.heroes.forEach((hero: Hero) => {
+        if (hero.getKind().toString() === heroKind) {
+          hero.moveTo(self.tiles[tileID])
+        }
+      })
+    }
+
+
   }
 
   private addMerchants() {
