@@ -174,11 +174,24 @@ export class CollabWindow extends Window {
 
     private verifyAllocated() {
         var self = this;
-        // Not sure if TS guarantees ordering of attributes when iterating?
-        // self.resources = { "gold": 5, "wineskin": 2 };
-        Object.values(self.resources).forEach(function(value, index) {
+        
+        var currTotals = [];
+        currTotals.length = this.resources.size;
+        currTotals.fill(0);
+        Array.from(this.resAllocated.values()).forEach( counts => {
+            for (let i=0; i<counts.length; i++) {
+                currTotals[i] += counts[i];
+            }
+        });
+        console.log(currTotals);
 
-        })
+        var resMaxes = Array.from(this.resources.values());
+        for (let i=0; i<resMaxes.length; i++) {
+            if (resMaxes[i] != currTotals[i]) {
+                console.log("resource", i, "count did not match");
+                return false;
+            }
+        }
         return true;
     }
 }
