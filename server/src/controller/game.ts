@@ -234,10 +234,15 @@ export function game(socket, model: Game) {
 
   socket.on('monsterRoll', function (m, callback) {
     console.log(model.getMonsters())
-    console.log(model.getMonsters().get(m))
-    let monster = model.getMonsters().get(m)
-    let roll = monster!.rollDice()
-    callback(roll)
+    try {
+      console.log(model.getMonsters().get(m))
+      let monster = model.getMonsters().get(m)
+      let roll = monster!.rollDice()
+      callback(roll)
+    }
+    catch {
+      console.log('no such monster name exists!')
+    }
   })
 
   function getCurrentDate() {

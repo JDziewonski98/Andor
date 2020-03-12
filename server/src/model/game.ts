@@ -67,7 +67,7 @@ export class Game {
         let gor3 = new Monster(MonsterKind.Gor, 21, this.numOfDesiredPlayers, 'gor3')
         let gor4 = new Monster(MonsterKind.Gor, 26, this.numOfDesiredPlayers, 'gor4')
         let gor5 = new Monster(MonsterKind.Gor, 48, this.numOfDesiredPlayers,'gor5')
-        let skral = new Monster(MonsterKind.Skral, 19, this.numOfDesiredPlayers, 'skral')
+        let skral = new Monster(MonsterKind.Skral, 19, this.numOfDesiredPlayers, 'skral1')
 
         this.monsters.set(gor1.name, gor1)
         this.monsters.set(gor2.name, gor2)
