@@ -1,4 +1,5 @@
-import { Game, HeroKind, Region, Hero } from '../model';
+import { Game, HeroKind, Region, Hero, Monster } from '../model';
+import { callbackify } from 'util';
 
 export function game(socket, model: Game, io) {
 
@@ -77,6 +78,8 @@ export function game(socket, model: Game, io) {
     }
   });
 
+
+
   socket.on("useWell", function (callback) {
     let success_well = false;
 
@@ -93,6 +96,23 @@ export function game(socket, model: Game, io) {
 
     }
   });
+
+    socket.on("dropGold", function (callback) {
+
+        console.log("here3") //printed
+        let success_dropGold = false;
+        let heroId = socket.conn.id;
+        let hero = model.getHero(heroId);
+        
+        if (hero !== undefined) {
+            success_dropGold = hero.dropGold();
+        }
+        if (success_dropGold) {
+            console.log("dropped") //printed
+            socket.broadcast.emit("updateDropGold");
+            callback()
+        }
+    });   
 
   socket.on('bind hero', function (heroType, callback) {
     let success = false;
@@ -167,10 +187,10 @@ export function game(socket, model: Game, io) {
     socket.emit('recieveDesiredPlayerCount', model.getNumOfDesiredPlayers())
   })
 
-  socket.on("dropGold", function (callback) {
+ /* socket.on("dropGold", function (callback) {
     // TODO:
     callback()
-  })
+  })*/
 
   socket.on("getHeros", function (callback) {
     let heros = new Array<HeroKind>();
@@ -226,30 +246,31 @@ export function game(socket, model: Game, io) {
 
   // Submitting a decision
   socket.on('collabDecisionSubmit', function(resAllocated) {
+    console.log(resAllocated);
     // Check that numAccepts equals total num of players-1
-    if (model.numAccepts == model.getNumOfDesiredPlayers() - 1) {
-      // Success: distribute accordingly
-      let modelHeros = model.getHeros();
-      for (let hero of modelHeros.values()) {
-        let heroTypeString = hero.getKind().toString();
-        // if the hero was involved in the collab decision, update their resources
-        if (resAllocated[heroTypeString]) {
-          let currHero = hero;
-          // TODO collab: change hardcoding of resource index
-          currHero?.updateGold(resAllocated[heroTypeString][0]);
-          currHero?.setWineskin(resAllocated[heroTypeString][1]>0);
-          console.log("Updated", heroTypeString, "gold:", currHero?.getGold(), "wineskin:", currHero?.getWineskin())
-        }
-      }
-      // Reset decision related state
-      model.numAccepts = 0;
-
-      socket.broadcast.emit('sendDecisionSubmitSuccess')
-      socket.emit('sendDecisionSubmitSuccess')
-    } else {
+    if (model.numAccepts != model.getNumOfDesiredPlayers() - 1) {
       // Failure: need more accepts before valid submit
-      socket.emit('sendDecisionSubmitFailure')
+      socket.emit('sendDecisionSubmitFailure');
+      return;
     }
+    // Success: distribute accordingly
+    let modelHeros = model.getHeros();
+    for (let hero of modelHeros.values()) {
+      let heroTypeString = hero.getKind().toString();
+      // if the hero was involved in the collab decision, update their resources
+      if (resAllocated[heroTypeString]) {
+        let currHero = hero;
+        // TODO collab: change hardcoding of resource index
+        currHero?.updateGold(resAllocated[heroTypeString][0]);
+        currHero?.setWineskin(resAllocated[heroTypeString][1]>0);
+        console.log("Updated", heroTypeString, "gold:", currHero?.getGold(), "wineskin:", currHero?.getWineskin())
+      }
+    }
+    // Reset decision related state
+    model.numAccepts = 0;
+
+    socket.broadcast.emit('sendDecisionSubmitSuccess')
+    socket.emit('sendDecisionSubmitSuccess')
   })
 
   // Accepting a decision
@@ -258,6 +279,19 @@ export function game(socket, model: Game, io) {
     console.log('number of players accepted decision: ', model.numAccepts)
     // Tell the client that accepted to update their status
     socket.emit('sendDecisionAccepted', model.numAccepts)
+  })
+
+  socket.on('monsterRoll', function (m, callback) {
+    console.log(model.getMonsters())
+    try {
+      console.log(model.getMonsters().get(m))
+      let monster = model.getMonsters().get(m)
+      let roll = monster!.rollDice()
+      callback(roll)
+    }
+    catch {
+      console.log('no such monster name exists!')
+    }
   })
 
   function getCurrentDate() {

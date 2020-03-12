@@ -2,6 +2,8 @@ import { Chat } from './chatwindow';
 import { HeroWindow } from './herowindow';
 import { WindowManager } from "../utils/WindowManager";
 import { game } from '../api/game';
+import { CollabWindow } from './collabwindow';
+//import { dropgoldwindow } from './dropgoldwindow';
 
 export default class BoardOverlay extends Phaser.Scene {
     private gameText;
@@ -120,6 +122,7 @@ export default class BoardOverlay extends Phaser.Scene {
         this.gameText = this.add.text(800, 550, "CHAT", style2).setOrigin(0.5)
         this.gameText.setInteractive();
         this.gameText.on('pointerdown', function (pointer) {
+            console.log(this.scene, ' in overlay')
             if (this.scene.isVisible('chat')) {
                 WindowManager.destroy(this, 'chat');
             }
@@ -127,7 +130,6 @@ export default class BoardOverlay extends Phaser.Scene {
                 WindowManager.create(this, 'chat', Chat, { gameinstance: self.gameinstance });
             }
         }, this);
-
 
     }
 }
