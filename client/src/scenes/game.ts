@@ -21,7 +21,7 @@ export default class GameScene extends Phaser.Scene {
   private heroes: Hero[];
   private hero: Hero;
   private ownHeroType: string;
-  private tiles: Tile[];
+  public tiles: Tile[];
   private farmers: Farmer[];
   private hourTracker: HourTracker;
   private gameinstance: game;
@@ -297,12 +297,11 @@ export default class GameScene extends Phaser.Scene {
     var self = this;
 
     farmer_0.on('pointerdown', function (pointer) {
-      if (self.hero.tile.id == self.farmers[0].tile.id) {
+      //if (self.hero.tile.id == self.farmers[0].tile.id) {
         self.gameinstance.pickupFarmer(function () {
           farmer_0.destroy();
-          //TODO: Add farmer to player inventory and display on player inventory card
-        });
-      }
+       });
+      //}
 
     }, this);
 

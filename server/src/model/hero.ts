@@ -96,11 +96,22 @@ export class Hero {
         if(r_farmers.length != 0 && (this.region.getID() === r_farmers[r_farmers.length-1].tile.getID())){
             var farmer = this.region.getFarmers().pop()!;
             farmer.carriedBy = this;
-            this.farmer = true;
             this.farmers.push(farmer);
             return true;
         }
         return false;
+    }
+
+    public dropFarmer() {
+        var r_farmers = this.region.getFarmers();
+        if(r_farmers.length < 2 && this.farmers.length > 0){
+            var farmer = this.farmers.pop()!;
+            farmer.carriedBy = undefined;
+            farmer.tile = this.region;
+            this.region.getFarmers().push(farmer);
+            return this.region;
+        }
+        return this.region;
     }
 
     private farmerSlotEmpty() {

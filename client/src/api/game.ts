@@ -32,6 +32,10 @@ export class game {
         this.socket.on("updateFarmer", callback);
     }
 
+    public dropFarmer(callback){
+        this.socket.emit("dropFarmer", callback);
+    }
+
     public merchant(callback){
         this.socket.emit("merchant", callback);
     }

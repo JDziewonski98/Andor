@@ -41,6 +41,21 @@ export function game(socket, model: Game) {
     }
   });
 
+  socket.on("dropFarmer", function(callback){
+    var region: Region;
+    let heroId = socket.conn.id;
+    let hero = model.getHero(heroId);
+    if (hero !== undefined) {
+      region = hero.dropFarmer();
+
+      if (region !== undefined) {
+        console.log(hero)
+        socket.broadcast.emit("updateFarmer");
+        callback(region.getID);
+      }
+    }
+  });
+
   socket.on("merchant", function(callback){
     let success = false;
     var heroId = socket.conn.id;

@@ -10,7 +10,7 @@ export class Farmer{
     public tile: Region;
     //public x: number;
     //public y: number;
-    public carriedBy!: Hero;
+    public carriedBy!: Hero | undefined;
 
     constructor(tile) {
         //this.x = x;

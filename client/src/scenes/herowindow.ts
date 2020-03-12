@@ -1,5 +1,7 @@
 import { Window } from "./window";
 import { game } from '../api/game';
+import { Farmer } from "../objects/farmer";
+
 export class HeroWindow extends Window {
 
     public icon
@@ -53,10 +55,25 @@ export class HeroWindow extends Window {
                 this.scene.refresh()
             }
         });
+
+        var self = this
+
+        this.farmtext.setInteractive()
+        this.farmtext.on('pointerdown', function (pointer) {
+            self.gameinstance.dropFarmer(function (tilenum) {
+                console.log("dropped", self)
+                let droppedFarmer = new Farmer(this.scene.parent, this.scene.parent.tiles[tilenum], 'farmer');
+                this.scene.parent.add.existing(droppedFarmer);
+                this.scene.parent.tiles[tilenum].farmer.push(droppedFarmer);
+
+            })
+
+        }, this);
+
+
         this.goldtext.setInteractive()
-        var that = this
         this.goldtext.on('pointerdown', function (pointer) {
-            that.gameinstance.dropGold(1, function () {
+            self.gameinstance.dropGold(1, function () {
                 console.log("we droppin the gold")
             })
 
