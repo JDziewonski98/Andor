@@ -386,9 +386,13 @@ export default class GameScene extends Phaser.Scene {
     */
     
     // TODO collab: Replace all this hardcoding UI shit with something nicer
-    var res = { "gold": 5, "wineskin": 2 };
+    // var res = { "gold": 5, "wineskin": 2 };
+    var res = new Map([
+      ["gold", 5], 
+      ["wineskin", 2]
+    ])
     // Determine width of the window based on how many resources are being distributed
-    var width = (Object.keys(res).length + 1) * collabColWidth; // Not sure if there's a better way of getting size of ts obj
+    var width = (res.size + 1) * collabColWidth; // Not sure if there's a better way of getting size of ts obj
     // Determine height of the window based on number of players involved
     var height = (self.heroes.length + 2) * collabRowHeight;
     // Set data depending on whether the client is the owner of the decision
