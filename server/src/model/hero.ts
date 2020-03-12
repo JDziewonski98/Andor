@@ -110,11 +110,25 @@ export class Hero {
         if(r_farmers.length != 0 && (this.region.getID() === r_farmers[r_farmers.length-1].tile.getID())){
             var farmer = this.region.getFarmers().pop()!;
             farmer.carriedBy = this;
-            this.farmer = true;
             this.farmers.push(farmer);
-            return true;
+            return this.region;
         }
-        return false;
+        return this.region;
+    }
+
+    public dropFarmer() {
+        var r_farmers = this.region.getFarmers();
+        var result = new Array()
+        if(r_farmers.length < 2 && this.farmers.length > 0){
+            var farmer = this.farmers.pop()!;
+            farmer.carriedBy = undefined;
+            farmer.tile = this.region;
+            this.region.getFarmers().push(farmer);
+            result.push(farmer.id)
+            result.push(this.region.getID())
+            return result;
+        }
+        return result;
     }
 
     private farmerSlotEmpty() {

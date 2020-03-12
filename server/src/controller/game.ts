@@ -1,7 +1,7 @@
 import { Game, HeroKind, Region, Hero, Monster } from '../model';
 import { callbackify } from 'util';
 
-export function game(socket, model: Game) {
+export function game(socket, model: Game, io) {
 
   socket.on("moveRequest", function (id, callback) {
     id = +id // turning Id from string to number
@@ -35,15 +35,31 @@ export function game(socket, model: Game) {
   })
 
   socket.on("pickupFarmer", function (callback) {
-    let success = false;
+    var region:Region;
     let heroId = socket.conn.id;
     let hero = model.getHero(heroId);
     if (hero !== undefined) {
-      success = hero.pickupFarmer();
+      region = hero.pickupFarmer();
+
+      if (region !== undefined) {
+        socket.broadcast.emit("destroyFarmer", region.getID());
+        callback(region.getID());
+      }
     }
-    if (success) {
-      socket.broadcast.emit("updateFarmer");
-      callback();
+  });
+
+  socket.on("dropFarmer", function(callback){
+    var result = new Array()
+    let heroId = socket.conn.id;
+    let hero = model.getHero(heroId);
+    if (hero !== undefined) {
+      result = hero.dropFarmer();
+
+      if (result !== undefined) {
+        console.log(hero)
+        io.of("/"+model.getName()).emit("addFarmer", result[1], result[0])
+        callback(result[1]);
+      }
     }
   });
 
