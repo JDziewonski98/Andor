@@ -108,6 +108,20 @@ export class CollabWindow extends Window {
         this.submitText = this.add.text(0, this.height-collabTextHeight, 'Submit decision', textStyle)
         this.acceptText = this.add.text(this.width/2, this.height-collabTextHeight, 'Accept decision', textStyle)
 
+        // If resource splitting collab, initiate all allocated resources to 0 for all heroes
+        if (this.resources) {
+            var numResources = Object.keys(this.resources).length;
+            var initialResources = [];
+            initialResources.length = numResources;
+            initialResources.fill(0);
+
+            for (var i=0; i<this.involvedHeroes.length; i++) {
+                // TODO: replace i with heroType
+                var allocRow = {i: initialResources};
+                this.allocated.push(allocRow);
+            }
+        }
+
         // Add hero "rows"
         var currY = 20;
         for (var h in this.involvedHeroes) {
