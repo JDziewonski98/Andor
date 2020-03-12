@@ -28,7 +28,7 @@ export default class GameScene extends Phaser.Scene {
   private farmers: Farmer[];
   private hourTracker: HourTracker;
   private gameinstance: game;
-  private monsters: Monster[]
+  private monsters: Monster[];
 
   private gameText;
 
@@ -56,7 +56,11 @@ export default class GameScene extends Phaser.Scene {
     let type = data.heroType;
     console.log("GameScene created, client hero type: ", type);
     if (type === "dwarf")
+    {
       this.ownHeroType = HeroKind.Dwarf
+      //This will need to be moved when we implement loading and saving, but for now this is fine.
+      this.gameinstance.setMyTurn(true)
+    }
     else if (type === "warrior")
       this.ownHeroType = HeroKind.Warrior
     else if (type === "mage")
@@ -152,6 +156,7 @@ export default class GameScene extends Phaser.Scene {
     var self = this
     this.tiles.map(function (tile) {
       tile.on('pointerdown', function () {
+        console.log("It is my turn: ", self.gameinstance.myTurn)
         self.gameinstance.moveRequest(tile.id, updateMoveRequest)
       })
     })

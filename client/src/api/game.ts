@@ -5,11 +5,13 @@ export class game {
     private name: string;
     private socket;
     private chatlog: any;
+    private myTurn: boolean;
 
     constructor(name) {
         this.name = name
         this.socket = this.connect(this.name)
         this.chatlog = []
+        this.myTurn = false;
     }
 
     private connect(name) {
@@ -72,13 +74,19 @@ export class game {
     }
     // TODO movement
     public moveRequest(tileID, callback){
-        this.socket.emit('moveRequest', tileID, callback)
+        if(this.myTurn){
+            this.socket.emit('moveRequest', tileID, callback)
+        }
     }
-
     public updateMoveRequest(callback){
         this.socket.on("updateMoveRequest", callback);
     }
 
+    public endTurn(callback){
+        if(this.myTurn){
+            this.socket.emit('endTurn', callback);
+        }
+    }
     public  removeListener(object){
         console.log('removing ', object)
         this.socket.emit('removeListener',object)

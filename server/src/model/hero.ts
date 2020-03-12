@@ -12,11 +12,23 @@ export class Hero {
     private timeOfDay: number = 1;
     private farmer: boolean = false;
     private farmers: Array<Farmer>;
-
+    private rank: number;
     private wineskin: boolean = false;
 
     constructor(hk: HeroKind, region:Region) {
         this.hk = hk
+        if(this.hk === "dwarf"){
+            this.rank = 7
+        }
+        else if(this.hk === "warrior"){
+            this.rank = 14
+        }
+        else if(this.hk === "archer"){
+            this.rank = 25
+        }
+        else{
+            this.rank = 34
+        }
         this.region = region;
         this.farmers = new Array()
         this.initializeResources()
@@ -30,7 +42,9 @@ export class Hero {
     public getKind(): HeroKind {
         return this.hk;
     }
-
+    public getRank(): number{
+        return this.rank;
+    }
     public moveTo(newTile: Region) {
         this.region = newTile
         this.timeOfDay++

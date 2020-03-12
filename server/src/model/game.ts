@@ -24,7 +24,7 @@ export class Game {
     private regions: Array<Region>;
     private farmers: Array<Farmer>;
     private monsters:Map<string, Monster>;
-
+    private currHerosTurn: HeroKind;
     // collab decision related state
     public numAccepts: number;
 
@@ -41,12 +41,26 @@ export class Game {
         this.regions = new Array<Region>();
         this.farmers = new Array<Farmer>();
         this.monsters = new Map<string, Monster>();
+        this.currHerosTurn = HeroKind.Dwarf
         this.setRegions();
         this.setFarmers();
         this.setMonsters()
         this.readyplayers = 0;
 
         this.numAccepts = 0;
+    }
+    private setFirstHerosTurn(){
+        var minRank = Number.MAX_VALUE;
+        var ID = "none";
+        for(var socketID in this.heroList){
+            var hero = this.heroList[socketID]
+            if(hero.getRank() < minRank){
+                minRank = hero.getRank()
+                ID = socketID
+            }
+        }
+        console.log(ID)
+        return this.heroList[ID].getKind()
     }
 
     private setFarmers() {

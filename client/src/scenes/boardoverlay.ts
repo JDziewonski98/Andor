@@ -131,5 +131,11 @@ export default class BoardOverlay extends Phaser.Scene {
             }
         }, this);
 
+        // end turn button
+        this.gameText = this.add.text(900, 550, "END TURN", style2).setOrigin(0.5)
+        this.gameText.setInteractive();
+        this.gameText.on('pointerdown', function (pointer){
+            this.gameinstance.endTurn();
+        }, this)
     }
 }
