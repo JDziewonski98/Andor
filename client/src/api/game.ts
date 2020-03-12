@@ -25,13 +25,17 @@ export class game {
     }
 
     public pickupFarmer(callback){
-        this.socket.emit("pickupFarmer", callback);
+        this.socket.emit("pickupFarmer",  callback);
     }
 
     public updateFarmer(callback){
         this.socket.on("updateFarmer", callback);
     }
 
+    public merchant(callback){
+        this.socket.emit("merchant", callback);
+    }
+    
     public useWell(callback) {
         this.socket.emit("useWell", callback);
     }
@@ -62,8 +66,12 @@ export class game {
         this.chatlog.push(msg)
     }
     // TODO movement
-    public moveTo(tile, callback){
-        this.socket.emit('moveRequest', tile, callback)
+    public moveRequest(tileID, callback){
+        this.socket.emit('moveRequest', tileID, callback)
+    }
+
+    public updateMoveRequest(callback){
+        this.socket.on("updateMoveRequest", callback);
     }
 
     public  removeListener(object){
@@ -97,6 +105,14 @@ export class game {
 
     public getHeros(callback){
         this.socket.emit("getHeros", callback)
+    }
+
+    public getHerosBorder(callback){
+        this.socket.emit("getHerosBorder", callback)
+    }
+
+    public getHeroAttributes(type, callback){
+        this.socket.emit("getHeroAttributes", type, callback)
     }
 
     // Collaborative decision making

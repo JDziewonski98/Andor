@@ -6,9 +6,9 @@ import {
     Player, 
     Hero, 
     HeroKind, 
-    Monster 
+    Monster,
+    MonsterKind
 } from "."
-import { MonsterKind } from './MonsterKind';
 
 export class Game {
 
@@ -104,7 +104,7 @@ export class Game {
             this.heroList.set(id, new Hero(heroType, this.regions[25]));
         }
         else if(heroType === HeroKind.Mage){
-            this.heroList.set(id, new Hero(heroType, this.regions[34]));
+            this.heroList.set(id, new Hero(heroType, this.regions[34])); 
         }
         else if(heroType === HeroKind.Warrior){
             this.heroList.set(id, new Hero(heroType, this.regions[14]));
@@ -155,6 +155,10 @@ export class Game {
         //TO BE IMPLEMENTED
     }
 
+    public moveHeroTo(hero, tile){
+        console.log("Passed method call")
+        hero.moveTo(tile)
+    }
     private endGame() {
         //TO BE IMPLEMENTED
     }
