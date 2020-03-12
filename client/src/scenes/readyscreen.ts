@@ -88,8 +88,8 @@ export default class ReadyScreenScene extends Phaser.Scene {
                 if (this.scene.isVisible('chat')) {
                     WindowManager.destroy(this, 'chat');
                 }
-                this.scene.start('Game', { controller: self.gameController });
-                this.scene.start('BoardOverlay',{gameinstance:self.gameController});
+                this.scene.start('Game', { controller: self.gameController, heroType: self.selection.name });
+                this.scene.start('BoardOverlay',{ gameinstance:self.gameController });
             }
             else {
                 this.tween()
