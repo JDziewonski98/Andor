@@ -24,6 +24,9 @@ export class Game {
     private regions: Array<Region>;
     private farmers: Array<Farmer>;
 
+    // collab decision related state
+    public numAccepts: number;
+
     private availableHeros: Array<HeroKind> = new Array(HeroKind.Archer, HeroKind.Dwarf, HeroKind.Mage, HeroKind.Warrior);
 
     constructor(name: string, numOfDesiredPlayers: number, difficulty: GameDifficulty) {
@@ -40,6 +43,8 @@ export class Game {
         this.setFarmers();
         this.setMonsters()
         this.readyplayers = 0;
+
+        this.numAccepts = 0;
     }
 
     private setFarmers() {
@@ -168,10 +173,37 @@ export class Game {
 
     private replenishWell() {
         //TO BE IMPLEMENTED
+        var region
+        var idRegion
+        var idRegionOfHero
+        var flag = true
+
+        for (region in this.regions) { // for every region
+            if (region.getHasWell()) { // if region has a well
+                flag = true
+                idRegion = region.getID()
+
+                // check there are no heros on this tile
+                for (let h of this.heroList.values()) {
+                    idRegionOfHero = h.getRegion().getID()
+
+                    if (idRegionOfHero === idRegion) {
+                        flag = false //found a hero on well tile
+                    }
+                }
+                //if no one standing on well tile, replenish well
+                if (flag) {
+                    region.setWellUsed(false)
+
+                    //TODO: inform front-end that a well has been replenished 
+                }
+
+            }
+        }
     }
 
     private incrementNarratorPosition() {
-        //TO BE IMPLEMENTED
+        //TO BE IMPLEMENTED      
     }
 
     public pushToLog(item) {

@@ -1,4 +1,4 @@
-import { Game, HeroKind, Region } from '../model';
+import { Game, HeroKind, Region, Hero } from '../model';
 
 export function game(socket, model: Game) {
 
@@ -41,6 +41,23 @@ export function game(socket, model: Game) {
     }
   });
 
+    socket.on("useWell", function (callback) {
+        let success_well = false;
+
+        let heroId = socket.conn.id;
+        let hero = model.getHero(heroId);
+        if (hero !== undefined) {
+            success_well = hero.useWell();
+
+        }
+
+        if (success_well) {
+            socket.broadcast.emit("updateWell");
+            callback();
+
+        }
+    });
+
   socket.on('bind hero', function (heroType, callback) {
     let success = false;
     let id = socket.conn.id;
@@ -79,8 +96,15 @@ export function game(socket, model: Game) {
   socket.on("send message", function (sent_msg, callback) {
     console.log(socket.conn.id, "said: ", sent_msg)
     let raw_sent_msg = sent_msg
-    let datestamp = getCurrentDate()
-    sent_msg = "[ " + datestamp + " ]: " + sent_msg;
+    let name = ""
+    let heroID = socket.conn.id;
+    let hero: Hero = model.getHero(heroID);
+    if(hero !== undefined){
+      name = hero.hk;
+    } else {
+      name = getCurrentDate()
+    }
+    sent_msg = "[ " + name + " ]: " + sent_msg;
     //model.pushToLog({ author: socket.conn.id, datestamp: datestamp, content: raw_sent_msg })
     socket.broadcast.emit("update messages", sent_msg);
     callback(sent_msg);
@@ -117,6 +141,31 @@ export function game(socket, model: Game) {
     model.getHeros().forEach((hero, key) => { heros.push(hero.hk) });
     if (heros.length !== 0)
       callback(heros);
+  })
+
+  // Collaborative decision making
+  
+  // Submitting a decision
+  socket.on('collabDecisionSubmit', function() {
+    // Check that numAccepts equals total num of players-1
+    if (model.numAccepts == model.getNumOfDesiredPlayers()-1) {
+      // Success: distribute accordingly
+      // Reset decision related state
+      model.numAccepts = 0;
+      socket.broadcast.emit('sendDecisionSubmitSuccess')
+      socket.emit('sendDecisionSubmitSuccess')
+    } else {
+      // Failure: need more accepts before valid submit
+      socket.emit('sendDecisionSubmitFailure')
+    }
+  })
+
+  // Accepting a decision
+  socket.on('collabDecisionAccept', function () {
+    model.numAccepts += 1;
+    console.log('number of players accepted decision: ', model.numAccepts)
+    // Tell the client that accepted to update their status
+    socket.emit('sendDecisionAccepted', model.numAccepts)
   })
 
   function getCurrentDate() {

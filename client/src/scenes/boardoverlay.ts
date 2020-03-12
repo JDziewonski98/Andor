@@ -41,7 +41,7 @@ export default class BoardOverlay extends Phaser.Scene {
                 WindowManager.destroy(this, 'heroCard');
             } else {
                 console.log(self.gameinstance)
-                WindowManager.create(this, 'heroCard', HeroWindow, self.gameinstance, { icon: 'weed' });
+                WindowManager.create(this, 'heroCard', HeroWindow, { icon: 'weed', controller: self.gameinstance });
                 let window = WindowManager.get(this, 'heroCard')
                 window.setName('You!!')
             }
@@ -54,7 +54,7 @@ export default class BoardOverlay extends Phaser.Scene {
             if (this.scene.isVisible('heroCard2')) {
                 WindowManager.destroy(this, 'heroCard2');
             } else {
-                WindowManager.create(this, 'heroCard2', HeroWindow, self.gameinstance, { icon: 'playbutton' });
+                WindowManager.create(this, 'heroCard2', HeroWindow, { icon: 'playbutton', controller: self.gameinstance });
                 let window = WindowManager.get(this, 'heroCard2')
                 window.setName('Player 2')
             }
@@ -66,7 +66,7 @@ export default class BoardOverlay extends Phaser.Scene {
             if (this.scene.isVisible('heroCard3')) {
                 WindowManager.destroy(this, 'heroCard3');
             } else {
-                WindowManager.create(this, 'heroCard3', HeroWindow, self.gameinstance, { icon: 'playbutton' });
+                WindowManager.create(this, 'heroCard3', HeroWindow, { icon: 'playbutton', controller: self.gameinstance });
                 let window = WindowManager.get(this, 'heroCard3')
                 window.setName('Player 3')
             }
@@ -78,7 +78,7 @@ export default class BoardOverlay extends Phaser.Scene {
             if (this.scene.isVisible('heroCard4')) {
                 WindowManager.destroy(this, 'heroCard4');
             } else {
-                WindowManager.create(this, 'heroCard4', HeroWindow, self.gameinstance, { icon: 'playbutton' });
+                WindowManager.create(this, 'heroCard4', HeroWindow, { icon: 'playbutton', controller: self.gameinstance });
                 let window = WindowManager.get(this, 'heroCard4')
                 window.setName('Player 4')
             }
@@ -101,10 +101,9 @@ export default class BoardOverlay extends Phaser.Scene {
                 WindowManager.destroy(this, 'chat');
             }
             else {
-                WindowManager.create(this, 'chat', Chat, { controller: self.gameinstance }, null);
+                WindowManager.create(this, 'chat', Chat, { controller: self.gameinstance });
             }
         }, this);
-
 
     }
 }

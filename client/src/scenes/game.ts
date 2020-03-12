@@ -3,10 +3,15 @@ import { Farmer } from '../objects/farmer';
 import { Hero } from '../objects/hero';
 import { HourTracker } from '../objects/hourTracker';
 import { game } from '../api';
+import { WindowManager } from "../utils/WindowManager";
+import { CollabWindow } from './collabwindow';
 import {
   expandedWidth, expandedHeight, borderWidth,
   fullWidth, fullHeight, htX, htY, scaleFactor,
-  mageTile, archerTile, warriorTile, dwarfTile
+  mageTile, archerTile, warriorTile, dwarfTile,
+  reducedWidth, reducedHeight,
+  collabTextHeight, collabColWidth, collabRowHeight,
+  wellTile1, wellTile2, wellTile3, wellTile4
 } from '../constants'
 import { Monster } from '../objects/monster';
 
@@ -21,6 +26,8 @@ export default class GameScene extends Phaser.Scene {
   private gameinstance: game;
   private monsters: Monster[]
 
+  private gameText;
+
   private cameraKeys;
   private cameraScrollSpeed = 15;
   private minZoom = 0.4;
@@ -29,7 +36,8 @@ export default class GameScene extends Phaser.Scene {
 
   constructor() {
     super({ key: 'Game' });
-    this.heroes = Array<Hero>(4);
+    // this.heroes = Array<Hero>(4); // This is adding 4 dummy elements at the start
+    this.heroes = Array<Hero>();
     this.tiles = Array<Tile>();
     this.farmers = new Array<Farmer>();
     this.ownHeroType = "dwarf";
@@ -52,6 +60,7 @@ export default class GameScene extends Phaser.Scene {
     this.load.multiatlas('tiles', './assets/tilesheet.json', 'assets')
     // TODO: Create a sprite sheet for heroes as well so they don't need an 
     // internal sprite to render their image
+    this.load.image("well", "../assets/well.png");
   }
 
   public create() {
@@ -83,6 +92,48 @@ export default class GameScene extends Phaser.Scene {
 
     this.addFarmers()
     this.addMonsters()
+
+      this.addWell(wellTile1, "well1")
+      this.addWell(wellTile2, "well2")
+      this.addWell(wellTile3, "well3")
+      this.addWell(wellTile4, "well4")
+
+    var style2 = {
+      fontFamily: '"Roboto Condensed"',
+      fontSize: "20px",
+      backgroundColor: '#f00'
+    }
+
+    // start of game collab decision mock
+    // TODO collab: automatically add this window when game starts instead of triggering on pointerdown
+    this.gameText = this.add.text(600, 550, "COLLAB", style2).setOrigin(0.5)
+    this.gameText.setInteractive();
+    this.gameText.on('pointerdown', function (pointer) {
+        if (this.scene.isVisible('collab')) {
+            WindowManager.destroy(this, 'collab');
+            return;
+        }
+
+        // TODO collab: Replace all this hardcoding UI shit with something nicer
+        var res = { "gold": 5, "wineskin": 2 };
+        // Determine width of the window based on how many resources are being distributed
+        var width = (Object.keys(res).length+1) * collabColWidth // Not sure if there's a better way of getting size of ts obj
+        // Determine height of the window based on number of players involved
+        var height = self.heroes.length * collabRowHeight + 24
+        console.log(self.heroes.length, width, height)
+        var collabWindowData = {
+            controller: self.gameinstance,
+            owner: self.heroes[0],
+            heroes: self.heroes,
+            resources: res,
+            textOptions: null,
+            x: reducedWidth/2 - width/2,
+            y: reducedHeight/2 - height/2,
+            w: width,
+            h: height
+        }
+        WindowManager.create(this, 'collab', CollabWindow, collabWindowData);
+    }, this);
 
   }
 
@@ -232,6 +283,39 @@ export default class GameScene extends Phaser.Scene {
     this.add.existing(hero);
     if (this.ownHeroType === type) this.hero = hero;
   }
+
+    private addWell(tileNumber: number, wellName: string) {
+        const tile: Tile = this.tiles[tileNumber]
+        const well = this.add.image(tile.x, tile.y, "well").setDisplaySize(60, 40)
+        well.name = wellName;
+
+        well.setInteractive()
+        var self = this
+
+        well.on("pointerdown", function () {
+
+            self.gameinstance.useWell(function () {
+                self[wellName].setTint(0x404040)
+                if (tile.hero.getWillPower() <= 17) {
+                    tile.hero.setwillPower(3)
+                }
+                else if (tile.hero.getWillPower() <= 20 && tile.hero.getWillPower() > 17) {
+                    tile.hero.setwillPower(20 - tile.hero.getWillPower())
+                }
+
+            });
+        });
+
+        this.gameinstance.updateWell(function () {
+            self[wellName].setTint(0x404040)
+            if (tile.hero.getWillPower() <= 17) {
+                tile.hero.setwillPower(3)
+            }
+            else if (tile.hero.getWillPower() <= 20 && tile.hero.getWillPower() > 17) {
+                tile.hero.setwillPower(20 - tile.hero.getWillPower())
+            }
+        });
+    }
 
   // Creating the hour tracker
   private hourTrackerSetup() {
