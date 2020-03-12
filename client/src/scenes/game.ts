@@ -15,7 +15,7 @@ import {
 } from '../constants'
 import { MerchantWindow } from './merchantwindow';
 import { Monster } from '../objects/monster';
-import { HeroKind } from '../objects/HeroKind';
+import { HeroKind } from '../objects/herokind';
 
 
 export default class GameScene extends Phaser.Scene {
@@ -44,7 +44,7 @@ export default class GameScene extends Phaser.Scene {
     this.farmers = new Array<Farmer>();
     this.ownHeroType = HeroKind.Dwarf;
     this.monsters = new Array<Monster>();
-
+      
   }
 
   public init(data) {
@@ -103,12 +103,13 @@ export default class GameScene extends Phaser.Scene {
     this.addFarmers()
     this.addMonsters()
 
-
-      this.addWell(209,2244,wellTile1, "well1")
+      // x and y coordinates
+      this.addWell(209,2244, wellTile1, "well1")
       this.addWell(1353,4873, wellTile2, "well2")
       this.addWell(7073, 3333, wellTile3, "well3")
       this.addWell(5962, 770, wellTile4, "well4")
 
+      this.addGold()
 
     var style2 = {
       fontFamily: '"Roboto Condensed"',
@@ -163,7 +164,8 @@ export default class GameScene extends Phaser.Scene {
       zoomIn: 'plus',
       zoomOut: 'minus'
     });
-  }
+  }        
+    
 
   private setRegions() {
     // Note that regions 73-79 and 83 are unused, but created anyways to preserve direct
@@ -194,8 +196,6 @@ export default class GameScene extends Phaser.Scene {
         }
       })
     }
-
-
   }
 
   private addMerchants() {
@@ -359,10 +359,8 @@ export default class GameScene extends Phaser.Scene {
         const well = this.add.image(x * scaleFactor + borderWidth, y * scaleFactor + borderWidth, "well").setDisplaySize(50, 40)
         well.name = wellName;
 
-
-    well.setInteractive()
-    var self = this
-
+        well.setInteractive()
+        var self = this
 
         well.on("pointerdown", function () {
             //console.log(tile.hero.getWillPower())
@@ -375,21 +373,47 @@ export default class GameScene extends Phaser.Scene {
                 else if (tile.hero.getWillPower() <= 20 && tile.hero.getWillPower() > 17) {
                     tile.hero.setwillPower(20 - tile.hero.getWillPower())
                 }
-
-
             });
         });
 
-    this.gameinstance.updateWell(function () {
-      self[wellName].setTint(0x404040)
-      if (tile.hero.getWillPower() <= 17) {
-        tile.hero.setwillPower(3)
-      }
-      else if (tile.hero.getWillPower() <= 20 && tile.hero.getWillPower() > 17) {
-        tile.hero.setwillPower(20 - tile.hero.getWillPower())
-      }
-    });
-  }
+        this.gameinstance.updateWell(function () {
+          self[wellName].setTint(0x404040)
+          if (tile.hero.getWillPower() <= 17) {
+            tile.hero.setwillPower(3)
+          }
+          else if (tile.hero.getWillPower() <= 20 && tile.hero.getWillPower() > 17) {
+            tile.hero.setwillPower(20 - tile.hero.getWillPower())
+          }
+        });
+    }
+
+    private addGold() {
+        var self = this
+        for (var id in self.tiles) {
+            if (self.tiles[id].getGold() !== 0) {
+                //create a text Sprite indicating the number of gold. 
+                var goldText = this.add.text(50, 50, String(self.tiles[id].getGold()), { color: "#fff52e" }).setX(self.tiles[id].x + 15).setY(self.tiles[id].y + 15)
+                //set to interactive
+                goldText.setInteractive()
+
+                goldText.on("pointerdown", function () {
+
+                    if (self.tiles[id].getGold() === 1) {
+                        goldText.destroy()
+                        self.tiles[id].hero.pickupGold()
+                        
+                    }
+                    else if (self.tiles[id].getGold() > 1) {
+                        self.tiles[id].setGold(self.tiles[id].getGold() - 1)
+                        self.tiles[id].hero.pickupGold()
+                        
+                    }
+                })
+            }
+        }
+    }
+
+
 
 
   // Creating the hour tracker
@@ -424,8 +448,6 @@ export default class GameScene extends Phaser.Scene {
 
     this.hourTracker.setInteractive();
   }
-
-
 
   public update() {
     var camera = this.cameras.main;

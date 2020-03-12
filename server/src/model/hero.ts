@@ -108,9 +108,7 @@ export class Hero {
         //what does this do?
     }
 
-    public dropGold() {
-        
-
+    public dropGold() {        
         if (this.gold < 1) {
             return false
         }
@@ -123,6 +121,20 @@ export class Hero {
             
             return true
         }       
+    }
+
+    public pickupGold() {
+        if (this.region.getGold() > 0) {
+            return false
+        }
+        else {
+            var reg = this.region
+            //decrease gold on region
+            reg.setGold(reg.getGold() - 1)
+            //increase your gold
+            this.setGold(this.gold + 1)
+            return true
+        }
     }
 
     public setWill(willValueToChange: number) {

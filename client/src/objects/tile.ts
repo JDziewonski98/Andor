@@ -52,7 +52,8 @@ export class Tile extends Phaser.GameObjects.Sprite {
             [this.x+30, this.y-30]
         ]
 
-        this.gold = 0;
+        //for testing purpose. remember to set back to 0 
+        this.gold = 3;
     }
 
     // Unused

@@ -57,19 +57,22 @@ export class HeroWindow extends Window {
 
         this.goldtext.setInteractive()
         var that = this
-        this.goldtext.on('pointerdown', function () {            
-            console.log("we droppin the gold")
-            console.log(that.gold)
-            if (that.gold > 0 ) {
-                that.gold -= 1
-                that.refreshText()
+        this.goldtext.on('pointerdown', function () {
+            //need to make it so that I cannot drop other people's gold from heroWindow
+            if (true ) {
+                console.log("we droppin the gold")
                 console.log(that.gold)
-                that.gameinstance.dropGold(function () {
-                    //create a token on the tile 
-                    //indicate the amount of gold on tile
+                if (that.gold > 0) {
+                    that.gold -= 1
+                    that.refreshText()
+                    console.log(that.gold)
+                    that.gameinstance.dropGold(function () {
+                        //create a token on the tile 
+                        //indicate the amount of gold on tile
 
-                })
-            }           
+                    })
+                }
+            }
         });
 
 
@@ -108,7 +111,6 @@ export class HeroWindow extends Window {
         console.log('refeshing')
         this.goldtext.setText('Gold: ' + this.gold)
         this.willtext.setText('Willpower: ' + this.will)
-
         this.nametext.setText(this.name)
         console.log(this.name)
 

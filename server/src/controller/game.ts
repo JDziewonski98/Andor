@@ -1,3 +1,5 @@
+//server controller
+
 import { Game, HeroKind, Region, Hero } from '../model';
 
 export function game(socket, model: Game) {
@@ -96,6 +98,24 @@ export function game(socket, model: Game) {
             callback()
         }
     });   
+
+    socket.on("pickupGold", function (callback) {
+        console.log("picking up gold")
+        let success_pickupGold = false;
+        let heroId = socket.conn.id;
+        let hero = model.getHero(heroId);
+
+        if (hero !== undefined) {
+            success_pickupGold = hero.pickupGold();
+        }
+
+        if (success_pickupGold) {
+            console.log("pickupGold successful")
+            socket.broadcast.emit("updatePickupGold");
+            callback()
+
+        }
+    });
 
   socket.on('bind hero', function (heroType, callback) {
     let success = false;
