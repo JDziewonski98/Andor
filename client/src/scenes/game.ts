@@ -14,6 +14,7 @@ import {
   wellTile1, wellTile2, wellTile3, wellTile4
 } from '../constants'
 import { Monster } from '../objects/monster';
+import { Fight} from './fightwindow';
 
 
 export default class GameScene extends Phaser.Scene {
@@ -33,6 +34,8 @@ export default class GameScene extends Phaser.Scene {
   private minZoom = 0.4;
   private maxZoom = 1;
   private zoomAmount = 0.01;
+
+  private sceneplugin
 
   constructor() {
     super({ key: 'Game' });
@@ -65,7 +68,7 @@ export default class GameScene extends Phaser.Scene {
 
   public create() {
     this.cameraSetup();
-
+    this.sceneplugin = this.scene
     // Centered gameboard with border
     this.add.image(fullWidth / 2, fullHeight / 2, 'gameboard')
       .setDisplaySize(expandedWidth, expandedHeight);
@@ -93,10 +96,27 @@ export default class GameScene extends Phaser.Scene {
     this.addFarmers()
     this.addMonsters()
 
-      this.addWell(wellTile1, "well1")
-      this.addWell(wellTile2, "well2")
-      this.addWell(wellTile3, "well3")
-      this.addWell(wellTile4, "well4")
+    this.monsters.forEach(monster =>
+        self.add.existing(monster)
+      );
+    console.log(this.monsters)
+
+    this.monsters.forEach(function (m) {
+      
+      if (this.scene.isVisible('gor1')) {
+          console.log('1')
+          WindowManager.destroy(this, m.name);
+      }
+      else {
+          WindowManager.create(this, 'gor1', Fight, { controller: self.gameinstance, monster:m});
+      }
+    })
+    
+
+    this.addWell(wellTile1, "well1")
+    this.addWell(wellTile2, "well2")
+    this.addWell(wellTile3, "well3")
+    this.addWell(wellTile4, "well4")
 
     var style2 = {
       fontFamily: '"Roboto Condensed"',
@@ -109,6 +129,7 @@ export default class GameScene extends Phaser.Scene {
     this.gameText = this.add.text(600, 550, "COLLAB", style2).setOrigin(0.5)
     this.gameText.setInteractive();
     this.gameText.on('pointerdown', function (pointer) {
+      console.log(this.scene)
         if (this.scene.isVisible('collab')) {
             WindowManager.destroy(this, 'collab');
             return;
@@ -186,12 +207,12 @@ export default class GameScene extends Phaser.Scene {
     const gortile5: Tile = this.tiles[48];
     const skraltile: Tile = this.tiles[19];
 
-    let gor1: Monster = new Monster(this, gortile1, 'gor').setInteractive().setScale(.5);
-    let gor2: Monster = new Monster(this, gortile2, 'gor').setInteractive().setScale(.5);
-    let gor3: Monster = new Monster(this, gortile3, 'gor').setInteractive().setScale(.5);
-    let gor4: Monster = new Monster(this, gortile4, 'gor').setInteractive().setScale(.5);
-    let gor5: Monster = new Monster(this, gortile5, 'gor').setInteractive().setScale(.5);
-    let skral: Monster = new Monster(this, skraltile, 'skral').setInteractive().setScale(.5);
+    let gor1: Monster = new Monster(this, gortile1, 'gor', 'gor1').setInteractive().setScale(.5);
+    let gor2: Monster = new Monster(this, gortile2, 'gor','gor2').setInteractive().setScale(.5);
+    let gor3: Monster = new Monster(this, gortile3, 'gor','gor3').setInteractive().setScale(.5);
+    let gor4: Monster = new Monster(this, gortile4, 'gor','gor4').setInteractive().setScale(.5);
+    let gor5: Monster = new Monster(this, gortile5, 'gor','gor5').setInteractive().setScale(.5);
+    let skral: Monster = new Monster(this, skraltile, 'skral','skral1').setInteractive().setScale(.5);
 
     this.monsters.push(gor1);
     this.monsters.push(gor2);
@@ -206,17 +227,6 @@ export default class GameScene extends Phaser.Scene {
     gortile4.monster = gor4
     gortile5.monster = gor5
     skraltile.monster = skral
-
-    let self = this;
-    this.monsters.forEach(monster =>
-        self.add.existing(monster)
-      );
-    this.monsters.forEach(monster =>
-        monster.on('click', function(pointer) {
-          
-        })
-      );
-
 
   }
 
