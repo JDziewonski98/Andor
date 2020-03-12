@@ -62,6 +62,8 @@ export function game(socket, model: Game) {
     }
   });
 
+
+
   socket.on("useWell", function (callback) {
     let success_well = false;
 
@@ -78,6 +80,23 @@ export function game(socket, model: Game) {
 
     }
   });
+
+    socket.on("dropGold", function (callback) {
+
+        console.log("here3") //printed
+        let success_dropGold = false;
+        let heroId = socket.conn.id;
+        let hero = model.getHero(heroId);
+        
+        if (hero !== undefined) {
+            success_dropGold = hero.dropGold();
+        }
+        if (success_dropGold) {
+            console.log("dropped") //printed
+            socket.broadcast.emit("updateDropGold");
+            callback()
+        }
+    });   
 
   socket.on('bind hero', function (heroType, callback) {
     let success = false;
@@ -152,10 +171,10 @@ export function game(socket, model: Game) {
     socket.emit('recieveDesiredPlayerCount', model.getNumOfDesiredPlayers())
   })
 
-  socket.on("dropGold", function (callback) {
+ /* socket.on("dropGold", function (callback) {
     // TODO:
     callback()
-  })
+  })*/
 
   socket.on("getHeros", function (callback) {
     let heros = new Array<HeroKind>();

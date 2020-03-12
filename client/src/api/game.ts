@@ -41,11 +41,16 @@ export class game {
     }
 
     public updateWell(callback) {
-        this.socket.on("updateWell", callback)
+        this.socket.on("updateWell", callback);
     }
-    
-    public dropGold(amount, callback) {
-        this.socket.emit("dropGold", amount, callback)
+
+    public updateDropGold(callback) {       
+        this.socket.on("updateDropGold", callback);       
+    }
+
+    public dropGold(callback) {
+        console.log("here2") //is printed
+        this.socket.emit("dropGold", callback)
     }
 
     public send(msg, callback) {
