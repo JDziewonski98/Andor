@@ -25,13 +25,17 @@ export class game {
     }
 
     public pickupFarmer(callback){
-        this.socket.emit("pickupFarmer", callback);
+        this.socket.emit("pickupFarmer",  callback);
     }
 
     public updateFarmer(callback){
         this.socket.on("updateFarmer", callback);
     }
 
+    public merchant(callback){
+        this.socket.emit("merchant", callback);
+    }
+    
     public useWell(callback) {
         this.socket.emit("useWell", callback);
     }
@@ -97,6 +101,14 @@ export class game {
 
     public getHeros(callback){
         this.socket.emit("getHeros", callback)
+    }
+
+    public getHerosBorder(callback){
+        this.socket.emit("getHerosBorder", callback)
+    }
+
+    public getHeroAttributes(type, callback){
+        this.socket.emit("getHeroAttributes", type, callback)
     }
 
     // Collaborative decision making

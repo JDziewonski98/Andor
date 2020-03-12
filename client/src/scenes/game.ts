@@ -13,6 +13,7 @@ import {
   collabTextHeight, collabColWidth, collabRowHeight,
   wellTile1, wellTile2, wellTile3, wellTile4
 } from '../constants'
+import { MerchantWindow } from './merchantwindow';
 import { Monster } from '../objects/monster';
 import { HeroKind } from '../objects/HeroKind';
 
@@ -99,6 +100,7 @@ export default class GameScene extends Phaser.Scene {
       });
     })
 
+    this.addMerchants();
     this.addFarmers()
     this.addMonsters()
 
@@ -185,6 +187,61 @@ export default class GameScene extends Phaser.Scene {
       })
     })
   }
+
+  private addMerchants(){
+    const merchtile_18: Tile = this.tiles[18];
+    const merchtile_57: Tile = this.tiles[57];
+    const merchtile_71: Tile = this.tiles[71];
+
+    var self  = this;
+
+    merchtile_18.on('pointerdown', function (pointer) {
+      if(self.hero.tile.id == merchtile_18.id){
+
+        if (this.scene.isVisible('merchant1')) {
+          WindowManager.destroy(self, 'merchant1');
+        } else {
+          WindowManager.create(self, 'merchant1', MerchantWindow, self.gameinstance);
+          let window = WindowManager.get(this, 'merchant1')
+          window.setName('Merchant')
+        }
+        
+      }
+
+    }, this);
+
+    merchtile_57.on('pointerdown', function (pointer) {
+      if(self.hero.tile.id == merchtile_18.id){
+
+        if (this.scene.isVisible('merchant2')) {
+          WindowManager.destroy(self, 'merchant2');
+        } else {
+          WindowManager.create(self, 'merchant2', MerchantWindow, self.gameinstance);
+          let window = WindowManager.get(this, 'merchant2')
+          window.setName('Merchant')
+        }
+        
+      }
+
+    }, this);
+
+    merchtile_71.on('pointerdown', function (pointer) {
+      if(self.hero.tile.id == merchtile_18.id){
+
+        if (this.scene.isVisible('merchant3')) {
+          WindowManager.destroy(self, 'merchant3');
+        } else {
+          WindowManager.create(self, 'merchant3', MerchantWindow, self.gameinstance);
+          let window = WindowManager.get(this, 'merchant3')
+          window.setName('Merchant')
+        }
+        
+      }
+
+    }, this);
+
+  }
+
 
   private addMonsters() {
 
