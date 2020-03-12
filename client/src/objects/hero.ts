@@ -15,7 +15,6 @@ export class Hero extends Phaser.GameObjects.Sprite {
         this.tile = tile;
         this.hourTracker = null;
         this.hour = 1;
-        
     }
 
     public move(newTile) {

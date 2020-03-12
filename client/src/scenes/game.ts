@@ -126,6 +126,18 @@ export default class GameScene extends Phaser.Scene {
     let farmer_0: Farmer = new Farmer(this, farmertile_0, 'farmer').setDisplaySize(40, 40);
     let farmer_1: Farmer = new Farmer(this, farmertile_1, 'farmer').setDisplaySize(40, 40);
 
+    // var gridX1 = farmertile_0.farmerCoords[0][0];
+    // var gridY1 = farmertile_0.farmerCoords[0][1];
+
+    // var gridX2 = farmertile_1.farmerCoords[1][0];
+    // var gridY2 = farmertile_1.farmerCoords[1][1];
+
+    // var farmerIcon1 = this.add.sprite(gridX1, gridY1, 'farmer').setDisplaySize(40, 40);
+    // var farmerIcon2 = this.add.sprite(gridX2, gridY2, 'farmer').setDisplaySize(40, 40);
+
+    // let farmer_0: Farmer = new Farmer(this, farmertile_0, farmerIcon1).setDisplaySize(40, 40);
+    // let farmer_1: Farmer = new Farmer(this, farmertile_1, farmerIcon2).setDisplaySize(40, 40);
+
     farmer_0.setInteractive();
     farmer_1.setInteractive();
 
@@ -173,11 +185,38 @@ export default class GameScene extends Phaser.Scene {
 
   private addHero(type: string, tileNumber: number, texture: string){
     const tile: Tile = this.tiles[tileNumber]
+    // var gridX;
+    // var gridY;
+
+    // switch (type) {
+    //   case "archer":
+    //     gridX = tile.heroCoords[2][0];
+    //     gridY = tile.heroCoords[2][1];
+    //     break;
+    //   case "mage":
+    //     gridX = tile.heroCoords[0][0];
+    //     gridY = tile.heroCoords[0][1];
+    //     break;
+    //   case "warrior":
+    //     gridX = tile.heroCoords[3][0];
+    //     gridY = tile.heroCoords[3][1];
+    //     break;
+    //   case "dwarf":
+    //     gridX = tile.heroCoords[1][0];
+    //     gridY = tile.heroCoords[1][1];
+    //     break;
+    //   default:
+    //     //default behavior if herotype invalid
+    // }
+
+    // var heroIcon = this.add.sprite(gridX, gridY, texture).setDisplaySize(40, 40);    
+    // this.heroes.push(new Hero(this, tile, heroIcon);
+    // tile.hero = this.heroes[this.heroes.length-1];
+    // tile.heroexist = true;
+
     let hero: Hero = new Hero(this, tile, texture).setDisplaySize(40, 40);
     this.heroes.push(hero);
-
     tile.hero = hero;
-    tile.heroexist = true;
     this.add.existing(hero);
     if (this.ownHeroType === type) this.hero = hero;
   }
