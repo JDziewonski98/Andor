@@ -66,8 +66,12 @@ export class game {
         this.chatlog.push(msg)
     }
     // TODO movement
-    public moveTo(tile, callback){
-        this.socket.emit('moveRequest', tile, callback)
+    public moveRequest(tileID, callback){
+        this.socket.emit('moveRequest', tileID, callback)
+    }
+
+    public moveHeroTo(heroType, tileID, callback){
+        this.socket.on("moveHeroTo", heroType, tileID, callback)
     }
 
     public  removeListener(object){

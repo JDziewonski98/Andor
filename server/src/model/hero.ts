@@ -31,7 +31,10 @@ export class Hero {
         return this.hk;
     }
 
-    private moveTo(newTile) {
+    public moveTo(newTile: Region) {
+        this.region = newTile
+        this.timeOfDay ++
+        console.log(this.hk, " moved to ", newTile.getID(), " and now is at ", this.timeOfDay)
         //TODO
     }
 

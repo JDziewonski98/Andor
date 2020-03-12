@@ -155,6 +155,10 @@ export class Game {
         //TO BE IMPLEMENTED
     }
 
+    public moveHeroTo(hero, tile){
+        console.log("Passed method call")
+        hero.moveTo(tile)
+    }
     private endGame() {
         //TO BE IMPLEMENTED
     }
