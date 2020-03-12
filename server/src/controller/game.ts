@@ -26,9 +26,7 @@ export function game(socket, model: Game) {
     if (isAdjacent && timeLeft ) {
       console.log("You can move!")
       model.moveHeroTo(hero, newRegion)
-      socket.broadcast.emit("moveHeroTo", heroID, newRegion.getID(), function(heroID, tileID){
-          
-      });
+      socket.broadcast.emit("moveHeroTo", heroID, newRegion.getID())
       callback(model.getHero(heroID).getKind(), (isAdjacent && timeLeft))
       
     } else {
