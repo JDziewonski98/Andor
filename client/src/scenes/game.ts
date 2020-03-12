@@ -15,6 +15,7 @@ import {
 } from '../constants'
 import { MerchantWindow } from './merchantwindow';
 import { Monster } from '../objects/monster';
+import { Fight} from './fightwindow';
 import { HeroKind } from '../objects/HeroKind';
 
 
@@ -36,6 +37,8 @@ export default class GameScene extends Phaser.Scene {
   private minZoom = 0.4;
   private maxZoom = 1;
   private zoomAmount = 0.01;
+
+  private sceneplugin
 
   constructor() {
     super({ key: 'Game' });
@@ -76,7 +79,7 @@ export default class GameScene extends Phaser.Scene {
 
   public create() {
     this.cameraSetup();
-
+    this.sceneplugin = this.scene
     // Centered gameboard with border
     this.add.image(fullWidth / 2, fullHeight / 2, 'gameboard')
       .setDisplaySize(expandedWidth, expandedHeight);
@@ -106,6 +109,8 @@ export default class GameScene extends Phaser.Scene {
     this.addMerchants();
     this.addFarmers()
     this.addMonsters()
+
+    
 
     this.addWell(wellTile1, "well1")
     this.addWell(wellTile2, "well2")
@@ -226,12 +231,12 @@ export default class GameScene extends Phaser.Scene {
     const gortile5: Tile = this.tiles[48];
     const skraltile: Tile = this.tiles[19];
 
-    let gor1: Monster = new Monster(this, gortile1, 'gor').setInteractive().setScale(.5);
-    let gor2: Monster = new Monster(this, gortile2, 'gor').setInteractive().setScale(.5);
-    let gor3: Monster = new Monster(this, gortile3, 'gor').setInteractive().setScale(.5);
-    let gor4: Monster = new Monster(this, gortile4, 'gor').setInteractive().setScale(.5);
-    let gor5: Monster = new Monster(this, gortile5, 'gor').setInteractive().setScale(.5);
-    let skral: Monster = new Monster(this, skraltile, 'skral').setInteractive().setScale(.5);
+    let gor1: Monster = new Monster(this, gortile1, 'gor', 'gor1').setInteractive().setScale(.5);
+    let gor2: Monster = new Monster(this, gortile2, 'gor','gor2').setInteractive().setScale(.5);
+    let gor3: Monster = new Monster(this, gortile3, 'gor','gor3').setInteractive().setScale(.5);
+    let gor4: Monster = new Monster(this, gortile4, 'gor','gor4').setInteractive().setScale(.5);
+    let gor5: Monster = new Monster(this, gortile5, 'gor','gor5').setInteractive().setScale(.5);
+    let skral: Monster = new Monster(this, skraltile, 'skral','skral1').setInteractive().setScale(.5);
 
     this.monsters.push(gor1);
     this.monsters.push(gor2);
@@ -247,11 +252,22 @@ export default class GameScene extends Phaser.Scene {
     gortile5.monster = gor5
     skraltile.monster = skral
 
-    let self = this;
     this.monsters.forEach(monster =>
-      self.add.existing(monster)
+      this.add.existing(monster)
     );
+  
+    for (let i = 0; i < this.monsters.length; i++) {
 
+      this.monsters[i].on('pointerdown', function (pointer)  {  
+        if (this.scene.isVisible(this.monsters[i].name)) {
+            WindowManager.destroy(this, this.monsters[i].name);
+        }
+        else {
+            WindowManager.create(this, this.monsters[i].name, Fight, { controller: this.gameinstance, monstertexture:this.monsters[i].texture,
+                                hero:this.hero, monstername:this.monsters[i].name});
+        }
+      }, this)
+    }
 
   }
 

@@ -68,4 +68,8 @@ export class Hero extends Phaser.GameObjects.Sprite {
     public getWillPower() {
         return this.willPower;
     }
+
+    public getStrength() {
+        return this.strength;
+    }
 }

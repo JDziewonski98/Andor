@@ -133,5 +133,9 @@ export class game {
     public receiveDecisionAccepted(callback) {
         this.socket.on('sendDecisionAccepted', callback)
     }
+
+    public rollMonsterDice(monstername, callback) {
+        this.socket.emit('monsterRoll', monstername, callback)
+    }
 }
 

@@ -23,6 +23,7 @@ export class Game {
     private heroList: Map<string, Hero>;
     private regions: Array<Region>;
     private farmers: Array<Farmer>;
+    private monsters:Map<string, Monster>;
 
     // collab decision related state
     public numAccepts: number;
@@ -39,6 +40,7 @@ export class Game {
         this.heroList = new Map<string, Hero>();
         this.regions = new Array<Region>();
         this.farmers = new Array<Farmer>();
+        this.monsters = new Map<string, Monster>();
         this.setRegions();
         this.setFarmers();
         this.setMonsters()
@@ -60,12 +62,26 @@ export class Game {
     }
 
     private setMonsters() {
-        this.regions[8].setMonster(new Monster(MonsterKind.Gor, 8))
-        this.regions[20].setMonster(new Monster(MonsterKind.Gor, 20))
-        this.regions[21].setMonster(new Monster(MonsterKind.Gor, 21))
-        this.regions[26].setMonster(new Monster(MonsterKind.Gor, 26))
-        this.regions[48].setMonster(new Monster(MonsterKind.Gor, 48))
-        this.regions[19].setMonster(new Monster(MonsterKind.Skral, 19))
+        let gor1 = new Monster(MonsterKind.Gor, 8, this.numOfDesiredPlayers,'gor1')
+        let gor2 = new Monster(MonsterKind.Gor, 20, this.numOfDesiredPlayers, 'gor2')
+        let gor3 = new Monster(MonsterKind.Gor, 21, this.numOfDesiredPlayers, 'gor3')
+        let gor4 = new Monster(MonsterKind.Gor, 26, this.numOfDesiredPlayers, 'gor4')
+        let gor5 = new Monster(MonsterKind.Gor, 48, this.numOfDesiredPlayers,'gor5')
+        let skral = new Monster(MonsterKind.Skral, 19, this.numOfDesiredPlayers, 'skral1')
+
+        this.monsters.set(gor1.name, gor1)
+        this.monsters.set(gor2.name, gor2)
+        this.monsters.set(gor3.name, gor3)
+        this.monsters.set(gor4.name, gor4)
+        this.monsters.set(gor5.name, gor5)
+        this.monsters.set(skral.name, skral)
+
+        this.regions[8].setMonster(gor1)
+        this.regions[20].setMonster(gor2)
+        this.regions[21].setMonster(gor3)
+        this.regions[26].setMonster(gor4)
+        this.regions[48].setMonster(gor5)
+        this.regions[19].setMonster(skral)
     }
 
     private setRegions() {
@@ -216,5 +232,9 @@ export class Game {
 
     public getChatLog() {
         return this.chatlog;
+    }
+
+    public getMonsters() {
+        return this.monsters
     }
 }
