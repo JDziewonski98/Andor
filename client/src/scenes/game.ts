@@ -109,6 +109,9 @@ export default class GameScene extends Phaser.Scene {
           self.addHero(HeroKind.Dwarf, dwarfTile, "dwarfmale");
         }
       });
+
+      // Need to wait for heroes to be created before creating collab decision
+      self.startingCollabDecisionSetup();
     })
 
     this.addMerchants();
@@ -120,43 +123,7 @@ export default class GameScene extends Phaser.Scene {
     this.addWell(wellTile3, "well3")
     this.addWell(wellTile4, "well4")
 
-    var style2 = {
-      fontFamily: '"Roboto Condensed"',
-      fontSize: "20px",
-      backgroundColor: '#f00'
-    }
-
-    // start of game collab decision mock
-    // TODO collab: automatically add this window when game starts instead of triggering on pointerdown
-    this.gameText = this.add.text(600, 550, "COLLAB", style2).setOrigin(0.5)
-    this.gameText.setInteractive();
-    this.gameText.on('pointerdown', function (pointer) {
-      if (this.scene.isVisible('collab')) {
-        WindowManager.destroy(this, 'collab');
-        return;
-      }
-
-      // TODO collab: Replace all this hardcoding UI shit with something nicer
-      var res = { "gold": 5, "wineskin": 2 };
-      // Determine width of the window based on how many resources are being distributed
-      var width = (Object.keys(res).length + 1) * collabColWidth; // Not sure if there's a better way of getting size of ts obj
-      // Determine height of the window based on number of players involved
-      var height = (self.heroes.length + 2) * collabRowHeight;
-      console.log(self.heroes.length, width, height);
-      var collabWindowData = {
-        controller: self.gameinstance,
-        owner: self.heroes[0],
-        heroes: self.heroes,
-        resources: res,
-        textOptions: null,
-        x: reducedWidth / 2 - width / 2,
-        y: reducedHeight / 2 - height / 2,
-        w: width,
-        h: height
-      };
-      WindowManager.create(this, 'collab', CollabWindow, collabWindowData);
-    }, this);
-
+    // self.startingCollabDecisionSetup();
   }
 
   private cameraSetup() {
@@ -400,6 +367,65 @@ export default class GameScene extends Phaser.Scene {
       }
     });
   }
+
+  private startingCollabDecisionSetup() {
+    var self = this;
+
+    var style2 = {
+      fontFamily: '"Roboto Condensed"',
+      fontSize: "20px",
+      backgroundColor: '#f00'
+    }
+
+    // Start of game collab decision
+    /* For testing purposes: open and close a collab window using interactive text on game
+    this.gameText = this.add.text(600, 550, "COLLAB", style2).setOrigin(0.5)
+    this.gameText.setInteractive();
+    this.gameText.on('pointerdown', function (pointer) {
+      if (this.scene.isVisible('collab')) {
+        WindowManager.destroy(this, 'collab');
+        return;
+      }
+
+      // Move definition and creation of collab window here for testing
+    }, this);
+    */
+    
+    // TODO collab: Replace all this hardcoding UI shit with something nicer
+    var res = { "gold": 5, "wineskin": 2 };
+    // Determine width of the window based on how many resources are being distributed
+    var width = (Object.keys(res).length + 1) * collabColWidth; // Not sure if there's a better way of getting size of ts obj
+    // Determine height of the window based on number of players involved
+    var height = (self.heroes.length + 2) * collabRowHeight;
+    // Set data depending on whether the client is the owner of the decision
+    // Get hero of lowest rank, based on their starting tile
+    var heroRanks = [];
+    for (let hero of self.heroes) { heroRanks.push(hero.tile.id); }
+    console.log(heroRanks);
+    var startingHeroRank = Math.min(...heroRanks);
+    console.log("starting hero rank is", startingHeroRank);
+    var collabWindowData = (self.hero.tile.id == startingHeroRank) ? 
+    {
+      controller: self.gameinstance,
+      isOwner: true,
+      heroes: self.heroes,
+      resources: res,
+      textOptions: null,
+      x: reducedWidth / 2 - width / 2,
+      y: reducedHeight / 2 - height / 2,
+      w: width,
+      h: height
+    } :
+    {
+      controller: self.gameinstance,
+      isOwner: false,
+      x: reducedWidth / 2 - width / 2,
+      y: reducedHeight / 2 - height / 2,
+      w: 200,
+      h: 100
+    }
+    WindowManager.create(this, 'collab', CollabWindow, collabWindowData);
+}
 
   // Creating the hour tracker
   private hourTrackerSetup() {

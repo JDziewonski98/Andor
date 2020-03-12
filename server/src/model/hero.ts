@@ -50,6 +50,19 @@ export class Hero {
         this.gold = amount;
     }
 
+    public updateGold(goldDelta) {
+        this.gold += goldDelta;
+    }
+
+    // TODO: actual wineskin implementation instead of boolean flag
+    public getWineskin() {
+        return this.wineskin;
+    }
+
+    public setWineskin(hasWineskin) {
+        this.wineskin = hasWineskin;
+    }
+
     private setTimeOfDay(time) {
         this.timeOfDay = time;
     }
