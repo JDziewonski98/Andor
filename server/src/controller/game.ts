@@ -41,6 +41,21 @@ export function game(socket, model: Game) {
     }
   });
 
+  socket.on("merchant", function(callback){
+    let success = false;
+    var heroId = socket.conn.id;
+    let hero = model.getHero(heroId);
+
+    if(hero !== undefined){
+      success = hero.buyStrength();
+    }
+
+    if(success){
+      console.log(hero);
+      callback();
+    }
+  });
+    
     socket.on("useWell", function (callback) {
         let success_well = false;
 
@@ -159,6 +174,49 @@ export function game(socket, model: Game) {
     if (heros.length !== 0)
       callback(heros);
   })
+
+
+  socket.on("getHeroAttributes", function(type, callback){
+    let data = {};
+    let hero:Hero;
+
+    model.getHeros().forEach((hero, key) => { 
+      if(type === "Mage" && hero.hk === HeroKind.Mage){
+        hero = model.getHero(key);
+
+        if(hero !== undefined){
+          data = hero.getData();
+          callback(data)
+        }
+      }else if(type === "Archer" && hero.hk === HeroKind.Archer){
+        hero = model.getHero(key);
+
+        if(hero !== undefined){
+          data = hero.getData();
+          callback(data)
+        }
+
+      }else if(type === "Warrior" && hero.hk === HeroKind.Warrior){
+        hero = model.getHero(key);
+
+        if(hero !== undefined){
+          data = hero.getData();
+          callback(data)
+        }
+
+      }else if(type === "Dwarf" && hero.hk === HeroKind.Dwarf){
+        hero = model.getHero(key);
+
+        if(hero !== undefined){
+          data = hero.getData();
+          callback(data)
+        }
+
+      }
+
+    });
+
+  });
 
   // Collaborative decision making
   

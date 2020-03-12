@@ -1,6 +1,7 @@
 import * as Phaser from 'phaser';
 import { Hero } from './hero';
 import { Farmer } from './farmer';
+import { Monster } from './monster';
 
 /* 
 On the client, Tiles should definitely know what they have on them so that
@@ -22,7 +23,11 @@ export class Tile extends Phaser.GameObjects.Sprite {
     public farmer: Array<Farmer>;
     public heroCoords;
     public farmerCoords;
+
     public gold: number;
+
+    public monster!: Monster;
+
 
     constructor(id, scene, x, y, texture) {
         super(scene, x, y, 'tiles', texture);

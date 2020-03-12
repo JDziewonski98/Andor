@@ -8,6 +8,7 @@ import {
     HeroKind, 
     Monster 
 } from "."
+import { MonsterKind } from './MonsterKind';
 
 export class Game {
 
@@ -40,6 +41,7 @@ export class Game {
         this.farmers = new Array<Farmer>();
         this.setRegions();
         this.setFarmers();
+        this.setMonsters()
         this.readyplayers = 0;
 
         this.numAccepts = 0;
@@ -55,6 +57,15 @@ export class Game {
         
         console.log(this.regions[36])
 
+    }
+
+    private setMonsters() {
+        this.regions[8].setMonster(new Monster(MonsterKind.Gor, 8))
+        this.regions[20].setMonster(new Monster(MonsterKind.Gor, 20))
+        this.regions[21].setMonster(new Monster(MonsterKind.Gor, 21))
+        this.regions[26].setMonster(new Monster(MonsterKind.Gor, 26))
+        this.regions[48].setMonster(new Monster(MonsterKind.Gor, 48))
+        this.regions[19].setMonster(new Monster(MonsterKind.Skral, 19))
     }
 
     private setRegions() {
@@ -93,7 +104,7 @@ export class Game {
             this.heroList.set(id, new Hero(heroType, this.regions[25]));
         }
         else if(heroType === HeroKind.Mage){
-            this.heroList.set(id, new Hero(heroType, this.regions[34]));
+            this.heroList.set(id, new Hero(heroType, this.regions[34])); 
         }
         else if(heroType === HeroKind.Warrior){
             this.heroList.set(id, new Hero(heroType, this.regions[14]));
@@ -190,11 +201,12 @@ export class Game {
 
             }
         }
+    }
 
     }
 
     private incrementNarratorPosition() {
-        //TO BE IMPLEMENTED
+        //TO BE IMPLEMENTED      
     }
 
     public pushToLog(item) {

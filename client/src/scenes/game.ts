@@ -3,12 +3,18 @@ import { Farmer } from '../objects/farmer';
 import { Hero } from '../objects/hero';
 import { HourTracker } from '../objects/hourTracker';
 import { game } from '../api';
+import { WindowManager } from "../utils/WindowManager";
+import { CollabWindow } from './collabwindow';
 import {
   expandedWidth, expandedHeight, borderWidth,
   fullWidth, fullHeight, htX, htY, scaleFactor,
-    mageTile, archerTile, warriorTile, dwarfTile,
-    wellTile1, wellTile2, wellTile3, wellTile4
+  mageTile, archerTile, warriorTile, dwarfTile,
+  reducedWidth, reducedHeight,
+  collabTextHeight, collabColWidth, collabRowHeight,
+  wellTile1, wellTile2, wellTile3, wellTile4
 } from '../constants'
+import { MerchantWindow } from './merchantwindow';
+import { Monster } from '../objects/monster';
 
 
 export default class GameScene extends Phaser.Scene {
@@ -19,6 +25,9 @@ export default class GameScene extends Phaser.Scene {
   private farmers: Farmer[];
   private hourTracker: HourTracker;
   private gameinstance: game;
+  private monsters: Monster[]
+
+  private gameText;
 
   private cameraKeys;
   private cameraScrollSpeed = 15;
@@ -28,10 +37,12 @@ export default class GameScene extends Phaser.Scene {
 
   constructor() {
     super({ key: 'Game' });
-    this.heroes = Array<Hero>(4);
+    // this.heroes = Array<Hero>(4); // This is adding 4 dummy elements at the start
+    this.heroes = Array<Hero>();
     this.tiles = Array<Tile>();
     this.farmers = new Array<Farmer>();
     this.ownHeroType = "dwarf";
+    this.monsters = new Array<Monster>();
 
   }
 
@@ -43,6 +54,9 @@ export default class GameScene extends Phaser.Scene {
   }
 
   public preload() {
+    this.load.image("gor", "../assets/gor.PNG")
+    this.load.image("skral", "../assets/skral.PNG")
+    this.load.image("wardrak", "../assets/wardrak.PNG")
     this.load.image("farmer", "../assets/farmer.png");
     this.load.multiatlas('tiles', './assets/tilesheet.json', 'assets')
     // TODO: Create a sprite sheet for heroes as well so they don't need an 
@@ -77,13 +91,51 @@ export default class GameScene extends Phaser.Scene {
       });
     })
 
+    this.addMerchants();
     this.addFarmers()
-    // this.hourTrackerSetup();
+    this.addMonsters()
 
       this.addWell(wellTile1, "well1")
       this.addWell(wellTile2, "well2")
       this.addWell(wellTile3, "well3")
       this.addWell(wellTile4, "well4")
+
+    var style2 = {
+      fontFamily: '"Roboto Condensed"',
+      fontSize: "20px",
+      backgroundColor: '#f00'
+    }
+
+    // start of game collab decision mock
+    // TODO collab: automatically add this window when game starts instead of triggering on pointerdown
+    this.gameText = this.add.text(600, 550, "COLLAB", style2).setOrigin(0.5)
+    this.gameText.setInteractive();
+    this.gameText.on('pointerdown', function (pointer) {
+        if (this.scene.isVisible('collab')) {
+            WindowManager.destroy(this, 'collab');
+            return;
+        }
+
+        // TODO collab: Replace all this hardcoding UI shit with something nicer
+        var res = { "gold": 5, "wineskin": 2 };
+        // Determine width of the window based on how many resources are being distributed
+        var width = (Object.keys(res).length+1) * collabColWidth // Not sure if there's a better way of getting size of ts obj
+        // Determine height of the window based on number of players involved
+        var height = self.heroes.length * collabRowHeight + 24
+        console.log(self.heroes.length, width, height)
+        var collabWindowData = {
+            controller: self.gameinstance,
+            owner: self.heroes[0],
+            heroes: self.heroes,
+            resources: res,
+            textOptions: null,
+            x: reducedWidth/2 - width/2,
+            y: reducedHeight/2 - height/2,
+            w: width,
+            h: height
+        }
+        WindowManager.create(this, 'collab', CollabWindow, collabWindowData);
+    }, this);
 
   }
 
@@ -125,6 +177,99 @@ export default class GameScene extends Phaser.Scene {
         })
       })
     })
+  }
+
+  private addMerchants(){
+    const merchtile_18: Tile = this.tiles[18];
+    const merchtile_57: Tile = this.tiles[57];
+    const merchtile_71: Tile = this.tiles[71];
+
+    var self  = this;
+
+    merchtile_18.on('pointerdown', function (pointer) {
+      if(self.hero.tile.id == merchtile_18.id){
+
+        if (this.scene.isVisible('merchant1')) {
+          WindowManager.destroy(self, 'merchant1');
+        } else {
+          WindowManager.create(self, 'merchant1', MerchantWindow, self.gameinstance);
+          let window = WindowManager.get(this, 'merchant1')
+          window.setName('Merchant')
+        }
+        
+      }
+
+    }, this);
+
+    merchtile_57.on('pointerdown', function (pointer) {
+      if(self.hero.tile.id == merchtile_18.id){
+
+        if (this.scene.isVisible('merchant2')) {
+          WindowManager.destroy(self, 'merchant2');
+        } else {
+          WindowManager.create(self, 'merchant2', MerchantWindow, self.gameinstance);
+          let window = WindowManager.get(this, 'merchant2')
+          window.setName('Merchant')
+        }
+        
+      }
+
+    }, this);
+
+    merchtile_71.on('pointerdown', function (pointer) {
+      if(self.hero.tile.id == merchtile_18.id){
+
+        if (this.scene.isVisible('merchant3')) {
+          WindowManager.destroy(self, 'merchant3');
+        } else {
+          WindowManager.create(self, 'merchant3', MerchantWindow, self.gameinstance);
+          let window = WindowManager.get(this, 'merchant3')
+          window.setName('Merchant')
+        }
+        
+      }
+
+    }, this);
+
+  }
+
+
+  private addMonsters() {
+
+    const gortile1: Tile = this.tiles[8];
+    const gortile2: Tile = this.tiles[20];
+    const gortile3: Tile = this.tiles[21];
+    const gortile4: Tile = this.tiles[26];
+    const gortile5: Tile = this.tiles[48];
+    const skraltile: Tile = this.tiles[19];
+
+    let gor1: Monster = new Monster(this, gortile1, 'gor').setInteractive().setScale(.5);
+    let gor2: Monster = new Monster(this, gortile2, 'gor').setInteractive().setScale(.5);
+    let gor3: Monster = new Monster(this, gortile3, 'gor').setInteractive().setScale(.5);
+    let gor4: Monster = new Monster(this, gortile4, 'gor').setInteractive().setScale(.5);
+    let gor5: Monster = new Monster(this, gortile5, 'gor').setInteractive().setScale(.5);
+    let skral: Monster = new Monster(this, skraltile, 'skral').setInteractive().setScale(.5);
+
+    this.monsters.push(gor1);
+    this.monsters.push(gor2);
+    this.monsters.push(gor3);
+    this.monsters.push(gor4);
+    this.monsters.push(gor5);
+    this.monsters.push(skral);
+
+    gortile1.monster = gor1
+    gortile2.monster = gor2
+    gortile3.monster = gor3
+    gortile4.monster = gor4
+    gortile5.monster = gor5
+    skraltile.monster = skral
+
+    let self = this;
+    this.monsters.forEach(monster =>
+        self.add.existing(monster)
+      );
+
+
   }
 
   private addFarmers() {
