@@ -12,7 +12,6 @@ export class Farmer extends Phaser.GameObjects.Sprite {
     public tile: Tile;
     public x: number;
     public y: number;
-    public sprite: Phaser.GameObjects.Sprite;
     public carriedBy: Hero;
 
     constructor(id,scene, tile: Tile, texture:string) {

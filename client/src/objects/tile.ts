@@ -35,6 +35,7 @@ export class Tile extends Phaser.GameObjects.Sprite {
         //this.on('pointerdown', function (pointer) { this.printstuff() });
         //this.on('pointerdown', function (pointer) { this.moveRequest() })
 
+        //depricated
         // Set coordinates for hero representations as 2d array
         this.heroCoords = [
             [this.x-30, this.y-30],
@@ -44,8 +45,8 @@ export class Tile extends Phaser.GameObjects.Sprite {
         ]
 
         this.farmerCoords = [
-            [this.x-30, this.y-30],
-            [this.x+30, this.y-30]
+            [this.x, this.y+30],
+            [this.x, this.y-30]
         ]
     }
 
@@ -72,6 +73,7 @@ export class Tile extends Phaser.GameObjects.Sprite {
     }
 
     public moveRequest() {
+        /*
         console.log("New request for hero to move to tile", this.id);
         this.adjacent.forEach(element => {
             try {
@@ -89,7 +91,7 @@ export class Tile extends Phaser.GameObjects.Sprite {
             }
             catch (e) { console.log(e) }
         });
-
+        */
     }
 
     public setSprite(texture){

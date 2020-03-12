@@ -31,8 +31,9 @@ export class Hero {
         return this.hk;
     }
 
-    private moveTo(newTile) {
-        //TODO
+    public moveTo(newTile: Region) {
+        this.region = newTile
+        this.timeOfDay++
     }
 
     public useItem(item) {
@@ -45,6 +46,19 @@ export class Hero {
 
     public setGold(amount) {
         this.gold = amount;
+    }
+
+    public updateGold(goldDelta) {
+        this.gold += goldDelta;
+    }
+
+    // TODO: actual wineskin implementation instead of boolean flag
+    public getWineskin() {
+        return this.wineskin;
+    }
+
+    public setWineskin(hasWineskin) {
+        this.wineskin = hasWineskin;
     }
 
     private setTimeOfDay(time) {
@@ -129,6 +143,10 @@ export class Hero {
         this.will += willValueToChange
     }
 
+    public getWill(){
+        return this.will;
+    }
+
     public useWell() {
         var reg = this.region
         if (reg.getHaswell() && !reg.getWellUsed()) {
@@ -146,10 +164,6 @@ export class Hero {
             return true
         }
         return false
-    }
-
-    public getWill() {
-        return this.will
     }
 
     private initializeResources() {

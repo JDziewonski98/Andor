@@ -6,9 +6,9 @@ import {
     Player, 
     Hero, 
     HeroKind, 
-    Monster 
+    Monster,
+    MonsterKind
 } from "."
-import { MonsterKind } from './MonsterKind';
 
 export class Game {
 
@@ -54,7 +54,7 @@ export class Game {
         
         this.regions[24].addFarmer(this.farmers[0]);
         this.regions[36].addFarmer(this.farmers[1]);
-        
+
         console.log(this.regions[36])
 
     }
@@ -78,7 +78,7 @@ export class Game {
         //console.log(this.regions[2].getNextRegionId())
         // console.log("regions sanity check:", this.regions);
     }
-    public getRegions() : Region[]{
+    public getRegions(): Region[] {
         return this.regions
     }
     public getName(): string {
@@ -97,17 +97,17 @@ export class Game {
                 return false;
             }
         })
-        if(heroType === HeroKind.Dwarf){
+        if (heroType === HeroKind.Dwarf) {
             this.heroList.set(id, new Hero(heroType, this.regions[7]));
         }
-        else if(heroType === HeroKind.Archer){
+        else if (heroType === HeroKind.Archer) {
             this.heroList.set(id, new Hero(heroType, this.regions[25]));
         }
-        else if(heroType === HeroKind.Mage){
-            this.heroList.set(id, new Hero(heroType, this.regions[24]));    //34!!!!
+        else if (heroType === HeroKind.Mage) {
+            this.heroList.set(id, new Hero(heroType, this.regions[34]));
         }
-        else if(heroType === HeroKind.Warrior){
-            this.heroList.set(id, new Hero(heroType, this.regions[24]));//14!!!!!
+        else if (heroType === HeroKind.Warrior) {
+            this.heroList.set(id, new Hero(heroType, this.regions[14]));
         }
 
         this.availableHeros = this.availableHeros.filter(h => h != heroType);
@@ -115,7 +115,7 @@ export class Game {
 
     }
 
-    public getHeros(){
+    public getHeros() {
         return this.heroList;
     }
 
@@ -155,6 +155,10 @@ export class Game {
         //TO BE IMPLEMENTED
     }
 
+    public moveHeroTo(hero, tile) {
+        console.log("Passed method call")
+        hero.moveTo(tile)
+    }
     private endGame() {
         //TO BE IMPLEMENTED
     }

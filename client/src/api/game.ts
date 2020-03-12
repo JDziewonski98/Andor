@@ -74,8 +74,12 @@ export class game {
         this.chatlog.push(msg)
     }
     // TODO movement
-    public moveTo(tile, callback){
-        this.socket.emit('moveRequest', tile, callback)
+    public moveRequest(tileID, callback){
+        this.socket.emit('moveRequest', tileID, callback)
+    }
+
+    public updateMoveRequest(callback){
+        this.socket.on("updateMoveRequest", callback);
     }
 
     public  removeListener(object){
@@ -121,8 +125,8 @@ export class game {
 
     // Collaborative decision making
     // Submitting a decision
-    public collabDecisionSubmit() {
-        this.socket.emit('collabDecisionSubmit')
+    public collabDecisionSubmit(resAllocated) {
+        this.socket.emit('collabDecisionSubmit', resAllocated)
     }
     public receiveDecisionSubmitSuccess(callback) {
         this.socket.on('sendDecisionSubmitSuccess', callback)
