@@ -28,8 +28,16 @@ export class game {
         this.socket.emit("pickupFarmer",  callback);
     }
 
-    public updateFarmer(callback){
-        this.socket.on("updateFarmer", callback);
+    public destroyFarmer(callback){
+        this.socket.on("destroyFarmer", callback);
+    }
+
+    public addFarmer(callback){
+        this.socket.on("addFarmer", callback);
+    }
+
+    public dropFarmer(callback){
+        this.socket.emit("dropFarmer", callback);
     }
 
     public merchant(callback){
@@ -131,8 +139,8 @@ export class game {
 
     // Collaborative decision making
     // Submitting a decision
-    public collabDecisionSubmit(resAllocated) {
-        this.socket.emit('collabDecisionSubmit', resAllocated)
+    public collabDecisionSubmit(resAllocated, resNames) {
+        this.socket.emit('collabDecisionSubmit', resAllocated, resNames)
     }
     public receiveDecisionSubmitSuccess(callback) {
         this.socket.on('sendDecisionSubmitSuccess', callback)
@@ -150,6 +158,10 @@ export class game {
 
     public rollMonsterDice(monstername, callback) {
         this.socket.emit('monsterRoll', monstername, callback)
+    }
+
+    public getMonsterStats(monstername, callback) {
+        this.socket.emit('getMonsterStats', monstername, callback)
     }
 }
 

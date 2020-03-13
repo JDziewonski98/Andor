@@ -5,7 +5,7 @@ import { Game, HeroKind, Region, Hero, Monster } from '../model';
 //import { callbackify } from 'util';
 
 
-export function game(socket, model: Game) {
+export function game(socket, model: Game, io) {
 
   socket.on("moveRequest", function (id, callback) {
     id = +id // turning Id from string to number
@@ -39,15 +39,31 @@ export function game(socket, model: Game) {
   })
 
   socket.on("pickupFarmer", function (callback) {
-    let success = false;
+    var region:Region;
     let heroId = socket.conn.id;
     let hero = model.getHero(heroId);
     if (hero !== undefined) {
-      success = hero.pickupFarmer();
+      region = hero.pickupFarmer();
+
+      if (region !== undefined) {
+        socket.broadcast.emit("destroyFarmer", region.getID());
+        callback(region.getID());
+      }
     }
-    if (success) {
-      socket.broadcast.emit("updateFarmer");
-      callback();
+  });
+
+  socket.on("dropFarmer", function(callback){
+    var result = new Array()
+    let heroId = socket.conn.id;
+    let hero = model.getHero(heroId);
+    if (hero !== undefined) {
+      result = hero.dropFarmer();
+
+      if (result !== undefined) {
+        console.log(hero)
+        io.of("/"+model.getName()).emit("addFarmer", result[1], result[0])
+        callback(result[1]);
+      }
     }
   });
 
@@ -251,31 +267,38 @@ export function game(socket, model: Game) {
   // Collaborative decision making
 
   // Submitting a decision
-  socket.on('collabDecisionSubmit', function(resAllocated) {
+  socket.on('collabDecisionSubmit', function(resAllocated, resNames) {
+    console.log(resAllocated);
     // Check that numAccepts equals total num of players-1
-    if (model.numAccepts == model.getNumOfDesiredPlayers() - 1) {
-      // Success: distribute accordingly
-      let modelHeros = model.getHeros();
-      for (let hero of modelHeros.values()) {
-        let heroTypeString = hero.getKind().toString();
-        // if the hero was involved in the collab decision, update their resources
-        if (resAllocated[heroTypeString]) {
-          let currHero = hero;
-          // TODO collab: change hardcoding of resource index
-          currHero?.updateGold(resAllocated[heroTypeString][0]);
-          currHero?.setWineskin(resAllocated[heroTypeString][1]>0);
-          console.log("Updated", heroTypeString, "gold:", currHero?.getGold(), "wineskin:", currHero?.getWineskin())
-        }
-      }
-      // Reset decision related state
-      model.numAccepts = 0;
-
-      socket.broadcast.emit('sendDecisionSubmitSuccess')
-      socket.emit('sendDecisionSubmitSuccess')
-    } else {
+    if (model.numAccepts != model.getNumOfDesiredPlayers() - 1) {
       // Failure: need more accepts before valid submit
-      socket.emit('sendDecisionSubmitFailure')
+      socket.emit('sendDecisionSubmitFailure');
+      return;
     }
+    // Success: distribute accordingly
+    let modelHeros = model.getHeros();
+    for (let hero of modelHeros.values()) {
+      let heroTypeString = hero.getKind().toString();
+      // if the hero was involved in the collab decision, update their resources
+      if (resAllocated[heroTypeString]) {
+        let currHero = hero;
+        // Iterate through resNames and map index to amount specified in resAllocated
+        for (let i=0; i<resNames.length; i++) {
+          if (resNames[i] == "gold") {
+            currHero?.updateGold(resAllocated[heroTypeString][i]);
+          } 
+          else if (resNames[i] == "wineskin") {
+            currHero?.setWineskin(resAllocated[heroTypeString][i]>0);
+          }
+        }
+        // console.log("Updated", heroTypeString, "gold:", currHero?.getGold(), "wineskin:", currHero?.getWineskin())
+      }
+    }
+    // Reset decision related state
+    model.numAccepts = 0;
+
+    socket.broadcast.emit('sendDecisionSubmitSuccess')
+    socket.emit('sendDecisionSubmitSuccess')
   })
 
   // Accepting a decision
@@ -286,17 +309,71 @@ export function game(socket, model: Game) {
     socket.emit('sendDecisionAccepted', model.numAccepts)
   })
 
-  socket.on('monsterRoll', function (m, callback) {
-    console.log(model.getMonsters())
+  socket.on('getMonsterStats', function (monstername, callback) {
     try {
-      console.log(model.getMonsters().get(m))
-      let monster = model.getMonsters().get(m)
-      let roll = monster!.rollDice()
-      callback(roll)
+      let monster = model.getMonsters().get(monstername)
+      callback({str:monster!.getStrength(), will:monster!.getWill(), reward:monster!.getGold(), type:monster!.getType()})
     }
+    catch {
+      console.log("invalid monster name!")
+    }
+  })
+
+  socket.on('monsterRoll', function (m, callback) {
+
+    try {
+
+      var heroId = socket.conn.id;
+      let hero = model.getHero(heroId);
+      let heroregion = hero.getRegion().getID()
+      let monster = model.getMonsters().get(m)
+      let monsterregion = monster!.getTile()
+
+      if (hero.getTimeOfDay() > 9) {
+        callback('notime', null, null)
+      }
+      else if (heroregion == monsterregion) {
+        let monsterroll = monster!.rollDice()
+        let heroroll = hero.roll()
+        var winner = ''
+        var dmg = 0
+
+        if (monsterroll > heroroll) {
+          winner = 'monster'
+          dmg = monsterroll - heroroll
+          hero.setWill(-dmg)
+          //TODO project new hero will to client
+          if (hero.getWill() < 1) {
+            //TODO: handle DEATH!!!
+          }
+        }
+
+        else if (monsterroll < heroroll) {
+          winner = 'hero'
+          dmg = heroroll - monsterroll
+          monster!.setWill(monster!.getWill() - dmg)
+          //TODO project new monster will to client...
+          if (monster!.getWill() < 1) {
+            //monster dead logic...
+          }
+        }
+
+        else {
+          winner = 'tie'
+        }
+
+        callback(monsterroll, heroroll, winner)
+      }
+
+      else {
+        callback('outofrange', null,null)
+      }
+    }
+
     catch {
       console.log('no such monster name exists!')
     }
+
   })
 
   function getCurrentDate() {

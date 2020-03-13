@@ -15,10 +15,8 @@ import {
 } from '../constants'
 import { MerchantWindow } from './merchantwindow';
 import { Monster } from '../objects/monster';
-
-import { HeroKind } from '../objects/herokind';
-
 import { Fight} from './fightwindow';
+import { HeroKind } from '../objects/HeroKind';
 
 
 export default class GameScene extends Phaser.Scene {
@@ -112,12 +110,14 @@ export default class GameScene extends Phaser.Scene {
     this.addMonsters()
 
 
+
       // x and y coordinates
       this.addWell(209,2244, wellTile1, "well1")
       this.addWell(1353,4873, wellTile2, "well2")
       this.addWell(7073, 3333, wellTile3, "well3")
       this.addWell(5962, 770, wellTile4, "well4")
 
+      
       this.addGold()
 
     // self.startingCollabDecisionSetup();
@@ -187,7 +187,7 @@ export default class GameScene extends Phaser.Scene {
         } else {
           WindowManager.create(self, 'merchant1', MerchantWindow, self.gameinstance);
           let window = WindowManager.get(self, 'merchant1')
-          
+
         }
 
       }
@@ -235,11 +235,11 @@ export default class GameScene extends Phaser.Scene {
     const skraltile: Tile = this.tiles[19];
 
     let gor1: Monster = new Monster(this, gortile1, 'gor', 'gor1').setInteractive().setScale(.5);
-    let gor2: Monster = new Monster(this, gortile2, 'gor','gor2').setInteractive().setScale(.5);
-    let gor3: Monster = new Monster(this, gortile3, 'gor','gor3').setInteractive().setScale(.5);
-    let gor4: Monster = new Monster(this, gortile4, 'gor','gor4').setInteractive().setScale(.5);
-    let gor5: Monster = new Monster(this, gortile5, 'gor','gor5').setInteractive().setScale(.5);
-    let skral: Monster = new Monster(this, skraltile, 'skral','skral1').setInteractive().setScale(.5);
+    let gor2: Monster = new Monster(this, gortile2, 'gor', 'gor2').setInteractive().setScale(.5);
+    let gor3: Monster = new Monster(this, gortile3, 'gor', 'gor3').setInteractive().setScale(.5);
+    let gor4: Monster = new Monster(this, gortile4, 'gor', 'gor4').setInteractive().setScale(.5);
+    let gor5: Monster = new Monster(this, gortile5, 'gor', 'gor5').setInteractive().setScale(.5);
+    let skral: Monster = new Monster(this, skraltile, 'skral', 'skral1').setInteractive().setScale(.5);
 
     this.monsters.push(gor1);
     this.monsters.push(gor2);
@@ -258,16 +258,18 @@ export default class GameScene extends Phaser.Scene {
     this.monsters.forEach(monster =>
       this.add.existing(monster)
     );
-  
+
     for (let i = 0; i < this.monsters.length; i++) {
 
-      this.monsters[i].on('pointerdown', function (pointer)  {  
+      this.monsters[i].on('pointerdown', function (pointer) {
         if (this.scene.isVisible(this.monsters[i].name)) {
-            WindowManager.destroy(this, this.monsters[i].name);
+          WindowManager.destroy(this, this.monsters[i].name);
         }
         else {
-            WindowManager.create(this, this.monsters[i].name, Fight, { controller: this.gameinstance, monstertexture:this.monsters[i].texture,
-                                hero:this.hero, monstername:this.monsters[i].name});
+          WindowManager.create(this, this.monsters[i].name, Fight, {
+            controller: this.gameinstance, monstertexture: this.monsters[i].texture,
+            hero: this.hero, monstername: this.monsters[i].name
+          });
         }
       }, this)
     }
@@ -279,8 +281,8 @@ export default class GameScene extends Phaser.Scene {
     const farmertile_0: Tile = this.tiles[24];
     const farmertile_1: Tile = this.tiles[36];
 
-    let farmer_0: Farmer = new Farmer(this, farmertile_0, 'farmer').setDisplaySize(40, 40);
-    let farmer_1: Farmer = new Farmer(this, farmertile_1, 'farmer').setDisplaySize(40, 40);
+    let farmer_0: Farmer = new Farmer(0,this, farmertile_0, 'farmer').setDisplaySize(40, 40);
+    let farmer_1: Farmer = new Farmer(1, this, farmertile_1, 'farmer').setDisplaySize(40, 40);
 
     // var gridX1 = farmertile_0.farmerCoords[0][0];
     // var gridY1 = farmertile_0.farmerCoords[0][1];
@@ -311,31 +313,86 @@ export default class GameScene extends Phaser.Scene {
     var self = this;
 
     farmer_0.on('pointerdown', function (pointer) {
-      if (self.hero.tile.id == self.farmers[0].tile.id) {
-        self.gameinstance.pickupFarmer(self.heroes[0], function () {
-          farmer_0.destroy();
-          //TODO: Add farmer to player inventory and display on player inventory card
-        });
-      }
+      //if (self.hero.tile.id == self.farmers[0].tile.id) {
+        self.gameinstance.pickupFarmer(function (tileid) {
+          let pickedFarmer:Farmer = self.tiles[tileid].farmer.pop();
+          for( var i = 0; i < 2; i++){
+            if(self.farmers[i].id === pickedFarmer.id){
+              self.farmers[i].tile = undefined;
+              self.hero.farmers.push(pickedFarmer)
+              break;
+            }
+          }
+          pickedFarmer.destroy()
+          console.log(self.hero.farmers)
+       });
+      //}
 
     }, this);
 
     farmer_1.on('pointerdown', function (pointer) {
       if (self.hero.tile.id == self.farmers[1].tile.id) {
-        self.gameinstance.pickupFarmer(self.heroes[0], function () {
-          farmer_1.destroy();
-        });
+        self.gameinstance.pickupFarmer(function (tileid) {
+          let pickedFarmer:Farmer = self.tiles[tileid].farmer.pop();
+          for( var i = 0; i < 2; i++){
+            if(self.farmers[i].id === pickedFarmer.id){
+              self.farmers[i].tile = undefined;
+              self.hero.farmers.push(pickedFarmer)
+              break;
+            }
+          }
+          pickedFarmer.destroy()
+          console.log(self.hero.farmers)
+       });
       }
 
     }, this);
 
 
-    this.gameinstance.updateFarmer(function () {
-      farmer_0.destroy();
+    this.gameinstance.destroyFarmer(function (tileid) {
+      let pickedFarmer:Farmer = self.tiles[tileid].farmer.pop();
+      for( var i = 0; i < 2; i++){
+        if(self.farmers[i] === pickedFarmer){
+          self.farmers[i].tile = undefined;
+          console.log(self.farmers[i].tile)
+          break;
+        }
+      }
+      pickedFarmer.destroy()
+      
     });
 
-    this.gameinstance.updateFarmer(function () {
-      farmer_1.destroy();
+    this.gameinstance.addFarmer(function (tileid, farmerid) {
+      let newFarmer = self.hero.farmers.pop()
+      
+      if(farmerid === 0){
+        newFarmer = new Farmer(0, self, self.tiles[tileid], 'farmer').setDisplaySize(40,40)
+      }else if(farmerid === 1){
+        newFarmer = new Farmer(1, self, self.tiles[tileid], 'farmer').setDisplaySize(40,40)
+      }
+
+      self.tiles[tileid].farmer.push(newFarmer)
+
+      newFarmer.setInteractive()
+
+      newFarmer.on('pointerdown', function (pointer) {
+        //if (self.hero.tile.id == self.farmers[0].tile.id) {
+          self.gameinstance.pickupFarmer(function (tileid) {
+            let pickedFarmer:Farmer = self.tiles[tileid].farmer.pop();
+            for( var i = 0; i < 2; i++){
+              if(self.farmers[i].id === pickedFarmer.id){
+                self.farmers[i].tile = undefined;
+                self.hero.farmers.push(pickedFarmer)
+                break;
+              }
+            }
+            pickedFarmer.destroy()
+            console.log(self.hero.farmers)
+         });
+        //}
+  
+      }, this);
+      self.add.existing(newFarmer)
     });
   }
 
@@ -345,24 +402,28 @@ export default class GameScene extends Phaser.Scene {
     this.heroes.push(hero);
     tile.hero = hero;
     this.add.existing(hero);
-    if (this.ownHeroType === type) this.hero = hero;
+    if (this.ownHeroType === type) {
+      this.hero = hero;
+    }
   }
 
 
-    private addWell(x, y, tileNumber: number, wellName: string) {
-        const tile: Tile = this.tiles[tileNumber]
-        var well = this.add.image(x * scaleFactor + borderWidth, y * scaleFactor + borderWidth, "well").setDisplaySize(50, 40)
-        well.name = wellName;
+
+  private addWell(x, y, tileNumber: number, wellName: string) {
+    const tile: Tile = this.tiles[tileNumber]
+    const well = this.add.image(x * scaleFactor + borderWidth, y * scaleFactor + borderWidth, "well").setDisplaySize(50, 40)
+    well.name = wellName;
+
 
         well.setInteractive()
         this.add.existing(well);
-        var self = this        
+        var self = this
 
         well.on("pointerdown", function (pointer) {
             //console.log(tile.hero.getWillPower())
             self.gameinstance.useWell(function () {
-                                             
-                well.setTint(0x404040)                
+
+                well.setTint(0x404040)
 
                 if (tile.hero.getWillPower() <= 17) {
                     tile.hero.setwillPower(3)
@@ -373,15 +434,33 @@ export default class GameScene extends Phaser.Scene {
             });
         }, this);
 
-        this.gameinstance.updateWell(function (pointer) {           
-          self[wellName].setTint(0x404040)
-          if (tile.hero.getWillPower() <= 17) {
-            tile.hero.setwillPower(3)
-          }
-          else if (tile.hero.getWillPower() <= 20 && tile.hero.getWillPower() > 17) {
-            tile.hero.setwillPower(20 - tile.hero.getWillPower())
-          }
+        this.gameinstance.updateWell(function (pointer) {
+            self[wellName].setTint(0x404040)
+            if (tile.hero.getWillPower() <= 17) {
+                tile.hero.setwillPower(3)
+            }
+            else if (tile.hero.getWillPower() <= 20 && tile.hero.getWillPower() > 17) {
+                tile.hero.setwillPower(20 - tile.hero.getWillPower())
+            }
         }, this);
+
+        well.setInteractive()
+        var self = this
+
+
+        well.on("pointerdown", function () {
+            //console.log(tile.hero.getWillPower())
+            self.gameinstance.useWell(function () {
+                self[wellName].setTint(0x404040)
+
+                if (tile.hero.getWillPower() <= 17) {
+                    tile.hero.setwillPower(3)
+                }
+                else if (tile.hero.getWillPower() <= 20 && tile.hero.getWillPower() > 17) {
+                    tile.hero.setwillPower(20 - tile.hero.getWillPower())
+                }
+            })
+        })
     }
 
     private addGold() {       
@@ -446,11 +525,15 @@ export default class GameScene extends Phaser.Scene {
       // Move definition and creation of collab window here for testing
     }, this);
     */
-    
+
     // TODO collab: Replace all this hardcoding UI shit with something nicer
-    var res = { "gold": 5, "wineskin": 2 };
+    // var res = { "gold": 5, "wineskin": 2 };
+    var res = new Map([
+      ["gold", 5], 
+      ["wineskin", 2]
+    ])
     // Determine width of the window based on how many resources are being distributed
-    var width = (Object.keys(res).length + 1) * collabColWidth; // Not sure if there's a better way of getting size of ts obj
+    var width = (res.size + 1) * collabColWidth; // Not sure if there's a better way of getting size of ts obj
     // Determine height of the window based on number of players involved
     var height = (self.heroes.length + 2) * collabRowHeight;
     // Set data depending on whether the client is the owner of the decision
@@ -460,30 +543,30 @@ export default class GameScene extends Phaser.Scene {
     console.log(heroRanks);
     var startingHeroRank = Math.min(...heroRanks);
     console.log("starting hero rank is", startingHeroRank);
-    var collabWindowData = (self.hero.tile.id == startingHeroRank) ? 
-    {
-      controller: self.gameinstance,
-      isOwner: true,
-      heroes: self.heroes,
-      resources: res,
-      textOptions: null,
-      x: reducedWidth / 2 - width / 2,
-      y: reducedHeight / 2 - height / 2,
-      w: width,
-      h: height
-    } :
-    {
-      controller: self.gameinstance,
-      isOwner: false,
-      x: reducedWidth / 2 - width / 2,
-      y: reducedHeight / 2 - height / 2,
-      w: 200,
-      h: 100
-    }
+    var collabWindowData = (self.hero.tile.id == startingHeroRank) ?
+      {
+        controller: self.gameinstance,
+        isOwner: true,
+        heroes: self.heroes,
+        resources: res,
+        textOptions: null,
+        x: reducedWidth / 2 - width / 2,
+        y: reducedHeight / 2 - height / 2,
+        w: width,
+        h: height
+      } :
+      {
+        controller: self.gameinstance,
+        isOwner: false,
+        x: reducedWidth / 2 - width / 2,
+        y: reducedHeight / 2 - height / 2,
+        w: 200,
+        h: 100
+      }
     WindowManager.create(this, 'collab', CollabWindow, collabWindowData);
     // Freeze main game while collab window is active
     this.scene.pause();
-}
+  }
 
   // Creating the hour tracker
   private hourTrackerSetup() {

@@ -84,9 +84,8 @@ export class Monster {
             
             if (this.willpower < 7) {
                 var dicefaces = [1, 2, 3, 4, 5, 6]
-                var roll1 = Math.floor(Math.random() * dicefaces.length)
-                var roll2 = Math.floor(Math.random() * dicefaces.length)
-                console.log("Monster rolled ", roll1, " and ", roll2)
+                var roll1 = dicefaces[Math.floor(Math.random() * dicefaces.length)]
+                var roll2 = dicefaces[Math.floor(Math.random() * dicefaces.length)]
                 if (roll1 == roll2) {
                     attack = roll1 * 2;
                 }
@@ -99,6 +98,7 @@ export class Monster {
             else if (this.willpower > 6 && this.willpower < 14) {
                 //TODO...
             }
+
         }
 
         //black dice
@@ -108,7 +108,6 @@ export class Monster {
                 var dicefaces = [6, 8, 10, 10, 12]
                 var roll1 = Math.floor(Math.random() * dicefaces.length)
                 var roll2 = Math.floor(Math.random() * dicefaces.length)
-                console.log("Monster rolled ", roll1, " and ", roll2)
                 if (roll1 == roll2) {
                     attack = roll1 * 2;
                 }
@@ -123,5 +122,6 @@ export class Monster {
             }
 
         }
+        return attack + this.strength
     }
 }

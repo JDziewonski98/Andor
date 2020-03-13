@@ -1,5 +1,7 @@
 import { Window } from "./window";
 import { game } from '../api/game';
+import { Farmer } from "../objects/farmer";
+
 export class HeroWindow extends Window {
 
     public icon
@@ -23,7 +25,7 @@ export class HeroWindow extends Window {
         this.gold = data.gold
         this.will = data.will
         this.str = data.strength
-        this.farmers = data.farmers       
+        this.farmers = data.farmers
 
     }
 
@@ -32,22 +34,9 @@ export class HeroWindow extends Window {
         var bg = this.add.image(0, 0, 'scrollbg').setOrigin(0.5)
         var weed = this.add.sprite(50, 50, this.icon);
         this.goldtext = this.add.text(25, 100, 'Gold: ' + this.gold, { backgroundColor: 'fx00' })
-        this.goldtext.setInteractive();
-        this.add.existing(this.goldtext);
-
         this.willtext = this.add.text(25, 120, 'Willpower: ' + this.will, { backgroundColor: 'fx00' })
-        this.willtext.setInteractive();
-        this.add.existing(this.willtext)
-
         this.strtext = this.add.text(25, 140, 'Strength: ' + this.str, { backgroundColor: 'fx00' })
-        this.strtext.setInteractive()
-        this.add.existing(this.strtext)
-
         this.farmtext = this.add.text(25, 160, 'Farmers: ' + this.farmers, { backgroundColor: 'fx00' })
-        this.farmtext.setInteractive()
-        this.add.existing(this.farmtext)
-
-
         this.add.text(25, 180, 'Items ....', { backgroundColor: 'fx00' })
         this.add.text(25, 200, 'Special ability text ....', { backgroundColor: 'fx00' })
 
@@ -65,34 +54,45 @@ export class HeroWindow extends Window {
                 this.scene.parent.y = dragY;
                 this.scene.refresh()
             }
-        },this);
-        
+        });
 
-        var that = this
-        this.goldtext.on('pointerdown', function () {
-            that.gameinstance.dropGold(function () {
-                //need to make it so that I cannot drop other people's gold from heroWindow
-                if (true) {
-                    console.log("we droppin the gold")
-                    console.log(that.gold)
-                    if (that.gold > 0) {
-                        that.gold -= 1
-                        that.refreshText()
-                        console.log(that.gold)
+        var self = this
 
-                    }
-                }
+        this.farmtext.setInteractive()
+        this.farmtext.on('pointerdown', function (pointer) {
+            self.gameinstance.dropFarmer(function (tilenum) {
+                self.farmers--;
+                self.farmtext = self.add.text(25, 160, 'Farmers: ' + self.farmers, { backgroundColor: 'fx00' })
             })
-            
+
+        }, this);
+
+        this.goldtext.setInteractive()
+        var that = this
+        this.goldtext.on('pointerdown', function () {            
+            console.log("we droppin the gold")
+            console.log(that.gold)
+            if (that.gold > 0 ) {
+                that.gold -= 1
+                that.refreshText()
+                console.log(that.gold)
+                that.gameinstance.dropGold(function () {
+                    //create a token on the tile 
+                    //indicate the amount of gold on tile
+
+                })
+            }           
         });
 
 
         this.gameinstance.updateDropGold(function () {
-            console.log("here4")// is printed for other clients
+            console.log("here4")// is printed
             that.gold -= 1
             that.refreshText()
             //same code as above to show gold being dropped
         })
+
+
 
     }
 
@@ -119,7 +119,10 @@ export class HeroWindow extends Window {
     private refreshText() {
         console.log('refeshing')
         this.goldtext.setText('Gold: ' + this.gold)
-        this.willtext.setText('Willpower: ' + this.will)               
+        this.willtext.setText('Willpower: ' + this.will)
+
+        this.nametext.setText(this.name)
+        console.log(this.name)
 
     }
 }

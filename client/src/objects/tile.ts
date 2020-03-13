@@ -36,6 +36,7 @@ export class Tile extends Phaser.GameObjects.Sprite {
         this.y = y;
         this.hero = null;
         this.farmer = new Array(2);
+        this.gold = 0;
         //this.on('pointerdown', function (pointer) { this.printstuff() });
         //this.on('pointerdown', function (pointer) { this.moveRequest() })
 
@@ -54,7 +55,7 @@ export class Tile extends Phaser.GameObjects.Sprite {
         ]
 
         //for testing purpose. remember to set back to 0 
-        this.gold = 3;
+        
     }
 
     // Unused
@@ -110,6 +111,9 @@ export class Tile extends Phaser.GameObjects.Sprite {
     }
     public getGold() {
         return this.gold;
+    }
+    public getID() {
+        return this.id;
     }
 
     // public getAdjecent(){
