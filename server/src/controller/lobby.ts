@@ -11,7 +11,7 @@ export function lobby(socket, model: Lobby, io) {
 
     var gamensp = io.of("/" + name)
     gamensp.on("connection", function (socket) {
-      game(socket, g)
+      game(socket, g, io)
     });
 
   })

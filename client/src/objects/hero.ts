@@ -7,7 +7,7 @@ import { HeroKind } from './HeroKind';
 export class Hero extends Phaser.GameObjects.Sprite {
     public tile: Tile;
     public hourTracker: HourTracker;
-    public farmer: Array<Farmer>;
+    public farmers: Array<Farmer>;
     private hour: number;
     private willPower: number;
     private strength: number;
@@ -16,7 +16,17 @@ export class Hero extends Phaser.GameObjects.Sprite {
 
     constructor(scene, tile: Tile, texture: string, kind: HeroKind) {
         super(scene, tile.x, tile.y, texture);
-        this.farmer = new Array();
+        this.farmers = new Array();
+        switch (kind) {
+            case "archer":
+                super(scene, tile.x - 30, tile.y - 30, texture);
+            case "dwarf":
+                super(scene, tile.x + 30, tile.y - 30, texture);
+            case "mage":
+                super(scene, tile.x - 30, tile.y + 30, texture);
+            case "warrior":
+                super(scene, tile.x + 30, tile.y + 30, texture);
+        }
         this.tile = tile;
         this.hourTracker = null;
         this.hour = 1;
@@ -47,15 +57,27 @@ export class Hero extends Phaser.GameObjects.Sprite {
     }
 
     public moveTo(newTile: Tile) {
-        this.tile = newTile 
-        this.x = newTile.x
-        this.y = newTile.y
+        switch (this.heroKind) {
+            case "archer":
+                this.x = newTile.x - 30
+                this.y = newTile.y - 30
+            case "dwarf":
+                this.x = newTile.x + 30
+                this.y = newTile.y - 30
+            case "mage":
+                this.x = newTile.x - 30
+                this.y = newTile.y + 30
+            case "warrior":
+                this.x = newTile.x + 30
+                this.y = newTile.y + 30
+        }
+        this.tile = newTile
     }
 
     public resetHours() {
         // this.hourTracker.reset(this.id);
     }
-    public getKind(){
+    public getKind() {
         return this.heroKind;
     }
 

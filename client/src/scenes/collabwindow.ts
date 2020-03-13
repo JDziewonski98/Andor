@@ -16,6 +16,7 @@ export class CollabWindow extends Window {
     private involvedHeroes: Hero[];
     private isOwner: boolean;
     private resources: Map<string, number>;
+    private resourceNames: string[] = [];
     private resAllocated: Map<string, number[]> = new Map(); // track what has been allocated to who
     
     private textOptions; // for some event cards, null if this is a resource split
@@ -47,6 +48,14 @@ export class CollabWindow extends Window {
 
     protected initialize() {
         var self = this
+
+        // Initialize list of resource names
+        if (this.resources) {
+            Array.from(this.resources.keys()).forEach( key => {
+                this.resourceNames.push(key);
+            });
+            console.log(this.resourceNames);
+        }
 
         var bg = this.add.image(0, 0, 'scrollbg').setOrigin(0.5);
         this.populateWindow();
@@ -126,7 +135,9 @@ export class CollabWindow extends Window {
                 self.resAllocated.forEach((val: number[], key: string) => {
                     convMap[key] = val;
                 });
-                self.gameinstance.collabDecisionSubmit(convMap);
+                // Pass map of allocated resources and list of resource names to map allocated 
+                // quantities to the name of the corresponding resource
+                self.gameinstance.collabDecisionSubmit(convMap, self.resourceNames);
             } else {
                 console.log("Allocated quantities do not match those specified");
             }
@@ -174,11 +185,24 @@ export class CollabWindow extends Window {
 
     private verifyAllocated() {
         var self = this;
-        // Not sure if TS guarantees ordering of attributes when iterating?
-        // self.resources = { "gold": 5, "wineskin": 2 };
-        Object.values(self.resources).forEach(function(value, index) {
+        
+        var currTotals = [];
+        currTotals.length = this.resources.size;
+        currTotals.fill(0);
+        Array.from(this.resAllocated.values()).forEach( counts => {
+            for (let i=0; i<counts.length; i++) {
+                currTotals[i] += counts[i];
+            }
+        });
+        console.log(currTotals);
 
-        })
+        var resMaxes = Array.from(this.resources.values());
+        for (let i=0; i<resMaxes.length; i++) {
+            if (resMaxes[i] != currTotals[i]) {
+                console.log("resource", i, "count did not match");
+                return false;
+            }
+        }
         return true;
     }
 }

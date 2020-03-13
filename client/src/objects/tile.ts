@@ -36,24 +36,9 @@ export class Tile extends Phaser.GameObjects.Sprite {
         this.y = y;
         this.hero = null;
         this.farmer = new Array(2);
+        this.gold = 0;
         //this.on('pointerdown', function (pointer) { this.printstuff() });
         //this.on('pointerdown', function (pointer) { this.moveRequest() })
-
-        //depricated
-        // Set coordinates for hero representations as 2d array
-        this.heroCoords = [
-            [this.x-30, this.y-30],
-            [this.x+30, this.y-30],
-            [this.x-30, this.y+30],
-            [this.x+30, this.y+30]
-        ]
-
-        this.farmerCoords = [
-            [this.x, this.y+30],
-            [this.x, this.y-30]
-        ]
-
-        this.gold = 0;
     }
 
     // Unused
@@ -109,6 +94,9 @@ export class Tile extends Phaser.GameObjects.Sprite {
     }
     public getGold() {
         return this.gold;
+    }
+    public getID() {
+        return this.id;
     }
 
     // public getAdjecent(){
