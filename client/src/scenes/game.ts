@@ -112,7 +112,7 @@ export default class GameScene extends Phaser.Scene {
 
       // Need to wait for heroes to be created before creating collab decision
       self.startingCollabDecisionSetup();
-      
+      this.hourTrackerSetup();
     })
     console.log(numPlayer);
 
@@ -120,7 +120,8 @@ export default class GameScene extends Phaser.Scene {
     this.addFarmers()
     this.addMonsters()
     this.addSheildsToRietburg()
-
+    
+    
 
 
       // x and y coordinates
@@ -625,22 +626,37 @@ export default class GameScene extends Phaser.Scene {
     var htx = htX;
     var hty = htY;
     // Hero icons
-    var mageHtIcon = this.add.sprite(htx, hty, 'magemale').setDisplaySize(40, 40);
-    var dwarfHtIcon = this.add.sprite(htx, hty, 'dwarfmale').setDisplaySize(40, 40);
-    var archerHtIcon = this.add.sprite(htx, hty, 'archermale').setDisplaySize(40, 40);
-    var warriorHtIcon = this.add.sprite(htx, hty, 'warriormale').setDisplaySize(40, 40);
-
-    this.hourTracker = new HourTracker(this, htx, hty, [mageHtIcon, dwarfHtIcon, archerHtIcon, warriorHtIcon]);
-
-    // Hero ids are hardcoded for now, need to be linked to game setup
-    mageHtIcon.x = this.hourTracker.heroCoords[0][0];
-    mageHtIcon.y = this.hourTracker.heroCoords[0][1];
-    dwarfHtIcon.x = this.hourTracker.heroCoords[1][0];
-    dwarfHtIcon.y = this.hourTracker.heroCoords[1][1];
-    archerHtIcon.x = this.hourTracker.heroCoords[2][0];
-    archerHtIcon.y = this.hourTracker.heroCoords[2][1];
-    warriorHtIcon.x = this.hourTracker.heroCoords[3][0];
-    warriorHtIcon.y = this.hourTracker.heroCoords[3][1];
+    // var mageHtIcon = this.add.sprite(htx, hty, 'magemale').setDisplaySize(40, 40);
+    // var dwarfHtIcon = this.add.sprite(htx, hty, 'dwarfmale').setDisplaySize(40, 40);
+    // var archerHtIcon = this.add.sprite(htx, hty, 'archermale').setDisplaySize(40, 40);
+    // var warriorHtIcon = this.add.sprite(htx, hty, 'warriormale').setDisplaySize(40, 40);
+    
+    var self = this
+    var heroSprites = []
+    for(var h of this.heroes){
+      console.log(h)
+      var sprite = self.add.sprite(htx, hty, h.texture.key).setDisplaySize(40, 40)
+      heroSprites[h.getKind()] = sprite
+      switch (h.getKind()) {
+        case HeroKind.Archer:
+            sprite.x = htx - 20
+            sprite.y = hty - 20
+            break
+        case HeroKind.Dwarf:
+            sprite.x = htx + 20
+            sprite.y = hty - 20
+            break
+        case HeroKind.Mage:
+            sprite.x = htx - 20
+            sprite.y = hty + 20
+            break
+        case HeroKind.Warrior:
+            sprite.x = htx + 20
+            sprite.y = hty + 20
+            break
+    }
+    }
+    this.hourTracker = new HourTracker(this, htx, hty, heroSprites);
 
     // we're not actually adding the hourTracker, we're adding it's internal sprite
     this.hourTracker.depth = 5;
