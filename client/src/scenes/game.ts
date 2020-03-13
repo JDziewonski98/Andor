@@ -17,6 +17,7 @@ import { MerchantWindow } from './merchantwindow';
 import { Monster } from '../objects/monster';
 import { Fight} from './fightwindow';
 import { HeroKind } from '../objects/HeroKind';
+import { RietburgCastle } from './rietburgcastle';
 
 
 export default class GameScene extends Phaser.Scene {
@@ -29,6 +30,7 @@ export default class GameScene extends Phaser.Scene {
   private hourTracker: HourTracker;
   private gameinstance: game;
   private monsters: Monster[]
+  private castle:RietburgCastle;
 
   private gameText;
 
@@ -48,6 +50,8 @@ export default class GameScene extends Phaser.Scene {
     this.farmers = new Array<Farmer>();
     this.ownHeroType = HeroKind.Dwarf;
     this.monsters = new Array<Monster>();
+    this.castle = new RietburgCastle();
+
   }
 
   public init(data) {
@@ -88,6 +92,7 @@ export default class GameScene extends Phaser.Scene {
     this.setRegions();
 
     var self = this;
+    var numPlayer = 0;
     this.gameinstance.getHeros((herotypes) => {
       herotypes.forEach(type => {
         if (type === "archer") {
@@ -102,12 +107,14 @@ export default class GameScene extends Phaser.Scene {
       });
 
       // Need to wait for heroes to be created before creating collab decision
-      self.startingCollabDecisionSetup();
+      //self.startingCollabDecisionSetup();
     })
+    console.log(numPlayer);
 
     this.addMerchants();
     this.addFarmers()
     this.addMonsters()
+    this.addSheildsToRietburg()
 
 
 
@@ -170,6 +177,30 @@ export default class GameScene extends Phaser.Scene {
       })
     }
 
+  }
+
+  private addSheildsToRietburg(){
+    let s1 = this.add.sprite(85, 190, '8bit_herb').setDisplaySize(40,40)
+    let s2 = this.add.sprite(155, 190, '8bit_herb').setDisplaySize(40,40)
+    let s3 = this.add.sprite(225, 190, '8bit_herb').setDisplaySize(40,40)
+    let s4 = this.add.sprite(85, 310, '8bit_herb').setDisplaySize(40,40)
+    let s5 = this.add.sprite(155, 310, '8bit_herb').setDisplaySize(40,40)
+    let s6 = this.add.sprite(85, 430, '8bit_herb').setDisplaySize(40,40)
+
+    this.castle.sheilds.push(s1)
+    this.castle.sheilds.push(s2)
+    this.castle.sheilds.push(s3)
+    this.castle.sheilds.push(s4)
+    this.castle.sheilds.push(s5)
+    this.castle.sheilds.push(s6)
+    
+    var self = this;
+
+    this.gameinstance.getNumSheilds(function(numSheilds){
+      for(var i = 0; i < numSheilds; i++){
+        self.castle.sheilds[i].visible = false;
+      }
+    })
   }
 
   private addMerchants() {
@@ -363,37 +394,49 @@ export default class GameScene extends Phaser.Scene {
     });
 
     this.gameinstance.addFarmer(function (tileid, farmerid) {
-      let newFarmer = self.hero.farmers.pop()
-      
-      if(farmerid === 0){
-        newFarmer = new Farmer(0, self, self.tiles[tileid], 'farmer').setDisplaySize(40,40)
-      }else if(farmerid === 1){
-        newFarmer = new Farmer(1, self, self.tiles[tileid], 'farmer').setDisplaySize(40,40)
-      }
+      if(tileid === 0){
+        let newFarmer = self.hero.farmers.pop()
+        for(var i = 0; i < 6; i++){
+          if(self.castle.sheilds[i].visible == true){
+            self.castle.sheilds[i].visible = false;
+            break;
+          }
+        }
+        
+      }else{
+        let newFarmer = self.hero.farmers.pop()
+        
+        if(farmerid === 0){
+          newFarmer = new Farmer(0, self, self.tiles[tileid], 'farmer').setDisplaySize(40,40)
+        }else if(farmerid === 1){
+          newFarmer = new Farmer(1, self, self.tiles[tileid], 'farmer').setDisplaySize(40,40)
+        }
 
-      self.tiles[tileid].farmer.push(newFarmer)
+        self.tiles[tileid].farmer.push(newFarmer)
 
-      newFarmer.setInteractive()
+        newFarmer.setInteractive()
 
-      newFarmer.on('pointerdown', function (pointer) {
-        //if (self.hero.tile.id == self.farmers[0].tile.id) {
-          self.gameinstance.pickupFarmer(function (tileid) {
-            let pickedFarmer:Farmer = self.tiles[tileid].farmer.pop();
-            for( var i = 0; i < 2; i++){
-              if(self.farmers[i].id === pickedFarmer.id){
-                self.farmers[i].tile = undefined;
-                self.hero.farmers.push(pickedFarmer)
-                break;
+        newFarmer.on('pointerdown', function (pointer) {
+          //if (self.hero.tile.id == self.farmers[0].tile.id) {
+            self.gameinstance.pickupFarmer(function (tileid) {
+              let pickedFarmer:Farmer = self.tiles[tileid].farmer.pop();
+              for( var i = 0; i < 2; i++){
+                if(self.farmers[i].id === pickedFarmer.id){
+                  self.farmers[i].tile = undefined;
+                  self.hero.farmers.push(pickedFarmer)
+                  break;
+                }
               }
-            }
-            pickedFarmer.destroy()
-            console.log(self.hero.farmers)
-         });
-        //}
+              pickedFarmer.destroy()
+              console.log(self.hero.farmers)
+          });
+          //}
+    
+        }, this);
+        self.add.existing(newFarmer)
+      }
+      });
   
-      }, this);
-      self.add.existing(newFarmer)
-    });
   }
 
   private addHero(type: HeroKind, tileNumber: number, texture: string) {
