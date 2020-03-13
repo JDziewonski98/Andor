@@ -24,7 +24,7 @@ export class Game {
     private regions: Array<Region>;
     private farmers: Array<Farmer>;
     private monsters:Map<string, Monster>;
-
+    private currPlayersTurn: string;
     // collab decision related state
     public numAccepts: number;
 
@@ -34,31 +34,81 @@ export class Game {
         this.name = name;
         this.numOfDesiredPlayers = numOfDesiredPlayers;
         this.difficulty = difficulty;
-        this.castle = new RietburgCastle();
+        this.castle = new RietburgCastle()
         this.chatlog = [];
         this.players = new Set<Player>();
         this.heroList = new Map<string, Hero>();
         this.regions = new Array<Region>();
         this.farmers = new Array<Farmer>();
         this.monsters = new Map<string, Monster>();
+        this.currPlayersTurn = ""
         this.setRegions();
         this.setFarmers();
-        this.setMonsters()
+        this.setMonsters();
+        this.setSheilds();
+        console.log(this.castle.getSheilds(), "sheilds");
         this.readyplayers = 0;
 
         this.numAccepts = 0;
     }
+    private setFirstHerosTurn(){
+        var minRank = Number.MAX_VALUE;
+        var ID = "none";
+        for(var socketID in this.heroList){
+            var hero = this.heroList[socketID]
+            if(hero.getRank() < minRank){
+                minRank = hero.getRank()
+                ID = socketID
+            }
+        }
+        console.log(ID)
+        return this.heroList[ID].getKind()
+    }
+
+    public nextPlayer(){
+        console.log("nextPlayer")
+        console.log("currentPlayersTurn: ", this.currPlayersTurn)
+        var minRank = this.getHero(this.currPlayersTurn).getRank();
+        var maxRank = Number.MAX_VALUE;
+        var socketID = "none";
+        this.heroList.forEach((hero,ID) => {
+            if(hero.getRank() > minRank && hero.getRank() < maxRank ){
+                maxRank = hero.getRank()
+                socketID = ID
+            }
+        })
+        if(socketID == "none"){
+            minRank = Number.MAX_VALUE
+            this.heroList.forEach((hero,ID) => {
+                if(hero.getRank() < minRank){
+                    minRank = hero.getRank()
+                    socketID = ID
+                }
+            })
+        }
+        return socketID;
+    }
+
+    private setSheilds(){
+        var numPlayers = this.numOfDesiredPlayers;
+    
+        if(numPlayers === 2){
+            console.log(numPlayers, "inside")
+            this.castle.setSheilds(3);
+        }else if(numPlayers === 3){
+            this.castle.setSheilds(2);
+        }else if(numPlayers === 4){
+            this.castle.setSheilds(1);
+        }
+    }
 
     private setFarmers() {
         //this.regions[24].initFarmer()
-        this.farmers.push(new Farmer(this.regions[24]));
-        this.farmers.push(new Farmer(this.regions[36]));
-
+        this.farmers.push(new Farmer(0, this.regions[24]));
+        this.farmers.push(new Farmer(1, this.regions[36]));
         this.regions[24].addFarmer(this.farmers[0]);
         this.regions[36].addFarmer(this.farmers[1]);
-
         console.log(this.regions[36])
-
     }
 
     private setMonsters() {
@@ -131,6 +181,10 @@ export class Game {
 
     }
 
+    public getCastle(){
+        return this.castle;
+    }
+
     public getHeros() {
         return this.heroList;
     }
@@ -170,7 +224,13 @@ export class Game {
     public removeFarmer(f: Farmer) {
         //TO BE IMPLEMENTED
     }
-
+    public setCurrPlayersTurn(s:string){
+        this.currPlayersTurn = s;
+        console.log("Set currPlayersTurn to: ", s)
+    }
+    public getCurrPlayersTurn(){
+        return this.currPlayersTurn;
+    }
     public moveHeroTo(hero, tile) {
         console.log("Passed method call")
         hero.moveTo(tile)

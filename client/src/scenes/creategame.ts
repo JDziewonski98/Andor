@@ -39,7 +39,9 @@ export default class CreateGameScene extends Phaser.Scene {
             if (event.target.name === 'submitButton') {
                 var numPlayersSelect = this.getChildByName('numPlayers');
                 var numPlayers = numPlayersSelect.options[numPlayersSelect.selectedIndex].text
-                console.log(numPlayers);
+                console.log(numPlayers);                
+                
+
                 var inputText = this.getChildByName('Game Name');
 
                 //  Have they entered anything?

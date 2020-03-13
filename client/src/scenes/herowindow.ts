@@ -1,5 +1,7 @@
 import { Window } from "./window";
 import { game } from '../api/game';
+import { Farmer } from "../objects/farmer";
+
 export class HeroWindow extends Window {
 
     public icon
@@ -54,6 +56,18 @@ export class HeroWindow extends Window {
             }
         });
 
+        var self = this
+
+        this.farmtext.setInteractive()
+        this.farmtext.on('pointerdown', function (pointer) {
+            self.gameinstance.dropFarmer(function (tilenum) {
+                if(self.farmers > 0){
+                    self.farmers--;
+                    self.farmtext = self.add.text(25, 160, 'Farmers: ' + self.farmers, { backgroundColor: 'fx00' })
+                }
+            })
+
+        }, this);
 
         this.goldtext.setInteractive()
         var that = this
@@ -108,9 +122,6 @@ export class HeroWindow extends Window {
         console.log('refeshing')
         this.goldtext.setText('Gold: ' + this.gold)
         this.willtext.setText('Willpower: ' + this.will)
-
-        this.nametext.setText(this.name)
-        console.log(this.name)
-
+        
     }
 }

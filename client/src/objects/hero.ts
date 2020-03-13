@@ -2,12 +2,12 @@ import * as Phaser from 'phaser';
 import { Tile } from './tile';
 import { HourTracker } from './hourTracker';
 import { Farmer } from './farmer';
-import { HeroKind } from './HeroKind';
+import { HeroKind } from './herokind';
 
 export class Hero extends Phaser.GameObjects.Sprite {
     public tile: Tile;
     public hourTracker: HourTracker;
-    public farmer: Array<Farmer>;
+    public farmers: Array<Farmer>;
     private hour: number;
     private willPower: number;
     private strength: number;
@@ -15,6 +15,8 @@ export class Hero extends Phaser.GameObjects.Sprite {
     private heroKind: HeroKind
 
     constructor(scene, tile: Tile, texture: string, kind: HeroKind) {
+        super(scene, tile.x, tile.y, texture);
+        this.farmers = new Array();
         switch (kind) {
             case "archer":
                 super(scene, tile.x - 30, tile.y - 30, texture);
@@ -25,7 +27,6 @@ export class Hero extends Phaser.GameObjects.Sprite {
             case "warrior":
                 super(scene, tile.x + 30, tile.y + 30, texture);
         }
-        this.farmer = new Array();
         this.tile = tile;
         this.hourTracker = null;
         this.hour = 1;
@@ -80,7 +81,7 @@ export class Hero extends Phaser.GameObjects.Sprite {
         return this.heroKind;
     }
 
-    public dropGold(amount) {
+    /*public dropGold(amount) {
         if (this.gold < amount) {
             return false
         }
@@ -94,7 +95,14 @@ export class Hero extends Phaser.GameObjects.Sprite {
 
             return true
         }
-    }
+    }*/
+
+    /*public pickupGold() {
+        if (this.tile.getGold() === 0) {
+            return false
+        }
+        this.tile.setGold(this.tile.getGold() - 1)
+    }*/
 
     public setwillPower(willValToChange) {
         this.willPower += willValToChange;
