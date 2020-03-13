@@ -108,6 +108,7 @@ export default class GameScene extends Phaser.Scene {
 
       // Need to wait for heroes to be created before creating collab decision
       self.startingCollabDecisionSetup();
+      
     })
 
     this.addMerchants();
@@ -119,7 +120,7 @@ export default class GameScene extends Phaser.Scene {
     this.addWell(1353, 4873, wellTile2, "well2")
     this.addWell(7073, 3333, wellTile3, "well3")
     this.addWell(5962, 770, wellTile4, "well4")
-
+    this.gameinstance.yourTurn()
 
     // self.startingCollabDecisionSetup();
   }
@@ -569,10 +570,7 @@ export default class GameScene extends Phaser.Scene {
       camera.zoom -= this.zoomAmount;
     }
 
-    this.gameinstance.yourTurn(function(){
-        this.myTurn = true
-        console.log("yooooink")
-    })
+    //this.gameinstance.yourTurn()
   }
 
 }

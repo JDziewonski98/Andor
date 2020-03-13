@@ -37,16 +37,10 @@ export function game(socket, model: Game, io) {
   socket.on("endTurn", function(){
     console.log("endTurn")
     var nextPlayer = model.nextPlayer()
-    console.log(nextPlayer)
-    //console.log(model.getHeros()[nextPlayer])
     model.setCurrPlayersTurn(nextPlayer)
-    socket.to(nextPlayer).emit("yourTurn")
-    console.log("ya")
+    socket.broadcast.to(`/${model.getName()}#${nextPlayer}`).emit("yourTurn")
   })
 
-  socket.on("yourTurn", function(){
-    console.log("Fuck me")
-  })
 
   socket.on("pickupFarmer", function (callback) {
     var region:Region;
@@ -68,7 +62,6 @@ export function game(socket, model: Game, io) {
     let hero = model.getHero(heroId);
     if (hero !== undefined) {
       result = hero.dropFarmer();
-
       if (result !== undefined) {
         console.log(hero)
         io.of("/"+model.getName()).emit("addFarmer", result[1], result[0])
@@ -260,6 +253,9 @@ export function game(socket, model: Game, io) {
 
   // Submitting a decision
   socket.on('collabDecisionSubmit', function(resAllocated, resNames) {
+    if(model.getCurrPlayersTurn() == ""){
+      model.setCurrPlayersTurn(socket.conn.id)
+    }
     console.log(resAllocated);
     // Check that numAccepts equals total num of players-1
     if (model.numAccepts != model.getNumOfDesiredPlayers() - 1) {

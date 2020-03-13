@@ -92,18 +92,18 @@ export class game {
 
     public endTurn(){
         if(this.myTurn){
-            this.myTurn = false;
+            console.log("You have ended your turn.")
             this.socket.emit('endTurn');
+            this.myTurn = false;
         }
     }
-    public yourTurn(callback){
+    
+    public yourTurn(){
         var self = this
         this.socket.on("yourTurn", function(){
+            console.log("It is now your turn.")
             self.myTurn = true
         })
-        console.log("f00k")
-        
-        
     }
 
     public  removeListener(object){

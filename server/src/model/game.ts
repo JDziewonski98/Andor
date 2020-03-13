@@ -65,20 +65,25 @@ export class Game {
 
     public nextPlayer(){
         console.log("nextPlayer")
-        var minRank = Number.MAX_VALUE;
+        console.log("currentPlayersTurn: ", this.currPlayersTurn)
+        var minRank = this.getHero(this.currPlayersTurn).getRank();
+        var maxRank = Number.MAX_VALUE;
         var socketID = "none";
-        //console.log(this.heroList)
         this.heroList.forEach((hero,ID) => {
-            //console.log(ID)
-            //console.log(ID, hero);
-            if(ID != this.currPlayersTurn){
+            if(hero.getRank() > minRank && hero.getRank() < maxRank ){
+                maxRank = hero.getRank()
+                socketID = ID
+            }
+        })
+        if(socketID == "none"){
+            minRank = Number.MAX_VALUE
+            this.heroList.forEach((hero,ID) => {
                 if(hero.getRank() < minRank){
                     minRank = hero.getRank()
                     socketID = ID
                 }
-            }
-        })
-        //console.log(minRank)
+            })
+        }
         return socketID;
     }
 
@@ -86,12 +91,9 @@ export class Game {
         //this.regions[24].initFarmer()
         this.farmers.push(new Farmer(0, this.regions[24]));
         this.farmers.push(new Farmer(1, this.regions[36]));
-        
         this.regions[24].addFarmer(this.farmers[0]);
         this.regions[36].addFarmer(this.farmers[1]);
-
         console.log(this.regions[36])
-
     }
 
     private setMonsters() {
@@ -206,6 +208,9 @@ export class Game {
     public setCurrPlayersTurn(s:string){
         this.currPlayersTurn = s;
         console.log("Set currPlayersTurn to: ", s)
+    }
+    public getCurrPlayersTurn(){
+        return this.currPlayersTurn;
     }
     public moveHeroTo(hero, tile) {
         console.log("Passed method call")
