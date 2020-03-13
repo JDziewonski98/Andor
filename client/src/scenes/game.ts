@@ -425,6 +425,7 @@ export default class GameScene extends Phaser.Scene {
 
                 well.setTint(0x404040)
 
+                //assumes tile has only 1 hero NEED TO FIX
                 if (tile.hero.getWillPower() <= 17) {
                     tile.hero.setwillPower(3)
                 }

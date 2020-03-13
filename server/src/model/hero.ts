@@ -171,17 +171,20 @@ export class Hero {
 
     public useWell() {
         //console.log("server.hero.useWell")
+        //console.log(this.will)
         var reg = this.region
         if (reg.getHaswell() && !reg.getWellUsed()) {
             //increase 3 will power
             if (this.will <= 17) {
                 this.setWill(3)
+                //console.log(this.will)
             }
             else if (this.will <= 20 && this.will > 17) {
                 this.will = 20
             }
             //set the boolean of whether a well was used
             reg.setWellUsed(true)
+            //console.log(this.region.getWellUsed())
 
             //inform front-end that a well has been used
             return true
