@@ -20,7 +20,7 @@ export class Monster extends Phaser.GameObjects.Sprite {
         this.tile = tile;
     }
 
-    public destoryMonster(){
+    public destroyMonster(){
         this.destroy();
     }
 
