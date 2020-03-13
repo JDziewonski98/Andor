@@ -32,7 +32,7 @@ export default class GameScene extends Phaser.Scene {
   private monsters: Monster[]
   private castle:RietburgCastle;
 
-  private gameText;
+  private mockText;
 
   private cameraKeys;
   private cameraScrollSpeed = 15;
@@ -298,7 +298,6 @@ export default class GameScene extends Phaser.Scene {
     );
 
     for (let i = 0; i < this.monsters.length; i++) {
-
       this.monsters[i].on('pointerdown', function (pointer) {
         if (this.scene.isVisible(this.monsters[i].name)) {
           WindowManager.destroy(this, this.monsters[i].name);
@@ -563,8 +562,8 @@ export default class GameScene extends Phaser.Scene {
       backgroundColor: '#f00'
     }
 
-    // Start of game collab decision
-    /* For testing purposes: open and close a collab window using interactive text on game
+    /* Start of game collab decision
+    For testing purposes: open and close a collab window using interactive text on game
     this.gameText = this.add.text(600, 550, "COLLAB", style2).setOrigin(0.5)
     this.gameText.setInteractive();
     this.gameText.on('pointerdown', function (pointer) {
@@ -577,8 +576,6 @@ export default class GameScene extends Phaser.Scene {
     }, this);
     */
 
-    // TODO collab: Replace all this hardcoding UI shit with something nicer
-    // var res = { "gold": 5, "wineskin": 2 };
     var res = new Map([
       ["gold", 5], 
       ["wineskin", 2]
@@ -591,9 +588,7 @@ export default class GameScene extends Phaser.Scene {
     // Get hero of lowest rank, based on their starting tile
     var heroRanks = [];
     for (let hero of self.heroes) { heroRanks.push(hero.tile.id); }
-    console.log(heroRanks);
     var startingHeroRank = Math.min(...heroRanks);
-    console.log("starting hero rank is", startingHeroRank);
     var collabWindowData = (self.hero.tile.id == startingHeroRank) ?
       {
         controller: self.gameinstance,
@@ -619,38 +614,63 @@ export default class GameScene extends Phaser.Scene {
     this.scene.pause();
   }
 
-  // Creating the hour tracker
-  private hourTrackerSetup() {
-    //x, y coorindates
-    var htx = htX;
-    var hty = htY;
-    // Hero icons
-    var mageHtIcon = this.add.sprite(htx, hty, 'magemale').setDisplaySize(40, 40);
-    var dwarfHtIcon = this.add.sprite(htx, hty, 'dwarfmale').setDisplaySize(40, 40);
-    var archerHtIcon = this.add.sprite(htx, hty, 'archermale').setDisplaySize(40, 40);
-    var warriorHtIcon = this.add.sprite(htx, hty, 'warriormale').setDisplaySize(40, 40);
+  private mockEndDay() {
+    var self = this;
 
-    this.hourTracker = new HourTracker(this, htx, hty, [mageHtIcon, dwarfHtIcon, archerHtIcon, warriorHtIcon]);
-
-    // Hero ids are hardcoded for now, need to be linked to game setup
-    mageHtIcon.x = this.hourTracker.heroCoords[0][0];
-    mageHtIcon.y = this.hourTracker.heroCoords[0][1];
-    dwarfHtIcon.x = this.hourTracker.heroCoords[1][0];
-    dwarfHtIcon.y = this.hourTracker.heroCoords[1][1];
-    archerHtIcon.x = this.hourTracker.heroCoords[2][0];
-    archerHtIcon.y = this.hourTracker.heroCoords[2][1];
-    warriorHtIcon.x = this.hourTracker.heroCoords[3][0];
-    warriorHtIcon.y = this.hourTracker.heroCoords[3][1];
-
-    // we're not actually adding the hourTracker, we're adding it's internal sprite
-    this.hourTracker.depth = 5;
-    this.hourTracker.depth = 0;
-    for (var h of this.heroes) {
-      h.hourTracker = this.hourTracker;
+    var style2 = {
+      fontFamily: '"Roboto Condensed"',
+      fontSize: "20px",
+      backgroundColor: '#f00'
     }
 
-    this.hourTracker.setInteractive();
+    this.mockText = this.add.text(600, 550, "end day mock", style2).setOrigin(0.5)
+    this.mockText.setInteractive();
+    this.mockText.on('pointerdown', function (pointer) {
+      // Execute end of day actions
+
+      // Updating tiles of all the monsters
+      // all the current monsters should be pushed into the this.monsters array
+      // monsters are sprites so we add them to the scene
+      // monsters have an associated tile which determine's their x, y
+      // monsters have a name which is unique (i.e. gor1, gor2, ...) so
+      // it isn't just used to indicate their type
+      // Might need to add a monster type enum
+    }, this);
   }
+
+  // Creating the hour tracker
+  // private hourTrackerSetup() {
+  //   //x, y coorindates
+  //   var htx = htX;
+  //   var hty = htY;
+  //   // Hero icons
+  //   var mageHtIcon = this.add.sprite(htx, hty, 'magemale').setDisplaySize(40, 40);
+  //   var dwarfHtIcon = this.add.sprite(htx, hty, 'dwarfmale').setDisplaySize(40, 40);
+  //   var archerHtIcon = this.add.sprite(htx, hty, 'archermale').setDisplaySize(40, 40);
+  //   var warriorHtIcon = this.add.sprite(htx, hty, 'warriormale').setDisplaySize(40, 40);
+
+  //   this.hourTracker = new HourTracker(this, htx, hty, [mageHtIcon, dwarfHtIcon, archerHtIcon, warriorHtIcon]);
+
+  //   // Hero ids are hardcoded for now, need to be linked to game setup
+  //   mageHtIcon.x = this.hourTracker.heroCoords[0][0];
+  //   mageHtIcon.y = this.hourTracker.heroCoords[0][1];
+  //   dwarfHtIcon.x = this.hourTracker.heroCoords[1][0];
+  //   dwarfHtIcon.y = this.hourTracker.heroCoords[1][1];
+  //   archerHtIcon.x = this.hourTracker.heroCoords[2][0];
+  //   archerHtIcon.y = this.hourTracker.heroCoords[2][1];
+  //   warriorHtIcon.x = this.hourTracker.heroCoords[3][0];
+  //   warriorHtIcon.y = this.hourTracker.heroCoords[3][1];
+
+  //   // we're not actually adding the hourTracker, we're adding it's internal sprite
+  //   this.hourTracker.depth = 5;
+  //   this.hourTracker.depth = 0;
+  //   for (var h of this.heroes) {
+  //     h.hourTracker = this.hourTracker;
+  //   }
+
+  //   this.hourTracker.setInteractive();
+  // }
+
 
   public update() {
     var camera = this.cameras.main;
