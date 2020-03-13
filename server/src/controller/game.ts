@@ -355,7 +355,7 @@ export function game(socket, model: Game, io) {
       let hero = model.getHero(heroId);
       let heroregion = hero.getRegion().getID()
       let monster = model.getMonsters().get(m)
-      let monsterregion = monster!.getTile()
+      let monsterregion = monster!.getTileID()
 
       if (hero.getTimeOfDay() > 9) {
         callback('notime', null, null)
@@ -402,6 +402,20 @@ export function game(socket, model: Game, io) {
       console.log('no such monster name exists!')
     }
 
+  })
+
+  // End of day
+  socket.on('moveMonstersEndDay', function () {
+    // console.log("calling move monsters on back end");
+    model.moveMonsters();
+    // Convert monsters Map into passable object
+    let convMonsters = {};
+    for (let m of Array.from(model.getMonsters().values())) {
+      convMonsters[m.name] = m.getTileID();
+    }
+    // console.log(convMonsters);
+    socket.broadcast.emit('sendUpdatedMonsters', convMonsters);
+    socket.emit('sendUpdatedMonsters', convMonsters);
   })
 
   function getCurrentDate() {

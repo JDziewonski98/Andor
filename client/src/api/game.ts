@@ -185,5 +185,15 @@ export class game {
     public getMonsterStats(monstername, callback) {
         this.socket.emit('getMonsterStats', monstername, callback)
     }
+
+    // End of day
+    public moveMonstersEndDay() {
+        console.log("send move monsters to server");
+        this.socket.emit('moveMonstersEndDay');
+    }
+
+    public receiveUpdatedMonsters(callback) {
+        this.socket.on('sendUpdatedMonsters', callback);
+    }
 }
 

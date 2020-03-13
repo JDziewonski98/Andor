@@ -29,10 +29,11 @@ export default class GameScene extends Phaser.Scene {
   private farmers: Farmer[];
   private hourTracker: HourTracker;
   private gameinstance: game;
-  private monsters: Monster[]
+  private monsters: Monster[];
+  private monsterNameMap: Map<string, Monster>;
   private castle:RietburgCastle;
 
-  private gameText;
+  private mockText;
 
   private cameraKeys;
   private cameraScrollSpeed = 15;
@@ -50,6 +51,7 @@ export default class GameScene extends Phaser.Scene {
     this.farmers = new Array<Farmer>();
     this.ownHeroType = HeroKind.Dwarf;
     this.monsters = new Array<Monster>();
+    this.monsterNameMap = new Map();
     this.castle = new RietburgCastle();
 
   }
@@ -124,17 +126,17 @@ export default class GameScene extends Phaser.Scene {
     
 
 
-      // x and y coordinates
-      this.addWell(209,2244, wellTile1, "well1")
-      this.addWell(1353,4873, wellTile2, "well2")
-      this.addWell(7073, 3333, wellTile3, "well3")
-      this.addWell(5962, 770, wellTile4, "well4")
+    // x and y coordinates
+    this.addWell(209,2244, wellTile1, "well1")
+    this.addWell(1353,4873, wellTile2, "well2")
+    this.addWell(7073, 3333, wellTile3, "well3")
+    this.addWell(5962, 770, wellTile4, "well4")
 
-      this.gameinstance.yourTurn()
+    this.gameinstance.yourTurn()
 
-      this.addGold()
+    this.addGold()
 
-    // self.startingCollabDecisionSetup();
+    this.mockEndDay();
   }
 
   private cameraSetup() {
@@ -271,35 +273,46 @@ export default class GameScene extends Phaser.Scene {
     const gortile3: Tile = this.tiles[21];
     const gortile4: Tile = this.tiles[26];
     const gortile5: Tile = this.tiles[48];
-    const skraltile: Tile = this.tiles[19];
+    const skraltile1: Tile = this.tiles[19];
+    const wtile1: Tile = this.tiles[1];
 
     let gor1: Monster = new Monster(this, gortile1, 'gor', 'gor1').setInteractive().setScale(.5);
     let gor2: Monster = new Monster(this, gortile2, 'gor', 'gor2').setInteractive().setScale(.5);
     let gor3: Monster = new Monster(this, gortile3, 'gor', 'gor3').setInteractive().setScale(.5);
     let gor4: Monster = new Monster(this, gortile4, 'gor', 'gor4').setInteractive().setScale(.5);
     let gor5: Monster = new Monster(this, gortile5, 'gor', 'gor5').setInteractive().setScale(.5);
-    let skral: Monster = new Monster(this, skraltile, 'skral', 'skral1').setInteractive().setScale(.5);
+    let skral1: Monster = new Monster(this, skraltile1, 'skral', 'skral1').setInteractive().setScale(.5);
+    let wardrak1: Monster = new Monster(this, wtile1, 'wardrak', 'wardrak1').setInteractive().setScale(.5);
 
     this.monsters.push(gor1);
     this.monsters.push(gor2);
     this.monsters.push(gor3);
     this.monsters.push(gor4);
     this.monsters.push(gor5);
-    this.monsters.push(skral);
+    this.monsters.push(skral1);
+    this.monsters.push(wardrak1);
+
+    this.monsterNameMap[gor1.name] = gor1;
+    this.monsterNameMap[gor2.name] = gor2;
+    this.monsterNameMap[gor3.name] = gor3;
+    this.monsterNameMap[gor4.name] = gor4;
+    this.monsterNameMap[gor5.name] = gor5;
+    this.monsterNameMap[skral1.name] = skral1;
+    this.monsterNameMap[wardrak1.name] = wardrak1;
 
     gortile1.monster = gor1
     gortile2.monster = gor2
     gortile3.monster = gor3
     gortile4.monster = gor4
     gortile5.monster = gor5
-    skraltile.monster = skral
+    skraltile1.monster = skral1
+    wtile1.monster = wardrak1
 
     this.monsters.forEach(monster =>
       this.add.existing(monster)
     );
 
     for (let i = 0; i < this.monsters.length; i++) {
-
       this.monsters[i].on('pointerdown', function (pointer) {
         if (this.scene.isVisible(this.monsters[i].name)) {
           WindowManager.destroy(this, this.monsters[i].name);
@@ -518,7 +531,7 @@ export default class GameScene extends Phaser.Scene {
     private addGold() {       
         var self = this        
         for (var id in self.tiles) {
-            console.log(id, this)
+            // console.log(id, this)
 
             if (self.tiles[id].getGold() !== 0) {
                 //create a text Sprite indicating the number of gold. 
@@ -564,8 +577,8 @@ export default class GameScene extends Phaser.Scene {
       backgroundColor: '#f00'
     }
 
-    // Start of game collab decision
-    /* For testing purposes: open and close a collab window using interactive text on game
+    /* Start of game collab decision
+    For testing purposes: open and close a collab window using interactive text on game
     this.gameText = this.add.text(600, 550, "COLLAB", style2).setOrigin(0.5)
     this.gameText.setInteractive();
     this.gameText.on('pointerdown', function (pointer) {
@@ -578,8 +591,6 @@ export default class GameScene extends Phaser.Scene {
     }, this);
     */
 
-    // TODO collab: Replace all this hardcoding UI shit with something nicer
-    // var res = { "gold": 5, "wineskin": 2 };
     var res = new Map([
       ["gold", 5], 
       ["wineskin", 2]
@@ -592,9 +603,7 @@ export default class GameScene extends Phaser.Scene {
     // Get hero of lowest rank, based on their starting tile
     var heroRanks = [];
     for (let hero of self.heroes) { heroRanks.push(hero.tile.id); }
-    console.log(heroRanks);
     var startingHeroRank = Math.min(...heroRanks);
-    console.log("starting hero rank is", startingHeroRank);
     var collabWindowData = (self.hero.tile.id == startingHeroRank) ?
       {
         controller: self.gameinstance,
@@ -664,8 +673,39 @@ export default class GameScene extends Phaser.Scene {
     for (var h of this.heroes) {
       h.hourTracker = this.hourTracker;
     }
+  }
+  
+  private mockEndDay() {
+    var self = this;
 
-    this.hourTracker.setInteractive();
+    var style2 = {
+      fontFamily: '"Roboto Condensed"',
+      fontSize: "20px",
+      backgroundColor: '#f00'
+    }
+
+    this.mockText = this.add.text(600, 550, "end day mock", style2).setOrigin(0.5)
+    this.mockText.setInteractive();
+    this.mockText.on('pointerdown', function (pointer) {
+      // Execute end of day actions
+      self.gameinstance.moveMonstersEndDay();
+    }, this);
+
+    // Callbacks
+    function moveMonstersOnMap(updatedMonsters) {
+      console.log("Received updated monsters from server");
+      // console.log(updatedMonsters);
+      self.moveMonstersEndDay(updatedMonsters);
+    }
+
+    self.gameinstance.receiveUpdatedMonsters(moveMonstersOnMap);
+  }
+
+  private moveMonstersEndDay(updatedMonsters) {
+    for (const [mName, newTileID] of Object.entries(updatedMonsters)) {
+      let newTile = this.tiles[newTileID as number];
+      this.monsterNameMap[mName].moveToTile(newTile);
+    }
   }
 
   public update() {
@@ -690,8 +730,6 @@ export default class GameScene extends Phaser.Scene {
     } else if (this.cameraKeys["zoomOut"].isDown && camera.zoom > this.minZoom) {
       camera.zoom -= this.zoomAmount;
     }
-
-    //this.gameinstance.yourTurn()
   }
 
 }
