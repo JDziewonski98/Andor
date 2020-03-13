@@ -34,6 +34,7 @@ export class game {
         this.socket.on("destroyFarmer", callback);
     }
 
+
     public addFarmer(callback){
         this.socket.on("addFarmer", callback);
     }
@@ -148,8 +149,8 @@ export class game {
         this.socket.emit("getHeros", callback)
     }
 
-    public getHerosBorder(callback){
-        this.socket.emit("getHerosBorder", callback)
+    public getNumSheilds(callback){
+        this.socket.emit("getNumSheilds", callback)
     }
 
     public getHeroAttributes(type, callback){

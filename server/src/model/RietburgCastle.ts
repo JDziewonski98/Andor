@@ -3,7 +3,24 @@ export class RietburgCastle {
     private numDefenseSheildsUsed: number
 
     constructor() {
-        this.numDefenseSheilds = 4
-        this.numDefenseSheildsUsed = 0
+        this.numDefenseSheilds = 0;
+        this.numDefenseSheildsUsed = 0;
+    }
+
+    public setSheilds(s: number){
+        this.numDefenseSheilds = s;
+    }
+
+    public getSheilds(){
+        return this.numDefenseSheilds;
+    }
+
+    public attackOnCastle(){
+        this.numDefenseSheilds--;
+        this.numDefenseSheildsUsed++;
+    }
+
+    public incSheilds(){
+        this.numDefenseSheilds++;
     }
 }

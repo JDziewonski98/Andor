@@ -66,13 +66,21 @@ export function game(socket, model: Game, io) {
     let hero = model.getHero(heroId);
     if (hero !== undefined) {
       result = hero.dropFarmer();
+
+
+      //result[1] = dropped region id, result[0] = farmer id
       if (result !== undefined) {
-        console.log(hero)
+        //Farmer dropped on reitburg
+        if(result[1] === 0){
+          model.getCastle().incSheilds();
+          console.log(model.getCastle());
+        }
         io.of("/"+model.getName()).emit("addFarmer", result[1], result[0])
         callback(result[1]);
       }
     }
   });
+
 
   socket.on("merchant", function (callback) {
     let success = false;
@@ -86,6 +94,16 @@ export function game(socket, model: Game, io) {
     if (success) {
       console.log(hero);
       callback();
+    }
+  });
+
+  socket.on("getNumSheilds", function (callback) {
+    let success = false;
+    var numSheilds = model.getCastle().getSheilds();
+
+    if(numSheilds !== undefined){
+      console.log(numSheilds)
+      callback(numSheilds)
     }
   });
 
