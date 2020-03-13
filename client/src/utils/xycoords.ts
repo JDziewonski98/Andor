@@ -128,8 +128,8 @@ export var map = [
         "hasWell": false,
         "nextRegionId": 0,
         "hasMerchant": false,
-        "xcoord": 2088,
-        "ycoord": 1328
+        "xcoord": 2464,
+        "ycoord": 1287
     },
     {
         "id": 12,
@@ -139,8 +139,8 @@ export var map = [
         "hasWell": false,
         "nextRegionId": 11,
         "hasMerchant": false,
-        "xcoord": 2824,
-        "ycoord": 1528
+        "xcoord": 3080,
+        "ycoord": 1581
     },
     {
         "id": 13,
@@ -150,8 +150,8 @@ export var map = [
         "hasWell": false,
         "nextRegionId": 6,
         "hasMerchant": false,
-        "xcoord": 3360,
-        "ycoord": 1952
+        "xcoord": 3740,
+        "ycoord": 1826
     },
     {
         "id": 14,
@@ -183,8 +183,8 @@ export var map = [
         "hasWell": false,
         "nextRegionId": 13,
         "hasMerchant": false,
-        "xcoord": 4344,
-        "ycoord": 2936
+        "xcoord": 4290,
+        "ycoord": 2442
     },
     {
         "id": 17,
@@ -348,8 +348,8 @@ export var map = [
         "hasWell": false,
         "nextRegionId": 23,
         "hasMerchant": false,
-        "xcoord": 1064,
-        "ycoord": 5632
+        "xcoord": 1012,
+        "ycoord": 5357
     },
     {
         "id": 32,
@@ -359,8 +359,8 @@ export var map = [
         "hasWell": false,
         "nextRegionId": 16,
         "hasMerchant": false,
-        "xcoord": 4880,
-        "ycoord": 3008
+        "xcoord": 4983,
+        "ycoord": 2624
     },
     {
         "id": 33,
@@ -436,8 +436,8 @@ export var map = [
         "hasWell": false,
         "nextRegionId": 38,
         "hasMerchant": false,
-        "xcoord": 5400,
-        "ycoord": 4600
+        "xcoord": 5313,
+        "ycoord": 4433
     },
     {
         "id": 40,
@@ -447,8 +447,8 @@ export var map = [
         "hasWell": false,
         "nextRegionId": 39,
         "hasMerchant": false,
-        "xcoord": 3952,
-        "ycoord": 4672
+        "xcoord": 4323,
+        "ycoord": 4664
     },
     {
         "id": 41,
@@ -458,8 +458,8 @@ export var map = [
         "hasWell": false,
         "nextRegionId": 39,
         "hasMerchant": false,
-        "xcoord": 3664,
-        "ycoord": 5024
+        "xcoord": 3696,
+        "ycoord": 5060
     },
     {
         "id": 42,
@@ -469,8 +469,8 @@ export var map = [
         "hasWell": false,
         "nextRegionId": 39,
         "hasMerchant": false,
-        "xcoord": 6064,
-        "ycoord": 3736
+        "xcoord": 5742,
+        "ycoord": 3586
     },
     {
         "id": 43,
@@ -480,8 +480,8 @@ export var map = [
         "hasWell": false,
         "nextRegionId": 39,
         "hasMerchant": false,
-        "xcoord": 6460,
-        "ycoord": 4360
+        "xcoord": 6468,
+        "ycoord": 4114
     },
     {
         "id": 44,
@@ -491,8 +491,8 @@ export var map = [
         "hasWell": false,
         "nextRegionId": 42,
         "hasMerchant": false,
-        "xcoord": 6440,
-        "ycoord": 3432
+        "xcoord": 5929,
+        "ycoord": 3190
     },
     {
         "id": 45,
@@ -513,8 +513,8 @@ export var map = [
         "hasWell": false,
         "nextRegionId": 44,
         "hasMerchant": false,
-        "xcoord": 6416,
-        "ycoord": 2968
+        "xcoord": 6006,
+        "ycoord": 2728
     },
     {
         "id": 47,
@@ -524,8 +524,8 @@ export var map = [
         "hasWell": false,
         "nextRegionId": 46,
         "hasMerchant": false,
-        "xcoord": 6256,
-        "ycoord": 2136
+        "xcoord": 5907,
+        "ycoord": 2057
     },
     {
         "id": 48,
@@ -535,8 +535,8 @@ export var map = [
         "hasWell": false,
         "nextRegionId": 16,
         "hasMerchant": false,
-        "xcoord": 4840,
-        "ycoord": 1864
+        "xcoord": 5335,
+        "ycoord": 1881
     },
     {
         "id": 49,
@@ -546,8 +546,8 @@ export var map = [
         "hasWell": false,
         "nextRegionId": 48,
         "hasMerchant": false,
-        "xcoord": 4290,
-        "ycoord": 1353
+        "xcoord": 3927,
+        "ycoord": 1227
     },
     {
         "id": 50,
@@ -601,8 +601,8 @@ export var map = [
         "hasWell": false,
         "nextRegionId": 47,
         "hasMerchant": false,
-        "xcoord": 6592,
-        "ycoord": 1440
+        "xcoord": 6523,
+        "ycoord": 1199
     },
     {
         "id": 55,
@@ -623,8 +623,8 @@ export var map = [
         "hasWell": false,
         "nextRegionId": 47,
         "hasMerchant": false,
-        "xcoord": 7224,
-        "ycoord": 1912
+        "xcoord": 6985,
+        "ycoord": 2079
     },
     {
         "id": 57,
@@ -700,8 +700,8 @@ export var map = [
         "hasWell": false,
         "nextRegionId": 56,
         "hasMerchant": false,
-        "xcoord": 8264,
-        "ycoord": 2216
+        "xcoord": 7887,
+        "ycoord": 1980
     },
     {
         "id": 64,
@@ -711,8 +711,8 @@ export var map = [
         "hasWell": false,
         "nextRegionId": 45,
         "hasMerchant": false,
-        "xcoord": 7616,
-        "ycoord": 2840
+        "xcoord": 7062,
+        "ycoord": 2640
     },
     {
         "id": 65,
