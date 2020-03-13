@@ -385,54 +385,38 @@ export default class GameScene extends Phaser.Scene {
     }
 
     private addGold() {       
-        var self = this
-
-        //console.log(this)
-
+        var self = this        
         for (var id in self.tiles) {
             console.log(id, this)
 
             if (self.tiles[id].getGold() !== 0) {
                 //create a text Sprite indicating the number of gold. 
-                var goldText = this.add.text(50, 50, "" + self.tiles[id].getGold(), { color: "#fff52e" }).setX(self.tiles[id].x + 20).setY(self.tiles[id].y + 20)
+                var goldText = this.add.text(50, 50, "G", { color: "#fff52e" }).setX(self.tiles[id].x + 20).setY(self.tiles[id].y + 20)
                 //set to interactive
                 goldText.setInteractive() 
-                this.add.existing(goldText);
-                var arg = this
+                this.add.existing(goldText);                
                 
 
                 goldText.on("pointerdown", function (pointer) {   
                     /*console.log("pickup attempt") //is printed
                     console.log(goldText)
                     console.log(self.tiles[id].getGold())*/
-                    self.gameinstance.pickupGold(function () {
-                        if (self.tiles[id].getGold() === 1) {
-                            self.tiles[id].setGold(self.tiles[id].getGold() - 1)
-                            goldText.destroy()
-                        }
-                        else if (self.tiles[id].getGold() > 1) {
+                    self.gameinstance.pickupGold(function () {                        
+                        if (self.tiles[id].getGold() > 0) {
                             console.log(self.tiles[id].getGold())
                             self.tiles[id].setGold(self.tiles[id].getGold() - 1)
-                      
                             //const newString = String()
-                            goldText.setText("" + self.tiles[id].getGold())
-                            
-                            
-
-                        }
+                            //goldText.setText("" + self.tiles[id].getGold()
+                        } 
                     })                                                
                    
                 },this)
 
                 self.gameinstance.updatePickupGold(function (pointer) {
-                    if (self.tiles[id].getGold() === 1) {
-                        self.tiles[id].setGold(self.tiles[id].getGold() - 1)
-                        goldText.destroy()
-                    }
-                    else if (self.tiles[id].getGold() > 1) {
-                        self.tiles[id].setGold(self.tiles[id].getGold() - 1)
-                        goldText.setText(String(self.tiles[id].getGold()))
-                    }
+                    if (self.tiles[id].getGold() > 0) {
+                        console.log(self.tiles[id].getGold())
+                        self.tiles[id].setGold(self.tiles[id].getGold() - 1)                        
+                    } 
                 }, this)
             }
         }

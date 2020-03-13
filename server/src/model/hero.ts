@@ -125,25 +125,25 @@ export class Hero {
         if (this.gold < 1) {
             return false
         }
-        else {            
-            var reg = this.region
+        else {                        
             //decrease the amount you have
-            this.setGold(this.gold - 1)
+            this.gold -= 1
             //increase the amount on tile
-            reg.setGold(reg.getGold() + 1)
+            this.region.setGold(this.region.getGold() + 1)
             
             return true
         }       
     }
 
     public pickupGold() {
-        if (this.region.getGold() > 0) {
+        if (this.region.getGold() <= 0) {
             return false
         }
         else {
-            var reg = this.region
+            //var reg = this.region
             //decrease gold on region
-            reg.setGold(reg.getGold() - 1)
+            this.region.setGold((this.region.getGold() - 1))
+            //reg.setGold(reg.getGold() - 1)
             //increase your gold
             this.setGold(this.gold + 1)
             return true

@@ -23,7 +23,7 @@ export class HeroWindow extends Window {
         this.gold = data.gold
         this.will = data.will
         this.str = data.strength
-        this.farmers = data.farmers
+        this.farmers = data.farmers       
 
     }
 
@@ -32,9 +32,22 @@ export class HeroWindow extends Window {
         var bg = this.add.image(0, 0, 'scrollbg').setOrigin(0.5)
         var weed = this.add.sprite(50, 50, this.icon);
         this.goldtext = this.add.text(25, 100, 'Gold: ' + this.gold, { backgroundColor: 'fx00' })
+        this.goldtext.setInteractive();
+        this.add.existing(this.goldtext);
+
         this.willtext = this.add.text(25, 120, 'Willpower: ' + this.will, { backgroundColor: 'fx00' })
+        this.willtext.setInteractive();
+        this.add.existing(this.willtext)
+
         this.strtext = this.add.text(25, 140, 'Strength: ' + this.str, { backgroundColor: 'fx00' })
+        this.strtext.setInteractive()
+        this.add.existing(this.strtext)
+
         this.farmtext = this.add.text(25, 160, 'Farmers: ' + this.farmers, { backgroundColor: 'fx00' })
+        this.farmtext.setInteractive()
+        this.add.existing(this.farmtext)
+
+
         this.add.text(25, 180, 'Items ....', { backgroundColor: 'fx00' })
         this.add.text(25, 200, 'Special ability text ....', { backgroundColor: 'fx00' })
 
@@ -53,10 +66,7 @@ export class HeroWindow extends Window {
                 this.scene.refresh()
             }
         },this);
-
-
-        this.goldtext.setInteractive()
-        this.add.existing(this.goldtext);
+        
 
         var that = this
         this.goldtext.on('pointerdown', function () {
@@ -109,9 +119,7 @@ export class HeroWindow extends Window {
     private refreshText() {
         console.log('refeshing')
         this.goldtext.setText('Gold: ' + this.gold)
-        this.willtext.setText('Willpower: ' + this.will)
-        this.nametext.setText(this.name)
-        console.log(this.name)
+        this.willtext.setText('Willpower: ' + this.will)               
 
     }
 }
