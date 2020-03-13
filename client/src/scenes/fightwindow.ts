@@ -1,5 +1,7 @@
 import { Window } from "./window";
 import { game } from "../api/game";
+import { WindowManager } from "../utils/WindowManager";
+import {CollabWindow} from "./collabwindow"
 
 export class Fight extends Window {
     private gameinstance: game;
@@ -25,6 +27,7 @@ export class Fight extends Window {
     private monstertypetxt
 
     private monster
+    private gamethis
 
     public constructor(key, data, windowData = { x: 10, y: 10, width: 350, height: 250 }) {
         super(key, windowData);
@@ -35,6 +38,7 @@ export class Fight extends Window {
         this.herostr = data.hero.getStrength()
         this.herowill = data.hero.getWillPower()
         this.monster = data.monster
+        this.gamethis = data.that;
     }
 
     protected initialize() {
@@ -73,6 +77,7 @@ export class Fight extends Window {
                     self.theirroll.setText('Their attack: '  + monsterroll)
                     self.yourroll.setText('Your attack: '  + heroroll)
                     self.notificationtext.setText('OUCH!! You take \n' + (monsterroll - heroroll) + ' damage!')
+                    self.tweentext()
                 }
                 else if (winner == 'hero') {
                     self.theirroll.setText('Their attack: '  + monsterroll)
@@ -81,7 +86,7 @@ export class Fight extends Window {
                     self.tween()
                     self.monsterwill = self.monsterwill - (heroroll - monsterroll)
                     self.monsterwilltxt.setText('Will: ' + self.monsterwill)
-                    if (self.monsterwill < 1) {
+                    if (self.monsterwill < 5) {
                         self.victory()
                     }
                 }
@@ -108,8 +113,50 @@ export class Fight extends Window {
         this.monstericon.clearTint()
     }
 
+    public tweentext() {
+        this.tweens.add({
+            targets: this.notificationtext,
+            alpha: 0.2,
+            duration: 200,
+            ease: 'Power3',
+            yoyo: true
+        });
+    }
+
     private victory() {
+        //TODO add logic to delete this guy from backend and all tile associations
+        var self = this
         this.monster.destroy()
+        this.monstertypetxt.destroy()
+        this.monsterstrtxt.destroy()
+        this.monsterwilltxt.destroy()
+        this.monstergoldtxt.destroy()
+        this.monstericon.destroy()
+        this.notificationtext.destroy()
+        this.fighttext.destroy()
+        this.theirroll.destroy()
+        this.yourroll.destroy()
+        let vic = this.add.text(70,20,"VICTORY!")
+        this.tweens.add({
+            targets: vic,
+            alpha: 0.3,
+            duration: 220,
+            ease: 'Power3',
+            yoyo: true
+        });
+
+        var goldtext = this.add.text(70,50,"Click to loot " + this.monstergold + " gold.").setInteractive()
+        var willtext = this.add.text(70,80,"Click to plunder " + this.monstergold + "  willpower.").setInteractive()
+
+        var victoryscreendata = { }
+        
+        goldtext.on('pointerdown', function(pointer) {
+            WindowManager.create(self.gamethis, self.monstername + 'victory', CollabWindow, {controller:this.gameinstance})
+        }, self.gamethis)
+
+        willtext.on('pointerdown', function(pointer) {
+            
+        })
 
     }
 
