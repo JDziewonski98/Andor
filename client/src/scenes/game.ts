@@ -329,9 +329,18 @@ export default class GameScene extends Phaser.Scene {
 
     farmer_1.on('pointerdown', function (pointer) {
       if (self.hero.tile.id == self.farmers[1].tile.id) {
-        self.gameinstance.pickupFarmer(self.heroes[0], function () {
-          farmer_1.destroy();
-        });
+        self.gameinstance.pickupFarmer(function (tileid) {
+          let pickedFarmer:Farmer = self.tiles[tileid].farmer.pop();
+          for( var i = 0; i < 2; i++){
+            if(self.farmers[i].id === pickedFarmer.id){
+              self.farmers[i].tile = undefined;
+              self.hero.farmers.push(pickedFarmer)
+              break;
+            }
+          }
+          pickedFarmer.destroy()
+          console.log(self.hero.farmers)
+       });
       }
 
     }, this);
