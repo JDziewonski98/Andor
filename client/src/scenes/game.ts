@@ -29,7 +29,8 @@ export default class GameScene extends Phaser.Scene {
   private farmers: Farmer[];
   private hourTracker: HourTracker;
   private gameinstance: game;
-  private monsters: Monster[]
+  private monsters: Monster[];
+  private monsterNameMap: Map<string, Monster>;
   private castle:RietburgCastle;
 
   private mockText;
@@ -50,6 +51,7 @@ export default class GameScene extends Phaser.Scene {
     this.farmers = new Array<Farmer>();
     this.ownHeroType = HeroKind.Dwarf;
     this.monsters = new Array<Monster>();
+    this.monsterNameMap = new Map();
     this.castle = new RietburgCastle();
 
   }
@@ -270,28 +272,40 @@ export default class GameScene extends Phaser.Scene {
     const gortile3: Tile = this.tiles[21];
     const gortile4: Tile = this.tiles[26];
     const gortile5: Tile = this.tiles[48];
-    const skraltile: Tile = this.tiles[19];
+    const skraltile1: Tile = this.tiles[19];
+    const wtile1: Tile = this.tiles[1];
 
     let gor1: Monster = new Monster(this, gortile1, 'gor', 'gor1').setInteractive().setScale(.5);
     let gor2: Monster = new Monster(this, gortile2, 'gor', 'gor2').setInteractive().setScale(.5);
     let gor3: Monster = new Monster(this, gortile3, 'gor', 'gor3').setInteractive().setScale(.5);
     let gor4: Monster = new Monster(this, gortile4, 'gor', 'gor4').setInteractive().setScale(.5);
     let gor5: Monster = new Monster(this, gortile5, 'gor', 'gor5').setInteractive().setScale(.5);
-    let skral: Monster = new Monster(this, skraltile, 'skral', 'skral1').setInteractive().setScale(.5);
+    let skral1: Monster = new Monster(this, skraltile1, 'skral', 'skral1').setInteractive().setScale(.5);
+    let wardrak1: Monster = new Monster(this, wtile1, 'wardrak', 'wardrak1').setInteractive().setScale(.5);
 
     this.monsters.push(gor1);
     this.monsters.push(gor2);
     this.monsters.push(gor3);
     this.monsters.push(gor4);
     this.monsters.push(gor5);
-    this.monsters.push(skral);
+    this.monsters.push(skral1);
+    this.monsters.push(wardrak1);
+
+    this.monsterNameMap[gor1.name] = gor1;
+    this.monsterNameMap[gor2.name] = gor2;
+    this.monsterNameMap[gor3.name] = gor3;
+    this.monsterNameMap[gor4.name] = gor4;
+    this.monsterNameMap[gor5.name] = gor5;
+    this.monsterNameMap[skral1.name] = skral1;
+    this.monsterNameMap[wardrak1.name] = wardrak1;
 
     gortile1.monster = gor1
     gortile2.monster = gor2
     gortile3.monster = gor3
     gortile4.monster = gor4
     gortile5.monster = gor5
-    skraltile.monster = skral
+    skraltile1.monster = skral1
+    wtile1.monster = wardrak1
 
     this.monsters.forEach(monster =>
       this.add.existing(monster)
@@ -516,7 +530,7 @@ export default class GameScene extends Phaser.Scene {
     private addGold() {       
         var self = this        
         for (var id in self.tiles) {
-            console.log(id, this)
+            // console.log(id, this)
 
             if (self.tiles[id].getGold() !== 0) {
                 //create a text Sprite indicating the number of gold. 
@@ -628,58 +642,24 @@ export default class GameScene extends Phaser.Scene {
     this.mockText.on('pointerdown', function (pointer) {
       // Execute end of day actions
       self.gameinstance.moveMonstersEndDay();
-
-      // Updating tiles of all the monsters
-      // all the current monsters should be pushed into the this.monsters array
-      // monsters are sprites so we add them to the scene
-      // monsters have an associated tile which determine's their x, y
-      // monsters have a name which is unique (i.e. gor1, gor2, ...) so
-      // it isn't just used to indicate their type
-      // Might need to add a monster type enum
     }, this);
 
     // Callbacks
     function moveMonstersOnMap(updatedMonsters) {
       console.log("Received updated monsters from server");
-      console.log(updatedMonsters);
+      // console.log(updatedMonsters);
+      self.moveMonstersEndDay(updatedMonsters);
     }
 
     self.gameinstance.receiveUpdatedMonsters(moveMonstersOnMap);
   }
 
-  // Creating the hour tracker
-  // private hourTrackerSetup() {
-  //   //x, y coorindates
-  //   var htx = htX;
-  //   var hty = htY;
-  //   // Hero icons
-  //   var mageHtIcon = this.add.sprite(htx, hty, 'magemale').setDisplaySize(40, 40);
-  //   var dwarfHtIcon = this.add.sprite(htx, hty, 'dwarfmale').setDisplaySize(40, 40);
-  //   var archerHtIcon = this.add.sprite(htx, hty, 'archermale').setDisplaySize(40, 40);
-  //   var warriorHtIcon = this.add.sprite(htx, hty, 'warriormale').setDisplaySize(40, 40);
-
-  //   this.hourTracker = new HourTracker(this, htx, hty, [mageHtIcon, dwarfHtIcon, archerHtIcon, warriorHtIcon]);
-
-  //   // Hero ids are hardcoded for now, need to be linked to game setup
-  //   mageHtIcon.x = this.hourTracker.heroCoords[0][0];
-  //   mageHtIcon.y = this.hourTracker.heroCoords[0][1];
-  //   dwarfHtIcon.x = this.hourTracker.heroCoords[1][0];
-  //   dwarfHtIcon.y = this.hourTracker.heroCoords[1][1];
-  //   archerHtIcon.x = this.hourTracker.heroCoords[2][0];
-  //   archerHtIcon.y = this.hourTracker.heroCoords[2][1];
-  //   warriorHtIcon.x = this.hourTracker.heroCoords[3][0];
-  //   warriorHtIcon.y = this.hourTracker.heroCoords[3][1];
-
-  //   // we're not actually adding the hourTracker, we're adding it's internal sprite
-  //   this.hourTracker.depth = 5;
-  //   this.hourTracker.depth = 0;
-  //   for (var h of this.heroes) {
-  //     h.hourTracker = this.hourTracker;
-  //   }
-
-  //   this.hourTracker.setInteractive();
-  // }
-
+  private moveMonstersEndDay(updatedMonsters) {
+    for (const [mName, newTileID] of Object.entries(updatedMonsters)) {
+      let newTile = this.tiles[newTileID as number];
+      this.monsterNameMap[mName].moveToTile(newTile);
+    }
+  }
 
   public update() {
     var camera = this.cameras.main;
@@ -703,8 +683,6 @@ export default class GameScene extends Phaser.Scene {
     } else if (this.cameraKeys["zoomOut"].isDown && camera.zoom > this.minZoom) {
       camera.zoom -= this.zoomAmount;
     }
-
-    //this.gameinstance.yourTurn()
   }
 
 }

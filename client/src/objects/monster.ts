@@ -24,4 +24,19 @@ export class Monster extends Phaser.GameObjects.Sprite {
         this.destroy();
     }
 
+    public moveToTile(newTile: Tile) {
+        // Update old and new tiles
+        var oldTile = this.tile;
+        oldTile.monster = null;
+        newTile.monster = this;
+
+        if (newTile.getID() == 0) {
+            this.destroyMonster();
+        }
+        // Update monster tile and x,y
+        this.tile = newTile;
+        this.x = this.tile.x - 40;
+        this.y = this.tile.y;
+    }
+
 }
