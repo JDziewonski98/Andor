@@ -2,7 +2,7 @@ import * as Phaser from 'phaser';
 import { Tile } from './tile';
 import { HourTracker } from './hourTracker';
 import { Farmer } from './farmer';
-import { HeroKind } from './HeroKind';
+import { HeroKind } from './herokind';
 
 export class Hero extends Phaser.GameObjects.Sprite {
     public tile: Tile;
@@ -81,7 +81,7 @@ export class Hero extends Phaser.GameObjects.Sprite {
         return this.heroKind;
     }
 
-    public dropGold(amount) {
+    /*public dropGold(amount) {
         if (this.gold < amount) {
             return false
         }
@@ -95,7 +95,14 @@ export class Hero extends Phaser.GameObjects.Sprite {
 
             return true
         }
-    }
+    }*/
+
+    /*public pickupGold() {
+        if (this.tile.getGold() === 0) {
+            return false
+        }
+        this.tile.setGold(this.tile.getGold() - 1)
+    }*/
 
     public setwillPower(willValToChange) {
         this.willPower += willValToChange;

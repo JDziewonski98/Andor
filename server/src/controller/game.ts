@@ -1,5 +1,9 @@
+
+//server controller
+
 import { Game, HeroKind, Region, Hero, Monster } from '../model';
-import { callbackify } from 'util';
+//import { callbackify } from 'util';
+
 
 export function game(socket, model: Game, io) {
 
@@ -82,7 +86,7 @@ export function game(socket, model: Game, io) {
 
   socket.on("useWell", function (callback) {
     let success_well = false;
-
+    //console.log("api game.ts")
     let heroId = socket.conn.id;
     let hero = model.getHero(heroId);
     if (hero !== undefined) {
@@ -113,6 +117,24 @@ export function game(socket, model: Game, io) {
             callback()
         }
     });   
+
+    socket.on("pickupGold", function (callback) {
+        console.log("picking up gold on server") //is printed
+        let success_pickupGold = false;
+        let heroId = socket.conn.id;
+        let hero = model.getHero(heroId);
+
+        if (hero !== undefined) {
+            success_pickupGold = hero.pickupGold();
+        }
+
+        if (success_pickupGold) {
+            console.log("pickupGold successful") //is printed
+            socket.broadcast.emit("updatePickupGold");
+            callback()
+
+        }
+    });
 
   socket.on('bind hero', function (heroType, callback) {
     let success = false;
@@ -245,7 +267,7 @@ export function game(socket, model: Game, io) {
   // Collaborative decision making
 
   // Submitting a decision
-  socket.on('collabDecisionSubmit', function(resAllocated) {
+  socket.on('collabDecisionSubmit', function(resAllocated, resNames) {
     console.log(resAllocated);
     // Check that numAccepts equals total num of players-1
     if (model.numAccepts != model.getNumOfDesiredPlayers() - 1) {
@@ -260,10 +282,16 @@ export function game(socket, model: Game, io) {
       // if the hero was involved in the collab decision, update their resources
       if (resAllocated[heroTypeString]) {
         let currHero = hero;
-        // TODO collab: change hardcoding of resource index
-        currHero?.updateGold(resAllocated[heroTypeString][0]);
-        currHero?.setWineskin(resAllocated[heroTypeString][1]>0);
-        console.log("Updated", heroTypeString, "gold:", currHero?.getGold(), "wineskin:", currHero?.getWineskin())
+        // Iterate through resNames and map index to amount specified in resAllocated
+        for (let i=0; i<resNames.length; i++) {
+          if (resNames[i] == "gold") {
+            currHero?.updateGold(resAllocated[heroTypeString][i]);
+          } 
+          else if (resNames[i] == "wineskin") {
+            currHero?.setWineskin(resAllocated[heroTypeString][i]>0);
+          }
+        }
+        // console.log("Updated", heroTypeString, "gold:", currHero?.getGold(), "wineskin:", currHero?.getWineskin())
       }
     }
     // Reset decision related state

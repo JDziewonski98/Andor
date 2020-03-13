@@ -34,7 +34,7 @@ export default class BoardOverlay extends Phaser.Scene {
             fontSize: "20px",
             backgroundColor: '#f00'
         }
-
+        
         this.gameinstance.getHeros((heros) =>{
             heros.forEach(type => {
                 if (type === "mage") {
@@ -99,7 +99,7 @@ export default class BoardOverlay extends Phaser.Scene {
                                 WindowManager.destroy(this, 'dwarfCard');
                             } else {
                                 console.log(self.gameinstance)
-                                WindowManager.create(this, 'dwarfCard', HeroWindow,{controller: self.gameinstance, icon: 'weed', ...herodata});
+                                WindowManager.create(this, 'dwarfCard', HeroWindow, {controller: self.gameinstance, icon: 'weed', ...herodata});
                                 let window = WindowManager.get(this, 'dwarfCard')
                                 window.setName('Dwarf')
                             }

@@ -15,7 +15,7 @@ import {
 } from '../constants'
 import { MerchantWindow } from './merchantwindow';
 import { Monster } from '../objects/monster';
-import { Fight } from './fightwindow';
+import { Fight} from './fightwindow';
 import { HeroKind } from '../objects/HeroKind';
 
 
@@ -48,7 +48,6 @@ export default class GameScene extends Phaser.Scene {
     this.farmers = new Array<Farmer>();
     this.ownHeroType = HeroKind.Dwarf;
     this.monsters = new Array<Monster>();
-
   }
 
   public init(data) {
@@ -111,11 +110,15 @@ export default class GameScene extends Phaser.Scene {
     this.addMonsters()
 
 
-    this.addWell(209, 2244, wellTile1, "well1")
-    this.addWell(1353, 4873, wellTile2, "well2")
-    this.addWell(7073, 3333, wellTile3, "well3")
-    this.addWell(5962, 770, wellTile4, "well4")
 
+      // x and y coordinates
+      this.addWell(209,2244, wellTile1, "well1")
+      this.addWell(1353,4873, wellTile2, "well2")
+      this.addWell(7073, 3333, wellTile3, "well3")
+      this.addWell(5962, 770, wellTile4, "well4")
+
+      
+      this.addGold()
 
     // self.startingCollabDecisionSetup();
   }
@@ -134,7 +137,8 @@ export default class GameScene extends Phaser.Scene {
       zoomIn: 'plus',
       zoomOut: 'minus'
     });
-  }
+  }        
+    
 
   private setRegions() {
     // Note that regions 73-79 and 83 are unused, but created anyways to preserve direct
@@ -165,7 +169,6 @@ export default class GameScene extends Phaser.Scene {
         }
       })
     }
-
 
   }
 
@@ -328,9 +331,18 @@ export default class GameScene extends Phaser.Scene {
 
     farmer_1.on('pointerdown', function (pointer) {
       if (self.hero.tile.id == self.farmers[1].tile.id) {
-        self.gameinstance.pickupFarmer(self.heroes[0], function () {
-          farmer_1.destroy();
-        });
+        self.gameinstance.pickupFarmer(function (tileid) {
+          let pickedFarmer:Farmer = self.tiles[tileid].farmer.pop();
+          for( var i = 0; i < 2; i++){
+            if(self.farmers[i].id === pickedFarmer.id){
+              self.farmers[i].tile = undefined;
+              self.hero.farmers.push(pickedFarmer)
+              break;
+            }
+          }
+          pickedFarmer.destroy()
+          console.log(self.hero.farmers)
+       });
       }
 
     }, this);
@@ -395,42 +407,101 @@ export default class GameScene extends Phaser.Scene {
   }
 
 
+
   private addWell(x, y, tileNumber: number, wellName: string) {
     const tile: Tile = this.tiles[tileNumber]
     const well = this.add.image(x * scaleFactor + borderWidth, y * scaleFactor + borderWidth, "well").setDisplaySize(50, 40)
     well.name = wellName;
 
 
-    well.setInteractive()
-    var self = this
+        well.setInteractive()
+        this.add.existing(well);
+        var self = this
+
+        well.on("pointerdown", function (pointer) {
+            //console.log(tile.hero.getWillPower())
+            self.gameinstance.useWell(function () {
+
+                well.setTint(0x404040)
+
+                //assumes tile has only 1 hero NEED TO FIX
+                if (tile.hero.getWillPower() <= 17) {
+                    tile.hero.setwillPower(3)
+                }
+                else if (tile.hero.getWillPower() <= 20 && tile.hero.getWillPower() > 17) {
+                    tile.hero.setwillPower(20 - tile.hero.getWillPower())
+                }
+            });
+        }, this);
+
+        this.gameinstance.updateWell(function (pointer) {
+            self[wellName].setTint(0x404040)
+            if (tile.hero.getWillPower() <= 17) {
+                tile.hero.setwillPower(3)
+            }
+            else if (tile.hero.getWillPower() <= 20 && tile.hero.getWillPower() > 17) {
+                tile.hero.setwillPower(20 - tile.hero.getWillPower())
+            }
+        }, this);
+
+        well.setInteractive()
+        var self = this
 
 
-    well.on("pointerdown", function () {
-      //console.log(tile.hero.getWillPower())
-      self.gameinstance.useWell(function () {
-        self[wellName].setTint(0x404040)
+        well.on("pointerdown", function () {
+            //console.log(tile.hero.getWillPower())
+            self.gameinstance.useWell(function () {
+                self[wellName].setTint(0x404040)
 
-        if (tile.hero.getWillPower() <= 17) {
-          tile.hero.setwillPower(3)
+                if (tile.hero.getWillPower() <= 17) {
+                    tile.hero.setwillPower(3)
+                }
+                else if (tile.hero.getWillPower() <= 20 && tile.hero.getWillPower() > 17) {
+                    tile.hero.setwillPower(20 - tile.hero.getWillPower())
+                }
+            })
+        })
+    }
+
+    private addGold() {       
+        var self = this        
+        for (var id in self.tiles) {
+            console.log(id, this)
+
+            if (self.tiles[id].getGold() !== 0) {
+                //create a text Sprite indicating the number of gold. 
+                var goldText = this.add.text(50, 50, "G", { color: "#fff52e" }).setX(self.tiles[id].x + 20).setY(self.tiles[id].y + 20)
+                //set to interactive
+                goldText.setInteractive() 
+                this.add.existing(goldText);                
+                
+
+                goldText.on("pointerdown", function (pointer) {   
+                    /*console.log("pickup attempt") //is printed
+                    console.log(goldText)
+                    console.log(self.tiles[id].getGold())*/
+                    self.gameinstance.pickupGold(function () {                        
+                        if (self.tiles[id].getGold() > 0) {
+                            console.log(self.tiles[id].getGold())
+                            self.tiles[id].setGold(self.tiles[id].getGold() - 1)
+                            //const newString = String()
+                            //goldText.setText("" + self.tiles[id].getGold()
+                        } 
+                    })                                                
+                   
+                },this)
+
+                self.gameinstance.updatePickupGold(function (pointer) {
+                    if (self.tiles[id].getGold() > 0) {
+                        console.log(self.tiles[id].getGold())
+                        self.tiles[id].setGold(self.tiles[id].getGold() - 1)                        
+                    } 
+                }, this)
+            }
         }
-        else if (tile.hero.getWillPower() <= 20 && tile.hero.getWillPower() > 17) {
-          tile.hero.setwillPower(20 - tile.hero.getWillPower())
-        }
+    }
 
 
-      });
-    });
-
-    this.gameinstance.updateWell(function () {
-      self[wellName].setTint(0x404040)
-      if (tile.hero.getWillPower() <= 17) {
-        tile.hero.setwillPower(3)
-      }
-      else if (tile.hero.getWillPower() <= 20 && tile.hero.getWillPower() > 17) {
-        tile.hero.setwillPower(20 - tile.hero.getWillPower())
-      }
-    });
-  }
 
   private startingCollabDecisionSetup() {
     var self = this;
@@ -529,7 +600,6 @@ export default class GameScene extends Phaser.Scene {
 
     this.hourTracker.setInteractive();
   }
-
 
   public update() {
     var camera = this.cameras.main;
