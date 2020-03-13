@@ -1,5 +1,6 @@
 import * as Phaser from 'phaser';
 import { Tile } from './tile';
+import { mOffset } from '../constants'
 //import { HourTracker } from './hourTracker';
 // import { boardScalingFactor } from '../scenes/game'
 
@@ -15,7 +16,7 @@ export class Monster extends Phaser.GameObjects.Sprite {
     constructor(scene, tile: Tile, texture:string, name: string) {
         super(scene, tile.x, tile.y, texture);
         this.name = name;
-        this.x = tile.x - 40;
+        this.x = tile.x + mOffset;
         this.y = tile.y;
         this.tile = tile;
     }
@@ -35,7 +36,7 @@ export class Monster extends Phaser.GameObjects.Sprite {
         }
         // Update monster tile and x,y
         this.tile = newTile;
-        this.x = this.tile.x - 40;
+        this.x = this.tile.x + mOffset;
         this.y = this.tile.y;
     }
 

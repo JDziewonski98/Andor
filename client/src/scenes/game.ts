@@ -11,7 +11,8 @@ import {
   mageTile, archerTile, warriorTile, dwarfTile,
   reducedWidth, reducedHeight,
   collabTextHeight, collabColWidth, collabRowHeight,
-  wellTile1, wellTile2, wellTile3, wellTile4
+  wellTile1, wellTile2, wellTile3, wellTile4,
+  mOffset
 } from '../constants'
 import { MerchantWindow } from './merchantwindow';
 import { Monster } from '../objects/monster';
@@ -113,7 +114,7 @@ export default class GameScene extends Phaser.Scene {
       });
 
       // Need to wait for heroes to be created before creating collab decision
-      self.startingCollabDecisionSetup();
+      // self.startingCollabDecisionSetup();
       this.hourTrackerSetup();
     })
     console.log(numPlayer);
@@ -704,8 +705,21 @@ export default class GameScene extends Phaser.Scene {
   private moveMonstersEndDay(updatedMonsters) {
     for (const [mName, newTileID] of Object.entries(updatedMonsters)) {
       let newTile = this.tiles[newTileID as number];
-      this.monsterNameMap[mName].moveToTile(newTile);
+      this.monsterMoveTween(this.monsterNameMap[mName], newTile, newTile.x, newTile.y);
     }
+  }
+
+  public monsterMoveTween(monster: Monster, newTile: Tile, newX, newY) {
+    this.tweens.add({
+      targets: monster,
+      x: newX + mOffset,
+      y: newY,
+      duration: 1000,
+      ease: 'Power2',
+      completeDelay: 1000,
+      onComplete: function() {monster.moveToTile(newTile)}
+    });
+    
   }
 
   public update() {

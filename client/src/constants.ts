@@ -17,6 +17,9 @@ export var htX = 4600*scaleFactor+borderWidth;
 export var htY = 250*scaleFactor+borderWidth;
 export var htShift = 415*scaleFactor;
 
+// Monster position offset
+export var mOffset = -40;
+
 // SETUP
 export const dwarfTile = 7;
 export const archerTile = 25;
@@ -28,8 +31,8 @@ export const collabTextHeight = 12;
 export const collabRowHeight = 50;
 export const collabColWidth = 70;
 
+// Well tile IDs
 export const wellTile1 = 5;
 export const wellTile2 = 35;
 export const wellTile3 = 45;
 export const wellTile4 = 55;
-
