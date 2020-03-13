@@ -151,21 +151,33 @@ export class Hero {
         //what does this do?
     }
 
-    public dropGold() {
-        
-
+    public dropGold() {        
         if (this.gold < 1) {
             return false
         }
-        else {            
-            var reg = this.region
+        else {                        
             //decrease the amount you have
-            this.setGold(this.gold - 1)
+            this.gold -= 1
             //increase the amount on tile
-            reg.setGold(reg.getGold() + 1)
+            this.region.setGold(this.region.getGold() + 1)
             
             return true
         }       
+    }
+
+    public pickupGold() {
+        if (this.region.getGold() <= 0) {
+            return false
+        }
+        else {
+            //var reg = this.region
+            //decrease gold on region
+            this.region.setGold((this.region.getGold() - 1))
+            //reg.setGold(reg.getGold() - 1)
+            //increase your gold
+            this.setGold(this.gold + 1)
+            return true
+        }
     }
 
     public setWill(willValueToChange: number) {
@@ -173,17 +185,21 @@ export class Hero {
     }
 
     public useWell() {
+        //console.log("server.hero.useWell")
+        //console.log(this.will)
         var reg = this.region
         if (reg.getHaswell() && !reg.getWellUsed()) {
             //increase 3 will power
             if (this.will <= 17) {
                 this.setWill(3)
+                //console.log(this.will)
             }
             else if (this.will <= 20 && this.will > 17) {
                 this.will = 20
             }
             //set the boolean of whether a well was used
             reg.setWellUsed(true)
+            //console.log(this.region.getWellUsed())
 
             //inform front-end that a well has been used
             return true
