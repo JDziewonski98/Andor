@@ -303,7 +303,7 @@ export class Game {
         this.moveMonsters();
     }
 
-    private moveMonsters() {
+    public moveMonsters() {
         var self = this;
         // Move monsters in phases based on MonsterKind: Gors, Skrals, Wardraks
         // Also need to sort the monsters based on tileID

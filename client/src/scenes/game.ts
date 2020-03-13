@@ -123,17 +123,17 @@ export default class GameScene extends Phaser.Scene {
 
 
 
-      // x and y coordinates
-      this.addWell(209,2244, wellTile1, "well1")
-      this.addWell(1353,4873, wellTile2, "well2")
-      this.addWell(7073, 3333, wellTile3, "well3")
-      this.addWell(5962, 770, wellTile4, "well4")
+    // x and y coordinates
+    this.addWell(209,2244, wellTile1, "well1")
+    this.addWell(1353,4873, wellTile2, "well2")
+    this.addWell(7073, 3333, wellTile3, "well3")
+    this.addWell(5962, 770, wellTile4, "well4")
 
-      this.gameinstance.yourTurn()
+    this.gameinstance.yourTurn()
 
-      this.addGold()
+    this.addGold()
 
-    // self.startingCollabDecisionSetup();
+    this.mockEndDay();
   }
 
   private cameraSetup() {
@@ -627,7 +627,7 @@ export default class GameScene extends Phaser.Scene {
     this.mockText.setInteractive();
     this.mockText.on('pointerdown', function (pointer) {
       // Execute end of day actions
-      
+      self.gameinstance.moveMonstersEndDay();
 
       // Updating tiles of all the monsters
       // all the current monsters should be pushed into the this.monsters array
@@ -637,6 +637,14 @@ export default class GameScene extends Phaser.Scene {
       // it isn't just used to indicate their type
       // Might need to add a monster type enum
     }, this);
+
+    // Callbacks
+    function moveMonstersOnMap(updatedMonsters) {
+      console.log("Received updated monsters from server");
+      console.log(updatedMonsters);
+    }
+
+    self.gameinstance.receiveUpdatedMonsters(moveMonstersOnMap);
   }
 
   // Creating the hour tracker
