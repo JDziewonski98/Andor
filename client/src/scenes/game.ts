@@ -627,6 +627,7 @@ export default class GameScene extends Phaser.Scene {
     this.mockText.setInteractive();
     this.mockText.on('pointerdown', function (pointer) {
       // Execute end of day actions
+      
 
       // Updating tiles of all the monsters
       // all the current monsters should be pushed into the this.monsters array
