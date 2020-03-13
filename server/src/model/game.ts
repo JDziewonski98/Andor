@@ -34,7 +34,7 @@ export class Game {
         this.name = name;
         this.numOfDesiredPlayers = numOfDesiredPlayers;
         this.difficulty = difficulty;
-        this.castle = new RietburgCastle();
+        this.castle = new RietburgCastle()
         this.chatlog = [];
         this.players = new Set<Player>();
         this.heroList = new Map<string, Hero>();
@@ -43,10 +43,25 @@ export class Game {
         this.monsters = new Map<string, Monster>();
         this.setRegions();
         this.setFarmers();
-        this.setMonsters()
+        this.setMonsters();
+        this.setSheilds();
+        console.log(this.castle.getSheilds(), "sheilds");
         this.readyplayers = 0;
 
         this.numAccepts = 0;
+    }
+
+    private setSheilds(){
+        var numPlayers = this.numOfDesiredPlayers;
+    
+        if(numPlayers === 2){
+            console.log(numPlayers, "inside")
+            this.castle.setSheilds(3);
+        }else if(numPlayers === 3){
+            this.castle.setSheilds(2);
+        }else if(numPlayers === 4){
+            this.castle.setSheilds(1);
+        }
     }
 
     private setFarmers() {
@@ -129,6 +144,10 @@ export class Game {
         this.availableHeros = this.availableHeros.filter(h => h != heroType);
         return true;
 
+    }
+
+    public getCastle(){
+        return this.castle;
     }
 
     public getHeros() {

@@ -61,8 +61,10 @@ export class HeroWindow extends Window {
         this.farmtext.setInteractive()
         this.farmtext.on('pointerdown', function (pointer) {
             self.gameinstance.dropFarmer(function (tilenum) {
-                self.farmers--;
-                self.farmtext = self.add.text(25, 160, 'Farmers: ' + self.farmers, { backgroundColor: 'fx00' })
+                if(self.farmers > 0){
+                    self.farmers--;
+                    self.farmtext = self.add.text(25, 160, 'Farmers: ' + self.farmers, { backgroundColor: 'fx00' })
+                }
             })
 
         }, this);
@@ -120,8 +122,6 @@ export class HeroWindow extends Window {
         console.log('refeshing')
         this.goldtext.setText('Gold: ' + this.gold)
         this.willtext.setText('Willpower: ' + this.will)
-
-        this.nametext.setText(this.name)
         console.log(this.name)
 
     }

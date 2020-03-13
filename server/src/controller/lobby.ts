@@ -4,6 +4,7 @@ import { game } from '.';
 
 export function lobby(socket, model: Lobby, io) {
   socket.on("createGame", function (name, numPlayers, difficulty) {
+    numPlayers = +numPlayers
     const d = difficulty === "Easy" ? GameDifficulty.Easy : GameDifficulty.Hard;
     let g = new Game(name, numPlayers, d);
     model.createGame(g);
