@@ -50,10 +50,12 @@ export class CollabWindow extends Window {
         var self = this
 
         // Initialize list of resource names
-        Array.from(this.resources.keys()).forEach( key => {
-            this.resourceNames.push(key);
-        });
-        console.log(this.resourceNames);
+        if (this.resources) {
+            Array.from(this.resources.keys()).forEach( key => {
+                this.resourceNames.push(key);
+            });
+            console.log(this.resourceNames);
+        }
 
         var bg = this.add.image(0, 0, 'scrollbg').setOrigin(0.5);
         this.populateWindow();

@@ -1,5 +1,9 @@
+
+//server controller
+
 import { Game, HeroKind, Region, Hero, Monster } from '../model';
-import { callbackify } from 'util';
+//import { callbackify } from 'util';
+
 
 export function game(socket, model: Game, io) {
 
@@ -99,7 +103,7 @@ export function game(socket, model: Game, io) {
 
   socket.on("useWell", function (callback) {
     let success_well = false;
-
+    //console.log("api game.ts")
     let heroId = socket.conn.id;
     let hero = model.getHero(heroId);
     if (hero !== undefined) {
@@ -130,6 +134,24 @@ export function game(socket, model: Game, io) {
             callback()
         }
     });   
+
+    socket.on("pickupGold", function (callback) {
+        console.log("picking up gold on server") //is printed
+        let success_pickupGold = false;
+        let heroId = socket.conn.id;
+        let hero = model.getHero(heroId);
+
+        if (hero !== undefined) {
+            success_pickupGold = hero.pickupGold();
+        }
+
+        if (success_pickupGold) {
+            console.log("pickupGold successful") //is printed
+            socket.broadcast.emit("updatePickupGold");
+            callback()
+
+        }
+    });
 
   socket.on('bind hero', function (heroType, callback) {
     let success = false;
