@@ -346,6 +346,12 @@ export class Game {
                 if (nextRegID == 0) {
                     // Monster is going to enter the castle
                     // Decrement shields, remove monster, evaluate end of game condition
+                    self.castle.attackOnCastle();
+                    self.regions[startReg].setMonster(null);
+                    self.monsters.delete(m.name);
+                    if(self.castle.getSheilds() == 0){
+                        //ENDGAME
+                    }
                     break;
                 }
             } while (self.regions[nextRegID].getMonster());

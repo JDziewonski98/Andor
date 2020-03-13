@@ -77,6 +77,7 @@ export class Monster {
         this.tileID = num;
     }
 
+
     public rollDice() {
         var attack = 0;
 
