@@ -509,6 +509,11 @@ export default class GameScene extends Phaser.Scene {
     } else if (this.cameraKeys["zoomOut"].isDown && camera.zoom > this.minZoom) {
       camera.zoom -= this.zoomAmount;
     }
+
+    this.gameinstance.yourTurn(function(){
+        this.myTurn = true
+        console.log("yooooink")
+    })
   }
 
 }

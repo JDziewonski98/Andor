@@ -82,11 +82,22 @@ export class game {
         this.socket.on("updateMoveRequest", callback);
     }
 
-    public endTurn(callback){
+    public endTurn(){
         if(this.myTurn){
-            this.socket.emit('endTurn', callback);
+            this.myTurn = false;
+            this.socket.emit('endTurn');
         }
     }
+    public yourTurn(callback){
+        var self = this
+        this.socket.on("yourTurn", function(){
+            self.myTurn = true
+        })
+        console.log("f00k")
+        
+        
+    }
+
     public  removeListener(object){
         console.log('removing ', object)
         this.socket.emit('removeListener',object)
@@ -150,6 +161,9 @@ export class game {
 
     public rollMonsterDice(monstername, callback) {
         this.socket.emit('monsterRoll', monstername, callback)
+    }
+    public setMyTurn(b:boolean){
+        this.myTurn = b;
     }
 }
 

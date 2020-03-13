@@ -34,6 +34,20 @@ export function game(socket, model: Game) {
     callback(heroType, tile);
   })
 
+  socket.on("endTurn", function(){
+    console.log("endTurn")
+    var nextPlayer = model.nextPlayer()
+    console.log(nextPlayer)
+    //console.log(model.getHeros()[nextPlayer])
+    model.setCurrPlayersTurn(nextPlayer)
+    socket.to(nextPlayer).emit("yourTurn")
+    console.log("ya")
+  })
+
+  socket.on("yourTurn", function(){
+    console.log("Fuck me")
+  })
+
   socket.on("pickupFarmer", function (callback) {
     let success = false;
     let heroId = socket.conn.id;

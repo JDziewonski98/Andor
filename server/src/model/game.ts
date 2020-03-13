@@ -24,7 +24,7 @@ export class Game {
     private regions: Array<Region>;
     private farmers: Array<Farmer>;
     private monsters:Map<string, Monster>;
-    private currHerosTurn: HeroKind;
+    private currPlayersTurn: string;
     // collab decision related state
     public numAccepts: number;
 
@@ -41,7 +41,7 @@ export class Game {
         this.regions = new Array<Region>();
         this.farmers = new Array<Farmer>();
         this.monsters = new Map<string, Monster>();
-        this.currHerosTurn = HeroKind.Dwarf
+        this.currPlayersTurn = ""
         this.setRegions();
         this.setFarmers();
         this.setMonsters()
@@ -61,6 +61,25 @@ export class Game {
         }
         console.log(ID)
         return this.heroList[ID].getKind()
+    }
+
+    public nextPlayer(){
+        console.log("nextPlayer")
+        var minRank = Number.MAX_VALUE;
+        var socketID = "none";
+        //console.log(this.heroList)
+        this.heroList.forEach((hero,ID) => {
+            //console.log(ID)
+            //console.log(ID, hero);
+            if(ID != this.currPlayersTurn){
+                if(hero.getRank() < minRank){
+                    minRank = hero.getRank()
+                    socketID = ID
+                }
+            }
+        })
+        //console.log(minRank)
+        return socketID;
     }
 
     private setFarmers() {
@@ -184,7 +203,10 @@ export class Game {
     public removeFarmer(f: Farmer) {
         //TO BE IMPLEMENTED
     }
-
+    public setCurrPlayersTurn(s:string){
+        this.currPlayersTurn = s;
+        console.log("Set currPlayersTurn to: ", s)
+    }
     public moveHeroTo(hero, tile) {
         console.log("Passed method call")
         hero.moveTo(tile)
