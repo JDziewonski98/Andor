@@ -72,6 +72,7 @@ export class Hero extends Phaser.GameObjects.Sprite {
                 this.y = newTile.y + 30
         }
         this.tile = newTile
+        this.hourTracker.incHour(this.heroKind)
     }
 
     public resetHours() {
