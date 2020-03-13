@@ -114,7 +114,7 @@ export default class GameScene extends Phaser.Scene {
       });
 
       // Need to wait for heroes to be created before creating collab decision
-      // self.startingCollabDecisionSetup();
+      self.startingCollabDecisionSetup();
       this.hourTrackerSetup();
     })
     console.log(numPlayer);
