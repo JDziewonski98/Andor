@@ -223,9 +223,6 @@ export class Game {
         }
     }
 
-
-
-
     private incrementNarratorPosition() {
         //TO BE IMPLEMENTED      
     }
@@ -240,5 +237,63 @@ export class Game {
 
     public getMonsters() {
         return this.monsters
+    }
+
+    public endOfDay() {
+        this.moveMonsters();
+    }
+
+    private moveMonsters() {
+        var self = this;
+        // Move monsters in phases based on MonsterKind: Gors, Skrals, Wardraks
+        // Also need to sort the monsters based on tileID
+        var gors: Monster[] = [];
+        var skrals: Monster[] = [];
+        var wardraks: Monster[] = [];
+
+        for(let m of Array.from(this.monsters.values())) {
+            switch (m.getType()) {
+                case MonsterKind.Gor:
+                    gors.push(m);
+                    break;
+                case MonsterKind.Skral:
+                    gors.push(m);
+                    break;
+                case MonsterKind.Wardrak:
+                    gors.push(m);
+                    break;
+                default: // Fortress does not move
+                    break;
+            }
+        }
+
+        // Inline custom sort of monsters on tileID
+        gors.sort((a,b) => (a.getTileID() - b.getTileID()));
+        skrals.sort((a,b) => (a.getTileID() - b.getTileID()));
+        wardraks.sort((a,b) => (a.getTileID() - b.getTileID()));
+
+        // Move each monster based on tile and type ordering
+        var sortedMonsters = gors.concat(skrals).concat(wardraks);
+        for (let m of sortedMonsters) {
+            var startReg = m.getTileID();
+            var nextRegID = startReg;
+            // Algo to find the next available region for the monster to land on
+            // Also need to handle the monster advancing all the way into the castle
+            // if this happens then we can update shields and check for end of game
+            do {
+                nextRegID = self.regions[nextRegID].getNextRegionId();
+                // base case: the region is tile 0
+                if (nextRegID == 0) {
+                    // Monster is going to enter the castle
+                    // Decrement shields, remove monster, evaluate end of game condition
+                    break;
+                }
+            } while (self.regions[nextRegID].getMonster());
+
+            // Update the two tiles and the monster
+            self.regions[nextRegID].setMonster(m);
+            self.regions[startReg].setMonster(null);
+            m.setTileID(nextRegID);
+        }
     }
 }

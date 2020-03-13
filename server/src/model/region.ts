@@ -10,7 +10,7 @@ export class Region {
     private hasWell: boolean;
     private hasMerchant: boolean;
     private wellUsed: boolean = false;
-    private curMonster!: Monster;
+    private curMonster!: Monster | null;
     
     constructor(id: number, nextRegion: number, adjRegions: Array<number>, hasWell: boolean = false, hasMerchant: boolean = false) {
         this.id = id;
@@ -49,7 +49,7 @@ export class Region {
     // }
 
     //deviates from design class diagrma
-    public setMonster(m: Monster) {
+    public setMonster(m: Monster | null) {
         this.curMonster = m;
     }
     public getMonster() {

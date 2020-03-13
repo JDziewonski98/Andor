@@ -6,15 +6,15 @@ export class Monster {
     private willpower: number = 0;
     private dice = 'red';
     private type: MonsterKind;
-    private tile: number;
+    private tileID: number;
     //reward amount of gold and willpower are always same.
     private gold: number = 0;
-    public name
+    public name;
 
     constructor(kind: MonsterKind, tile: number, numplayers: number = 0, name: string) {
         this.name = name
         this.type = kind;
-        this.tile = tile;
+        this.tileID = tile;
         switch (kind) {
             case "gor":
                 this.strength = 2;
@@ -69,12 +69,12 @@ export class Monster {
         return this.type;
     }
 
-    public getTile() {
-        return this.tile;
+    public getTileID() {
+        return this.tileID;
     }
 
-    public setTile(num: number) {
-        this.tile = num;
+    public setTileID(num: number) {
+        this.tileID = num;
     }
 
     public rollDice() {
