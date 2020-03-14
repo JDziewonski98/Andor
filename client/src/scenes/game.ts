@@ -267,8 +267,9 @@ export default class GameScene extends Phaser.Scene {
         }
         else {
           console.log(this)
-            WindowManager.create(this, this.monsters[i].name, Fight, { controller: this.gameinstance, monstertexture:this.monsters[i].texture,
-                                hero:this.hero, monstername:this.monsters[i].name, monster:this.monsters[i], that:this});
+            WindowManager.create(this, this.monsters[i].name, Fight, { controller: this.gameinstance,
+                                hero:this.hero, monster:this.monsters[i]});
+                                this.scene.pause()
         }
       }, this)
     }
@@ -466,7 +467,7 @@ export default class GameScene extends Phaser.Scene {
     private addGold() {       
         var self = this        
         for (var id in self.tiles) {
-            console.log(id, this)
+            //console.log(id, this)
 
             if (self.tiles[id].getGold() !== 0) {
                 //create a text Sprite indicating the number of gold. 
@@ -553,7 +554,8 @@ export default class GameScene extends Phaser.Scene {
         x: reducedWidth / 2 - width / 2,
         y: reducedHeight / 2 - height / 2,
         w: width,
-        h: height
+        h: height,
+        infight:false
       } :
       {
         controller: self.gameinstance,
@@ -561,7 +563,8 @@ export default class GameScene extends Phaser.Scene {
         x: reducedWidth / 2 - width / 2,
         y: reducedHeight / 2 - height / 2,
         w: 200,
-        h: 100
+        h: 100,
+        infight:false
       }
     WindowManager.create(this, 'collab', CollabWindow, collabWindowData);
     // Freeze main game while collab window is active

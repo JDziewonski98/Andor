@@ -2,43 +2,41 @@ import { Window } from "./window";
 import { game } from "../api/game";
 import { WindowManager } from "../utils/WindowManager";
 import {CollabWindow} from "./collabwindow"
+import {
+    reducedWidth, reducedHeight, collabColWidth, collabRowHeight
+  } from '../constants'
 
 export class Fight extends Window {
     private gameinstance: game;
-    private monstertexture;
-
-    private herostr;
-    private herowill;
-
+    //texts
     private fighttext;
-    private monstername;
     private theirroll;
     private notificationtext
     private yourroll;
-
+    private monsterstrtxt
+    private monsterwilltxt
+    private monstergoldtxt
+    private monstertypetxt
+    //monster stats and attributes
+    private monstername;
+    private monstertexture;
     private monstericon
     private monsterstr
     private monsterwill
     private monstergold
     private monstertype
-    private monsterstrtxt
-    private monsterwilltxt
-    private monstergoldtxt
-    private monstertypetxt
-
+    //hero and monster references
     private monster
-    private gamethis
+    private hero
 
     public constructor(key, data, windowData = { x: 10, y: 10, width: 350, height: 250 }) {
         super(key, windowData);
         console.log(data)
         this.gameinstance = data.controller
-        this.monstertexture = data.monstertexture
-        this.monstername = data.monstername
-        this.herostr = data.hero.getStrength()
-        this.herowill = data.hero.getWillPower()
+        this.monstertexture = data.monster.texture
+        this.monstername = data.monster.name
+        this.hero = data.hero
         this.monster = data.monster
-        this.gamethis = data.that;
     }
 
     protected initialize() {
@@ -48,6 +46,7 @@ export class Fight extends Window {
         bg.tint = 0xff0000
         this.monstericon = this.add.image(40,40,this.monstertexture)
 
+        //fetch monster stats from backend
         this.gameinstance.getMonsterStats(this.monstername, function(data) {
             self.monsterstr = data.str;
             self.monsterwill = data.will;
@@ -59,11 +58,13 @@ export class Fight extends Window {
             self.monstergoldtxt = self.add.text(3,125,"Reward: " + self.monstergold)
         })
 
+        //populate window with text
         this.notificationtext = this.add.text(90,170, '', { backgroundColor: '#3b44af' })
         this.fighttext = this.add.text(90, 25, 'Fight!!', { backgroundColor: '#363956' }).setInteractive()
         this.theirroll = this.add.text(90, 75, 'Their roll: ', { backgroundColor: 'fx00' })
         this.yourroll = this.add.text(90, 125, 'Your roll: ', { backgroundColor: 'fx00' })
 
+        //click the fight text to fight.
         this.fighttext.on('pointerdown', function (pointer) {
             console.log('fighting!!')
             self.gameinstance.rollMonsterDice(self.monstername, function (monsterroll, heroroll, winner) {
@@ -102,25 +103,29 @@ export class Fight extends Window {
 
     public tween() {
         //  Flash the prompt
+        this.fighttext.disableInteractive()
         this.monstericon.setTint('#000000')
         this.tweens.add({
             targets: this.monstericon,
             alpha: 0.2,
-            duration: 200,
+            duration: 160,
             ease: 'Power3',
             yoyo: true
         });
         this.monstericon.clearTint()
+        this.fighttext.setInteractive()
     }
 
     public tweentext() {
+        this.fighttext.disableInteractive()
         this.tweens.add({
             targets: this.notificationtext,
             alpha: 0.2,
-            duration: 200,
+            duration: 160,
             ease: 'Power3',
             yoyo: true
         });
+        this.fighttext.setInteractive()
     }
 
     private victory() {
@@ -136,6 +141,7 @@ export class Fight extends Window {
         this.fighttext.destroy()
         this.theirroll.destroy()
         this.yourroll.destroy()
+
         let vic = this.add.text(70,20,"VICTORY!")
         this.tweens.add({
             targets: vic,
@@ -147,16 +153,58 @@ export class Fight extends Window {
 
         var goldtext = this.add.text(70,50,"Click to loot " + this.monstergold + " gold.").setInteractive()
         var willtext = this.add.text(70,80,"Click to plunder " + this.monstergold + "  willpower.").setInteractive()
-
-        var victoryscreendata = { }
         
         goldtext.on('pointerdown', function(pointer) {
-            WindowManager.create(self.gamethis, self.monstername + 'victory', CollabWindow, {controller:this.gameinstance})
-        }, self.gamethis)
+
+            var res = new Map([
+                ["gold", self.monstergold]
+              ])
+
+            var width = (res.size + 1) * collabColWidth; 
+            var height = (3) * collabRowHeight;
+
+            var collabwindowdata = {
+                controller: self.gameinstance,
+                isOwner: true,
+                heroes: [self.hero],
+                resources: res,
+                textOptions: null,
+                x: reducedWidth / 2 - width / 2,
+                y: reducedHeight / 2 - height / 2,
+                w: 200,
+                h: 100,
+                infight: true
+              }
+
+            WindowManager.create(this, self.monstername + 'collab', CollabWindow, collabwindowdata)
+            self.scene.remove(self.monstername)
+        }, this)
+
 
         willtext.on('pointerdown', function(pointer) {
-            
-        })
+            var res = new Map([
+                ["will", self.monstergold]
+              ])
+
+            var width = (res.size + 1) * collabColWidth;
+            var height = (3) * collabRowHeight;
+
+            var collabwindowdata = {
+                controller: self.gameinstance,
+                isOwner: true,
+                heroes: [self.hero],
+                resources: res,
+                textOptions: null,
+                x: reducedWidth / 2 - width / 2,
+                y: reducedHeight / 2 - height / 2,
+                w: 200,
+                h: 100,
+                infight: true
+              }
+
+            WindowManager.create(this, self.monstername + 'collab', CollabWindow, collabwindowdata)
+            self.scene.remove(self.monstername)
+        }, this)
 
     }
 
