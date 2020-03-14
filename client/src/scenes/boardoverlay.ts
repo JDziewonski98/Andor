@@ -127,7 +127,8 @@ export default class BoardOverlay extends Phaser.Scene {
                 WindowManager.destroy(this, 'chat');
             }
             else {
-                WindowManager.create(this, 'chat', Chat, { gameinstance: self.gameinstance });
+                console.log(self.gameinstance)
+                WindowManager.create(this, 'chat', Chat, { controller: self.gameinstance });
             }
         }, this);
 
