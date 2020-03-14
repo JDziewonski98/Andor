@@ -28,6 +28,9 @@ export class CollabWindow extends Window {
     private height;
 
     private gameinstance: game;
+    private infight: boolean = false;
+
+    private name;
 
     public constructor(key: string, data) {
         super(key, {x: data.x, y: data.y, width: data.w, height: data.h});
@@ -38,6 +41,8 @@ export class CollabWindow extends Window {
         this.y = data.y;
         this.width = data.w;
         this.height = data.h;
+        this.infight = data.infight;
+        this.name = key
 
         if (this.isOwner) {
             this.involvedHeroes = data.heroes;
@@ -72,10 +77,12 @@ export class CollabWindow extends Window {
                 this.scene.parent.y = dragY;
                 this.scene.refresh()
             }
+            
         });
-
+        console.log('this: xxxxxx' , this)
         // Callbacks
         // Submitting decision callback
+        console.log('in init', self.infight)
         this.gameinstance.receiveDecisionSubmitSuccess(submitSuccess);
         this.gameinstance.receiveDecisionSubmitFailure(submitFailure);
         // Accepting decision callback
@@ -84,10 +91,12 @@ export class CollabWindow extends Window {
         function submitSuccess() {
             self.hasAccepted = false;
             console.log("Callback: successfully submitted decision");
-
             // Resume main game scene when collab decision is complete
+            
             self.scene.resume('Game');
-            self.scene.remove('collab');
+            
+            self.scene.remove(self.name);
+            self.gameinstance.unsubscribeListeners()
         }
         function submitFailure() {
             console.log("Callback: submit decision failed - not enough accepts");
@@ -125,7 +134,7 @@ export class CollabWindow extends Window {
         }
 
         this.submitText = this.add.text(0, this.height-collabTextHeight, 'Submit', textStyle)
-
+        console.log('we here son.')
         this.submitText.setInteractive()
         this.submitText.on('pointerdown', function (pointer) {
             // Check that resAllocated corresponds with specified quantities from data.resources

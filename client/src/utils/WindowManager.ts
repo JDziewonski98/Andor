@@ -5,6 +5,7 @@ export class WindowManager extends Phaser.Scene {
         var win = new obj(key, data);
         console.log(self.scene, 'in window manageru')
         self.scene.add(key, win, true);
+        console.log(key)
         return win;
     }
 

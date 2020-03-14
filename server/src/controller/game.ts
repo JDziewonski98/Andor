@@ -318,6 +318,9 @@ export function game(socket, model: Game, io) {
           else if (resNames[i] == "wineskin") {
             currHero?.setWineskin(resAllocated[heroTypeString][i]>0);
           }
+          else if (resNames[i] == 'will') {
+            currHero?.setWill(resAllocated[heroTypeString][i])
+          }
         }
         // console.log("Updated", heroTypeString, "gold:", currHero?.getGold(), "wineskin:", currHero?.getWineskin())
       }

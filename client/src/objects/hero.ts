@@ -128,4 +128,8 @@ export class Hero extends Phaser.GameObjects.Sprite {
     public setGold(amount) {
         this.gold = amount;
     }
+
+    public getStrength() {
+        return this.strength
+    }
 }

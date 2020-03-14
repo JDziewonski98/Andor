@@ -165,6 +165,12 @@ export class game {
     public receiveDecisionSubmitSuccess(callback) {
         this.socket.on('sendDecisionSubmitSuccess', callback)
     }
+    public unsubscribeListeners() {
+        //must be called once youre done using the collab decision listeners.
+        this.socket.off('sendDecisionSubmitSuccess')
+        this.socket.off('sendDecisionSubmitFailure')
+        this.socket.off('sendDecisionAccepted')
+    }
     public receiveDecisionSubmitFailure(callback) {
         this.socket.on('sendDecisionSubmitFailure', callback)
     }
