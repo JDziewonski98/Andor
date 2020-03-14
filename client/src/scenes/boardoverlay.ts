@@ -58,7 +58,7 @@ export default class BoardOverlay extends Phaser.Scene {
                     }, this);
                 }else if (type === "archer") {
                   //Other player's icons.
-                    this.gameText = this.add.text(360, 10, "Archer", style2)
+                    this.gameText = this.add.text(300, 10, "Archer", style2)
                     this.gameText.setInteractive();
                     this.gameText.on('pointerdown', function (pointer) {
                         this.gameinstance.getHeroAttributes("Archer", (herodata) => {
@@ -74,7 +74,7 @@ export default class BoardOverlay extends Phaser.Scene {
                         })
                     }, this);
                 } else if (type === "warrior") {
-                    this.gameText = this.add.text(330, 10, "Warrior", style2)
+                    this.gameText = this.add.text(200, 10, "Warrior", style2)
                     this.gameText.setInteractive();
                     this.gameText.on('pointerdown', function (pointer) {
                         this.gameinstance.getHeroAttributes("Warrior", (herodata) => {
@@ -90,7 +90,7 @@ export default class BoardOverlay extends Phaser.Scene {
                         })
                     }, this);
                 } else if (type === "dwarf") {
-                    this.gameText = this.add.text(300, 10, "Dwarf", style2)
+                    this.gameText = this.add.text(100, 10, "Dwarf", style2)
                     this.gameText.setInteractive();
                     this.gameText.on('pointerdown', function (pointer) {
                         this.gameinstance.getHeroAttributes("Dwarf", (herodata) => {
@@ -131,5 +131,11 @@ export default class BoardOverlay extends Phaser.Scene {
             }
         }, this);
 
+        // end turn button
+        this.gameText = this.add.text(900, 550, "END TURN", style2).setOrigin(0.5)
+        this.gameText.setInteractive();
+        this.gameText.on('pointerdown', function (pointer){
+            this.gameinstance.endTurn();
+        }, this)
     }
 }

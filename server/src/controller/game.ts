@@ -38,6 +38,14 @@ export function game(socket, model: Game, io) {
     callback(heroType, tile);
   })
 
+  socket.on("endTurn", function(){
+    console.log("endTurn")
+    var nextPlayer = model.nextPlayer()
+    model.setCurrPlayersTurn(nextPlayer)
+    socket.broadcast.to(`/${model.getName()}#${nextPlayer}`).emit("yourTurn")
+  })
+
+
   socket.on("pickupFarmer", function (callback) {
     var region:Region;
     let heroId = socket.conn.id;
@@ -59,13 +67,20 @@ export function game(socket, model: Game, io) {
     if (hero !== undefined) {
       result = hero.dropFarmer();
 
+
+      //result[1] = dropped region id, result[0] = farmer id
       if (result !== undefined) {
-        console.log(hero)
+        //Farmer dropped on reitburg
+        if(result[1] === 0){
+          model.getCastle().incSheilds();
+          console.log(model.getCastle());
+        }
         io.of("/"+model.getName()).emit("addFarmer", result[1], result[0])
         callback(result[1]);
       }
     }
   });
+
 
   socket.on("merchant", function (callback) {
     let success = false;
@@ -79,6 +94,16 @@ export function game(socket, model: Game, io) {
     if (success) {
       console.log(hero);
       callback();
+    }
+  });
+
+  socket.on("getNumSheilds", function (callback) {
+    let success = false;
+    var numSheilds = model.getCastle().getSheilds();
+
+    if(numSheilds !== undefined){
+      console.log(numSheilds)
+      callback(numSheilds)
     }
   });
 
@@ -268,6 +293,9 @@ export function game(socket, model: Game, io) {
 
   // Submitting a decision
   socket.on('collabDecisionSubmit', function(resAllocated, resNames) {
+    if(model.getCurrPlayersTurn() == ""){
+      model.setCurrPlayersTurn(socket.conn.id)
+    }
     console.log(resAllocated);
     // Check that numAccepts equals total num of players-1
     if (model.numAccepts != model.getNumOfDesiredPlayers() - 1) {
@@ -330,7 +358,7 @@ export function game(socket, model: Game, io) {
       let hero = model.getHero(heroId);
       let heroregion = hero.getRegion().getID()
       let monster = model.getMonsters().get(m)
-      let monsterregion = monster!.getTile()
+      let monsterregion = monster!.getTileID()
 
       if (hero.getTimeOfDay() > 9) {
         callback('notime', null, null)
@@ -377,6 +405,20 @@ export function game(socket, model: Game, io) {
       console.log('no such monster name exists!')
     }
 
+  })
+
+  // End of day
+  socket.on('moveMonstersEndDay', function () {
+    // console.log("calling move monsters on back end");
+    model.moveMonsters();
+    // Convert monsters Map into passable object
+    let convMonsters = {};
+    for (let m of Array.from(model.getMonsters().values())) {
+      convMonsters[m.name] = m.getTileID();
+    }
+    // console.log(convMonsters);
+    socket.broadcast.emit('sendUpdatedMonsters', convMonsters);
+    socket.emit('sendUpdatedMonsters', convMonsters);
   })
 
   function getCurrentDate() {

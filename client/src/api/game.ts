@@ -5,11 +5,13 @@ export class game {
     private name: string;
     private socket;
     private chatlog: any;
+    private myTurn: boolean;
 
     constructor(name) {
         this.name = name
         this.socket = this.connect(this.name)
         this.chatlog = []
+        this.myTurn = false;
     }
 
     private connect(name) {
@@ -31,6 +33,7 @@ export class game {
     public destroyFarmer(callback){
         this.socket.on("destroyFarmer", callback);
     }
+
 
     public addFarmer(callback){
         this.socket.on("addFarmer", callback);
@@ -89,11 +92,28 @@ export class game {
     }
     // TODO movement
     public moveRequest(tileID, callback){
-        this.socket.emit('moveRequest', tileID, callback)
+        if(this.myTurn){
+            this.socket.emit('moveRequest', tileID, callback)
+        }
     }
-
     public updateMoveRequest(callback){
         this.socket.on("updateMoveRequest", callback);
+    }
+
+    public endTurn(){
+        if(this.myTurn){
+            console.log("You have ended your turn.")
+            this.socket.emit('endTurn');
+            this.myTurn = false;
+        }
+    }
+    
+    public yourTurn(){
+        var self = this
+        this.socket.on("yourTurn", function(){
+            console.log("It is now your turn.")
+            self.myTurn = true
+        })
     }
 
     public  removeListener(object){
@@ -129,8 +149,8 @@ export class game {
         this.socket.emit("getHeros", callback)
     }
 
-    public getHerosBorder(callback){
-        this.socket.emit("getHerosBorder", callback)
+    public getNumSheilds(callback){
+        this.socket.emit("getNumSheilds", callback)
     }
 
     public getHeroAttributes(type, callback){
@@ -165,9 +185,21 @@ export class game {
     public rollMonsterDice(monstername, callback) {
         this.socket.emit('monsterRoll', monstername, callback)
     }
-
+    public setMyTurn(b:boolean){
+        this.myTurn = b;
+    }
     public getMonsterStats(monstername, callback) {
         this.socket.emit('getMonsterStats', monstername, callback)
+    }
+
+    // End of day
+    public moveMonstersEndDay() {
+        console.log("send move monsters to server");
+        this.socket.emit('moveMonstersEndDay');
+    }
+
+    public receiveUpdatedMonsters(callback) {
+        this.socket.on('sendUpdatedMonsters', callback);
     }
 }
 

@@ -20,12 +20,16 @@ export class Hero extends Phaser.GameObjects.Sprite {
         switch (kind) {
             case "archer":
                 super(scene, tile.x - 30, tile.y - 30, texture);
+                break;
             case "dwarf":
                 super(scene, tile.x + 30, tile.y - 30, texture);
+                break;
             case "mage":
                 super(scene, tile.x - 30, tile.y + 30, texture);
+                break;
             case "warrior":
                 super(scene, tile.x + 30, tile.y + 30, texture);
+                break;
         }
         this.tile = tile;
         this.hourTracker = null;
@@ -61,17 +65,22 @@ export class Hero extends Phaser.GameObjects.Sprite {
             case "archer":
                 this.x = newTile.x - 30
                 this.y = newTile.y - 30
+                break;
             case "dwarf":
                 this.x = newTile.x + 30
                 this.y = newTile.y - 30
+                break;
             case "mage":
                 this.x = newTile.x - 30
                 this.y = newTile.y + 30
+                break;
             case "warrior":
                 this.x = newTile.x + 30
                 this.y = newTile.y + 30
+                break;
         }
         this.tile = newTile
+        this.hourTracker.incHour(this.heroKind)
     }
 
     public resetHours() {
