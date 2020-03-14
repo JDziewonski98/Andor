@@ -292,13 +292,13 @@ export function game(socket, model: Game, io) {
   // Collaborative decision making
 
   // Submitting a decision
-  socket.on('collabDecisionSubmit', function(resAllocated, resNames) {
+  socket.on('collabDecisionSubmit', function(resAllocated, resNames, involvedHeroes) {
     if(model.getCurrPlayersTurn() == ""){
       model.setCurrPlayersTurn(socket.conn.id)
     }
     console.log(resAllocated);
     // Check that numAccepts equals total num of players-1
-    if (model.numAccepts != model.getNumOfDesiredPlayers() - 1) {
+    if (model.numAccepts != involvedHeroes.length-1) {
       // Failure: need more accepts before valid submit
       socket.emit('sendDecisionSubmitFailure');
       return;
@@ -348,6 +348,17 @@ export function game(socket, model: Game, io) {
     catch {
       console.log("invalid monster name!")
     }
+  })
+
+  socket.on('killMonster', function (monstername) {
+    let monstertile = model.getMonsters().get(monstername)?.getTileID()
+    let monsterregion = model.getRegions()[monstertile!]
+    monsterregion.setMonster(null)
+    console.log(model.getRegions()[monstertile!].getMonster(), 'should be null!')
+    model.deleteMonster(monstername)
+    // console.log(convMonsters);
+    socket.broadcast.emit('sendKilledMonsters', monstername);
+    //socket.emit('sendKilledMonsters', monstername);
   })
 
   socket.on('monsterRoll', function (m, callback) {

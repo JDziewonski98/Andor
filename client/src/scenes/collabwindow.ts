@@ -112,7 +112,7 @@ export class CollabWindow extends Window {
         var self = this;
 
         var textStyle = {
-            backgroundColor: 'fx00',
+            backgroundColor: 'fxb09696',
             fontSize: collabTextHeight
         }
         
@@ -127,6 +127,8 @@ export class CollabWindow extends Window {
                     console.log("You have already accepted this decision");
                     return;
                 }
+                self.acceptText.setText('Accepted!')
+                self.acceptText.setColor('#d11313')
                 self.gameinstance.collabDecisionAccept();
             });
 
@@ -146,9 +148,10 @@ export class CollabWindow extends Window {
                 });
                 // Pass map of allocated resources and list of resource names to map allocated 
                 // quantities to the name of the corresponding resource
-                self.gameinstance.collabDecisionSubmit(convMap, self.resourceNames);
+                self.gameinstance.collabDecisionSubmit(convMap, self.resourceNames, self.involvedHeroes);
             } else {
                 console.log("Allocated quantities do not match those specified");
+                self.submitText("Submit. Others must accept first!")
             }
         });
 

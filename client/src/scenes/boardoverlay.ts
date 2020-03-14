@@ -8,7 +8,7 @@ import { CollabWindow } from './collabwindow';
 export default class BoardOverlay extends Phaser.Scene {
     private gameText;
     private gameinstance: game;
-
+    private endturntext;
     constructor() {
         super({
             key: 'BoardOverlay'
@@ -132,10 +132,20 @@ export default class BoardOverlay extends Phaser.Scene {
         }, this);
 
         // end turn button
-        this.gameText = this.add.text(900, 550, "END TURN", style2).setOrigin(0.5)
-        this.gameText.setInteractive();
-        this.gameText.on('pointerdown', function (pointer){
-            this.gameinstance.endTurn();
+        this.endturntext = this.add.text(900, 550, "END TURN", style2).setOrigin(0.5)
+        this.endturntext.setInteractive();
+        this.endturntext.on('pointerdown', function (pointer){
+            if (this.gameinstance.myTurn) {
+                this.gameinstance.endTurn();
+                this.tweens.add({
+                    targets: this.endturntext,
+                    alpha: 0.3,
+                    duration: 350,
+                    ease: 'Power3',
+                    yoyo: true
+                });
+        
+            }
         }, this)
     }
 }

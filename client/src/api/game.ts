@@ -110,7 +110,7 @@ export class game {
     
     public yourTurn(){
         var self = this
-        this.socket.on("yourTurn", function(){
+        this.socket.on("yourTurn", function() {
             console.log("It is now your turn.")
             self.myTurn = true
         })
@@ -159,8 +159,8 @@ export class game {
 
     // Collaborative decision making
     // Submitting a decision
-    public collabDecisionSubmit(resAllocated, resNames) {
-        this.socket.emit('collabDecisionSubmit', resAllocated, resNames)
+    public collabDecisionSubmit(resAllocated, resNames, involvedHeroes) {
+        this.socket.emit('collabDecisionSubmit', resAllocated, resNames, involvedHeroes)
     }
     public receiveDecisionSubmitSuccess(callback) {
         this.socket.on('sendDecisionSubmitSuccess', callback)
@@ -182,6 +182,10 @@ export class game {
         this.socket.on('sendDecisionAccepted', callback)
     }
 
+    public killMonster(monstername) {
+        this.socket.emit('killMonster', monstername)
+    }
+
     public rollMonsterDice(monstername, callback) {
         this.socket.emit('monsterRoll', monstername, callback)
     }
@@ -200,6 +204,10 @@ export class game {
 
     public receiveUpdatedMonsters(callback) {
         this.socket.on('sendUpdatedMonsters', callback);
+    }
+
+    public receiveKilledMonsters(callback) {
+        this.socket.on('sendKilledMonsters', callback)
     }
 }
 

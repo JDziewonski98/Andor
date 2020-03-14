@@ -90,6 +90,9 @@ export class Hero extends Phaser.GameObjects.Sprite {
         return this.heroKind;
     }
 
+    public incrementHour() {
+        this.hourTracker.incHour(this.heroKind)
+    }
     /*public dropGold(amount) {
         if (this.gold < amount) {
             return false

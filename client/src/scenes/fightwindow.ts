@@ -18,6 +18,7 @@ export class Fight extends Window {
     private monsterwilltxt
     private monstergoldtxt
     private monstertypetxt
+    private exitbutton
     //monster stats and attributes
     private monstername;
     private monstertexture;
@@ -77,12 +78,14 @@ export class Fight extends Window {
                     self.notificationtext.setText('Get some sleep!!!!')
                 }
                 else if (winner == 'monster'){
+                    self.hero.incrementHour()
                     self.theirroll.setText('Their attack: '  + monsterroll)
                     self.yourroll.setText('Your attack: '  + heroroll)
                     self.notificationtext.setText('OUCH!! You take \n' + (monsterroll - heroroll) + ' damage!')
                     self.tweentext()
                 }
                 else if (winner == 'hero') {
+                    self.hero.incrementHour()
                     self.theirroll.setText('Their attack: '  + monsterroll)
                     self.yourroll.setText('Your attack: '  + heroroll)
                     self.notificationtext.setText('WHAM!! You hit them for \n' + (heroroll - monsterroll) + ' damage!')
@@ -95,6 +98,7 @@ export class Fight extends Window {
                 }
                 else {
                     //tie
+                    self.hero.incrementHour()
                     self.theirroll.setText('Their attack: '  + monsterroll)
                     self.yourroll.setText('Your attack: '  + heroroll)
                     self.notificationtext.setText('Tie! You are \nevenly matched...')
@@ -107,8 +111,8 @@ export class Fight extends Window {
             fontSize: "30px",
             color: "#4944A4"
         }
-        let exitbutton = this.add.text(300, 10, 'X', style).setInteractive()
-        exitbutton.on('pointerdown', function(pointer) {
+        this.exitbutton = this.add.text(300, 10, 'X', style).setInteractive()
+        this.exitbutton.on('pointerdown', function(pointer) {
             self.scene.resume("Game")
             self.scene.remove(self.windowname)
         })
@@ -142,7 +146,6 @@ export class Fight extends Window {
     }
 
     private victory() {
-        //TODO add logic to delete this guy from backend and all tile associations
         var self = this
         this.monster.destroy()
         this.monstertypetxt.destroy()
@@ -154,6 +157,7 @@ export class Fight extends Window {
         this.fighttext.destroy()
         this.theirroll.destroy()
         this.yourroll.destroy()
+        this.exitbutton.destroy()
 
         let vic = this.add.text(70,20,"VICTORY!")
         this.tweens.add({
@@ -219,6 +223,8 @@ export class Fight extends Window {
             self.scene.remove(self.monstername)
         }, this)
 
+        //deleting the monster.
+        this.gameinstance.killMonster(self.monstername)
     }
 
 }

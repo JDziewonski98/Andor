@@ -304,6 +304,10 @@ export class Game {
         return this.monsters
     }
 
+    public deleteMonster(monstername) {
+        this.monsters.delete(monstername)
+    }
+
     public endOfDay() {
         this.moveMonsters();
     }

@@ -43,7 +43,8 @@ export default class GameScene extends Phaser.Scene {
   private zoomAmount = 0.01;
 
   private sceneplugin
-
+  private turntext;
+  
   constructor() {
     super({ key: 'Game' });
     // this.heroes = Array<Hero>(4); // This is adding 4 dummy elements at the start
@@ -701,14 +702,27 @@ export default class GameScene extends Phaser.Scene {
       self.moveMonstersEndDay(updatedMonsters);
     }
 
+    function deleteKilledMonsters(killedMonster) {
+      self.removeKilledMonsters(killedMonster)
+    }
+
     self.gameinstance.receiveUpdatedMonsters(moveMonstersOnMap);
+    self.gameinstance.receiveKilledMonsters(deleteKilledMonsters);
   }
+
 
   private moveMonstersEndDay(updatedMonsters) {
     for (const [mName, newTileID] of Object.entries(updatedMonsters)) {
       let newTile = this.tiles[newTileID as number];
       this.monsterMoveTween(this.monsterNameMap[mName], newTile, newTile.x, newTile.y);
     }
+  }
+
+  private removeKilledMonsters(m) {
+    let monster = this.monsterNameMap[m]
+    monster.tile.monster = null
+    monster.destroy()
+    this.monsterNameMap[m] = null
   }
 
   public monsterMoveTween(monster: Monster, newTile: Tile, newX, newY) {
