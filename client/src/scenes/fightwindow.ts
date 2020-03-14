@@ -8,6 +8,7 @@ import {
 
 export class Fight extends Window {
     private gameinstance: game;
+    private windowname;
     //texts
     private fighttext;
     private theirroll;
@@ -32,6 +33,7 @@ export class Fight extends Window {
     public constructor(key, data, windowData = { x: 10, y: 10, width: 350, height: 250 }) {
         super(key, windowData);
         console.log(data)
+        this.windowname = key
         this.gameinstance = data.controller
         this.monstertexture = data.monster.texture
         this.monstername = data.monster.name
@@ -99,10 +101,21 @@ export class Fight extends Window {
                 }
             })
         })
+
+        let style = {
+            fontFamily: '"Roboto Condensed"',
+            fontSize: "30px",
+            color: "#4944A4"
+        }
+        let exitbutton = this.add.text(300, 10, 'X', style).setInteractive()
+        exitbutton.on('pointerdown', function(pointer) {
+            self.scene.resume("Game")
+            self.scene.remove(self.windowname)
+        })
     }
 
     public tween() {
-        //  Flash the prompt
+        //  Flash the mosntericon
         this.fighttext.disableInteractive()
         this.monstericon.setTint('#000000')
         this.tweens.add({
