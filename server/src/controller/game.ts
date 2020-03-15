@@ -120,31 +120,18 @@ export function game(socket, model: Game, io) {
         }
     });   
 
-    socket.on("pickupGold", function (callback) {        
+    socket.on("pickupGold", function (id, callback) {        
 
-        /*let success_pickupGold = false;
-        let heroId = socket.conn.id;
-        let hero = model.getHero(heroId);
-        //console.log(hero.getRegion().getID(), id)
-        
-        // hero defined, hero on tile to retrieve gold, region has at least 1 gold
-            if (hero !== undefined && hero.getRegion().getGold() > 0) {
-            console.log("picking up gold on server") 
-            success_pickupGold = hero.pickupGold();
-        }
-
-        if (success_pickupGold) {
-            console.log("pickupGold successful") //is printed
-            socket.broadcast.emit("updatePickupGold");
-            callback(hero.getRegion().getID())
-
-        }*/
         console.log("picking up gold on server") //is printed
         let success_pickupGold = false;
         let heroId = socket.conn.id;
         let hero = model.getHero(heroId);
 
-        if (hero !== undefined && hero.getRegion().getGold() > 0) {
+        //id is type string. must convert to number
+        id = +id
+        //console.log(hero.getRegion().getID(), id) 
+
+        if (hero !== undefined && hero.getRegion().getID() === id && hero.getRegion().getGold() > 0) {
             success_pickupGold = hero.pickupGold();
         }
 

@@ -61,9 +61,9 @@ export class game {
         this.socket.emit("dropGold", callback)
     }
 
-    public pickupGold(callback) {
+    public pickupGold(id, callback) {
         console.log("api pickupGold()") //is printed
-        this.socket.emit("pickupGold", callback)
+        this.socket.emit("pickupGold", id, callback)
     }
 
     public updatePickupGold(callback) {

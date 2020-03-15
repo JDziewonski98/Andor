@@ -482,11 +482,11 @@ export default class GameScene extends Phaser.Scene {
                 console.log(self.tiles[id].getGold())*/
                 //console.log(id)
 
-                self.gameinstance.pickupGold(function () {
+                self.gameinstance.pickupGold(id, function () {
                     if (self.tiles[id].getGold() > 0) {
-                        // console.log(self.tiles[id].getGold())  
+                        console.log("amount on client-tile: ", self.tiles[id].getGold())  
                         self.tiles[id].setGold(self.tiles[id].getGold() - 1)
-                        // console.log(self.tiles[id].getGold())   amount of gold on tile is updated
+                        console.log("amount on client-tile: ", self.tiles[id].getGold())   //amount of gold on tile is updated
                        
                     }
                 })
