@@ -22,6 +22,10 @@ export class game {
         this.socket.emit("bind hero", herotype, callback)
     }
 
+    public getTurn() {
+        return this.myTurn
+    }
+
     public updateHeroList(callback){
         this.socket.on("updateHeroList", callback)
     }
@@ -208,6 +212,10 @@ export class game {
 
     public receiveKilledMonsters(callback) {
         this.socket.on('sendKilledMonsters', callback)
+    }
+
+    public doDamageToHero(hero, damage) {
+        this.socket.emit('doDamageToHero', hero, damage)
     }
 }
 

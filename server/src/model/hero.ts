@@ -184,6 +184,14 @@ export class Hero {
         this.will += willValueToChange
     }
 
+    public setStrength(strengthChange: number) {
+        this.strength += strengthChange
+    }
+
+    public resetWill() {
+        this.will = 3
+    }
+
     public useWell() {
         //console.log("server.hero.useWell")
         //console.log(this.will)

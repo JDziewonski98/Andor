@@ -418,6 +418,22 @@ export function game(socket, model: Game, io) {
 
   })
 
+  socket.on('doDamageToHero', function(thehero, damage) {
+    let modelHeros = model.getHeros();
+    for (let hero of modelHeros.values()) {
+      let heroTypeString = hero.getKind().toString();
+      console.log(heroTypeString, 'herotypestring')
+      console.log(thehero, 'thehero')
+      if (heroTypeString == thehero) {
+        hero.setWill(-damage)
+        if (hero.getWill() < 1) {
+          hero.setStrength(-1);
+          hero.resetWill()
+        }
+      }
+    }
+  })
+
   // End of day
   socket.on('moveMonstersEndDay', function () {
     // console.log("calling move monsters on back end");

@@ -151,7 +151,7 @@ export class CollabWindow extends Window {
                 self.gameinstance.collabDecisionSubmit(convMap, self.resourceNames, self.involvedHeroes);
             } else {
                 console.log("Allocated quantities do not match those specified");
-                self.submitText("Submit. Others must accept first!")
+                self.submitText.setText("Submit. Others must accept first!")
             }
         });
 

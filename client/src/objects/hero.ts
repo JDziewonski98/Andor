@@ -124,6 +124,10 @@ export class Hero extends Phaser.GameObjects.Sprite {
         return this.willPower;
     }
 
+    public resetWillPower() {
+        this.willPower = 3;
+    }
+
     public getGold() {
         return this.gold;
     }
@@ -134,5 +138,9 @@ export class Hero extends Phaser.GameObjects.Sprite {
 
     public getStrength() {
         return this.strength
+    }
+
+    public setStrength(change) {
+        this.strength += change;
     }
 }

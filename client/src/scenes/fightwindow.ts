@@ -14,6 +14,8 @@ export class Fight extends Window {
     private theirroll;
     private notificationtext
     private yourroll;
+    private yourwill;
+    private yourwilltxt;
     private monsterstrtxt
     private monsterwilltxt
     private monstergoldtxt
@@ -40,6 +42,7 @@ export class Fight extends Window {
         this.monstername = data.monster.name
         this.hero = data.hero
         this.monster = data.monster
+        this.yourwill = this.hero.getWillPower()
     }
 
     protected initialize() {
@@ -62,10 +65,11 @@ export class Fight extends Window {
         })
 
         //populate window with text
-        this.notificationtext = this.add.text(90,170, '', { backgroundColor: '#3b44af' })
-        this.fighttext = this.add.text(90, 25, 'Fight!!', { backgroundColor: '#363956' }).setInteractive()
-        this.theirroll = this.add.text(90, 75, 'Their roll: ', { backgroundColor: 'fx00' })
-        this.yourroll = this.add.text(90, 125, 'Your roll: ', { backgroundColor: 'fx00' })
+        this.notificationtext = this.add.text(90,180, '', { backgroundColor: '#3b44af' })
+        this.fighttext = this.add.text(90, 20, 'Fight!!', { backgroundColor: '#363956' }).setInteractive()
+        this.theirroll = this.add.text(90, 60, 'Their roll: ', { backgroundColor: 'fx00' })
+        this.yourroll = this.add.text(90, 110, 'Your roll: ', { backgroundColor: 'fx00' })
+        this.yourwilltxt = this.add.text(90, 160, 'Your will: ' + this.yourwill, { backgroundColor: 'fx00' })
 
         //click the fight text to fight.
         this.fighttext.on('pointerdown', function (pointer) {
@@ -78,11 +82,20 @@ export class Fight extends Window {
                     self.notificationtext.setText('Get some sleep!!!!')
                 }
                 else if (winner == 'monster'){
+                    self.gameinstance.doDamageToHero(self.hero.getKind(), monsterroll - heroroll)
                     self.hero.incrementHour()
+                    self.hero.setwillPower(-(monsterroll-heroroll))
+                    self.yourwill = self.hero.getWillPower()
+                    self.yourwilltxt.setText('Your will: ' + self.yourwill)
                     self.theirroll.setText('Their attack: '  + monsterroll)
                     self.yourroll.setText('Your attack: '  + heroroll)
                     self.notificationtext.setText('OUCH!! You take \n' + (monsterroll - heroroll) + ' damage!')
                     self.tweentext()
+                    if (self.hero.getWillPower() < 1) {
+                        self.hero.resetWillPower()
+                        self.hero.setStrength(-1)
+                        self.death()
+                    }
                 }
                 else if (winner == 'hero') {
                     self.hero.incrementHour()
@@ -148,6 +161,7 @@ export class Fight extends Window {
     private victory() {
         var self = this
         this.monster.destroy()
+        this.yourwilltxt.destroy()
         this.monstertypetxt.destroy()
         this.monsterstrtxt.destroy()
         this.monsterwilltxt.destroy()
@@ -225,6 +239,29 @@ export class Fight extends Window {
 
         //deleting the monster.
         this.gameinstance.killMonster(self.monstername)
+    }
+
+    public death() {
+        var self = this
+        this.yourwilltxt.destroy()
+        this.monstertypetxt.destroy()
+        this.monsterstrtxt.destroy()
+        this.monsterwilltxt.destroy()
+        this.monstergoldtxt.destroy()
+        this.monstericon.destroy()
+        this.notificationtext.destroy()
+        this.fighttext.destroy()
+        this.theirroll.destroy()
+        this.yourroll.destroy()
+        this.exitbutton.destroy()
+        this.add.text(70,50,"You lost and lose\n 1 strength. Your turn \n is over. Your \nwill is set to 3.")
+        var text = this.add.text(70,150,"Click to accept.").setInteractive()
+        text.on('pointerdown', function(pointer) {
+            self.scene.remove(self.windowname)
+            if (self.gameinstance.getTurn()) {
+                self.gameinstance.endTurn();
+            }
+        })
     }
 
 }
