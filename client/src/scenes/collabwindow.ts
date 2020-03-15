@@ -100,6 +100,7 @@ export class CollabWindow extends Window {
         }
         function submitFailure() {
             console.log("Callback: submit decision failed - not enough accepts");
+            self.submitText.setText("Submit. You need more accepts!")
         }
         function setAccepted(numAccepted) {
             self.hasAccepted = true;
@@ -151,7 +152,7 @@ export class CollabWindow extends Window {
                 self.gameinstance.collabDecisionSubmit(convMap, self.resourceNames, self.involvedHeroes);
             } else {
                 console.log("Allocated quantities do not match those specified");
-                self.submitText("Submit. Others must accept first!")
+                self.submitText.setText("Submit. Quantities must match!")
             }
         });
 
