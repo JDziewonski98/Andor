@@ -209,5 +209,13 @@ export class game {
     public receiveKilledMonsters(callback) {
         this.socket.on('sendKilledMonsters', callback)
     }
+
+    public getHerosInRange(id, callback) {
+        this.socket.emit('getHerosInRange',id,callback)
+    }
+
+    public sendBattleInvite(hero) {
+        this.socket.emit('sendBattleInvite', hero)
+    }
 }
 

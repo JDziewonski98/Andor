@@ -320,10 +320,9 @@ export default class GameScene extends Phaser.Scene {
           WindowManager.destroy(this, this.monsters[i].name);
         }
         else {
-          console.log(this)
             WindowManager.create(this, this.monsters[i].name, Fight, { controller: this.gameinstance,
                                 hero:this.hero, monster:this.monsters[i]});
-                                this.scene.pause()
+            this.scene.pause()
         }
       }, this)
     }
