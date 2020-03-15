@@ -32,8 +32,9 @@ export class Fight extends Window {
     //hero and monster references
     private monster
     private hero
+    private alliedheros: string[] = []
 
-    public constructor(key, data, windowData = { x: 10, y: 10, width: 350, height: 250 }) {
+    public constructor(key, data, windowData = { x: 10, y: 10, width: 450, height: 350 }) {
         super(key, windowData);
         console.log(data)
         this.windowname = key
@@ -43,6 +44,18 @@ export class Fight extends Window {
         this.hero = data.hero
         this.monster = data.monster
         this.yourwill = this.hero.getWillPower()
+        var self = this
+        this.gameinstance.getHerosInRange(this.monster.tile.id, (heros) =>
+        {
+            for (let i = 0; i < heros.length; i++) {
+                if (heros[i] == this.hero.getKind()){
+                    heros.splice(i,1)
+                }
+            }
+            self.alliedheros = heros
+            console.log('possible allies: ' , this.alliedheros)
+        })
+
     }
 
     protected initialize() {
@@ -128,6 +141,22 @@ export class Fight extends Window {
         this.exitbutton.on('pointerdown', function(pointer) {
             self.scene.resume("Game")
             self.scene.remove(self.windowname)
+        })
+
+        var invitetext = this.add.text(250,50, 'Invite to fight').setInteractive()
+        invitetext.on('pointerdown', function(pointer) {
+            if (self.alliedheros.length > 0) {
+                for (let i = 0; i < self.alliedheros.length; i++) {
+                    let invhero = self.add.text(250, 65, self.alliedheros[i])
+                    invhero.on('pointerdown', function(pointer) {
+                        //self.gameinstance.sendBattleInvite(self.alliedheros[i])
+                        
+                    })
+                }
+            }
+            else {
+                this.setText('No other \nplayers in\nrange.')
+            }
         })
     }
 

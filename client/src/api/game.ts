@@ -217,5 +217,12 @@ export class game {
     public doDamageToHero(hero, damage) {
         this.socket.emit('doDamageToHero', hero, damage)
     }
+    public getHerosInRange(id, callback) {
+        this.socket.emit('getHerosInRange',id,callback)
+    }
+
+    public sendBattleInvite(hero) {
+        this.socket.emit('sendBattleInvite', hero)
+    }
 }
 

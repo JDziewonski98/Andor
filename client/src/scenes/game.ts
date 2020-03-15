@@ -320,10 +320,9 @@ export default class GameScene extends Phaser.Scene {
           WindowManager.destroy(this, this.monsters[i].name);
         }
         else {
-          console.log(this)
             WindowManager.create(this, this.monsters[i].name, Fight, { controller: this.gameinstance,
                                 hero:this.hero, monster:this.monsters[i]});
-                                this.scene.pause()
+            this.scene.pause()
         }
       }, this)
     }
@@ -532,39 +531,25 @@ export default class GameScene extends Phaser.Scene {
 
     private addGold() {       
         var self = this        
-        for (var id in self.tiles) {
-            // console.log(id, this)
+        for (let id in self.tiles) { // of dattara tile object ga iterate sareru
+            //console.log(id, this)
+            
+            //create a text Sprite indicating the number of gold. 
+            console.log("adding Gold")
+            var goldText = self.add.text(50, 50, "G", { color: "#fff52e" }).setX(self.tiles[id].x - 30).setY(self.tiles[id].y - 30)
+            //set to interactive
+            goldText.setInteractive() 
+            self.add.existing(goldText);         
 
-            if (self.tiles[id].getGold() !== 0) {
-                //create a text Sprite indicating the number of gold. 
-                var goldText = this.add.text(50, 50, "G", { color: "#fff52e" }).setX(self.tiles[id].x + 20).setY(self.tiles[id].y + 20)
-                //set to interactive
-                goldText.setInteractive() 
-                this.add.existing(goldText);                
-                
+            goldText.on("pointerdown", function (pointer) {                
 
-                goldText.on("pointerdown", function (pointer) {   
-                    /*console.log("pickup attempt") //is printed
-                    console.log(goldText)
-                    console.log(self.tiles[id].getGold())*/
-                    self.gameinstance.pickupGold(function () {                        
-                        if (self.tiles[id].getGold() > 0) {
-                            console.log(self.tiles[id].getGold())
-                            self.tiles[id].setGold(self.tiles[id].getGold() - 1)
-                            //const newString = String()
-                            //goldText.setText("" + self.tiles[id].getGold()
-                        } 
-                    })                                                
-                   
-                },this)
-
-                self.gameinstance.updatePickupGold(function (pointer) {
+                self.gameinstance.pickupGold(id, function () {
                     if (self.tiles[id].getGold() > 0) {
                         console.log(self.tiles[id].getGold())
                         self.tiles[id].setGold(self.tiles[id].getGold() - 1)                        
                     } 
                 }, this)
-            }
+              }
         }
     }
 

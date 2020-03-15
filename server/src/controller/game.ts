@@ -2,6 +2,7 @@
 //server controller
 
 import { Game, HeroKind, Region, Hero, Monster } from '../model';
+import { callbackify } from 'util';
 //import { callbackify } from 'util';
 
 
@@ -456,6 +457,70 @@ export function game(socket, model: Game, io) {
 
     return hour + ":" + minute + ":" + second;
   }
+
+  socket.on('getHerosInRange', function(id, callback) {
+    var centraltile = model.getRegions()[id]
+    var centraltileid = centraltile.getID()
+    var adjregionids = centraltile.getAdjRegionsIds()
+    let dwarftile: number = -1 
+    let archertile: number = -1 
+    let magetile: number = -1  
+    let warriortile: number = -1 
+
+    model.getHeros().forEach((hero, key) => {
+      if (hero.hk === HeroKind.Mage) {
+        hero = model.getHero(key);
+
+        if (hero !== undefined && hero.getTimeOfDay() < 10) {
+          magetile = hero.getRegion().getID();
+        }
+      } 
+      
+      else if (hero.hk === HeroKind.Archer) {
+        hero = model.getHero(key);
+
+        if (hero !== undefined && hero.getTimeOfDay() < 10) {
+          archertile = hero.getRegion().getID()
+        }
+
+      } 
+      
+      else if (hero.hk === HeroKind.Warrior) {
+        hero = model.getHero(key);
+
+        if (hero !== undefined && hero.getTimeOfDay() < 10) {
+          warriortile = hero.getRegion().getID()
+        }
+
+      } 
+      
+      else if (hero.hk === HeroKind.Dwarf) {
+        hero = model.getHero(key);
+
+        if (hero !== undefined && hero.getTimeOfDay() < 10) {
+          dwarftile = hero.getRegion().getID()
+        }
+
+      }
+
+    });
+
+    var heroeswithinrange : string[] = []
+    if (centraltileid == dwarftile) {
+      heroeswithinrange.push('dwarf')
+    }
+    if (adjregionids.includes(archertile) || centraltileid == archertile) {
+      heroeswithinrange.push('archer')
+    }
+    if (centraltileid == magetile) {
+      heroeswithinrange.push('mage')
+    }
+    if (centraltileid == warriortile) {
+      heroeswithinrange.push('warrior')
+    }
+
+    callback(heroeswithinrange)
+  })
 
 
 }
