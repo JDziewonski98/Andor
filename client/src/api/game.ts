@@ -60,13 +60,13 @@ export class game {
     }
 
     public dropGold(callback) {
-        //console.log("here2") //is printed at user console
+        console.log("here2") //is printed at user console
         this.socket.emit("dropGold", callback)
     }
 
-    public pickupGold(id, callback) {
+    public pickupGold(callback) {
         console.log("api pickupGold()") //is printed
-        this.socket.emit("pickupGold", id, callback)
+        this.socket.emit("pickupGold", callback)
     }
 
     public updatePickupGold(callback) {

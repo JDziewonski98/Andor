@@ -11,12 +11,14 @@ import {
   mageTile, archerTile, warriorTile, dwarfTile,
   reducedWidth, reducedHeight,
   collabTextHeight, collabColWidth, collabRowHeight,
-  wellTile1, wellTile2, wellTile3, wellTile4
+  wellTile1, wellTile2, wellTile3, wellTile4,
+  mOffset
 } from '../constants'
 import { MerchantWindow } from './merchantwindow';
 import { Monster } from '../objects/monster';
 import { Fight} from './fightwindow';
 import { HeroKind } from '../objects/HeroKind';
+import { RietburgCastle } from './rietburgcastle';
 
 
 export default class GameScene extends Phaser.Scene {
@@ -28,9 +30,11 @@ export default class GameScene extends Phaser.Scene {
   private farmers: Farmer[];
   private hourTracker: HourTracker;
   private gameinstance: game;
-  private monsters: Monster[]
+  private monsters: Monster[];
+  private monsterNameMap: Map<string, Monster>;
+  private castle:RietburgCastle;
 
-  private gameText;
+  private mockText;
 
   private cameraKeys;
   private cameraScrollSpeed = 15;
@@ -39,7 +43,8 @@ export default class GameScene extends Phaser.Scene {
   private zoomAmount = 0.01;
 
   private sceneplugin
-
+  private turntext;
+  
   constructor() {
     super({ key: 'Game' });
     // this.heroes = Array<Hero>(4); // This is adding 4 dummy elements at the start
@@ -48,6 +53,9 @@ export default class GameScene extends Phaser.Scene {
     this.farmers = new Array<Farmer>();
     this.ownHeroType = HeroKind.Dwarf;
     this.monsters = new Array<Monster>();
+    this.monsterNameMap = new Map();
+    this.castle = new RietburgCastle();
+
   }
 
   public init(data) {
@@ -55,7 +63,11 @@ export default class GameScene extends Phaser.Scene {
     let type = data.heroType;
     console.log("GameScene created, client hero type: ", type);
     if (type === "dwarf")
+    {
       this.ownHeroType = HeroKind.Dwarf
+      //This will need to be moved when we implement loading and saving, but for now this is fine.
+      this.gameinstance.setMyTurn(true)
+    }
     else if (type === "warrior")
       this.ownHeroType = HeroKind.Warrior
     else if (type === "mage")
@@ -88,6 +100,7 @@ export default class GameScene extends Phaser.Scene {
     this.setRegions();
 
     var self = this;
+    var numPlayer = 0;
     this.gameinstance.getHeros((herotypes) => {
       herotypes.forEach(type => {
         if (type === "archer") {
@@ -103,24 +116,29 @@ export default class GameScene extends Phaser.Scene {
 
       // Need to wait for heroes to be created before creating collab decision
       self.startingCollabDecisionSetup();
+      this.hourTrackerSetup();
     })
+    console.log(numPlayer);
 
     this.addMerchants();
     this.addFarmers()
     this.addMonsters()
+    this.addSheildsToRietburg()
+    
+    
 
 
+    // x and y coordinates
+    this.addWell(209,2244, wellTile1, "well1")
+    this.addWell(1353,4873, wellTile2, "well2")
+    this.addWell(7073, 3333, wellTile3, "well3")
+    this.addWell(5962, 770, wellTile4, "well4")
 
-      // x and y coordinates
-      this.addWell(209,2244, wellTile1, "well1")
-      this.addWell(1353,4873, wellTile2, "well2")
-      this.addWell(7073, 3333, wellTile3, "well3")
-      this.addWell(5962, 770, wellTile4, "well4")
+    this.gameinstance.yourTurn()
 
-      
-      this.addGold()
+    this.addGold()
 
-    // self.startingCollabDecisionSetup();
+    this.mockEndDay();
   }
 
   private cameraSetup() {
@@ -156,6 +174,7 @@ export default class GameScene extends Phaser.Scene {
     var self = this
     this.tiles.map(function (tile) {
       tile.on('pointerdown', function () {
+        console.log("It is my turn: ", self.gameinstance.myTurn)
         self.gameinstance.moveRequest(tile.id, updateMoveRequest)
       })
     })
@@ -170,6 +189,30 @@ export default class GameScene extends Phaser.Scene {
       })
     }
 
+  }
+
+  private addSheildsToRietburg(){
+    let s1 = this.add.sprite(85, 190, '8bit_herb').setDisplaySize(40,40)
+    let s2 = this.add.sprite(155, 190, '8bit_herb').setDisplaySize(40,40)
+    let s3 = this.add.sprite(225, 190, '8bit_herb').setDisplaySize(40,40)
+    let s4 = this.add.sprite(85, 310, '8bit_herb').setDisplaySize(40,40)
+    let s5 = this.add.sprite(155, 310, '8bit_herb').setDisplaySize(40,40)
+    let s6 = this.add.sprite(85, 430, '8bit_herb').setDisplaySize(40,40)
+
+    this.castle.sheilds.push(s1)
+    this.castle.sheilds.push(s2)
+    this.castle.sheilds.push(s3)
+    this.castle.sheilds.push(s4)
+    this.castle.sheilds.push(s5)
+    this.castle.sheilds.push(s6)
+    
+    var self = this;
+
+    this.gameinstance.getNumSheilds(function(numSheilds){
+      for(var i = 0; i < numSheilds; i++){
+        self.castle.sheilds[i].visible = false;
+      }
+    })
   }
 
   private addMerchants() {
@@ -232,44 +275,55 @@ export default class GameScene extends Phaser.Scene {
     const gortile3: Tile = this.tiles[21];
     const gortile4: Tile = this.tiles[26];
     const gortile5: Tile = this.tiles[48];
-    const skraltile: Tile = this.tiles[19];
+    const skraltile1: Tile = this.tiles[19];
+    const wtile1: Tile = this.tiles[1];
 
     let gor1: Monster = new Monster(this, gortile1, 'gor', 'gor1').setInteractive().setScale(.5);
     let gor2: Monster = new Monster(this, gortile2, 'gor', 'gor2').setInteractive().setScale(.5);
     let gor3: Monster = new Monster(this, gortile3, 'gor', 'gor3').setInteractive().setScale(.5);
     let gor4: Monster = new Monster(this, gortile4, 'gor', 'gor4').setInteractive().setScale(.5);
     let gor5: Monster = new Monster(this, gortile5, 'gor', 'gor5').setInteractive().setScale(.5);
-    let skral: Monster = new Monster(this, skraltile, 'skral', 'skral1').setInteractive().setScale(.5);
+    let skral1: Monster = new Monster(this, skraltile1, 'skral', 'skral1').setInteractive().setScale(.5);
+    let wardrak1: Monster = new Monster(this, wtile1, 'wardrak', 'wardrak1').setInteractive().setScale(.5);
 
     this.monsters.push(gor1);
     this.monsters.push(gor2);
     this.monsters.push(gor3);
     this.monsters.push(gor4);
     this.monsters.push(gor5);
-    this.monsters.push(skral);
+    this.monsters.push(skral1);
+    this.monsters.push(wardrak1);
+
+    this.monsterNameMap[gor1.name] = gor1;
+    this.monsterNameMap[gor2.name] = gor2;
+    this.monsterNameMap[gor3.name] = gor3;
+    this.monsterNameMap[gor4.name] = gor4;
+    this.monsterNameMap[gor5.name] = gor5;
+    this.monsterNameMap[skral1.name] = skral1;
+    this.monsterNameMap[wardrak1.name] = wardrak1;
 
     gortile1.monster = gor1
     gortile2.monster = gor2
     gortile3.monster = gor3
     gortile4.monster = gor4
     gortile5.monster = gor5
-    skraltile.monster = skral
+    skraltile1.monster = skral1
+    wtile1.monster = wardrak1
 
     this.monsters.forEach(monster =>
       this.add.existing(monster)
     );
 
     for (let i = 0; i < this.monsters.length; i++) {
-
       this.monsters[i].on('pointerdown', function (pointer) {
         if (this.scene.isVisible(this.monsters[i].name)) {
           WindowManager.destroy(this, this.monsters[i].name);
         }
         else {
-          WindowManager.create(this, this.monsters[i].name, Fight, {
-            controller: this.gameinstance, monstertexture: this.monsters[i].texture,
-            hero: this.hero, monstername: this.monsters[i].name
-          });
+          console.log(this)
+            WindowManager.create(this, this.monsters[i].name, Fight, { controller: this.gameinstance,
+                                hero:this.hero, monster:this.monsters[i]});
+                                this.scene.pause()
         }
       }, this)
     }
@@ -363,37 +417,49 @@ export default class GameScene extends Phaser.Scene {
     });
 
     this.gameinstance.addFarmer(function (tileid, farmerid) {
-      let newFarmer = self.hero.farmers.pop()
-      
-      if(farmerid === 0){
-        newFarmer = new Farmer(0, self, self.tiles[tileid], 'farmer').setDisplaySize(40,40)
-      }else if(farmerid === 1){
-        newFarmer = new Farmer(1, self, self.tiles[tileid], 'farmer').setDisplaySize(40,40)
-      }
+      if(tileid === 0){
+        let newFarmer = self.hero.farmers.pop()
+        for(var i = 0; i < 6; i++){
+          if(self.castle.sheilds[i].visible == true){
+            self.castle.sheilds[i].visible = false;
+            break;
+          }
+        }
+        
+      }else{
+        let newFarmer = self.hero.farmers.pop()
+        
+        if(farmerid === 0){
+          newFarmer = new Farmer(0, self, self.tiles[tileid], 'farmer').setDisplaySize(40,40)
+        }else if(farmerid === 1){
+          newFarmer = new Farmer(1, self, self.tiles[tileid], 'farmer').setDisplaySize(40,40)
+        }
 
-      self.tiles[tileid].farmer.push(newFarmer)
+        self.tiles[tileid].farmer.push(newFarmer)
 
-      newFarmer.setInteractive()
+        newFarmer.setInteractive()
 
-      newFarmer.on('pointerdown', function (pointer) {
-        //if (self.hero.tile.id == self.farmers[0].tile.id) {
-          self.gameinstance.pickupFarmer(function (tileid) {
-            let pickedFarmer:Farmer = self.tiles[tileid].farmer.pop();
-            for( var i = 0; i < 2; i++){
-              if(self.farmers[i].id === pickedFarmer.id){
-                self.farmers[i].tile = undefined;
-                self.hero.farmers.push(pickedFarmer)
-                break;
+        newFarmer.on('pointerdown', function (pointer) {
+          //if (self.hero.tile.id == self.farmers[0].tile.id) {
+            self.gameinstance.pickupFarmer(function (tileid) {
+              let pickedFarmer:Farmer = self.tiles[tileid].farmer.pop();
+              for( var i = 0; i < 2; i++){
+                if(self.farmers[i].id === pickedFarmer.id){
+                  self.farmers[i].tile = undefined;
+                  self.hero.farmers.push(pickedFarmer)
+                  break;
+                }
               }
-            }
-            pickedFarmer.destroy()
-            console.log(self.hero.farmers)
-         });
-        //}
+              pickedFarmer.destroy()
+              console.log(self.hero.farmers)
+          });
+          //}
+    
+        }, this);
+        self.add.existing(newFarmer)
+      }
+      });
   
-      }, this);
-      self.add.existing(newFarmer)
-    });
   }
 
   private addHero(type: HeroKind, tileNumber: number, texture: string) {
@@ -411,7 +477,7 @@ export default class GameScene extends Phaser.Scene {
 
   private addWell(x, y, tileNumber: number, wellName: string) {
     const tile: Tile = this.tiles[tileNumber]
-    const well = this.add.image(x * scaleFactor + borderWidth, y * scaleFactor + borderWidth, "well").setDisplaySize(50, 40)
+    const well = this.add.image(x * scaleFactor + borderWidth, y * scaleFactor + borderWidth, "well").setDisplaySize(40, 45)
     well.name = wellName;
 
 
@@ -464,41 +530,42 @@ export default class GameScene extends Phaser.Scene {
         })
     }
 
-    private addGold() {               
+    private addGold() {       
         var self = this        
-        for (let id in self.tiles) { // of dattara tile object ga iterate sareru
-            //console.log(id, this)
-            
-            //create a text Sprite indicating the number of gold. 
-            console.log("adding Gold")
-            var goldText = self.add.text(50, 50, "G", { color: "#fff52e" }).setX(self.tiles[id].x - 30).setY(self.tiles[id].y - 30)
-            //set to interactive
-            goldText.setInteractive() 
-            self.add.existing(goldText);         
+        for (var id in self.tiles) {
+            // console.log(id, this)
 
-            goldText.on("pointerdown", function (pointer) {                
+            if (self.tiles[id].getGold() !== 0) {
+                //create a text Sprite indicating the number of gold. 
+                var goldText = this.add.text(50, 50, "G", { color: "#fff52e" }).setX(self.tiles[id].x + 20).setY(self.tiles[id].y + 20)
+                //set to interactive
+                goldText.setInteractive() 
+                this.add.existing(goldText);                
+                
 
-                self.gameinstance.pickupGold(id, function () {
+                goldText.on("pointerdown", function (pointer) {   
+                    /*console.log("pickup attempt") //is printed
+                    console.log(goldText)
+                    console.log(self.tiles[id].getGold())*/
+                    self.gameinstance.pickupGold(function () {                        
+                        if (self.tiles[id].getGold() > 0) {
+                            console.log(self.tiles[id].getGold())
+                            self.tiles[id].setGold(self.tiles[id].getGold() - 1)
+                            //const newString = String()
+                            //goldText.setText("" + self.tiles[id].getGold()
+                        } 
+                    })                                                
+                   
+                },this)
+
+                self.gameinstance.updatePickupGold(function (pointer) {
                     if (self.tiles[id].getGold() > 0) {
-                        console.log("amount on client-tile: ", self.tiles[id].getGold())  
-                        self.tiles[id].setGold(self.tiles[id].getGold() - 1)
-                        console.log("amount on client-tile: ", self.tiles[id].getGold())   //amount of gold on tile is updated
-                       
-                    }
-                })
-
-            }, this)
-
-            self.gameinstance.updatePickupGold(function (pointer) {
-                if (self.tiles[id].getGold() > 0) {
-                    console.log(self.tiles[id].getGold())
-                    self.tiles[id].setGold(self.tiles[id].getGold() - 1)
-                    console.log(self.tiles[id].getGold())
-                }
-            }, this)
-            
+                        console.log(self.tiles[id].getGold())
+                        self.tiles[id].setGold(self.tiles[id].getGold() - 1)                        
+                    } 
+                }, this)
+            }
         }
-
     }
 
 
@@ -512,8 +579,8 @@ export default class GameScene extends Phaser.Scene {
       backgroundColor: '#f00'
     }
 
-    // Start of game collab decision
-    /* For testing purposes: open and close a collab window using interactive text on game
+    /* Start of game collab decision
+    For testing purposes: open and close a collab window using interactive text on game
     this.gameText = this.add.text(600, 550, "COLLAB", style2).setOrigin(0.5)
     this.gameText.setInteractive();
     this.gameText.on('pointerdown', function (pointer) {
@@ -526,8 +593,6 @@ export default class GameScene extends Phaser.Scene {
     }, this);
     */
 
-    // TODO collab: Replace all this hardcoding UI shit with something nicer
-    // var res = { "gold": 5, "wineskin": 2 };
     var res = new Map([
       ["gold", 5], 
       ["wineskin", 2]
@@ -540,9 +605,7 @@ export default class GameScene extends Phaser.Scene {
     // Get hero of lowest rank, based on their starting tile
     var heroRanks = [];
     for (let hero of self.heroes) { heroRanks.push(hero.tile.id); }
-    console.log(heroRanks);
     var startingHeroRank = Math.min(...heroRanks);
-    console.log("starting hero rank is", startingHeroRank);
     var collabWindowData = (self.hero.tile.id == startingHeroRank) ?
       {
         controller: self.gameinstance,
@@ -553,7 +616,8 @@ export default class GameScene extends Phaser.Scene {
         x: reducedWidth / 2 - width / 2,
         y: reducedHeight / 2 - height / 2,
         w: width,
-        h: height
+        h: height,
+        infight:false
       } :
       {
         controller: self.gameinstance,
@@ -561,7 +625,8 @@ export default class GameScene extends Phaser.Scene {
         x: reducedWidth / 2 - width / 2,
         y: reducedHeight / 2 - height / 2,
         w: 200,
-        h: 100
+        h: 100,
+        infight:false
       }
     WindowManager.create(this, 'collab', CollabWindow, collabWindowData);
     // Freeze main game while collab window is active
@@ -574,22 +639,37 @@ export default class GameScene extends Phaser.Scene {
     var htx = htX;
     var hty = htY;
     // Hero icons
-    var mageHtIcon = this.add.sprite(htx, hty, 'magemale').setDisplaySize(40, 40);
-    var dwarfHtIcon = this.add.sprite(htx, hty, 'dwarfmale').setDisplaySize(40, 40);
-    var archerHtIcon = this.add.sprite(htx, hty, 'archermale').setDisplaySize(40, 40);
-    var warriorHtIcon = this.add.sprite(htx, hty, 'warriormale').setDisplaySize(40, 40);
-
-    this.hourTracker = new HourTracker(this, htx, hty, [mageHtIcon, dwarfHtIcon, archerHtIcon, warriorHtIcon]);
-
-    // Hero ids are hardcoded for now, need to be linked to game setup
-    mageHtIcon.x = this.hourTracker.heroCoords[0][0];
-    mageHtIcon.y = this.hourTracker.heroCoords[0][1];
-    dwarfHtIcon.x = this.hourTracker.heroCoords[1][0];
-    dwarfHtIcon.y = this.hourTracker.heroCoords[1][1];
-    archerHtIcon.x = this.hourTracker.heroCoords[2][0];
-    archerHtIcon.y = this.hourTracker.heroCoords[2][1];
-    warriorHtIcon.x = this.hourTracker.heroCoords[3][0];
-    warriorHtIcon.y = this.hourTracker.heroCoords[3][1];
+    // var mageHtIcon = this.add.sprite(htx, hty, 'magemale').setDisplaySize(40, 40);
+    // var dwarfHtIcon = this.add.sprite(htx, hty, 'dwarfmale').setDisplaySize(40, 40);
+    // var archerHtIcon = this.add.sprite(htx, hty, 'archermale').setDisplaySize(40, 40);
+    // var warriorHtIcon = this.add.sprite(htx, hty, 'warriormale').setDisplaySize(40, 40);
+    
+    var self = this
+    var heroSprites = []
+    for(var h of this.heroes){
+      console.log(h)
+      var sprite = self.add.sprite(htx, hty, h.texture.key).setDisplaySize(40, 40)
+      heroSprites[h.getKind()] = sprite
+      switch (h.getKind()) {
+        case HeroKind.Archer:
+            sprite.x = htx - 20
+            sprite.y = hty - 20
+            break
+        case HeroKind.Dwarf:
+            sprite.x = htx + 20
+            sprite.y = hty - 20
+            break
+        case HeroKind.Mage:
+            sprite.x = htx - 20
+            sprite.y = hty + 20
+            break
+        case HeroKind.Warrior:
+            sprite.x = htx + 20
+            sprite.y = hty + 20
+            break
+    }
+    }
+    this.hourTracker = new HourTracker(this, htx, hty, heroSprites);
 
     // we're not actually adding the hourTracker, we're adding it's internal sprite
     this.hourTracker.depth = 5;
@@ -597,8 +677,65 @@ export default class GameScene extends Phaser.Scene {
     for (var h of this.heroes) {
       h.hourTracker = this.hourTracker;
     }
+  }
+  
+  private mockEndDay() {
+    var self = this;
 
-    this.hourTracker.setInteractive();
+    var style2 = {
+      fontFamily: '"Roboto Condensed"',
+      fontSize: "20px",
+      backgroundColor: '#f00'
+    }
+
+    this.mockText = this.add.text(600, 550, "end day mock", style2).setOrigin(0.5)
+    this.mockText.setInteractive();
+    this.mockText.on('pointerdown', function (pointer) {
+      // Execute end of day actions
+      self.gameinstance.moveMonstersEndDay();
+    }, this);
+
+    // Callbacks
+    function moveMonstersOnMap(updatedMonsters) {
+      console.log("Received updated monsters from server");
+      // console.log(updatedMonsters);
+      self.moveMonstersEndDay(updatedMonsters);
+    }
+
+    function deleteKilledMonsters(killedMonster) {
+      self.removeKilledMonsters(killedMonster)
+    }
+
+    self.gameinstance.receiveUpdatedMonsters(moveMonstersOnMap);
+    self.gameinstance.receiveKilledMonsters(deleteKilledMonsters);
+  }
+
+
+  private moveMonstersEndDay(updatedMonsters) {
+    for (const [mName, newTileID] of Object.entries(updatedMonsters)) {
+      let newTile = this.tiles[newTileID as number];
+      this.monsterMoveTween(this.monsterNameMap[mName], newTile, newTile.x, newTile.y);
+    }
+  }
+
+  private removeKilledMonsters(m) {
+    let monster = this.monsterNameMap[m]
+    monster.tile.monster = null
+    monster.destroy()
+    this.monsterNameMap[m] = null
+  }
+
+  public monsterMoveTween(monster: Monster, newTile: Tile, newX, newY) {
+    this.tweens.add({
+      targets: monster,
+      x: newX + mOffset,
+      y: newY,
+      duration: 1000,
+      ease: 'Power2',
+      completeDelay: 1000,
+      onComplete: function() {monster.moveToTile(newTile)}
+    });
+    
   }
 
   public update() {

@@ -82,8 +82,6 @@ export class HeroWindow extends Window {
                     //create a token on the tile 
                     //indicate the amount of gold on tile
 
-                    //update gold amount on tile                    
-
                 })
             }           
         });
