@@ -476,11 +476,7 @@ export default class GameScene extends Phaser.Scene {
             goldText.setInteractive() 
             self.add.existing(goldText);         
 
-            goldText.on("pointerdown", function (pointer) {
-                /*console.log("pickup attempt") //is printed
-                console.log(goldText)
-                console.log(self.tiles[id].getGold())*/
-                //console.log(id)
+            goldText.on("pointerdown", function (pointer) {                
 
                 self.gameinstance.pickupGold(id, function () {
                     if (self.tiles[id].getGold() > 0) {
