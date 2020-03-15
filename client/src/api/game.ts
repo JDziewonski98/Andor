@@ -57,7 +57,7 @@ export class game {
     }
 
     public dropGold(callback) {
-        console.log("here2") //is printed at user console
+        //console.log("here2") //is printed at user console
         this.socket.emit("dropGold", callback)
     }
 

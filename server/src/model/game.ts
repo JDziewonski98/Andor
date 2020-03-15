@@ -89,7 +89,8 @@ export class Game {
         // indexing between regions array and region IDs
         var tilesData = require("./tilemap").map;
         tilesData.forEach(t => {
-            this.regions.push(new Region(t.id, t.nextRegionId, t.adjRegionsIds, t.hasWell, t.hasMerchant))
+            // on top of setting t.something, also set amount of gold on each tile to 0
+            this.regions.push(new Region(0, t.id, t.nextRegionId, t.adjRegionsIds, t.hasWell, t.hasMerchant))
         })
         //console.log(this.regions[2].getNextRegionId())
         // console.log("regions sanity check:", this.regions);
