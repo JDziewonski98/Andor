@@ -2,3 +2,4 @@
 */node_modules/*
 .DS_Store
 client/src/config/env.js
+.vs/slnx.sqlite
