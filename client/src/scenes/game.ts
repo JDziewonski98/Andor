@@ -513,7 +513,6 @@ export default class GameScene extends Phaser.Scene {
         well.setInteractive()
         var self = this
 
-
         well.on("pointerdown", function () {
             //console.log(tile.hero.getWillPower())
             self.gameinstance.useWell(function () {
