@@ -28,7 +28,6 @@ export class Tile extends Phaser.GameObjects.Sprite {
 
     public monster!: Monster;
 
-
     constructor(id, scene, x, y, texture) {
         super(scene, x, y, 'tiles', texture);
         this.id = id;
