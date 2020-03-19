@@ -1,5 +1,7 @@
 import { Window } from "./window";
 import { game } from '../api/game';
+import { WindowManager } from "../utils/WindowManager";
+import { CollabWindow } from './collabwindow';
 
 export class BattleInvWindow extends Window {
 
@@ -62,7 +64,19 @@ export class BattleInvWindow extends Window {
                         //send the roll to battle host and destroy the window.
                         self.gameinstance.confirmroll(self.herokind, self.roll, self.str)
                         //maybe display results first?
-                        self.scene.remove(self.windowname)
+                        self.gameinstance.battleRewardsPopup(function(windowname){
+                            var collabWindowData = {
+                                controller: self.gameinstance,
+                                isOwner: false,
+                                x: 500,
+                                y: 500,
+                                w: 200,
+                                h: 100,
+                                infight:false
+                              }
+                              WindowManager.create(self, windowname, CollabWindow, collabWindowData);
+                        })
+                        //self.scene.remove(self.windowname)
                     })                    
                 }
                 else {

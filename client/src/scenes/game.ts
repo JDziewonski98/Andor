@@ -137,8 +137,14 @@ export default class GameScene extends Phaser.Scene {
 
     this.gameinstance.yourTurn()
     this.gameinstance.receiveBattleInvite(function() {
+      if (self.scene.isVisible('battleinv')){
+        console.log('destroying battleinv')
+        WindowManager.destroy(self, 'battleinv');
+      }
+      console.log('creating battleinv')
       console.log('attempting to create battleinv window')
       WindowManager.create(self, 'battleinv', BattleInvWindow, {controller:self.gameinstance, heroname:self.hero.getKind()});
+      
     })
     this.addGold()
 
@@ -325,7 +331,7 @@ export default class GameScene extends Phaser.Scene {
         }
         else {
             WindowManager.create(this, this.monsters[i].name, Fight, { controller: this.gameinstance,
-                                hero:this.hero, monster:this.monsters[i]});
+                                hero:this.hero, monster:this.monsters[i],heroes:this.heroes});
             this.scene.pause()
         }
       }, this)

@@ -389,63 +389,6 @@ export function game(socket, model: Game, io) {
     }
   })
 
-  // socket.on('monsterRoll', function (m, callback) {
-
-  //   try {
-
-  //     var heroId = socket.conn.id;
-  //     let hero = model.getHero(heroId);
-  //     let heroregion = hero.getRegion().getID()
-  //     let monster = model.getMonsters().get(m)
-  //     let monsterregion = monster!.getTileID()
-
-  //     if (hero.getTimeOfDay() > 9) {
-  //       callback('notime', null, null)
-  //     }
-  //     else if (heroregion == monsterregion) {
-  //       let monsterroll = monster!.rollDice()
-  //       let heroroll = hero.roll()
-  //       var winner = ''
-  //       var dmg = 0
-
-  //       if (monsterroll > heroroll) {
-  //         winner = 'monster'
-  //         dmg = monsterroll - heroroll
-  //         hero.setWill(-dmg)
-  //         //TODO project new hero will to client
-  //         if (hero.getWill() < 1) {
-  //           //TODO: handle DEATH!!!
-  //         }
-  //       }
-
-  //       else if (monsterroll < heroroll) {
-  //         winner = 'hero'
-  //         dmg = heroroll - monsterroll
-  //         monster!.setWill(monster!.getWill() - dmg)
-  //         //TODO project new monster will to client...
-  //         if (monster!.getWill() < 1) {
-  //           //monster dead logic...
-  //         }
-  //       }
-
-  //       else {
-  //         winner = 'tie'
-  //       }
-
-  //       callback(monsterroll, heroroll, winner)
-  //     }
-
-  //     else {
-  //       callback('outofrange', null,null)
-  //     }
-  //   }
-
-  //   catch {
-  //     console.log('no such monster name exists!')
-  //   }
-
-  // })
-
   socket.on('doDamageToMonster', function(themonster, dmg) {
     let monster = model.getMonsters().get(themonster)
     monster!.setWill(monster!.getWill() - dmg)
@@ -558,6 +501,10 @@ export function game(socket, model: Game, io) {
 
   socket.on('sendBattleInviteResponse', function(response, herokind) {
     socket.broadcast.emit('recieveBattleInviteResponse', response, herokind)
+  })
+
+  socket.on('battleCollabApprove', function(windowname) {
+    socket.broadcast.emit('battleRewardsPopup',windowname)
   })
 
 

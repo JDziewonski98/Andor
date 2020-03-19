@@ -241,6 +241,14 @@ export class game {
     public receiveBattleInviteResponse(callback) {
         this.socket.on('recieveBattleInviteResponse', callback)
     }
+    
+    public sendCollabApproveToBattleAllies(windowname) {
+        this.socket.emit('battleCollabApprove', windowname)
+    }
+
+    public battleRewardsPopup(callback) {
+        this.socket.on('battleRewardsPopup',callback)
+    }
 
     public heroRoll(callback) {
         this.socket.emit('heroRoll',callback)
@@ -256,6 +264,7 @@ export class game {
 
     public unsubscribeAlliedRollListener() {
         this.socket.off('receiveAlliedRoll')
+        this.socket.off('recieveBattleInviteResponse')
     }
 }
 
