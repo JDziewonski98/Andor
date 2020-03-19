@@ -19,6 +19,7 @@ import { Monster } from '../objects/monster';
 import { Fight} from './fightwindow';
 import { HeroKind } from '../objects/HeroKind';
 import { RietburgCastle } from './rietburgcastle';
+import { BattleInvWindow } from './battleinvitewindow';
 
 
 export default class GameScene extends Phaser.Scene {
@@ -135,7 +136,10 @@ export default class GameScene extends Phaser.Scene {
     this.addWell(5962, 770, wellTile4, "well4")
 
     this.gameinstance.yourTurn()
-
+    this.gameinstance.receiveBattleInvite(function() {
+      console.log('attempting to create battleinv window')
+      WindowManager.create(self, 'battleinv', BattleInvWindow, {controller:self.gameinstance, heroname:self.hero.getKind()});
+    })
     this.addGold()
 
     this.mockEndDay();
@@ -228,7 +232,7 @@ export default class GameScene extends Phaser.Scene {
         if (this.scene.isVisible('merchant1')) {
           WindowManager.destroy(self, 'merchant1');
         } else {
-          WindowManager.create(self, 'merchant1', MerchantWindow, self.gameinstance);
+          WindowManager.create(self, 'merchant1', MerchantWindow, {controller:self.gameinstance});
           let window = WindowManager.get(self, 'merchant1')
 
         }
@@ -243,7 +247,7 @@ export default class GameScene extends Phaser.Scene {
         if (this.scene.isVisible('merchant2')) {
           WindowManager.destroy(self, 'merchant2');
         } else {
-          WindowManager.create(self, 'merchant2', MerchantWindow, self.gameinstance);
+          WindowManager.create(self, 'merchant2', MerchantWindow, {controller:self.gameinstance});
           let window = WindowManager.get(self, 'merchant2')
         }
 
@@ -257,7 +261,7 @@ export default class GameScene extends Phaser.Scene {
         if (this.scene.isVisible('merchant3')) {
           WindowManager.destroy(self, 'merchant3');
         } else {
-          WindowManager.create(self, 'merchant3', MerchantWindow, self.gameinstance);
+          WindowManager.create(self, 'merchant3', MerchantWindow, {controller:self.gameinstance});
           let window = WindowManager.get(self, 'merchant3')
         }
 
