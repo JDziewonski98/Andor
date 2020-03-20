@@ -15,15 +15,20 @@ export class BattleInvWindow extends Window {
 
     private roll = -1;
     private str = -1;
+    private hero
+    private gamescene
 
     public constructor(key: string, data, windowData = { x: 350, y: 30, width: 400, height: 250 }) {
         super(key, windowData);
         this.gameinstance = data.controller
         this.windowname = key
-        this.herokind = data.heroname
+        this.herokind = data.hero.getKind()
+        this.hero = data.hero
+        this.gamescene = data.gamescene
     }
 
     protected initialize() {
+        console.log('in init')
         var bg = this.add.image(0, 0, 'scrollbg').setOrigin(0.5)
         bg.tint = 0xff0000
 
@@ -33,7 +38,7 @@ export class BattleInvWindow extends Window {
         var self = this
 
         yesbutton.on('pointerdown', function(pointer) {
-
+            self.hero.incrementHour()
             self.gameinstance.sendBattleInviteResponse('yes', self.herokind)
             yesbutton.destroy()
             nobutton.destroy()
@@ -41,6 +46,7 @@ export class BattleInvWindow extends Window {
             self.rolltext = self.add.text(50, 25, 'Your roll: ' + self.roll + ' Your str: ' + self.str)
 
             self.gameinstance.heroRoll(function(data) {
+                self.hero.incrementHour()
                 if (self.herokind == 'archer') {
                     self.str = data.strength
                     var count = 0
@@ -64,19 +70,20 @@ export class BattleInvWindow extends Window {
                         //send the roll to battle host and destroy the window.
                         self.gameinstance.confirmroll(self.herokind, self.roll, self.str)
                         //maybe display results first?
+                        self.gameinstance.unsubscribeBattleRewardsPopup()
                         self.gameinstance.battleRewardsPopup(function(windowname){
                             var collabWindowData = {
                                 controller: self.gameinstance,
                                 isOwner: false,
-                                x: 500,
-                                y: 500,
+                                x: 250,
+                                y: 250,
                                 w: 200,
                                 h: 100,
                                 infight:false
                               }
-                              WindowManager.create(self, windowname, CollabWindow, collabWindowData);
+                              WindowManager.create(self.gamescene, windowname, CollabWindow, collabWindowData);
                         })
-                        //self.scene.remove(self.windowname)
+                        self.scene.remove(self.windowname)
                     })                    
                 }
                 else {

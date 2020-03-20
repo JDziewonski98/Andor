@@ -1,12 +1,13 @@
 import { Window } from "./window";
 import { game } from "../api/game";
 import { WindowManager } from "../utils/WindowManager";
-import {CollabWindow} from "./collabwindow"
+import { CollabWindow } from "./collabwindow"
 import {
     reducedWidth, reducedHeight, collabColWidth, collabRowHeight
-  } from '../constants'
+} from '../constants'
 
 export class Fight extends Window {
+    //shit ton of attributes mostly just text objects
     private gameinstance: game;
     private windowname;
     //texts
@@ -34,12 +35,14 @@ export class Fight extends Window {
     //hero and monster references
     private monster
     private hero
+    //misc
     private alliedheros: string[] = []
     private actuallyjoinedheros: string[] = []
     private allyrolls: Map<string, number>
-    private yourattack:number;
+    private yourattack: number;
     private heroobjectsforcollab
     private firstfight = true
+    private inviteresponses = 0
 
     public constructor(key, data, windowData = { x: 10, y: 10, width: 450, height: 350 }) {
         super(key, windowData);
@@ -52,58 +55,63 @@ export class Fight extends Window {
         this.monster = data.monster
         this.yourwill = this.hero.getWillPower()
         this.heroobjectsforcollab = data.heroes
+        this.allyrolls = new Map<string, number>();
+        this.getPossibleAllies()
+    }
+
+    private getPossibleAllies() {
         var self = this
-        this.allyrolls = new Map<string,number>();
-        this.gameinstance.getHerosInRange(this.monster.tile.id, (heros) =>
-        {
+        this.gameinstance.getHerosInRange(this.monster.tile.id, (heros) => {
             for (let i = 0; i < heros.length; i++) {
-                if (heros[i] == this.hero.getKind()){
-                    heros.splice(i,1)
+                if (heros[i] == this.hero.getKind()) {
+                    heros.splice(i, 1)
                 }
             }
             self.alliedheros = heros
-            console.log('possible allies: ' , this.alliedheros)
+            console.log('possible allies: ', this.alliedheros)
         })
     }
-
 
     protected initialize() {
         var self = this
         var bg = this.add.image(0, 0, 'scrollbg').setOrigin(0.5)
         bg.tint = 0xff0000
-        this.monstericon = this.add.image(40,40,this.monstertexture)
+        this.monstericon = this.add.image(40, 40, this.monstertexture)
 
         //fetch monster stats from backend
-        this.gameinstance.getMonsterStats(this.monstername, function(data) {
+        this.gameinstance.getMonsterStats(this.monstername, function (data) {
             self.monsterstr = data.str;
             self.monsterwill = data.will;
             self.monstergold = data.reward;
             self.monstertype = data.type;
-            self.monstertypetxt = self.add.text(3,80,self.monstertype)
-            self.monsterstrtxt = self.add.text(3,95,"Str: " + self.monsterstr)
-            self.monsterwilltxt = self.add.text(3,110,"Will: " + self.monsterwill)
-            self.monstergoldtxt = self.add.text(3,125,"Reward: " + self.monstergold)
+            self.monstertypetxt = self.add.text(3, 80, self.monstertype)
+            self.monsterstrtxt = self.add.text(3, 95, "Str: " + self.monsterstr)
+            self.monsterwilltxt = self.add.text(3, 110, "Will: " + self.monsterwill)
+            self.monstergoldtxt = self.add.text(3, 125, "Reward: " + self.monstergold)
         })
 
         //populate window with text
-        this.notificationtext = this.add.text(90,215, '', { backgroundColor: '#3b44af' })
+        this.notificationtext = this.add.text(90, 215, '', { backgroundColor: '#3b44af' })
         this.fighttext = this.add.text(90, 20, 'Fight!!', { backgroundColor: '#363956' }).setInteractive()
-        this.theirroll = this.add.text(90, 60, 'Monster roll: ', { backgroundColor: 'fx00' })
-        this.yourroll = this.add.text(90, 110, 'Your roll: ', { backgroundColor: 'fx00' })
-        this.alliedrollstxt = this.add.text(90, 160, 'Allied rolls: ', { backgroundColor: 'fx00' })
+        this.theirroll = this.add.text(90, 60, 'Monster atk: ', { backgroundColor: 'fx00' })
+        this.yourroll = this.add.text(90, 110, 'Your atk: ', { backgroundColor: 'fx00' })
+        this.alliedrollstxt = this.add.text(90, 160, 'Allied atks: ', { backgroundColor: 'fx00' })
         this.yourwilltxt = this.add.text(90, 200, 'Your will: ' + this.yourwill, { backgroundColor: 'fx00' })
 
         //click the fight text to enter the fight.
         this.fighttext.on('pointerdown', function (pointer) {
+            self.inviteresponses = 0
+            var haveyourolled = false
+            self.alliedrollstxt.setText('Allied rolls: ')
+            self.actuallyjoinedheros = []
             self.fighttext.setText('Fight again!')
             self.fighttext.disableInteractive()
-            self.gameinstance.rollMonsterDice(self.monstername, function(result) {
+            self.gameinstance.rollMonsterDice(self.monstername, function (result) {
 
-                if (result != 'outofrange'){
+                if (result != 'outofrange') {
+                    //only generate the list of heroes in range text first time.
                     self.exitbutton.visible = false
-                    //TODO get rid of X and invite text.
-                    if (self.firstfight == true)
-                    {
+                    if (self.firstfight == true) {
                         self.displayInvList()
                         self.firstfight = false
                     }
@@ -115,9 +123,10 @@ export class Fight extends Window {
                     self.theirroll.setText('Monster roll: ' + result)
 
                     //click to get your roll.
-                    var rollbutton = self.add.text(220, 110, 'ROLL.').setInteractive()
-                    rollbutton.on('pointerdown', function(pointer) {
-                        self.gameinstance.heroRoll(function(data) {
+                    var rollbutton = self.add.text(220, 110, 'ROLL.', { backgroundColor: '#3b44af' }).setInteractive()
+                    rollbutton.on('pointerdown', function (pointer) {
+                        haveyourolled = true
+                        self.gameinstance.heroRoll(function (data) {
                             if (self.hero.getKind() == 'archer') {
                                 //TODO
                             }
@@ -126,7 +135,7 @@ export class Fight extends Window {
                                 rollbutton.disableInteractive()
                                 let attack = data.roll + data.strength
                                 self.yourattack = attack
-                                self.yourroll.setText('Your roll: ' + attack)
+                                self.yourroll.setText('Your atk: ' + attack)
                                 if (self.hero.getKind() == 'mage') {
                                     //TODO
                                 }
@@ -135,34 +144,30 @@ export class Fight extends Window {
                     })
 
                     //listener for ally's rolls...
-                    self.gameinstance.receiveAlliedRoll(function(herokind, roll,str) {
+                    self.gameinstance.receiveAlliedRoll(function (herokind, roll, str) {
                         console.log('received', herokind, ' roll.')
                         alliedrollstxtreceived++
-                        self.allyrolls.set(herokind,roll+str)
+                        self.allyrolls.set(herokind, roll + str)
                         self.alliedrollstxt.setText(self.alliedrollstxt.getWrappedText() + self.allyrolls.get(herokind))
-                        if(alliedrollstxtreceived == self.actuallyjoinedheros.length) {
+                        if (alliedrollstxtreceived == self.actuallyjoinedheros.length) {
                             console.log('all allies have confirmed their roll.')
                         }
                     })
 
                     //confirm you want to use your current roll and ally's rolls.
-                    //TODO wait for N responses in the invite thing before u can click dis shit.
-                    var confirmbutton = self.add.text(300,300,'Confirm.').setInteractive()
-                    confirmbutton.on('pointerdown', function(pointer) {
-                        if (alliedrollstxtreceived == self.actuallyjoinedheros.length) {
-                            console.log(self.yourattack, ' andddddd', result)
+                    var confirmbutton = self.add.text(300, 300, 'Confirm.').setInteractive()
+                    confirmbutton.on('pointerdown', function (pointer) {
+                        if (alliedrollstxtreceived == self.actuallyjoinedheros.length && self.inviteresponses == self.alliedheros.length && haveyourolled == true) {
                             confirmbutton.destroy()
-                            //TODO handle re-inviting allies
-                            //TODO hide confirm button, flash fight again button, reopen invite list.
                             self.fighttext.setInteractive()
                             self.gameinstance.unsubscribeAlliedRollListener()
-                            var alliedattacksum:number = 0;
+                            var alliedattacksum: number = 0;
                             rollbutton.destroy()
                             self.exitbutton.visible = true
 
                             for (let ally of self.alliedheros) {
-                                try{
-                                    if (self.actuallyjoinedheros.length > 0){
+                                try {
+                                    if (self.actuallyjoinedheros.length > 0) {
                                         alliedattacksum += self.allyrolls.get(ally)
                                         console.log(self.allyrolls)
                                     }
@@ -172,11 +177,18 @@ export class Fight extends Window {
                                 }
                             }
 
+                            self.hero.incrementHour()
+                            self.heroobjectsforcollab.forEach(h => {
+                                if (self.actuallyjoinedheros.includes(h.getKind())) {
+                                    h.incrementHour()
+                                }
+                            })
+
                             var totalattack = self.yourattack + alliedattacksum
-                            console.log('totalatk:',totalattack,'uratk:',self.yourattack,'result',result)
+                            console.log('totalatk:', totalattack, 'uratk:', self.yourattack, 'result', result)
                             if (totalattack > result) {
-                                //todo handle reinvite
-                                self.hero.incrementHour()
+                                //hero(s) win.
+                                //todo handle reinvite (i think done?)
                                 self.gameinstance.doDamageToMonster(self.monstername, totalattack - result)
                                 self.notificationtext.setText('WHAM!! You hit them for \n' + (totalattack - result) + ' damage!')
                                 self.tween()
@@ -186,13 +198,14 @@ export class Fight extends Window {
                                     self.victory()
                                 }
                             }
-                            else if (totalattack < result){
+                            else if (totalattack < result) {
+                                //monster win.
                                 //TODO handle allies dying and therefore remove them from invite list.
                                 self.gameinstance.doDamageToHero(self.hero.getKind(), result - totalattack)
-                                for (let ally of self.actuallyjoinedheros){
+                                for (let ally of self.actuallyjoinedheros) {
                                     self.gameinstance.doDamageToHero(ally, result - totalattack)
                                 }
-                                self.hero.setwillPower(-(result-totalattack))
+                                self.hero.setwillPower(-(result - totalattack))
                                 self.yourwill = self.hero.getWillPower()
                                 self.yourwilltxt.setText('Your will: ' + self.yourwill)
                                 self.notificationtext.setText('OUCH!! You take \n' + (result - totalattack) + ' damage!')
@@ -204,20 +217,20 @@ export class Fight extends Window {
                                 }
                             }
                             else {
-                                //TODO tie
-                                self.hero.incrementHour()
+                                //TODO tie (anything else to do?)
                                 self.notificationtext.setText('Tie! You are \nevenly matched...')
                             }
                         }
                         else {
+                            console.log(alliedrollstxtreceived, self.actuallyjoinedheros.length, self.inviteresponses, self.alliedheros.length)
                             this.setText('Not all allied heroes\nhave confirmed their roll.\n Click again.')
                         }
                     })
-                    
+
                 }
 
                 else {
-                    
+
                     self.notificationtext.setText('Out Of Range!')
                 }
 
@@ -230,7 +243,7 @@ export class Fight extends Window {
             color: "#4944A4"
         }
         this.exitbutton = this.add.text(300, 10, 'X', style).setInteractive()
-        this.exitbutton.on('pointerdown', function(pointer) {
+        this.exitbutton.on('pointerdown', function (pointer) {
             self.scene.resume("Game")
             self.scene.remove(self.windowname)
         })
@@ -240,14 +253,14 @@ export class Fight extends Window {
     private displayInvList() {
         var self = this
         //display possible players to invite to the game.
-        this.invitetext = this.add.text(250,50, 'Allies in range:')
+        this.invitetext = this.add.text(250, 50, 'Allies in range:')
         if (self.alliedheros.length > 0) {
             //iterate over other heros in range.
             for (let i = 0; i < self.alliedheros.length; i++) {
                 //display them in the window.
                 this.invitetext.setText(this.invitetext.getWrappedText() + '\n' + self.alliedheros[i])
             }
-        this.sendInvites()
+            this.sendInvites()
         }
         else {
             this.invitetext.setText('No other \nplayers in\nrange.')
@@ -258,8 +271,9 @@ export class Fight extends Window {
         var self = this
         //this will display a invite request pop-up on the clients of all heroes in range.
         self.gameinstance.sendBattleInvite(self.monster.tile.id, self.alliedheros)
-        self.gameinstance.receiveBattleInviteResponse(function(response, herokind) {
-            if (response == 'yes' )  {
+        self.gameinstance.receiveBattleInviteResponse(function (response, herokind) {
+            self.inviteresponses++
+            if (response == 'yes') {
                 console.log('yes ' + herokind)
                 //TODO rn we arent checking which ones confirm bruh
                 self.actuallyjoinedheros.push(herokind)
@@ -298,6 +312,8 @@ export class Fight extends Window {
 
     private victory() {
         var self = this
+        this.alliedrollstxt.destroy()
+        this.invitetext.destroy()
         this.monster.destroy()
         this.yourwilltxt.destroy()
         this.monstertypetxt.destroy()
@@ -311,7 +327,7 @@ export class Fight extends Window {
         this.yourroll.destroy()
         this.exitbutton.destroy()
 
-        let vic = this.add.text(70,20,"VICTORY!")
+        let vic = this.add.text(70, 20, "VICTORY!")
         this.tweens.add({
             targets: vic,
             alpha: 0.3,
@@ -320,9 +336,9 @@ export class Fight extends Window {
             yoyo: true
         });
 
-        var goldtext = this.add.text(70,50,"Click to loot " + this.monstergold + " gold.").setInteractive()
-        var willtext = this.add.text(70,80,"Click to plunder " + this.monstergold + "  willpower.").setInteractive()
-        
+        var goldtext = this.add.text(70, 50, "Click to loot " + this.monstergold + " gold.").setInteractive()
+        var willtext = this.add.text(70, 80, "Click to plunder " + this.monstergold + "  willpower.").setInteractive()
+
         var involvedheros = []
         //unfortunately we have to do this because collab window wants actual hero onjcts instad of their kind as a string
         //even thought all it needs them for is the getKind()...
@@ -332,39 +348,11 @@ export class Fight extends Window {
             }
         });
 
-        //todo send message for other allies to get the accept collab decision window.
-        goldtext.on('pointerdown', function(pointer) {
+        goldtext.on('pointerdown', function (pointer) {
             self.gameinstance.sendCollabApproveToBattleAllies(self.monstername + 'collab')
             var res = new Map([
                 ["gold", self.monstergold]
-              ])
-
-            var width = (res.size + 1) * collabColWidth; 
-            var height = (3) * collabRowHeight;
-
-            var collabwindowdata = {
-                controller: self.gameinstance,
-                isOwner: true,
-                heroes: involvedheros,
-                resources: res,
-                textOptions: null,
-                x: reducedWidth / 2 - width / 2,
-                y: reducedHeight / 2 - height / 2,
-                w: width,
-                h: (involvedheros.length + 2) * collabRowHeight,
-                infight: true
-              }
-
-            WindowManager.create(this, self.monstername + 'collab', CollabWindow, collabwindowdata)
-            self.scene.remove(self.monstername)
-        }, this)
-
-
-        willtext.on('pointerdown', function(pointer) {
-            self.gameinstance.sendCollabApproveToBattleAllies(self.monstername + 'collab')
-            var res = new Map([
-                ["will", self.monstergold]
-              ])
+            ])
 
             var width = (res.size + 1) * collabColWidth;
             var height = (3) * collabRowHeight;
@@ -380,7 +368,34 @@ export class Fight extends Window {
                 w: width,
                 h: (involvedheros.length + 2) * collabRowHeight,
                 infight: true
-              }
+            }
+
+            WindowManager.create(this, self.monstername + 'collab', CollabWindow, collabwindowdata)
+            self.scene.remove(self.monstername)
+        }, this)
+
+
+        willtext.on('pointerdown', function (pointer) {
+            self.gameinstance.sendCollabApproveToBattleAllies(self.monstername + 'collab')
+            var res = new Map([
+                ["will", self.monstergold]
+            ])
+
+            var width = (res.size + 1) * collabColWidth;
+            var height = (3) * collabRowHeight;
+
+            var collabwindowdata = {
+                controller: self.gameinstance,
+                isOwner: true,
+                heroes: involvedheros,
+                resources: res,
+                textOptions: null,
+                x: reducedWidth / 2 - width / 2,
+                y: reducedHeight / 2 - height / 2,
+                w: width,
+                h: (involvedheros.length + 2) * collabRowHeight,
+                infight: true
+            }
 
             WindowManager.create(this, self.monstername + 'collab', CollabWindow, collabwindowdata)
             self.scene.remove(self.monstername)
@@ -393,6 +408,8 @@ export class Fight extends Window {
 
     public death() {
         var self = this
+        this.invitetext.destroy()
+        this.alliedrollstxt.destroy()
         this.yourwilltxt.destroy()
         this.monstertypetxt.destroy()
         this.monsterstrtxt.destroy()
@@ -404,9 +421,9 @@ export class Fight extends Window {
         this.theirroll.destroy()
         this.yourroll.destroy()
         this.exitbutton.destroy()
-        this.add.text(70,50,"You lost and lose\n 1 strength. Your turn \n is over. Your \nwill is set to 3.")
-        var text = this.add.text(70,150,"Click to accept.").setInteractive()
-        text.on('pointerdown', function(pointer) {
+        this.add.text(70, 50, "You lost and lose\n 1 strength. Your turn \n is over. Your \nwill is set to 3.")
+        var text = this.add.text(70, 150, "Click to accept.").setInteractive()
+        text.on('pointerdown', function (pointer) {
             self.scene.remove(self.windowname)
             if (self.gameinstance.getTurn()) {
                 self.gameinstance.endTurn();

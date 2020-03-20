@@ -250,6 +250,10 @@ export class game {
         this.socket.on('battleRewardsPopup',callback)
     }
 
+    public unsubscribeBattleRewardsPopup() {
+        this.socket.off('battleRewardsPopup')
+    }
+
     public heroRoll(callback) {
         this.socket.emit('heroRoll',callback)
     }
