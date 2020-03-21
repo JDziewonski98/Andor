@@ -127,8 +127,26 @@ export class Fight extends Window {
                     rollbutton.on('pointerdown', function (pointer) {
                         haveyourolled = true
                         self.gameinstance.heroRoll(function (data) {
+                            //handle archer ability
                             if (self.hero.getKind() == 'archer') {
-                                //TODO
+                                var count = 0
+                                var curroll = data.rolls[count]
+                                var str = data.strength
+                                self.notificationtext.setText('You may reroll ' + (data.rolls.length-1-count) + ' more times.')
+                                self.yourroll.setText('Your roll: ' + curroll + ' Your str: ' + str)
+                                rollbutton.setText('Click to use ability.')
+                                rollbutton.removeAllListeners('pointerdown')
+                                self.yourattack = str + curroll
+                                rollbutton.on('pointerdown', function(pointer) {
+                                    count++
+                                    self.notificationtext.setText('You may reroll ' + (data.rolls.length-1-count) + ' more times.')
+                                    curroll = data.rolls[count]
+                                    self.yourroll.setText('Your roll: ' + curroll + ' Your str: ' + str)
+                                    self.yourattack = str + curroll
+                                    if (count == data.rolls.length - 1) {
+                                        rollbutton.disableInteractive()
+                                    }
+                                })
                             }
                             else {
                                 rollbutton.setText('Rolled.')
@@ -136,8 +154,18 @@ export class Fight extends Window {
                                 let attack = data.roll + data.strength
                                 self.yourattack = attack
                                 self.yourroll.setText('Your atk: ' + attack)
+                                //handle mage ability
                                 if (self.hero.getKind() == 'mage') {
-                                    //TODO
+                                    rollbutton.setInteractive()
+                                    rollbutton.removeAllListeners('pointerdown')
+                                    var oppositeside = 7 - data.roll
+                                    rollbutton.setText('Flip die to ' + oppositeside + '?')
+                                    rollbutton.on('pointerdown', function(pointer){
+                                        rollbutton.setText('Mage ability used.')
+                                        rollbutton.disableInteractive()
+                                        self.yourattack = oppositeside + data.strength
+                                        self.yourroll.setText('Your atk: ' + self.yourattack)
+                                    })
                                 }
                             }
                         })
@@ -205,6 +233,19 @@ export class Fight extends Window {
                                 for (let ally of self.actuallyjoinedheros) {
                                     self.gameinstance.doDamageToHero(ally, result - totalattack)
                                 }
+                                self.heroobjectsforcollab.forEach(hero => {
+                                    if (self.actuallyjoinedheros.includes(hero.getKind())) {
+                                        hero.setwillPower(-(result - totalattack))
+                                        if (hero.getWillPower() < 1) {
+                                            var index = self.alliedheros.indexOf(hero.getKind());
+                                            if (index > -1) {
+                                                self.alliedheros.splice(index, 1);
+                                                console.log('removed', hero.getKind(), 'due to death.')
+                                                //send message to display death on their screen.
+                                            }
+                                        }
+                                    }
+                                });
                                 self.hero.setwillPower(-(result - totalattack))
                                 self.yourwill = self.hero.getWillPower()
                                 self.yourwilltxt.setText('Your will: ' + self.yourwill)

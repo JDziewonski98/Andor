@@ -63,32 +63,47 @@ export class BattleInvWindow extends Window {
                         if (count == data.rolls.length - 1) {
                             self.abilitybutton.destroy()
                         }
-                    })
-
-                    self.confirmbutton = self.add.text(50,70,'Click to confirm your attack.').setInteractive()
-                    self.confirmbutton.on('pointerdown', function(pointer) {
-                        //send the roll to battle host and destroy the window.
-                        self.gameinstance.confirmroll(self.herokind, self.roll, self.str)
-                        //maybe display results first?
-                        self.gameinstance.unsubscribeBattleRewardsPopup()
-                        self.gameinstance.battleRewardsPopup(function(windowname){
-                            var collabWindowData = {
-                                controller: self.gameinstance,
-                                isOwner: false,
-                                x: 250,
-                                y: 250,
-                                w: 200,
-                                h: 100,
-                                infight:false
-                              }
-                              WindowManager.create(self.gamescene, windowname, CollabWindow, collabWindowData);
-                        })
-                        self.scene.remove(self.windowname)
-                    })                    
+                    })                 
                 }
                 else {
-                    //todo: handle non archer heros
+                    //handle non archer heros
+                    self.str = data.strength
+                    self.rolltext.setText('Your roll: ' + data.roll + 'Your str:' + data.strength)
+                    self.roll = data.roll
+                    //handle mage ability
+                    if (self.hero.getKind() == 'mage') {
+                        self.abilitytext = self.add.text(50,40,'You may flip the die to: ' + (7-data.roll))
+                        var oppositeside = 7 - data.roll
+                        self.abilitybutton = self.add.text(50,55,'Click to use ability.').setInteractive()
+                        self.abilitybutton.on('pointerdown', function(pointer){
+                            self.abilitytext.setText('Mage ability used.')
+                            self.abilitybutton.disableInteractive()
+                            self.roll = oppositeside
+                            self.rolltext.setText('Your roll: ' + oppositeside + 'Your str:' + data.strength)
+                        })
+                    }
                 }
+                
+                self.confirmbutton = self.add.text(50,70,'Click to confirm your attack.').setInteractive()
+                self.confirmbutton.on('pointerdown', function(pointer) {
+                    //send the roll to battle host and destroy the window.
+                    self.gameinstance.confirmroll(self.herokind, self.roll, self.str)
+                    //maybe display results first?
+                    self.gameinstance.unsubscribeBattleRewardsPopup()
+                    self.gameinstance.battleRewardsPopup(function(windowname){
+                        var collabWindowData = {
+                            controller: self.gameinstance,
+                            isOwner: false,
+                            x: 250,
+                            y: 250,
+                            w: 200,
+                            h: 100,
+                            infight:false
+                          }
+                          WindowManager.create(self.gamescene, windowname, CollabWindow, collabWindowData);
+                    })
+                    self.scene.remove(self.windowname)
+                })   
             })
         })
 
