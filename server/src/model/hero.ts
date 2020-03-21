@@ -192,27 +192,30 @@ export class Hero {
         this.will = 3
     }
 
+    // Returns the amount of willpower to increment by to the client.
+    // If request is invalid, then return -1 as failure value.
     public useWell() {
-        //console.log("server.hero.useWell")
-        //console.log(this.will)
-        var reg = this.region
+        let wpInc = -1;
+        var reg = this.region;
+        console.log("region", reg.getID(), "well used: ", reg.getWellUsed());
+        if (reg.getWellUsed()) {
+            console.log("well used already");
+        }
         if (reg.getHaswell() && !reg.getWellUsed()) {
             //increase 3 will power
             if (this.will <= 17) {
-                this.setWill(3)
-                //console.log(this.will)
+                this.setWill(3);
+                wpInc = 3;
             }
             else if (this.will <= 20 && this.will > 17) {
-                this.will = 20
+                this.will = 20;
+                wpInc = (20 - this.will);
             }
             //set the boolean of whether a well was used
-            reg.setWellUsed(true)
-            //console.log(this.region.getWellUsed())
-
-            //inform front-end that a well has been used
-            return true
+            reg.setWellUsed(true);
+            console.log(this.region.getWellUsed())
         }
-        return false
+        return wpInc;
     }
 
     public getWill() {
