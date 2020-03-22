@@ -7,6 +7,12 @@ import {
 } from '../constants'
 
 export class Fight extends Window {
+    //  Class to display a fight window through which you can see mosnter stats and engage in a fight.
+    //  The one starting the fight through this window can send invites to other allies in range.
+    //  This player will also be the controller for resource distribution upon victory.
+    //  There's some crap and redundancy in the code due to me angrily having to refactor it and copy pasting shit around, but it works.
+
+
     //shit ton of attributes mostly just text objects
     private gameinstance: game;
     private windowname;
@@ -44,7 +50,7 @@ export class Fight extends Window {
     private firstfight = true
     private inviteresponses = 0
 
-    public constructor(key, data, windowData = { x: 10, y: 10, width: 450, height: 350 }) {
+    public constructor(key, data, windowData = { x: 10, y: 10, width: 500, height: 380 }) {
         super(key, windowData);
         console.log(data)
         this.windowname = key
@@ -107,8 +113,10 @@ export class Fight extends Window {
             self.fighttext.setText('Fight again!')
             self.fighttext.disableInteractive()
             self.gameinstance.rollMonsterDice(self.monstername, function (result) {
-
-                if (result != 'outofrange') {
+                if (self.gameinstance.getTurn() == false) {
+                    self.notificationtext.setText('Not your Turn!')
+                }
+                else if (result != 'outofrange') {
                     //only generate the list of heroes in range text first time.
                     self.exitbutton.visible = false
                     if (self.firstfight == true) {
@@ -123,7 +131,7 @@ export class Fight extends Window {
                     self.theirroll.setText('Monster roll: ' + result)
 
                     //click to get your roll.
-                    var rollbutton = self.add.text(220, 110, 'ROLL.', { backgroundColor: '#3b44af' }).setInteractive()
+                    var rollbutton = self.add.text(220, 123, 'ROLL.', { backgroundColor: '#3b44af' }).setInteractive()
                     rollbutton.on('pointerdown', function (pointer) {
                         haveyourolled = true
                         self.gameinstance.heroRoll(function (data) {
@@ -152,8 +160,10 @@ export class Fight extends Window {
                                 rollbutton.setText('Rolled.')
                                 rollbutton.disableInteractive()
                                 let attack = data.roll + data.strength
+                                var str = data.strength
+                                var urroll = data.roll
                                 self.yourattack = attack
-                                self.yourroll.setText('Your atk: ' + attack)
+                                self.yourroll.setText('Your roll: ' + urroll + 'Your str: ' + str)
                                 //handle mage ability
                                 if (self.hero.getKind() == 'mage') {
                                     rollbutton.setInteractive()
@@ -164,7 +174,8 @@ export class Fight extends Window {
                                         rollbutton.setText('Mage ability used.')
                                         rollbutton.disableInteractive()
                                         self.yourattack = oppositeside + data.strength
-                                        self.yourroll.setText('Your atk: ' + self.yourattack)
+                                        urroll = oppositeside
+                                        self.yourroll.setText('Your roll: ' + urroll + 'Your str: ' + str)
                                     })
                                 }
                             }
@@ -176,7 +187,7 @@ export class Fight extends Window {
                         console.log('received', herokind, ' roll.')
                         alliedrollstxtreceived++
                         self.allyrolls.set(herokind, roll + str)
-                        self.alliedrollstxt.setText(self.alliedrollstxt.getWrappedText() + self.allyrolls.get(herokind))
+                        self.alliedrollstxt.setText(self.alliedrollstxt.getWrappedText() + '+' + self.allyrolls.get(herokind))
                         if (alliedrollstxtreceived == self.actuallyjoinedheros.length) {
                             console.log('all allies have confirmed their roll.')
                         }
@@ -228,11 +239,19 @@ export class Fight extends Window {
                             }
                             else if (totalattack < result) {
                                 //monster win.
-                                //TODO handle allies dying and therefore remove them from invite list.
+                                //WARNING: here im doing some client side calculations on heros will to determine if they die.
+                                // I think this is wrong and will have to be changed, as those values are only up to date if
+                                // youve opened their hero panel recently. TODO.
+
+                                //do damage to all involved heros, backend
                                 self.gameinstance.doDamageToHero(self.hero.getKind(), result - totalattack)
                                 for (let ally of self.actuallyjoinedheros) {
                                     self.gameinstance.doDamageToHero(ally, result - totalattack)
                                 }
+
+                                // determine which allies died and remove them from possible allies and display death on their screen
+                                // (this is the bad client side calculation that I need to change eventually)
+                                // this is the one shaky part of the code basically.
                                 self.heroobjectsforcollab.forEach(hero => {
                                     if (self.actuallyjoinedheros.includes(hero.getKind())) {
                                         hero.setwillPower(-(result - totalattack))
@@ -242,10 +261,12 @@ export class Fight extends Window {
                                                 self.alliedheros.splice(index, 1);
                                                 console.log('removed', hero.getKind(), 'due to death.')
                                                 //send message to display death on their screen.
+                                                self.gameinstance.sendDeathNotice(hero.getKind())
                                             }
                                         }
                                     }
                                 });
+                                
                                 self.hero.setwillPower(-(result - totalattack))
                                 self.yourwill = self.hero.getWillPower()
                                 self.yourwilltxt.setText('Your will: ' + self.yourwill)
@@ -271,7 +292,6 @@ export class Fight extends Window {
                 }
 
                 else {
-
                     self.notificationtext.setText('Out Of Range!')
                 }
 
@@ -316,7 +336,6 @@ export class Fight extends Window {
             self.inviteresponses++
             if (response == 'yes') {
                 console.log('yes ' + herokind)
-                //TODO rn we arent checking which ones confirm bruh
                 self.actuallyjoinedheros.push(herokind)
             }
         })
@@ -448,6 +467,7 @@ export class Fight extends Window {
 
 
     public death() {
+        //if you died, end your turn and reset the stats.
         var self = this
         this.invitetext.destroy()
         this.alliedrollstxt.destroy()

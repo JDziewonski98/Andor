@@ -5,6 +5,7 @@ import { HourTracker } from '../objects/hourTracker';
 import { game } from '../api';
 import { WindowManager } from "../utils/WindowManager";
 import { CollabWindow } from './collabwindow';
+import {DeathWindow} from './deathwindow'
 import {
   expandedWidth, expandedHeight, borderWidth,
   fullWidth, fullHeight, htX, htY, scaleFactor,
@@ -145,6 +146,15 @@ export default class GameScene extends Phaser.Scene {
       console.log('attempting to create battleinv window')
       WindowManager.create(self, 'battleinv', BattleInvWindow, {controller:self.gameinstance, hero:self.hero, gamescene:self});
       
+    })
+    this.gameinstance.receiveDeathNotice(function() {
+      if (self.scene.isVisible('deathnotice')){
+        console.log('destroying deathnotice')
+        WindowManager.destroy(self, 'deathnotice');
+      }
+      console.log('creating deathnotice')
+      WindowManager.create(self, 'deathnotice', DeathWindow, {controller:self.gameinstance});
+     
     })
     this.addGold()
 

@@ -384,6 +384,13 @@ export function game(socket, model: Game, io) {
       let monsterroll = monster!.rollDice()
       callback(monsterroll)
     }
+    else if (hero.getKind() == HeroKind.Archer ){
+      if (hero.getRegion().getAdjRegionsIds().includes(monsterregion)) {
+        let monsterroll = monster!.rollDice()
+        callback(monsterroll)
+      }
+      
+    }
     else {
       callback('outofrange')
     }
@@ -505,6 +512,15 @@ export function game(socket, model: Game, io) {
 
   socket.on('battleCollabApprove', function(windowname) {
     socket.broadcast.emit('battleRewardsPopup',windowname)
+  })
+
+  //TODO test this further
+  socket.on('deathNotice', function(hero) {
+    //could also just emit it to everyone....
+    var deadheroid = model.getIDsByHeroname([hero]) 
+    for (let playerid of deadheroid) {
+      socket.broadcast.to(`/${model.getName()}#${playerid}`).emit("receiveDeathNotice")
+    }
   })
 
 

@@ -270,5 +270,13 @@ export class game {
         this.socket.off('receiveAlliedRoll')
         this.socket.off('recieveBattleInviteResponse')
     }
+
+    public sendDeathNotice(hero) {
+        this.socket.emit('deathNotice', hero)
+    }
+
+    public receiveDeathNotice(callback) {
+        this.socket.on('receiveDeathNotice', callback)
+    }
 }
 
