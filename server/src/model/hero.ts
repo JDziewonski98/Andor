@@ -44,9 +44,11 @@ export class Hero {
     public getKind(): HeroKind {
         return this.hk;
     }
+
     public getRank(): number{
         return this.rank;
     }
+
     public moveTo(newTile: Region) {
         this.region = newTile
         this.timeOfDay++
@@ -77,7 +79,7 @@ export class Hero {
         this.wineskin = hasWineskin;
     }
 
-    private setTimeOfDay(time) {
+    public setTimeOfDay(time) {
         this.timeOfDay = time;
     }
 

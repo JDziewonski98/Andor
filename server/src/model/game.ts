@@ -53,6 +53,7 @@ export class Game {
 
         this.numAccepts = 0;
     }
+
     private setFirstHerosTurn(){
         var minRank = Number.MAX_VALUE;
         var ID = "none";
@@ -230,13 +231,16 @@ export class Game {
     public removeFarmer(f: Farmer) {
         //TO BE IMPLEMENTED
     }
+
     public setCurrPlayersTurn(s:string){
         this.currPlayersTurn = s;
         console.log("Set currPlayersTurn to: ", s)
     }
+
     public getCurrPlayersTurn(){
         return this.currPlayersTurn;
     }
+
     public moveHeroTo(hero, tile) {
         console.log("Passed method call")
         hero.moveTo(tile)
@@ -282,34 +286,7 @@ export class Game {
     public endOfDay() {
         this.moveMonsters();
         this.replenishWells();
-    }
-
-    public replenishWells() {
-        var flag = true;
-        var replenishedIDs: number[] = [];
-
-        for (let region of this.regions) { // for every region
-            if (region.getHasWell()) { // if region has a well
-                flag = true;
-                let idRegion = region.getID();
-
-                // Replenish wells that have no hero on them
-                for (let h of this.heroList.values()) {
-                    let idRegionOfHero = h.getRegion().getID();
-                    if (idRegionOfHero === idRegion) {
-                        flag = false //found a hero on well tile
-                        break;
-                    }
-                }
-                //if no one standing on well tile, replenish well
-                if (flag) {
-                    region.setWellUsed(false)
-                    replenishedIDs.push(idRegion);
-                }
-            }
-        }
-
-        return replenishedIDs;
+        this.resetHeroHours();
     }
 
     public moveMonsters() {
@@ -376,6 +353,40 @@ export class Game {
             self.regions[startReg].setMonster(null);
             m.setTileID(nextRegID);
             console.log("moved", m.name, "btw tiles", startReg, nextRegID);
+        }
+    }
+
+    public replenishWells() {
+        var flag = true;
+        var replenishedIDs: number[] = [];
+
+        for (let region of this.regions) { // for every region
+            if (region.getHasWell()) { // if region has a well
+                flag = true;
+                let idRegion = region.getID();
+
+                // Replenish wells that have no hero on them
+                for (let h of this.heroList.values()) {
+                    let idRegionOfHero = h.getRegion().getID();
+                    if (idRegionOfHero === idRegion) {
+                        flag = false //found a hero on well tile
+                        break;
+                    }
+                }
+                //if no one standing on well tile, replenish well
+                if (flag) {
+                    region.setWellUsed(false)
+                    replenishedIDs.push(idRegion);
+                }
+            }
+        }
+
+        return replenishedIDs;
+    }
+
+    public resetHeroHours() {
+        for (let hero of Array.from(this.heroList.values())) {
+            hero.setTimeOfDay(1);
         }
     }
 }
