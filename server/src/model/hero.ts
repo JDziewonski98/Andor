@@ -166,18 +166,12 @@ export class Hero {
     }
 
     public pickupGold() {
-        if (this.region.getGold() <= 0) {
-            return false
-        }
-        else {
-            //var reg = this.region
-            //decrease gold on region
-            this.region.setGold((this.region.getGold() - 1))
-            //reg.setGold(reg.getGold() - 1)
-            //increase your gold
-            this.setGold(this.gold + 1)
-            return true
-        }
+        //decrease gold on region
+        this.region.setGold((this.region.getGold() - 1))
+        
+        //increase your gold
+        this.gold += 1        
+        return true
     }
 
     public setWill(willValueToChange: number) {

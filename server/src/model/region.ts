@@ -12,13 +12,14 @@ export class Region {
     private wellUsed: boolean = false;
     private curMonster!: Monster | null;
     
-    constructor(id: number, nextRegion: number, adjRegions: Array<number>, hasWell: boolean = false, hasMerchant: boolean = false) {
+    constructor(gold:number, id: number, nextRegion: number, adjRegions: Array<number>, hasWell: boolean = false, hasMerchant: boolean = false) {
         this.id = id;
         this.hasWell = hasWell;
         this.hasMerchant = hasMerchant;
         this.nextRegionId = nextRegion;
         this.adjRegionsIds = adjRegions;
         this.farmers = new Array();
+        this.gold = gold
     }
 
     // public removeHero() {

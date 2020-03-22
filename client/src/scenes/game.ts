@@ -539,8 +539,7 @@ export default class GameScene extends Phaser.Scene {
           var goldText = self.add.text(50, 50, "G", { color: "#fff52e" }).setX(self.tiles[id].x - 30).setY(self.tiles[id].y - 30)
           //set to interactive
           goldText.setInteractive() 
-          self.add.existing(goldText);         
-
+          self.add.existing(goldText);       
           goldText.on("pointerdown", function (pointer) {                
 
               self.gameinstance.pickupGold(id, function () {
@@ -564,29 +563,6 @@ export default class GameScene extends Phaser.Scene {
           
       }
 
-
-      /*this.tiles.map(function (tile) {
-          goldText.on("pointerdown", function (pointer) {
-              //console.log(self.tiles[id].getGold())
-
-              if (self.hero.tile.id === tile.id) {
-                  self.gameinstance.pickupGold(tile.id, function (ID) {
-                      
-                      
-
-                  })
-              }
-          }, this)
-      })        
-
-      self.gameinstance.updatePickupGold(function (pointer) {
-          self.gameinstance.pickupGold(function (id, gold) {
-              *//*goldText.setText("G" + self.tiles[id].setGold(gold))*//*
-
-          })
-      }, this)
-
-      */
   }
 
 

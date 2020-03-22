@@ -144,13 +144,16 @@ export function game(socket, model: Game, io) {
         }
     });   
 
-    socket.on("pickupGold", function (callback) {
+    socket.on("pickupGold", function (id, callback) { 
         console.log("picking up gold on server") //is printed
         let success_pickupGold = false;
         let heroId = socket.conn.id;
         let hero = model.getHero(heroId);
+        //id is type string. must convert to number
+        id = +id
+        //console.log(hero.getRegion().getID(), id) 
 
-        if (hero !== undefined) {
+        if (hero !== undefined && hero.getRegion().getID() === id && hero.getRegion().getGold() > 0) {
             success_pickupGold = hero.pickupGold();
         }
 
