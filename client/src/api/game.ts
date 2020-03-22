@@ -51,12 +51,23 @@ export class game {
         this.socket.emit("merchant", callback);
     }
     
+    // Server uses the passed callback to tell the calling client to update the well
+    // Server broadcasts to update the other clients
     public useWell(callback) {
+        console.log("Emitting useWell to server");
         this.socket.emit("useWell", callback);
     }
 
     public updateWell(callback) {
         this.socket.on("updateWell", callback);
+    }
+
+    public resetWells(callback) {
+        this.socket.emit("resetWells", callback);
+    }
+
+    public fillWells(callback) {
+        this.socket.on("fillWells", callback);
     }
 
     public updateDropGold(callback) {       
@@ -120,7 +131,7 @@ export class game {
         })
     }
 
-    public  removeListener(object){
+    public removeListener(object){
         console.log('removing ', object)
         this.socket.emit('removeListener',object)
     }

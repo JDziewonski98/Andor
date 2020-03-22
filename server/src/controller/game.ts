@@ -108,62 +108,65 @@ export function game(socket, model: Game, io) {
     }
   });
 
-
-
   socket.on("useWell", function (callback) {
-    let success_well = false;
-    //console.log("api game.ts")
     let heroId = socket.conn.id;
     let hero = model.getHero(heroId);
+    console.log("Hero requesting well use: ", hero.getKind());
     if (hero !== undefined) {
-      success_well = hero.useWell();
-
-    }
-
-    if (success_well) {
-      socket.broadcast.emit("updateWell");
-      callback();
-
+      let wpInc = hero.useWell();
+      if (wpInc != -1) {
+        // pass back the determined amount of wp to add to the hero
+        console.log("Server: Well use success,", hero.getKind(), wpInc); //may need to convert to string
+        // Update the hero that used the well
+        callback(wpInc);
+        // Update the other heroes
+        socket.broadcast.emit("updateWell", hero.getRegion().getID(), wpInc);
+      }
     }
   });
 
-    socket.on("dropGold", function (callback) {
+  socket.on("resetWells", function (callback) {
+    var replenished = model.replenishWells();
+    callback(replenished);
+    socket.broadcast.emit("fillWells", replenished);
+  })
 
-        console.log("here3") //printed
-        let success_dropGold = false;
-        let heroId = socket.conn.id;
-        let hero = model.getHero(heroId);
-        
-        if (hero !== undefined) {
-            success_dropGold = hero.dropGold();
-        }
-        if (success_dropGold) {
-            console.log("dropped") //printed
-            socket.broadcast.emit("updateDropGold");
-            callback()
-        }
-    });   
+  socket.on("dropGold", function (callback) {
+    console.log("here3") //printed
+    let success_dropGold = false;
+    let heroId = socket.conn.id;
+    let hero = model.getHero(heroId);
+    
+    if (hero !== undefined) {
+        success_dropGold = hero.dropGold();
+    }
+    if (success_dropGold) {
+        console.log("dropped") //printed
+        socket.broadcast.emit("updateDropGold");
+        callback()
+    }
+  });   
 
-    socket.on("pickupGold", function (id, callback) { 
-        console.log("picking up gold on server") //is printed
-        let success_pickupGold = false;
-        let heroId = socket.conn.id;
-        let hero = model.getHero(heroId);
-        //id is type string. must convert to number
-        id = +id
-        //console.log(hero.getRegion().getID(), id) 
+  socket.on("pickupGold", function (id, callback) { 
+    console.log("picking up gold on server") //is printed
+    let success_pickupGold = false;
+    let heroId = socket.conn.id;
+    let hero = model.getHero(heroId);
+    //id is type string. must convert to number
+    id = +id
+    //console.log(hero.getRegion().getID(), id) 
 
-        if (hero !== undefined && hero.getRegion().getID() === id && hero.getRegion().getGold() > 0) {
-            success_pickupGold = hero.pickupGold();
-        }
+    if (hero !== undefined && hero.getRegion().getID() === id && hero.getRegion().getGold() > 0) {
+        success_pickupGold = hero.pickupGold();
+    }
 
-        if (success_pickupGold) {
-            console.log("pickupGold successful") //is printed
-            socket.broadcast.emit("updatePickupGold");
-            callback()
+    if (success_pickupGold) {
+        console.log("pickupGold successful") //is printed
+        socket.broadcast.emit("updatePickupGold");
+        callback()
 
-        }
-    });
+    }
+  });
 
   socket.on('bind hero', function (heroType, callback) {
     let success = false;
