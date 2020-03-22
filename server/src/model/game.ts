@@ -120,7 +120,7 @@ export class Game {
         let gor4 = new Monster(MonsterKind.Gor, 26, this.numOfDesiredPlayers, 'gor4')
         let gor5 = new Monster(MonsterKind.Gor, 48, this.numOfDesiredPlayers,'gor5')
         let skral = new Monster(MonsterKind.Skral, 19, this.numOfDesiredPlayers, 'skral1')
-        let war = new Monster(MonsterKind.Wardrak, 1, this.numOfDesiredPlayers, 'wardrak1')
+        // let war = new Monster(MonsterKind.Wardrak, 1, this.numOfDesiredPlayers, 'wardrak1')
 
         this.monsters.set(gor1.name, gor1)
         this.monsters.set(gor2.name, gor2)
@@ -128,7 +128,7 @@ export class Game {
         this.monsters.set(gor4.name, gor4)
         this.monsters.set(gor5.name, gor5)
         this.monsters.set(skral.name, skral)
-        this.monsters.set(war.name, war)
+        // this.monsters.set(war.name, war)
 
         this.regions[8].setMonster(gor1)
         this.regions[20].setMonster(gor2)
@@ -136,7 +136,7 @@ export class Game {
         this.regions[26].setMonster(gor4)
         this.regions[48].setMonster(gor5)
         this.regions[19].setMonster(skral)
-        this.regions[1].setMonster(war)
+        // this.regions[1].setMonster(war)
     }
 
     private setRegions() {
