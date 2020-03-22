@@ -125,6 +125,12 @@ export function game(socket, model: Game, io) {
     }
   });
 
+  socket.on("resetWells", function (callback) {
+    var replenished = model.replenishWells();
+    callback(replenished);
+    socket.broadcast.emit("fillWells", replenished);
+  })
+
   socket.on("dropGold", function (callback) {
 
       console.log("here3") //printed

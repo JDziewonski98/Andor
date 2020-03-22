@@ -28,6 +28,8 @@ export default class GameScene extends Phaser.Scene {
   private ownHeroType: HeroKind;
   private tiles: Tile[];
   private welltiles: Tile[];
+  // Note acui: was having trouble using wells map with number typed keys, so converting to strings
+  private wells: Map<string, Well>;
   private farmers: Farmer[];
   private hourTracker: HourTracker;
   private gameinstance: game;
@@ -48,15 +50,14 @@ export default class GameScene extends Phaser.Scene {
   
   constructor() {
     super({ key: 'Game' });
-    // this.heroes = Array<Hero>(4); // This is adding 4 dummy elements at the start
     this.heroes = Array<Hero>();
     this.tiles = Array<Tile>();
+    this.wells = new Map();
     this.farmers = new Array<Farmer>();
     this.ownHeroType = HeroKind.Dwarf;
     this.monsters = new Array<Monster>();
     this.monsterNameMap = new Map();
     this.castle = new RietburgCastle();
-
   }
 
   public init(data) {
@@ -84,8 +85,6 @@ export default class GameScene extends Phaser.Scene {
     this.load.image("wardrak", "../assets/wardrak.PNG")
     this.load.image("farmer", "../assets/farmer.png");
     this.load.multiatlas('tiles', './assets/tilesheet.json', 'assets')
-    // TODO: Create a sprite sheet for heroes as well so they don't need an 
-    // internal sprite to render their image
     this.load.image("well", "../assets/well.png");
   }
 
@@ -127,10 +126,10 @@ export default class GameScene extends Phaser.Scene {
     this.addSheildsToRietburg()
     
     // x and y coordinates
-    this.addWell(209,2244, wellTile1, "well1")
-    this.addWell(1353,4873, wellTile2, "well2")
-    this.addWell(7073, 3333, wellTile3, "well3")
-    this.addWell(5962, 770, wellTile4, "well4")
+    this.addWell(209,2244, wellTile1)
+    this.addWell(1353,4873, wellTile2)
+    this.addWell(7073, 3333, wellTile3)
+    this.addWell(5962, 770, wellTile4)
 
     this.gameinstance.yourTurn()
 
@@ -463,11 +462,12 @@ export default class GameScene extends Phaser.Scene {
     }
   }
 
-  private addWell(x, y, tileNumber: number, wellName: string) {
+  private addWell(x, y, tileNumber: number) {
     const tile: Tile = this.tiles[tileNumber];
     const newWell = new Well(this, x * scaleFactor + borderWidth, 
       y * scaleFactor + borderWidth, "well", tile, this.gameinstance).setDisplaySize(40, 45);
     this.add.existing(newWell);
+    this.wells.set(""+newWell.getTileID(), newWell);
   }
 
   private addGold() {               
@@ -605,21 +605,31 @@ export default class GameScene extends Phaser.Scene {
     this.mockText.on('pointerdown', function (pointer) {
       // Execute end of day actions
       self.gameinstance.moveMonstersEndDay();
+
+      // Reset wells
+      self.gameinstance.resetWells(replenishWellsClient);
     }, this);
 
     // Callbacks
+    self.gameinstance.receiveUpdatedMonsters(moveMonstersOnMap);
     function moveMonstersOnMap(updatedMonsters) {
       console.log("Received updated monsters from server");
       // console.log(updatedMonsters);
       self.moveMonstersEndDay(updatedMonsters);
     }
 
+    self.gameinstance.receiveKilledMonsters(deleteKilledMonsters);
     function deleteKilledMonsters(killedMonster) {
       self.removeKilledMonsters(killedMonster)
     }
 
-    self.gameinstance.receiveUpdatedMonsters(moveMonstersOnMap);
-    self.gameinstance.receiveKilledMonsters(deleteKilledMonsters);
+    self.gameinstance.fillWells(replenishWellsClient);
+    function replenishWellsClient(replenished: number[]) {
+      console.log("well tile ids to replenish:", replenished);
+      for (let id of replenished) {
+        self.wells.get(""+id).fillWell();
+      }
+    }
   }
 
 

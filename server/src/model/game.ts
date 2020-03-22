@@ -240,9 +240,9 @@ export class Game {
         console.log("Passed method call")
         hero.moveTo(tile)
     }
+
     private endGame() {
         //TO BE IMPLEMENTED
-        this.replenishWell()
     }
 
     private checkMonsterInRietburg() {
@@ -255,37 +255,6 @@ export class Game {
 
     private checkHeroOnWellTile() {
         //TO BE IMPLEMENTED
-    }
-
-    private replenishWell() {
-        //TO BE IMPLEMENTED
-        var region
-        var idRegion
-        var idRegionOfHero
-        var flag = true
-
-        for (region in this.regions) { // for every region
-            if (region.getHasWell()) { // if region has a well
-                flag = true
-                idRegion = region.getID()
-
-                // check there are no heros on this tile
-                for (let h of this.heroList.values()) {
-                    idRegionOfHero = h.getRegion().getID()
-
-                    if (idRegionOfHero === idRegion) {
-                        flag = false //found a hero on well tile
-                    }
-                }
-                //if no one standing on well tile, replenish well
-                if (flag) {
-                    region.setWellUsed(false)
-
-                    //TODO: inform front-end that a well has been replenished 
-                }
-
-            }
-        }
     }
 
     private incrementNarratorPosition() {
@@ -308,8 +277,38 @@ export class Game {
         this.monsters.delete(monstername)
     }
 
+    // nb: Controller calls on individual APIs rather than this one
     public endOfDay() {
         this.moveMonsters();
+        this.replenishWells();
+    }
+
+    public replenishWells() {
+        var flag = true;
+        var replenishedIDs: number[] = [];
+
+        for (let region of this.regions) { // for every region
+            if (region.getHasWell()) { // if region has a well
+                flag = true;
+                let idRegion = region.getID();
+
+                // Replenish wells that have no hero on them
+                for (let h of this.heroList.values()) {
+                    let idRegionOfHero = h.getRegion().getID();
+                    if (idRegionOfHero === idRegion) {
+                        flag = false //found a hero on well tile
+                        break;
+                    }
+                }
+                //if no one standing on well tile, replenish well
+                if (flag) {
+                    region.setWellUsed(false)
+                    replenishedIDs.push(idRegion);
+                }
+            }
+        }
+
+        return replenishedIDs;
     }
 
     public moveMonsters() {

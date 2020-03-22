@@ -62,6 +62,14 @@ export class game {
         this.socket.on("updateWell", callback);
     }
 
+    public resetWells(callback) {
+        this.socket.emit("resetWells", callback);
+    }
+
+    public fillWells(callback) {
+        this.socket.on("fillWells", callback);
+    }
+
     public updateDropGold(callback) {       
         this.socket.on("updateDropGold", callback);       
     }

@@ -37,4 +37,12 @@ export class Well extends Phaser.GameObjects.Image {
         })
     }
 
+    public fillWell() {
+        this.clearTint();
+        this.used = false;
+    }
+
+    public getTileID() {
+        return this.tile.getID();
+    }
 }

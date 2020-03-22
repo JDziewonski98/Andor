@@ -32,7 +32,7 @@ export class Region {
         return this.gold;
     }
 
-    public getHaswell() {
+    public getHasWell() {
         return this.hasWell
     }
 

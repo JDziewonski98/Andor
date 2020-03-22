@@ -197,7 +197,7 @@ export class Hero {
     public useWell() {
         let wpInc = -1;
         var reg = this.region;
-        if (reg.getHaswell() && !reg.getWellUsed()) {
+        if (reg.getHasWell() && !reg.getWellUsed()) {
             //increase 3 will power
             if (this.will <= 17) {
                 this.setWill(3);
