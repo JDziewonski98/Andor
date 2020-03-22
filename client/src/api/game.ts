@@ -51,7 +51,10 @@ export class game {
         this.socket.emit("merchant", callback);
     }
     
+    // Server uses the passed callback to tell the calling client to update the well
+    // Server broadcasts to update the other clients
     public useWell(callback) {
+        console.log("Emitting useWell to server");
         this.socket.emit("useWell", callback);
     }
 
@@ -68,8 +71,9 @@ export class game {
         this.socket.emit("dropGold", callback)
     }
 
-    public pickupGold(callback) {
-        this.socket.emit("pickupGold", callback)
+    public pickupGold(id, callback) {
+        console.log("api pickupGold()") //is printed
+        this.socket.emit("pickupGold", id, callback)
     }
 
     public updatePickupGold(callback) {
@@ -99,6 +103,7 @@ export class game {
             this.socket.emit('moveRequest', tileID, callback)
         }
     }
+
     public updateMoveRequest(callback){
         this.socket.on("updateMoveRequest", callback);
     }
@@ -119,7 +124,11 @@ export class game {
         })
     }
 
-    public  removeListener(object){
+    public setMyTurn(b:boolean){
+        this.myTurn = b;
+    }
+
+    public removeListener(object){
         console.log('removing ', object)
         this.socket.emit('removeListener',object)
     }
@@ -185,20 +194,6 @@ export class game {
         this.socket.on('sendDecisionAccepted', callback)
     }
 
-    public killMonster(monstername) {
-        this.socket.emit('killMonster', monstername)
-    }
-
-    public rollMonsterDice(monstername, callback) {
-        this.socket.emit('monsterRoll', monstername, callback)
-    }
-    public setMyTurn(b:boolean){
-        this.myTurn = b;
-    }
-    public getMonsterStats(monstername, callback) {
-        this.socket.emit('getMonsterStats', monstername, callback)
-    }
-
     // End of day
     public moveMonstersEndDay() {
         console.log("send move monsters to server");
@@ -207,6 +202,35 @@ export class game {
 
     public receiveUpdatedMonsters(callback) {
         this.socket.on('sendUpdatedMonsters', callback);
+    }
+
+    public resetWells(callback) {
+        this.socket.emit("resetWells", callback);
+    }
+
+    public fillWells(callback) {
+        this.socket.on("fillWells", callback);
+    }
+
+    public resetHours(callback) {
+        this.socket.emit("resetHours", callback);
+    }
+
+    public receiveResetHours(callback) {
+        this.socket.on("sendResetHours", callback);
+    }
+
+    // Monsters and battling
+    public killMonster(monstername) {
+        this.socket.emit('killMonster', monstername)
+    }
+
+    public rollMonsterDice(monstername, callback) {
+        this.socket.emit('monsterRoll', monstername, callback)
+    }
+    
+    public getMonsterStats(monstername, callback) {
+        this.socket.emit('getMonsterStats', monstername, callback)
     }
 
     public receiveKilledMonsters(callback) {

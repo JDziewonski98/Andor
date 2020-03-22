@@ -44,9 +44,11 @@ export class Hero {
     public getKind(): HeroKind {
         return this.hk;
     }
+
     public getRank(): number{
         return this.rank;
     }
+
     public moveTo(newTile: Region) {
         this.region = newTile
         this.timeOfDay++
@@ -77,7 +79,7 @@ export class Hero {
         this.wineskin = hasWineskin;
     }
 
-    private setTimeOfDay(time) {
+    public setTimeOfDay(time) {
         this.timeOfDay = time;
     }
 
@@ -166,18 +168,12 @@ export class Hero {
     }
 
     public pickupGold() {
-        if (this.region.getGold() <= 0) {
-            return false
-        }
-        else {
-            //var reg = this.region
-            //decrease gold on region
-            this.region.setGold((this.region.getGold() - 1))
-            //reg.setGold(reg.getGold() - 1)
-            //increase your gold
-            this.setGold(this.gold + 1)
-            return true
-        }
+        //decrease gold on region
+        this.region.setGold((this.region.getGold() - 1))
+        
+        //increase your gold
+        this.gold += 1        
+        return true
     }
 
     public setWill(willValueToChange: number) {
@@ -192,27 +188,25 @@ export class Hero {
         this.will = 3
     }
 
+    // Returns the amount of willpower to increment by to the client.
+    // If request is invalid, then return -1 as failure value.
     public useWell() {
-        //console.log("server.hero.useWell")
-        //console.log(this.will)
-        var reg = this.region
-        if (reg.getHaswell() && !reg.getWellUsed()) {
+        let wpInc = -1;
+        var reg = this.region;
+        if (reg.getHasWell() && !reg.getWellUsed()) {
             //increase 3 will power
             if (this.will <= 17) {
-                this.setWill(3)
-                //console.log(this.will)
+                this.setWill(3);
+                wpInc = 3;
             }
             else if (this.will <= 20 && this.will > 17) {
-                this.will = 20
+                this.will = 20;
+                wpInc = (20 - this.will);
             }
             //set the boolean of whether a well was used
-            reg.setWellUsed(true)
-            //console.log(this.region.getWellUsed())
-
-            //inform front-end that a well has been used
-            return true
+            reg.setWellUsed(true);
         }
-        return false
+        return wpInc;
     }
 
     public getWill() {

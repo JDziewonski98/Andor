@@ -53,6 +53,7 @@ export class Game {
 
         this.numAccepts = 0;
     }
+
     private setFirstHerosTurn(){
         var minRank = Number.MAX_VALUE;
         var ID = "none";
@@ -130,7 +131,7 @@ export class Game {
         let gor4 = new Monster(MonsterKind.Gor, 26, this.numOfDesiredPlayers, 'gor4')
         let gor5 = new Monster(MonsterKind.Gor, 48, this.numOfDesiredPlayers,'gor5')
         let skral = new Monster(MonsterKind.Skral, 19, this.numOfDesiredPlayers, 'skral1')
-        let war = new Monster(MonsterKind.Wardrak, 1, this.numOfDesiredPlayers, 'wardrak1')
+        // let war = new Monster(MonsterKind.Wardrak, 1, this.numOfDesiredPlayers, 'wardrak1')
 
         this.monsters.set(gor1.name, gor1)
         this.monsters.set(gor2.name, gor2)
@@ -138,7 +139,7 @@ export class Game {
         this.monsters.set(gor4.name, gor4)
         this.monsters.set(gor5.name, gor5)
         this.monsters.set(skral.name, skral)
-        this.monsters.set(war.name, war)
+        // this.monsters.set(war.name, war)
 
         this.regions[8].setMonster(gor1)
         this.regions[20].setMonster(gor2)
@@ -146,7 +147,7 @@ export class Game {
         this.regions[26].setMonster(gor4)
         this.regions[48].setMonster(gor5)
         this.regions[19].setMonster(skral)
-        this.regions[1].setMonster(war)
+        // this.regions[1].setMonster(war)
     }
 
     private setRegions() {
@@ -154,7 +155,8 @@ export class Game {
         // indexing between regions array and region IDs
         var tilesData = require("./tilemap").map;
         tilesData.forEach(t => {
-            this.regions.push(new Region(t.id, t.nextRegionId, t.adjRegionsIds, t.hasWell, t.hasMerchant))
+            // on top of setting t.something, also set amount of gold on each tile to 0
+            this.regions.push(new Region(0, t.id, t.nextRegionId, t.adjRegionsIds, t.hasWell, t.hasMerchant))
         })
         //console.log(this.regions[2].getNextRegionId())
         // console.log("regions sanity check:", this.regions);
@@ -239,20 +241,23 @@ export class Game {
     public removeFarmer(f: Farmer) {
         //TO BE IMPLEMENTED
     }
+
     public setCurrPlayersTurn(s:string){
         this.currPlayersTurn = s;
         console.log("Set currPlayersTurn to: ", s)
     }
+
     public getCurrPlayersTurn(){
         return this.currPlayersTurn;
     }
+
     public moveHeroTo(hero, tile) {
         console.log("Passed method call")
         hero.moveTo(tile)
     }
+
     private endGame() {
         //TO BE IMPLEMENTED
-        this.replenishWell()
     }
 
     private checkMonsterInRietburg() {
@@ -265,37 +270,6 @@ export class Game {
 
     private checkHeroOnWellTile() {
         //TO BE IMPLEMENTED
-    }
-
-    private replenishWell() {
-        //TO BE IMPLEMENTED
-        var region
-        var idRegion
-        var idRegionOfHero
-        var flag = true
-
-        for (region in this.regions) { // for every region
-            if (region.getHasWell()) { // if region has a well
-                flag = true
-                idRegion = region.getID()
-
-                // check there are no heros on this tile
-                for (let h of this.heroList.values()) {
-                    idRegionOfHero = h.getRegion().getID()
-
-                    if (idRegionOfHero === idRegion) {
-                        flag = false //found a hero on well tile
-                    }
-                }
-                //if no one standing on well tile, replenish well
-                if (flag) {
-                    region.setWellUsed(false)
-
-                    //TODO: inform front-end that a well has been replenished 
-                }
-
-            }
-        }
     }
 
     private incrementNarratorPosition() {
@@ -318,8 +292,11 @@ export class Game {
         this.monsters.delete(monstername)
     }
 
+    // nb: Controller calls on individual APIs rather than this one
     public endOfDay() {
         this.moveMonsters();
+        this.replenishWells();
+        this.resetHeroHours();
     }
 
     public moveMonsters() {
@@ -386,6 +363,40 @@ export class Game {
             self.regions[startReg].setMonster(null);
             m.setTileID(nextRegID);
             console.log("moved", m.name, "btw tiles", startReg, nextRegID);
+        }
+    }
+
+    public replenishWells() {
+        var flag = true;
+        var replenishedIDs: number[] = [];
+
+        for (let region of this.regions) { // for every region
+            if (region.getHasWell()) { // if region has a well
+                flag = true;
+                let idRegion = region.getID();
+
+                // Replenish wells that have no hero on them
+                for (let h of this.heroList.values()) {
+                    let idRegionOfHero = h.getRegion().getID();
+                    if (idRegionOfHero === idRegion) {
+                        flag = false //found a hero on well tile
+                        break;
+                    }
+                }
+                //if no one standing on well tile, replenish well
+                if (flag) {
+                    region.setWellUsed(false)
+                    replenishedIDs.push(idRegion);
+                }
+            }
+        }
+
+        return replenishedIDs;
+    }
+
+    public resetHeroHours() {
+        for (let hero of Array.from(this.heroList.values())) {
+            hero.setTimeOfDay(1);
         }
     }
 }
