@@ -372,9 +372,12 @@ export function game(socket, model: Game, io) {
       callback(monsterroll)
     }
     else if (hero.getKind() == HeroKind.Archer ){
-      if (hero.getRegion().getAdjRegionsIds().includes(monsterregion)) {
+      if (hero.getRegion().getAdjRegionsIds().includes(monsterregion) || heroregion == monsterregion) {
         let monsterroll = monster!.rollDice()
         callback(monsterroll)
+      }
+      else {
+        callback('outofrange')
       }
       
     }

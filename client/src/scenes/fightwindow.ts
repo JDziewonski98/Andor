@@ -113,10 +113,13 @@ export class Fight extends Window {
             self.fighttext.setText('Fight again!')
             self.fighttext.disableInteractive()
             self.gameinstance.rollMonsterDice(self.monstername, function (result) {
+                console.log('here??')
                 if (self.gameinstance.getTurn() == false) {
+                    console.log('case1')
                     self.notificationtext.setText('Not your Turn!')
                 }
                 else if (result != 'outofrange') {
+                    console.log('case2')
                     //only generate the list of heroes in range text first time.
                     self.exitbutton.visible = false
                     if (self.firstfight == true) {
@@ -292,6 +295,7 @@ export class Fight extends Window {
                 }
 
                 else {
+                    console.log('case3')
                     self.notificationtext.setText('Out Of Range!')
                 }
 
