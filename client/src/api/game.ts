@@ -62,14 +62,6 @@ export class game {
         this.socket.on("updateWell", callback);
     }
 
-    public resetWells(callback) {
-        this.socket.emit("resetWells", callback);
-    }
-
-    public fillWells(callback) {
-        this.socket.on("fillWells", callback);
-    }
-
     public updateDropGold(callback) {       
         this.socket.on("updateDropGold", callback);       
     }
@@ -111,6 +103,7 @@ export class game {
             this.socket.emit('moveRequest', tileID, callback)
         }
     }
+
     public updateMoveRequest(callback){
         this.socket.on("updateMoveRequest", callback);
     }
@@ -129,6 +122,10 @@ export class game {
             console.log("It is now your turn.")
             self.myTurn = true
         })
+    }
+
+    public setMyTurn(b:boolean){
+        this.myTurn = b;
     }
 
     public removeListener(object){
@@ -197,20 +194,6 @@ export class game {
         this.socket.on('sendDecisionAccepted', callback)
     }
 
-    public killMonster(monstername) {
-        this.socket.emit('killMonster', monstername)
-    }
-
-    public rollMonsterDice(monstername, callback) {
-        this.socket.emit('monsterRoll', monstername, callback)
-    }
-    public setMyTurn(b:boolean){
-        this.myTurn = b;
-    }
-    public getMonsterStats(monstername, callback) {
-        this.socket.emit('getMonsterStats', monstername, callback)
-    }
-
     // End of day
     public moveMonstersEndDay() {
         console.log("send move monsters to server");
@@ -221,6 +204,35 @@ export class game {
         this.socket.on('sendUpdatedMonsters', callback);
     }
 
+    public resetWells(callback) {
+        this.socket.emit("resetWells", callback);
+    }
+
+    public fillWells(callback) {
+        this.socket.on("fillWells", callback);
+    }
+
+    public resetHours(callback) {
+        this.socket.emit("resetHours", callback);
+    }
+
+    public receiveResetHours(callback) {
+        this.socket.on("sendResetHours", callback);
+    }
+
+    // Monsters and battling
+    public killMonster(monstername) {
+        this.socket.emit('killMonster', monstername)
+    }
+
+    public rollMonsterDice(monstername, callback) {
+        this.socket.emit('monsterRoll', monstername, callback)
+    }
+    
+    public getMonsterStats(monstername, callback) {
+        this.socket.emit('getMonsterStats', monstername, callback)
+    }
+
     public receiveKilledMonsters(callback) {
         this.socket.on('sendKilledMonsters', callback)
     }
@@ -228,6 +240,7 @@ export class game {
     public doDamageToHero(hero, damage) {
         this.socket.emit('doDamageToHero', hero, damage)
     }
+    
     public getHerosInRange(id, callback) {
         this.socket.emit('getHerosInRange',id,callback)
     }

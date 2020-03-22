@@ -3,7 +3,6 @@
 
 import { Game, HeroKind, Region, Hero, Monster } from '../model';
 import { callbackify } from 'util';
-//import { callbackify } from 'util';
 
 
 export function game(socket, model: Game, io) {
@@ -26,12 +25,9 @@ export function game(socket, model: Game, io) {
 
           socket.broadcast.emit("updateMoveRequest", hero.getKind(), id)
           callback(hero.getKind(), id)
-
         }
       }
-
     }
-
   });
 
   socket.on("moveHeroTo", function (heroType, tile, callback) {
@@ -45,7 +41,6 @@ export function game(socket, model: Game, io) {
     model.setCurrPlayersTurn(nextPlayer)
     socket.broadcast.to(`/${model.getName()}#${nextPlayer}`).emit("yourTurn")
   })
-
 
   socket.on("pickupFarmer", function (callback) {
     var region:Region;
@@ -68,7 +63,6 @@ export function game(socket, model: Game, io) {
     if (hero !== undefined) {
       result = hero.dropFarmer();
 
-
       //result[1] = dropped region id, result[0] = farmer id
       if (result !== undefined) {
         //Farmer dropped on reitburg
@@ -81,7 +75,6 @@ export function game(socket, model: Game, io) {
       }
     }
   });
-
 
   socket.on("merchant", function (callback) {
     let success = false;
@@ -125,12 +118,6 @@ export function game(socket, model: Game, io) {
     }
   });
 
-  socket.on("resetWells", function (callback) {
-    var replenished = model.replenishWells();
-    callback(replenished);
-    socket.broadcast.emit("fillWells", replenished);
-  })
-
   socket.on("dropGold", function (callback) {
     console.log("here3") //printed
     let success_dropGold = false;
@@ -164,7 +151,6 @@ export function game(socket, model: Game, io) {
         console.log("pickupGold successful") //is printed
         socket.broadcast.emit("updatePickupGold");
         callback()
-
     }
   });
 
@@ -191,7 +177,6 @@ export function game(socket, model: Game, io) {
       socket.broadcast.emit("updateHeroList", heros)
       callback(heros);
     }
-
   });
 
   socket.on('disconnect', function () {
@@ -241,11 +226,6 @@ export function game(socket, model: Game, io) {
     socket.emit('recieveDesiredPlayerCount', model.getNumOfDesiredPlayers())
   })
 
- /* socket.on("dropGold", function (callback) {
-    // TODO:
-    callback()
-  })*/
-
   socket.on("getHeros", function (callback) {
     let heros = new Array<HeroKind>();
     model.getHeros().forEach((hero, key) => { heros.push(hero.hk) });
@@ -289,15 +269,13 @@ export function game(socket, model: Game, io) {
           data = hero.getData();
           callback(data)
         }
-
       }
-
     });
-
   });
 
-  // Collaborative decision making
-
+  /*
+   * COLLAB DECISION
+   */
   // Submitting a decision
   socket.on('collabDecisionSubmit', function(resAllocated, resNames, involvedHeroes) {
     if(model.getCurrPlayersTurn() == ""){
@@ -347,6 +325,9 @@ export function game(socket, model: Game, io) {
     socket.emit('sendDecisionAccepted', model.numAccepts)
   })
 
+  /*
+  * BATTLING
+  */
   socket.on('getMonsterStats', function (monstername, callback) {
     try {
       let monster = model.getMonsters().get(monstername)
@@ -369,9 +350,7 @@ export function game(socket, model: Game, io) {
   })
 
   socket.on('monsterRoll', function (m, callback) {
-
     try {
-
       var heroId = socket.conn.id;
       let hero = model.getHero(heroId);
       let heroregion = hero.getRegion().getID()
@@ -441,29 +420,6 @@ export function game(socket, model: Game, io) {
     }
   })
 
-  // End of day
-  socket.on('moveMonstersEndDay', function () {
-    // console.log("calling move monsters on back end");
-    model.moveMonsters();
-    // Convert monsters Map into passable object
-    let convMonsters = {};
-    for (let m of Array.from(model.getMonsters().values())) {
-      convMonsters[m.name] = m.getTileID();
-    }
-    // console.log(convMonsters);
-    socket.broadcast.emit('sendUpdatedMonsters', convMonsters);
-    socket.emit('sendUpdatedMonsters', convMonsters);
-  })
-
-  function getCurrentDate() {
-    var currentDate = new Date();
-    var hour = (currentDate.getHours() < 10 ? '0' : '') + currentDate.getHours();
-    var minute = (currentDate.getMinutes() < 10 ? '0' : '') + currentDate.getMinutes();
-    var second = (currentDate.getSeconds() < 10 ? '0' : '') + currentDate.getSeconds();
-
-    return hour + ":" + minute + ":" + second;
-  }
-
   socket.on('getHerosInRange', function(id, callback) {
     var centraltile = model.getRegions()[id]
     var centraltileid = centraltile.getID()
@@ -529,5 +485,41 @@ export function game(socket, model: Game, io) {
   })
 
 
+  /*
+  * End of day
+  */
+  socket.on('moveMonstersEndDay', function () {
+    // console.log("calling move monsters on back end");
+    model.moveMonsters();
+    // Convert monsters Map into passable object
+    let convMonsters = {};
+    for (let m of Array.from(model.getMonsters().values())) {
+      convMonsters[m.name] = m.getTileID();
+    }
+    // console.log(convMonsters);
+    socket.broadcast.emit('sendUpdatedMonsters', convMonsters);
+    socket.emit('sendUpdatedMonsters', convMonsters);
+  })
+
+  socket.on("resetWells", function (callback) {
+    var replenished = model.replenishWells();
+    callback(replenished);
+    socket.broadcast.emit("fillWells", replenished);
+  })
+
+  socket.on("resetHours", function (callback) {
+    model.resetHeroHours();
+    callback();
+    socket.broadcast.emit("sendResetHours");
+  })
+
+  function getCurrentDate() {
+    var currentDate = new Date();
+    var hour = (currentDate.getHours() < 10 ? '0' : '') + currentDate.getHours();
+    var minute = (currentDate.getMinutes() < 10 ? '0' : '') + currentDate.getMinutes();
+    var second = (currentDate.getSeconds() < 10 ? '0' : '') + currentDate.getSeconds();
+
+    return hour + ":" + minute + ":" + second;
+  }
 }
 

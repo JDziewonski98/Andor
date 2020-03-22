@@ -135,7 +135,7 @@ export default class GameScene extends Phaser.Scene {
 
     this.addGold()
 
-    this.mockEndDay();
+    this.endDay();
   }
 
   private cameraSetup() {
@@ -552,15 +552,14 @@ export default class GameScene extends Phaser.Scene {
 
   // Creating the hour tracker
   private hourTrackerSetup() {
-    //x, y coorindates
+    //x, y coordinates
     var htx = htX;
     var hty = htY;
     var self = this
-    var heroSprites = []
+    var heroSprites = new Map();
     for(var h of this.heroes){
-      console.log(h)
       var sprite = self.add.sprite(htx, hty, h.texture.key).setDisplaySize(40, 40)
-      heroSprites[h.getKind()] = sprite
+      heroSprites.set(h.getKind(), sprite);
       switch (h.getKind()) {
         case HeroKind.Archer:
             sprite.x = htx - 20
@@ -590,7 +589,7 @@ export default class GameScene extends Phaser.Scene {
     }
   }
   
-  private mockEndDay() {
+  private endDay() {
     var self = this;
 
     var style2 = {
@@ -607,6 +606,9 @@ export default class GameScene extends Phaser.Scene {
 
       // Reset wells
       self.gameinstance.resetWells(replenishWellsClient);
+
+      // Reset hours and hourtracker
+      self.gameinstance.resetHours(resetHeroHours);
     }, this);
 
     // Callbacks
@@ -628,6 +630,13 @@ export default class GameScene extends Phaser.Scene {
       for (let id of replenished) {
         self.wells.get(""+id).fillWell();
       }
+    }
+
+    self.gameinstance.receiveResetHours(resetHeroHours);
+    function resetHeroHours() {
+      // Note: we don't keep track of hero hours on client, so only need to update 
+      // visual hourTracker
+      self.hourTracker.resetAll();
     }
   }
 
