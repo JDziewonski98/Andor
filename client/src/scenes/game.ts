@@ -20,6 +20,7 @@ import { Fight} from './fightwindow';
 import { HeroKind } from '../objects/HeroKind';
 import { RietburgCastle } from './rietburgcastle';
 import { Well } from '../objects/well';
+import BoardOverlay from './boardoverlay';
 
 
 export default class GameScene extends Phaser.Scene {
@@ -76,7 +77,6 @@ export default class GameScene extends Phaser.Scene {
       this.ownHeroType = HeroKind.Mage
     else if (type === "archer")
       this.ownHeroType = HeroKind.Archer
-    this.sys.game.scene.bringToTop('BoardOverlay');
   }
 
   public preload() {
@@ -89,17 +89,34 @@ export default class GameScene extends Phaser.Scene {
   }
 
   public create() {
+    var self = this;
+    
     this.cameraSetup();
     this.sceneplugin = this.scene
     // Centered gameboard with border
     this.add.image(fullWidth / 2, fullHeight / 2, 'gameboard')
       .setDisplaySize(expandedWidth, expandedHeight);
 
-    this.sys.game.scene.bringToTop('BoardOverlay');
-
     this.setRegions();
 
-    var self = this;
+    this.addMerchants();
+    this.addFarmers()
+    this.addMonsters()
+    this.addSheildsToRietburg()
+    
+    // x and y coordinates
+    this.addWell(209,2244, wellTile1)
+    this.addWell(1353,4873, wellTile2)
+    this.addWell(7073, 3333, wellTile3)
+    this.addWell(5962, 770, wellTile4)
+
+    this.gameinstance.yourTurn()
+
+    // UNCOMMENT BEFORE PUSH
+    // this.addGold()
+
+    // this.endDaySetup();
+
     var numPlayer = 0;
     this.gameinstance.getHeros((herotypes) => {
       herotypes.forEach(type => {
@@ -117,25 +134,19 @@ export default class GameScene extends Phaser.Scene {
       // Need to wait for heroes to be created before creating collab decision
       self.startingCollabDecisionSetup();
       this.hourTrackerSetup();
+
+      // Add overlay to game
+      const overlayData = {
+        gameinstance: self.gameinstance,
+        tiles: self.tiles,
+        monsterMap: self.monsterNameMap,
+        // gameTweens: self.tweens, not sure if this needs to be passed
+        hourTracker: self.hourTracker,
+        wells: self.wells
+      };
+      this.scene.add('BoardOverlay', new BoardOverlay(overlayData), true);
     })
     console.log(numPlayer);
-
-    this.addMerchants();
-    this.addFarmers()
-    this.addMonsters()
-    this.addSheildsToRietburg()
-    
-    // x and y coordinates
-    this.addWell(209,2244, wellTile1)
-    this.addWell(1353,4873, wellTile2)
-    this.addWell(7073, 3333, wellTile3)
-    this.addWell(5962, 770, wellTile4)
-
-    this.gameinstance.yourTurn()
-
-    this.addGold()
-
-    this.endDay();
   }
 
   private cameraSetup() {
@@ -587,85 +598,6 @@ export default class GameScene extends Phaser.Scene {
     for (var h of this.heroes) {
       h.hourTracker = this.hourTracker;
     }
-  }
-  
-  private endDay() {
-    var self = this;
-
-    var style2 = {
-      fontFamily: '"Roboto Condensed"',
-      fontSize: "20px",
-      backgroundColor: '#f00'
-    }
-
-    this.mockText = this.add.text(600, 550, "end day mock", style2).setOrigin(0.5)
-    this.mockText.setInteractive();
-    this.mockText.on('pointerdown', function (pointer) {
-      // Execute end of day actions
-      self.gameinstance.moveMonstersEndDay();
-
-      // Reset wells
-      self.gameinstance.resetWells(replenishWellsClient);
-
-      // Reset hours and hourtracker
-      self.gameinstance.resetHours(resetHeroHours);
-    }, this);
-
-    // Callbacks
-    self.gameinstance.receiveUpdatedMonsters(moveMonstersOnMap);
-    function moveMonstersOnMap(updatedMonsters) {
-      console.log("Received updated monsters from server");
-      // console.log(updatedMonsters);
-      self.moveMonstersEndDay(updatedMonsters);
-    }
-
-    self.gameinstance.receiveKilledMonsters(deleteKilledMonsters);
-    function deleteKilledMonsters(killedMonster) {
-      self.removeKilledMonsters(killedMonster)
-    }
-
-    self.gameinstance.fillWells(replenishWellsClient);
-    function replenishWellsClient(replenished: number[]) {
-      console.log("well tile ids to replenish:", replenished);
-      for (let id of replenished) {
-        self.wells.get(""+id).fillWell();
-      }
-    }
-
-    self.gameinstance.receiveResetHours(resetHeroHours);
-    function resetHeroHours() {
-      // Note: we don't keep track of hero hours on client, so only need to update 
-      // visual hourTracker
-      self.hourTracker.resetAll();
-    }
-  }
-
-
-  private moveMonstersEndDay(updatedMonsters) {
-    for (const [mName, newTileID] of Object.entries(updatedMonsters)) {
-      let newTile = this.tiles[newTileID as number];
-      this.monsterMoveTween(this.monsterNameMap[mName], newTile, newTile.x, newTile.y);
-    }
-  }
-
-  private removeKilledMonsters(m) {
-    let monster = this.monsterNameMap[m]
-    monster.tile.monster = null
-    monster.destroy()
-    this.monsterNameMap[m] = null
-  }
-
-  public monsterMoveTween(monster: Monster, newTile: Tile, newX, newY) {
-    this.tweens.add({
-      targets: monster,
-      x: newX + mOffset,
-      y: newY,
-      duration: 1000,
-      ease: 'Power2',
-      completeDelay: 1000,
-      onComplete: function() {monster.moveToTile(newTile)}
-    });
-    
   }
 
   public update() {

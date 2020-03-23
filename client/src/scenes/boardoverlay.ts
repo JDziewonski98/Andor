@@ -2,31 +2,53 @@ import { Chat } from './chatwindow';
 import { HeroWindow } from './herowindow';
 import { WindowManager } from "../utils/WindowManager";
 import { game } from '../api/game';
-import { CollabWindow } from './collabwindow';
-//import { dropgoldwindow } from './dropgoldwindow';
+import { Tile } from '../objects/tile';
+import { Monster } from '../objects/monster';
+import { HourTracker } from '../objects/hourTracker';
+import { Well } from '../objects/well';
+import { reducedWidth, reducedHeight, mOffset } from '../constants';
 
 export default class BoardOverlay extends Phaser.Scene {
+    private parent: Phaser.GameObjects.Zone
     private gameText;
     private gameinstance: game;
     private endturntext;
-    constructor() {
+
+    // End Day
+    private endDayText;
+    private tiles: Tile[];
+    private monsterNameMap: Map<string, Monster>;
+    private hourTracker: HourTracker;
+    private wells: Map<string, Well>;
+
+    // Positioning
+    private x = 0;
+    private y = 0;
+    private width = reducedWidth;
+    private height = reducedHeight;
+
+    constructor(data) {
         super({
             key: 'BoardOverlay'
         })
+        this.gameinstance = data.gameinstance;
+        this.tiles = data.tiles;
+        this.monsterNameMap = data.monsterMap;
+        this.hourTracker = data.hourTracker;
+        this.wells = data.wells;
     }
 
-    // BoardOverlay scene needs reference to the game controller so it can
-    // create chat windows.
-    public init(data) {
-        console.log(data.gameinstance)
-        this.gameinstance = data.gameinstance;
-    }
+    public init() { }
 
     public preload() {
         this.load.image('hourbar', './assets/hours.PNG')
     }
 
     public create() {
+        // Set the overlay as a top bar on the game
+        this.parent = this.add.zone(this.x, this.y, this.width, this.height).setOrigin(0);
+        this.cameras.main.setViewport(this.parent.x, this.parent.y, this.width, this.height);
+
         var self = this;
 
         var style2 = {
@@ -119,7 +141,7 @@ export default class BoardOverlay extends Phaser.Scene {
         }, this);
 
         // chat window
-        this.gameText = this.add.text(800, 550, "CHAT", style2).setOrigin(0.5)
+        this.gameText = this.add.text(750, 560, "CHAT", style2)
         this.gameText.setInteractive();
         this.gameText.on('pointerdown', function (pointer) {
             console.log(this.scene, ' in overlay')
@@ -133,7 +155,7 @@ export default class BoardOverlay extends Phaser.Scene {
         }, this);
 
         // end turn button
-        this.endturntext = this.add.text(900, 550, "END TURN", style2).setOrigin(0.5)
+        this.endturntext = this.add.text(850, 560, "END TURN", style2)
         this.endturntext.setInteractive();
         this.endturntext.on('pointerdown', function (pointer){
             if (this.gameinstance.myTurn) {
@@ -148,5 +170,87 @@ export default class BoardOverlay extends Phaser.Scene {
         
             }
         }, this)
+
+        // end day setup
+        this.endDaySetup();
+    }
+  
+    private endDaySetup() {
+      var self = this;
+  
+      var style2 = {
+        fontFamily: '"Roboto Condensed"',
+        fontSize: "20px",
+        backgroundColor: '#f00'
+      }
+  
+      this.endDayText = this.add.text(600, 560, "end day mock", style2)
+      this.endDayText.setInteractive();
+      this.endDayText.on('pointerdown', function (pointer) {
+        // Execute end of day actions
+        self.gameinstance.moveMonstersEndDay();
+  
+        // Reset wells
+        self.gameinstance.resetWells(replenishWellsClient);
+  
+        // Reset hours and hourtracker
+        self.gameinstance.resetHours(resetHeroHours);
+      }, this);
+  
+      // Callbacks
+      self.gameinstance.receiveUpdatedMonsters(moveMonstersOnMap);
+      function moveMonstersOnMap(updatedMonsters) {
+        console.log("Received updated monsters from server");
+        // console.log(updatedMonsters);
+        self.moveMonstersEndDay(updatedMonsters);
+      }
+  
+      self.gameinstance.receiveKilledMonsters(deleteKilledMonsters);
+      function deleteKilledMonsters(killedMonster) {
+        self.removeKilledMonsters(killedMonster)
+      }
+  
+      self.gameinstance.fillWells(replenishWellsClient);
+      function replenishWellsClient(replenished: number[]) {
+        console.log("well tile ids to replenish:", replenished);
+        for (let id of replenished) {
+          self.wells.get(""+id).fillWell();
+        }
+      }
+  
+      self.gameinstance.receiveResetHours(resetHeroHours);
+      function resetHeroHours() {
+        // Note: we don't keep track of hero hours on client, so only need to update 
+        // visual hourTracker
+        self.hourTracker.resetAll();
+      }
+    }
+  
+  
+    private moveMonstersEndDay(updatedMonsters) {
+      for (const [mName, newTileID] of Object.entries(updatedMonsters)) {
+        let newTile = this.tiles[newTileID as number];
+        this.monsterMoveTween(this.monsterNameMap[mName], newTile, newTile.x, newTile.y);
+      }
+    }
+  
+    private removeKilledMonsters(m) {
+      let monster = this.monsterNameMap[m]
+      monster.tile.monster = null
+      monster.destroy()
+      this.monsterNameMap[m] = null
+    }
+  
+    public monsterMoveTween(monster: Monster, newTile: Tile, newX, newY) {
+      this.tweens.add({
+        targets: monster,
+        x: newX + mOffset,
+        y: newY,
+        duration: 1000,
+        ease: 'Power2',
+        completeDelay: 1000,
+        onComplete: function() {monster.moveToTile(newTile)}
+      });
+      
     }
 }

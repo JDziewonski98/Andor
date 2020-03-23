@@ -48,7 +48,6 @@ export default class LobbyScene extends Phaser.Scene {
         this.scale.setGameSize(reducedWidth, reducedHeight);
         
         // Initially hide Options and BoardOverlay scenes
-        this.scene.sleep('BoardOverlay')
         this.scene.sleep('Options')
         
         this.draw()
