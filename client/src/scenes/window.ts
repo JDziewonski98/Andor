@@ -1,6 +1,5 @@
 import * as Phaser from 'phaser';
 export abstract class Window extends Phaser.Scene {
-
     private parent: Phaser.GameObjects.Zone
     protected windowData;
 
