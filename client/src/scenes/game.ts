@@ -5,6 +5,7 @@ import { HourTracker } from '../objects/hourTracker';
 import { game } from '../api';
 import { WindowManager } from "../utils/WindowManager";
 import { CollabWindow } from './collabwindow';
+import {DeathWindow} from './deathwindow'
 import {
   expandedWidth, expandedHeight, borderWidth,
   fullWidth, fullHeight, htX, htY, scaleFactor,
@@ -19,6 +20,7 @@ import { Monster } from '../objects/monster';
 import { Fight} from './fightwindow';
 import { HeroKind } from '../objects/HeroKind';
 import { RietburgCastle } from './rietburgcastle';
+import { BattleInvWindow } from './battleinvitewindow';
 import { Well } from '../objects/well';
 import BoardOverlay from './boardoverlay';
 
@@ -112,10 +114,26 @@ export default class GameScene extends Phaser.Scene {
 
     this.gameinstance.yourTurn()
 
-    // UNCOMMENT BEFORE PUSH
-    // this.addGold()
-
-    // this.endDaySetup();
+    this.gameinstance.receiveBattleInvite(function() {
+      if (self.scene.isVisible('battleinv')){
+        console.log('destroying battleinv')
+        WindowManager.destroy(self, 'battleinv');
+      }
+      console.log('creating battleinv')
+      console.log('attempting to create battleinv window')
+      WindowManager.create(self, 'battleinv', BattleInvWindow, {controller:self.gameinstance, hero:self.hero, gamescene:self});
+      
+    })
+    this.gameinstance.receiveDeathNotice(function() {
+      if (self.scene.isVisible('deathnotice')){
+        console.log('destroying deathnotice')
+        WindowManager.destroy(self, 'deathnotice');
+      }
+      console.log('creating deathnotice')
+      WindowManager.create(self, 'deathnotice', DeathWindow, {controller:self.gameinstance});
+     
+    })
+    this.addGold()
 
     var numPlayer = 0;
     this.gameinstance.getHeros((herotypes) => {
@@ -236,7 +254,7 @@ export default class GameScene extends Phaser.Scene {
         if (this.scene.isVisible('merchant1')) {
           WindowManager.destroy(self, 'merchant1');
         } else {
-          WindowManager.create(self, 'merchant1', MerchantWindow, self.gameinstance);
+          WindowManager.create(self, 'merchant1', MerchantWindow, {controller:self.gameinstance});
           let window = WindowManager.get(self, 'merchant1')
 
         }
@@ -251,7 +269,7 @@ export default class GameScene extends Phaser.Scene {
         if (this.scene.isVisible('merchant2')) {
           WindowManager.destroy(self, 'merchant2');
         } else {
-          WindowManager.create(self, 'merchant2', MerchantWindow, self.gameinstance);
+          WindowManager.create(self, 'merchant2', MerchantWindow, {controller:self.gameinstance});
           let window = WindowManager.get(self, 'merchant2')
         }
 
@@ -265,7 +283,7 @@ export default class GameScene extends Phaser.Scene {
         if (this.scene.isVisible('merchant3')) {
           WindowManager.destroy(self, 'merchant3');
         } else {
-          WindowManager.create(self, 'merchant3', MerchantWindow, self.gameinstance);
+          WindowManager.create(self, 'merchant3', MerchantWindow, {controller:self.gameinstance});
           let window = WindowManager.get(self, 'merchant3')
         }
 
@@ -329,7 +347,7 @@ export default class GameScene extends Phaser.Scene {
         }
         else {
             WindowManager.create(this, this.monsters[i].name, Fight, { controller: this.gameinstance,
-                                hero:this.hero, monster:this.monsters[i]});
+                                hero:this.hero, monster:this.monsters[i],heroes:this.heroes});
             this.scene.pause()
         }
       }, this)

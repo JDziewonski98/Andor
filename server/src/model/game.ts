@@ -68,6 +68,16 @@ export class Game {
         return this.heroList[ID].getKind()
     }
 
+    public getIDsByHeroname(heronames){
+        var heroids : string[] = []
+        this.heroList.forEach((hero,ID) => {
+            if(heronames.includes(hero.getKind())){
+                heroids.push(ID)
+            }
+        })
+        return heroids
+    }
+
     public nextPlayer(){
         console.log("nextPlayer")
         console.log("currentPlayersTurn: ", this.currPlayersTurn)

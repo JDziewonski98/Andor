@@ -240,13 +240,67 @@ export class game {
     public doDamageToHero(hero, damage) {
         this.socket.emit('doDamageToHero', hero, damage)
     }
-    
+
+    public doDamageToMonster(monstername, damage) {
+        this.socket.emit('doDamageToMonster', monstername, damage)
+    }
+
     public getHerosInRange(id, callback) {
         this.socket.emit('getHerosInRange',id,callback)
     }
 
-    public sendBattleInvite(hero) {
-        this.socket.emit('sendBattleInvite', hero)
+    public sendBattleInvite(id, herosinrange) {
+        this.socket.emit('sendBattleInvite', id, herosinrange)
+    }
+
+    public receiveBattleInvite(callback) {
+        this.socket.on('receiveBattleInvite',callback)
+    }
+
+    public sendBattleInviteResponse(response, herokind) {
+        //todo: have to clear this listener after use?
+        this.socket.emit('sendBattleInviteResponse', response, herokind)
+    }
+
+    public receiveBattleInviteResponse(callback) {
+        this.socket.on('recieveBattleInviteResponse', callback)
+    }
+    
+    public sendCollabApproveToBattleAllies(windowname) {
+        this.socket.emit('battleCollabApprove', windowname)
+    }
+
+    public battleRewardsPopup(callback) {
+        this.socket.on('battleRewardsPopup',callback)
+    }
+
+    public unsubscribeBattleRewardsPopup() {
+        this.socket.off('battleRewardsPopup')
+    }
+
+    public heroRoll(callback) {
+        this.socket.emit('heroRoll',callback)
+    }
+
+    public confirmroll(herokind, roll, str) {
+        this.socket.emit('confirmroll',herokind, roll, str)
+    }
+
+    public receiveAlliedRoll(callback) {
+        this.socket.on('receiveAlliedRoll', callback)
+    }
+
+    public unsubscribeAlliedRollListener() {
+        this.socket.off('receiveAlliedRoll')
+        this.socket.off('recieveBattleInviteResponse')
+    }
+
+    public sendDeathNotice(hero) {
+        this.socket.emit('deathNotice', hero)
+    }
+
+    public receiveDeathNotice(callback) {
+        this.socket.on('receiveDeathNotice', callback)
     }
 }
 

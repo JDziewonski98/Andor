@@ -349,59 +349,47 @@ export function game(socket, model: Game, io) {
     //socket.emit('sendKilledMonsters', monstername);
   })
 
-  socket.on('monsterRoll', function (m, callback) {
-    try {
-      var heroId = socket.conn.id;
-      let hero = model.getHero(heroId);
-      let heroregion = hero.getRegion().getID()
-      let monster = model.getMonsters().get(m)
-      let monsterregion = monster!.getTileID()
+  socket.on('heroRoll', function(callback) {
+    let heroId = socket.conn.id
+    var hero = model.getHero(heroId)
+    var roll = hero.roll()
+    hero.incrementHour()
+    callback(roll)
+  })
 
-      if (hero.getTimeOfDay() > 9) {
-        callback('notime', null, null)
-      }
-      else if (heroregion == monsterregion) {
+  socket.on('confirmroll', function(herokind, roll, str) {
+    socket.broadcast.emit('receiveAlliedRoll',herokind, roll, str)
+  })
+
+  socket.on('monsterRoll', function(m, callback) {
+    var heroId = socket.conn.id;
+    let hero = model.getHero(heroId);
+    let heroregion = hero.getRegion().getID()
+    let monster = model.getMonsters().get(m)
+    let monsterregion = monster!.getTileID()
+    if (heroregion == monsterregion) {
+      let monsterroll = monster!.rollDice()
+      callback(monsterroll)
+    }
+    else if (hero.getKind() == HeroKind.Archer ){
+      if (hero.getRegion().getAdjRegionsIds().includes(monsterregion) || heroregion == monsterregion) {
         let monsterroll = monster!.rollDice()
-        let heroroll = hero.roll()
-        var winner = ''
-        var dmg = 0
-
-        if (monsterroll > heroroll) {
-          winner = 'monster'
-          dmg = monsterroll - heroroll
-          hero.setWill(-dmg)
-          //TODO project new hero will to client
-          if (hero.getWill() < 1) {
-            //TODO: handle DEATH!!!
-          }
-        }
-
-        else if (monsterroll < heroroll) {
-          winner = 'hero'
-          dmg = heroroll - monsterroll
-          monster!.setWill(monster!.getWill() - dmg)
-          //TODO project new monster will to client...
-          if (monster!.getWill() < 1) {
-            //monster dead logic...
-          }
-        }
-
-        else {
-          winner = 'tie'
-        }
-
-        callback(monsterroll, heroroll, winner)
+        callback(monsterroll)
       }
-
       else {
-        callback('outofrange', null,null)
+        callback('outofrange')
       }
+      
     }
-
-    catch {
-      console.log('no such monster name exists!')
+    else {
+      callback('outofrange')
     }
+  })
 
+  socket.on('doDamageToMonster', function(themonster, dmg) {
+    let monster = model.getMonsters().get(themonster)
+    monster!.setWill(monster!.getWill() - dmg)
+    //dont have to handle monster death here. a seperate message gets sent from fight window upon death.
   })
 
   socket.on('doDamageToHero', function(thehero, damage) {
@@ -413,6 +401,7 @@ export function game(socket, model: Game, io) {
       if (heroTypeString == thehero) {
         hero.setWill(-damage)
         if (hero.getWill() < 1) {
+          //hero death. remove them from all battles please.
           hero.setStrength(-1);
           hero.resetWill()
         }
@@ -432,7 +421,6 @@ export function game(socket, model: Game, io) {
     model.getHeros().forEach((hero, key) => {
       if (hero.hk === HeroKind.Mage) {
         hero = model.getHero(key);
-
         if (hero !== undefined && hero.getTimeOfDay() < 10) {
           magetile = hero.getRegion().getID();
         }
@@ -440,31 +428,24 @@ export function game(socket, model: Game, io) {
       
       else if (hero.hk === HeroKind.Archer) {
         hero = model.getHero(key);
-
         if (hero !== undefined && hero.getTimeOfDay() < 10) {
           archertile = hero.getRegion().getID()
         }
-
       } 
       
       else if (hero.hk === HeroKind.Warrior) {
         hero = model.getHero(key);
-
         if (hero !== undefined && hero.getTimeOfDay() < 10) {
           warriortile = hero.getRegion().getID()
         }
-
       } 
       
       else if (hero.hk === HeroKind.Dwarf) {
         hero = model.getHero(key);
-
         if (hero !== undefined && hero.getTimeOfDay() < 10) {
           dwarftile = hero.getRegion().getID()
         }
-
       }
-
     });
 
     var heroeswithinrange : string[] = []
@@ -480,8 +461,31 @@ export function game(socket, model: Game, io) {
     if (centraltileid == warriortile) {
       heroeswithinrange.push('warrior')
     }
-
     callback(heroeswithinrange)
+  })
+
+  socket.on('sendBattleInvite', function(id, herosinrange) {
+    var heroids = model.getIDsByHeroname(herosinrange)
+    for (let playerid of heroids) {
+      socket.broadcast.to(`/${model.getName()}#${playerid}`).emit("receiveBattleInvite")
+    }
+  })
+
+  socket.on('sendBattleInviteResponse', function(response, herokind) {
+    socket.broadcast.emit('recieveBattleInviteResponse', response, herokind)
+  })
+
+  socket.on('battleCollabApprove', function(windowname) {
+    socket.broadcast.emit('battleRewardsPopup',windowname)
+  })
+
+  //TODO test this further
+  socket.on('deathNotice', function(hero) {
+    //could also just emit it to everyone....
+    var deadheroid = model.getIDsByHeroname([hero]) 
+    for (let playerid of deadheroid) {
+      socket.broadcast.to(`/${model.getName()}#${playerid}`).emit("receiveDeathNotice")
+    }
   })
 
 

@@ -213,10 +213,12 @@ export class Hero {
         return this.will
     }
 
+    public incrementHour() {
+        this.timeOfDay++
+    }
+
     public roll() {
 
-        this.timeOfDay = this.timeOfDay + 1;
-        
         var dicefaces = [1, 2, 3, 4, 5, 6]
         var rollamt = 0
         var rolls: number[] = []
@@ -236,11 +238,17 @@ export class Hero {
             rolls.push(roll)
         }
 
-        var max = Math.max(...rolls)
-        var attack = this.strength + max
-        console.log('str', this.strength, 'max', max)
-        return attack
+        var attack = 0
 
+        if (this.hk != HeroKind.Archer){
+            let max = Math.max(...rolls)
+            //var attack = this.strength + max
+            return {roll:max, strength:this.strength}
+        }
+        else {
+            //in case of archer we need to roll one at a time...
+            return {rolls:rolls, strength:this.strength}
+        }
     }
 
     private initializeResources() {
