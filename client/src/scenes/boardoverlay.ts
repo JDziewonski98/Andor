@@ -184,7 +184,7 @@ export default class BoardOverlay extends Phaser.Scene {
         backgroundColor: '#f00'
       }
   
-      this.endDayText = this.add.text(600, 560, "end day mock", style2)
+      this.endDayText = this.add.text(600, 560, "END DAY", style2)
       this.endDayText.setInteractive();
       this.endDayText.on('pointerdown', function (pointer) {
         // Execute end of day actions

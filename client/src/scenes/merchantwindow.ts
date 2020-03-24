@@ -8,9 +8,9 @@ export class MerchantWindow extends Window {
     private key;
     private gameinstance: game;
 
-    public constructor(key: string, gameinstance: game, windowData = { x: 350, y: 30, width: 450, height: 150 }) {
+    public constructor(key: string, data, windowData = { x: 350, y: 30, width: 450, height: 150 }) {
         super(key, windowData);
-        this.gameinstance = gameinstance
+        this.gameinstance = data.controller;
         this.key = key;
     }
 
