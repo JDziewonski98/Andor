@@ -176,54 +176,61 @@ export default class BoardOverlay extends Phaser.Scene {
     }
   
     private endDaySetup() {
-      var self = this;
-  
-      var style2 = {
-        fontFamily: '"Roboto Condensed"',
-        fontSize: "20px",
-        backgroundColor: '#f00'
-      }
-  
-      this.endDayText = this.add.text(600, 560, "END DAY", style2)
-      this.endDayText.setInteractive();
-      this.endDayText.on('pointerdown', function (pointer) {
-        // Execute end of day actions
-        self.gameinstance.moveMonstersEndDay();
-  
-        // Reset wells
-        self.gameinstance.resetWells(replenishWellsClient);
-  
-        // Reset hours and hourtracker
-        self.gameinstance.resetHours(resetHeroHours);
-      }, this);
-  
-      // Callbacks
-      self.gameinstance.receiveUpdatedMonsters(moveMonstersOnMap);
-      function moveMonstersOnMap(updatedMonsters) {
-        console.log("Received updated monsters from server");
-        // console.log(updatedMonsters);
-        self.moveMonstersEndDay(updatedMonsters);
-      }
-  
-      self.gameinstance.receiveKilledMonsters(deleteKilledMonsters);
-      function deleteKilledMonsters(killedMonster) {
-        self.removeKilledMonsters(killedMonster)
-      }
-  
-      self.gameinstance.fillWells(replenishWellsClient);
-      function replenishWellsClient(replenished: number[]) {
-        console.log("well tile ids to replenish:", replenished);
-        for (let id of replenished) {
-          self.wells.get(""+id).fillWell();
+        var self = this;
+
+        var style2 = {
+            fontFamily: '"Roboto Condensed"',
+            fontSize: "20px",
+            backgroundColor: '#f00'
         }
-      }
-  
-      self.gameinstance.receiveResetHours(resetHeroHours);
-      function resetHeroHours() {
-        // Note: we don't keep track of hero hours on client, so only need to update 
-        // visual hourTracker
-        self.hourTracker.resetAll();
-      }
+    
+        this.endDayText = this.add.text(600, 560, "END DAY", style2)
+        this.endDayText.setInteractive();
+        this.endDayText.on('pointerdown', function (pointer) {
+            // does nothing if not your turn
+            if (!self.gameinstance.getTurn()) {
+                return;
+            }
+
+            // if there is another player who hasn't ended their turn, then
+            // move this players hourtracker icon and remove them from the
+            // turn cycle
+            // self.gameinstance.endDay();
+
+            // Execute end of day actions
+            self.gameinstance.moveMonstersEndDay();
+            // Reset wells
+            self.gameinstance.resetWells(replenishWellsClient);
+            // Reset hours and hourtracker
+            self.gameinstance.resetHours(resetHeroHours);
+        }, this);
+    
+        // Callbacks
+        self.gameinstance.receiveUpdatedMonsters(moveMonstersOnMap);
+        function moveMonstersOnMap(updatedMonsters) {
+            console.log("Received updated monsters from server");
+            self.moveMonstersEndDay(updatedMonsters);
+        }
+    
+        self.gameinstance.receiveKilledMonsters(deleteKilledMonsters);
+        function deleteKilledMonsters(killedMonster) {
+            self.removeKilledMonsters(killedMonster)
+        }
+    
+        self.gameinstance.fillWells(replenishWellsClient);
+        function replenishWellsClient(replenished: number[]) {
+            console.log("well tile ids to replenish:", replenished);
+            for (let id of replenished) {
+            self.wells.get(""+id).fillWell();
+            }
+        }
+    
+        self.gameinstance.receiveResetHours(resetHeroHours);
+        function resetHeroHours() {
+            // Note: we don't keep track of hero hours on client, so only need to update 
+            // visual hourTracker
+            self.hourTracker.resetAll();
+        }
     }
   
   

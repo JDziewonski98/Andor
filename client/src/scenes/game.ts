@@ -28,11 +28,14 @@ import BoardOverlay from './boardoverlay';
 export default class GameScene extends Phaser.Scene {
   private heroes: Hero[];
   private hero: Hero;
+  private startingHeroRank: number;
   private ownHeroType: HeroKind;
+
   private tiles: Tile[];
   private welltiles: Tile[];
   // Note acui: was having trouble using wells map with number typed keys, so converting to strings
   private wells: Map<string, Well>;
+
   private farmers: Farmer[];
   private hourTracker: HourTracker;
   private gameinstance: game;
@@ -67,11 +70,13 @@ export default class GameScene extends Phaser.Scene {
     this.gameinstance = data.controller;
     let type = data.heroType;
     console.log("GameScene created, client hero type: ", type);
+
+    // Change this: first turn is hardcoded to be the dwarf but it should be dynamic
     if (type === "dwarf")
     {
       this.ownHeroType = HeroKind.Dwarf
       //This will need to be moved when we implement loading and saving, but for now this is fine.
-      this.gameinstance.setMyTurn(true)
+      // this.gameinstance.setMyTurn(true)
     }
     else if (type === "warrior")
       this.ownHeroType = HeroKind.Warrior
@@ -112,6 +117,7 @@ export default class GameScene extends Phaser.Scene {
     this.addWell(7073, 3333, wellTile3)
     this.addWell(5962, 770, wellTile4)
 
+    // Listen for turn to be passed to yourself
     this.gameinstance.yourTurn()
 
     this.gameinstance.receiveBattleInvite(function() {
@@ -151,6 +157,12 @@ export default class GameScene extends Phaser.Scene {
 
       // Need to wait for heroes to be created before creating collab decision
       self.startingCollabDecisionSetup();
+      // Note that starting hero rank gets determined in collab setup
+      if (self.hero.tile.id == self.startingHeroRank) {
+        console.log("first turn goes to hero rank", self.startingHeroRank);
+        self.gameinstance.setMyTurn(true);
+      }
+
       this.hourTrackerSetup();
 
       // Add overlay to game
@@ -551,8 +563,8 @@ export default class GameScene extends Phaser.Scene {
     // Get hero of lowest rank, based on their starting tile
     var heroRanks = [];
     for (let hero of self.heroes) { heroRanks.push(hero.tile.id); }
-    var startingHeroRank = Math.min(...heroRanks);
-    var collabWindowData = (self.hero.tile.id == startingHeroRank) ?
+    self.startingHeroRank = Math.min(...heroRanks);
+    var collabWindowData = (self.hero.tile.id == self.startingHeroRank) ?
       {
         controller: self.gameinstance,
         isOwner: true,
