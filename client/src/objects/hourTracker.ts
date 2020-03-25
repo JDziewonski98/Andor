@@ -14,8 +14,11 @@ export class HourTracker extends Phaser.GameObjects.Sprite {
     }
     
     public reset(hk: HeroKind) {
-        this.x = htX;
-        this.heroSprites.get(hk).x = htX;
+        if (hk == HeroKind.Archer || hk == HeroKind.Mage) {
+            this.heroSprites.get(hk).x = htX-20;
+        } else {
+            this.heroSprites.get(hk).x = htX+20;
+        }
     }
 
     public resetAll() {
