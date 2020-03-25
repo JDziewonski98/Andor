@@ -2,9 +2,6 @@
 //server controller
 
 import { Game, HeroKind, Region, Hero, Monster } from '../model';
-import { callbackify } from 'util';
-import { monitorEventLoopDelay } from 'perf_hooks';
-
 
 export function game(socket, model: Game, io) {
 
@@ -37,7 +34,6 @@ export function game(socket, model: Game, io) {
   })
 
   socket.on("endTurn", function() {
-    console.log("endTurn from button")
     var nextPlayer = model.nextPlayer(false)
 
     // Emitting with broadcast.to to the caller doesn't seem to work. Below is a workaround
@@ -533,6 +529,15 @@ export function game(socket, model: Game, io) {
       callback(false);
     }
 
+    // Note: In actual gameplay, a call to endDay will never pass the turn back to the same player.
+    // However, for testing purposes it is useful to run the game with only one player. Below code
+    // is a workaround for emitting yourTurn back to the caller without using broadcast.to
+    if (model.getCurrPlayersTurn() == nextPlayer) {
+      console.log("Currplayer is only one left and keeps turn");
+      socket.emit("yourTurn");
+      return;
+    }
+
     // Inform client that gets the next turn
     model.setCurrPlayersTurn(nextPlayer)
     console.log("Emitting yourTurn to ", nextPlayer)
@@ -555,12 +560,6 @@ export function game(socket, model: Game, io) {
     callback(replenished);
     socket.broadcast.emit("fillWells", replenished);
   })
-
-  // socket.on("resetHours", function (callback) {
-  //   model.resetHeroHours();
-  //   callback();
-  //   socket.broadcast.emit("sendResetHours");
-  // })
 
   function getCurrentDate() {
     var currentDate = new Date();

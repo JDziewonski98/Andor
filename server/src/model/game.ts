@@ -22,7 +22,7 @@ export class Game {
 
     // playerID mapping to Hero.
     private heroList: Map<string, Hero>;
-    // heroes who haven't ended their day yet
+    // connID of heroes who haven't ended their day yet
     private activeHeros: string[];
     // null when the game first starts
     private nextDayFirstHero: string | null = null;
@@ -85,8 +85,10 @@ export class Game {
         return heroids
     }
 
+    // endDayAll: boolean. True if nextPlayer is being called by the last hero to end their day,
+    // in this case we pass the next turn to the day's earliest ending player (nextDayFirstHero).
+    // False otherwise, in this case we pass the next turn based on increasing hero rank.
     public nextPlayer(endDayAll: boolean){
-        console.log("nextPlayer call with endDayAll:", endDayAll)
         console.log("currentPlayersTurn: ", this.currPlayersTurn)
 
         // If the last person is ending their day, pass turn to earliest ending player
@@ -290,7 +292,7 @@ export class Game {
         return this.currPlayersTurn;
     }
 
-    // takes connection ID of the hero
+    // takes string s: the connection ID of the hero
     public setNextDayFirstHero(s: string) {
         this.nextDayFirstHero = s;
         console.log("Set nextDayFirstHero to:", s);
@@ -337,13 +339,6 @@ export class Game {
         this.monsters.delete(monstername)
     }
 
-    // nb: Controller calls on individual APIs rather than this one
-    // public endOfDay() {
-    //     this.moveMonsters();
-    //     this.replenishWells();
-    //     this.resetHeroHours();
-    // }
-
     public moveMonsters() {
         var self = this;
         // Move monsters in phases based on MonsterKind: Gors, Skrals, Wardraks
@@ -387,7 +382,7 @@ export class Game {
             // if this happens then we can update shields and check for end of game
             do {
                 nextRegID = self.regions[nextRegID].getNextRegionId();
-                // base case: the region is tile 0
+                // base case: the region is tile 0 (the castle)
                 if (nextRegID == 0) {
                     // Monster is going to enter the castle
                     // Decrement shields, remove monster, evaluate end of game condition
@@ -439,11 +434,13 @@ export class Game {
     }
 
     public resetHeroHours(connID: string) {
-        if (this.heroList.get(connID) == null) {
-            console.log("cannot find", connID, "in heroList");
+        if (this.heroList.get(connID) == undefined) {
+            console.log("ERROR: cannot find", connID, "in heroList");
+            return;
+        } else {
+            this.heroList.get(connID)?.setTimeOfDay(1);
+            console.log("reset", connID, "hours to", this.heroList.get(connID)?.getTimeOfDay())
+            return this.heroList.get(connID)?.getKind();
         }
-        this.heroList.get(connID)?.setTimeOfDay(1);
-        console.log("reset", connID, "hours to", this.heroList.get(connID)?.getTimeOfDay())
-        return this.heroList.get(connID)?.getKind();
     }
 }
