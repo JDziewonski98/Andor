@@ -1,27 +1,27 @@
 export class RietburgCastle {
-    private numDefenseSheilds: number
-    private numDefenseSheildsUsed: number
+    private numDefenseShields: number
+    private numDefenseShieldsUsed: number
 
     constructor() {
-        this.numDefenseSheilds = 0;
-        this.numDefenseSheildsUsed = 0;
+        this.numDefenseShields = 0;
+        this.numDefenseShieldsUsed = 0;
     }
 
-    public setSheilds(s: number){
-        this.numDefenseSheilds = s;
+    public setShields(s: number){
+        this.numDefenseShields = s;
     }
 
-    public getSheilds(){
-        return this.numDefenseSheilds;
+    public getShields(){
+        return this.numDefenseShields;
     }
 
     public attackOnCastle(){
-        this.numDefenseSheilds--;
-        this.numDefenseSheildsUsed++;
-        console.log("Castle attacked! shields remaining:", this.numDefenseSheilds);
+        this.numDefenseShields--;
+        this.numDefenseShieldsUsed++;
+        console.log("Castle attacked! shields remaining:", this.numDefenseShields);
     }
 
-    public incSheilds(){
-        this.numDefenseSheilds++;
+    public incShields(){
+        this.numDefenseShields++;
     }
 }

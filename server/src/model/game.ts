@@ -54,8 +54,8 @@ export class Game {
         this.setRegions();
         this.setFarmers();
         this.setMonsters();
-        this.setSheilds();
-        console.log(this.castle.getSheilds(), "sheilds");
+        this.setShields();
+        console.log(this.castle.getShields(), "shields");
         this.readyplayers = 0;
 
         this.numAccepts = 0;
@@ -125,16 +125,16 @@ export class Game {
         return socketID;
     }
 
-    private setSheilds(){
+    private setShields(){
         var numPlayers = this.numOfDesiredPlayers;
     
         if(numPlayers === 2){
             console.log(numPlayers, "inside")
-            this.castle.setSheilds(3);
+            this.castle.setShields(3);
         }else if(numPlayers === 3){
-            this.castle.setSheilds(2);
+            this.castle.setShields(2);
         }else if(numPlayers === 4){
-            this.castle.setSheilds(1);
+            this.castle.setShields(1);
         }
     }
 
@@ -390,7 +390,7 @@ export class Game {
                     self.castle.attackOnCastle();
                     self.regions[startReg].setMonster(null);
                     // self.monsters.delete(m.name);
-                    if(self.castle.getSheilds() == 0){
+                    if(self.castle.getShields() == 0){
                         //ENDGAME
                     }
                     break;

@@ -108,7 +108,7 @@ export default class GameScene extends Phaser.Scene {
     this.addMerchants();
     this.addFarmers()
     this.addMonsters()
-    this.addSheildsToRietburg()
+    this.addShieldsToRietburg()
     
     // x and y coordinates
     this.addWell(209,2244, wellTile1)
@@ -229,7 +229,7 @@ export default class GameScene extends Phaser.Scene {
 
   }
 
-  private addSheildsToRietburg(){
+  private addShieldsToRietburg(){
     let s1 = this.add.sprite(85, 190, '8bit_herb').setDisplaySize(40,40)
     let s2 = this.add.sprite(155, 190, '8bit_herb').setDisplaySize(40,40)
     let s3 = this.add.sprite(225, 190, '8bit_herb').setDisplaySize(40,40)
@@ -237,18 +237,18 @@ export default class GameScene extends Phaser.Scene {
     let s5 = this.add.sprite(155, 310, '8bit_herb').setDisplaySize(40,40)
     let s6 = this.add.sprite(85, 430, '8bit_herb').setDisplaySize(40,40)
 
-    this.castle.sheilds.push(s1)
-    this.castle.sheilds.push(s2)
-    this.castle.sheilds.push(s3)
-    this.castle.sheilds.push(s4)
-    this.castle.sheilds.push(s5)
-    this.castle.sheilds.push(s6)
+    this.castle.shields.push(s1)
+    this.castle.shields.push(s2)
+    this.castle.shields.push(s3)
+    this.castle.shields.push(s4)
+    this.castle.shields.push(s5)
+    this.castle.shields.push(s6)
     
     var self = this;
 
-    this.gameinstance.getNumSheilds(function(numSheilds){
-      for(var i = 0; i < numSheilds; i++){
-        self.castle.sheilds[i].visible = false;
+    this.gameinstance.getNumShields(function(numShields){
+      for(var i = 0; i < numShields; i++){
+        self.castle.shields[i].visible = false;
       }
     })
   }
@@ -453,8 +453,8 @@ export default class GameScene extends Phaser.Scene {
       if(tileid === 0){
         let newFarmer = self.hero.farmers.pop()
         for(var i = 0; i < 6; i++){
-          if(self.castle.sheilds[i].visible == true){
-            self.castle.sheilds[i].visible = false;
+          if(self.castle.shields[i].visible == true){
+            self.castle.shields[i].visible = false;
             break;
           }
         }

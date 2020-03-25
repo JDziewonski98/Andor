@@ -1,9 +1,9 @@
 import * as Phaser from 'phaser';
 
 export class RietburgCastle {
-    public sheilds;
+    public shields;
 
     constructor() {
-        this.sheilds = new Array();
+        this.shields = new Array();
     }
 }

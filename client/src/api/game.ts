@@ -168,8 +168,8 @@ export class game {
         this.socket.emit("getHeros", callback)
     }
 
-    public getNumSheilds(callback){
-        this.socket.emit("getNumSheilds", callback)
+    public getNumShields(callback){
+        this.socket.emit("getNumShields", callback)
     }
 
     public getHeroAttributes(type, callback){

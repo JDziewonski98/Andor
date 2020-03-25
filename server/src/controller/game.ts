@@ -73,7 +73,7 @@ export function game(socket, model: Game, io) {
       if (result !== undefined) {
         //Farmer dropped on reitburg
         if(result[1] === 0){
-          model.getCastle().incSheilds();
+          model.getCastle().incShields();
           console.log(model.getCastle());
         }
         io.of("/"+model.getName()).emit("addFarmer", result[1], result[0])
@@ -97,13 +97,13 @@ export function game(socket, model: Game, io) {
     }
   });
 
-  socket.on("getNumSheilds", function (callback) {
+  socket.on("getNumShields", function (callback) {
     let success = false;
-    var numSheilds = model.getCastle().getSheilds();
+    var numShields = model.getCastle().getShields();
 
-    if(numSheilds !== undefined){
-      console.log(numSheilds)
-      callback(numSheilds)
+    if(numShields !== undefined){
+      console.log(numShields)
+      callback(numShields)
     }
   });
 
