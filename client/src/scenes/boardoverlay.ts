@@ -7,6 +7,7 @@ import { Monster } from '../objects/monster';
 import { HourTracker } from '../objects/hourTracker';
 import { Well } from '../objects/well';
 import { reducedWidth, reducedHeight, mOffset } from '../constants';
+import { HeroKind } from '../objects/HeroKind';
 
 export default class BoardOverlay extends Phaser.Scene {
     private parent: Phaser.GameObjects.Zone
@@ -20,6 +21,7 @@ export default class BoardOverlay extends Phaser.Scene {
     private monsterNameMap: Map<string, Monster>;
     private hourTracker: HourTracker;
     private wells: Map<string, Well>;
+    private hk: HeroKind;
 
     // Positioning
     private x = 0;
@@ -36,6 +38,7 @@ export default class BoardOverlay extends Phaser.Scene {
         this.monsterNameMap = data.monsterMap;
         this.hourTracker = data.hourTracker;
         this.wells = data.wells;
+        this.hk = data.hk
     }
 
     public init() { }
@@ -189,23 +192,26 @@ export default class BoardOverlay extends Phaser.Scene {
         this.endDayText.on('pointerdown', function (pointer) {
             // does nothing if not your turn
             if (!self.gameinstance.getTurn()) {
+                console.log("cannot end your day when it is not your turn");
                 return;
             }
 
-            // if there is another player who hasn't ended their turn, then
-            // move this players hourtracker icon and remove them from the
-            // turn cycle
-            // self.gameinstance.endDay();
-
-            // Execute end of day actions
-            self.gameinstance.moveMonstersEndDay();
-            // Reset wells
-            self.gameinstance.resetWells(replenishWellsClient);
-            // Reset hours and hourtracker
-            self.gameinstance.resetHours(resetHeroHours);
+            self.gameinstance.endDay(function(all: boolean) {
+                // Update this client's turn state
+                self.gameinstance.endTurnOnEndDay();
+                // the last client to end their day triggers end of day actions for everyone
+                if (all) {
+                    self.gameinstance.moveMonstersEndDay();
+                    // Reset wells
+                    self.gameinstance.resetWells(replenishWellsClient);
+                }
+            });
         }, this);
     
         // Callbacks
+        // Server handles logic for whose hours are getting reset
+        self.gameinstance.receiveResetHours(resetHeroHours);
+
         self.gameinstance.receiveUpdatedMonsters(moveMonstersOnMap);
         function moveMonstersOnMap(updatedMonsters) {
             console.log("Received updated monsters from server");
@@ -221,15 +227,30 @@ export default class BoardOverlay extends Phaser.Scene {
         function replenishWellsClient(replenished: number[]) {
             console.log("well tile ids to replenish:", replenished);
             for (let id of replenished) {
-            self.wells.get(""+id).fillWell();
+                self.wells.get(""+id).fillWell();
             }
         }
     
         self.gameinstance.receiveResetHours(resetHeroHours);
-        function resetHeroHours() {
+        function resetHeroHours(resetHoursHk: string) {
+            console.log("resetting hourtracker for", resetHoursHk)
             // Note: we don't keep track of hero hours on client, so only need to update 
             // visual hourTracker
-            self.hourTracker.resetAll();
+            var hk;
+            switch (resetHoursHk) {
+                case "archer":
+                    hk = HeroKind.Archer;
+                    break;
+                case "dwarf":
+                    hk = HeroKind.Dwarf;
+                    break;
+                case "mage":
+                    hk = HeroKind.Mage;
+                    break;
+                default:
+                    hk = HeroKind.Warrior;
+            }
+            self.hourTracker.reset(hk);
         }
     }
   

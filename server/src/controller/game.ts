@@ -3,6 +3,7 @@
 
 import { Game, HeroKind, Region, Hero, Monster } from '../model';
 import { callbackify } from 'util';
+import { monitorEventLoopDelay } from 'perf_hooks';
 
 
 export function game(socket, model: Game, io) {
@@ -35,10 +36,19 @@ export function game(socket, model: Game, io) {
     callback(heroType, tile);
   })
 
-  socket.on("endTurn", function(){
-    console.log("endTurn")
-    var nextPlayer = model.nextPlayer()
+  socket.on("endTurn", function() {
+    console.log("endTurn from button")
+    var nextPlayer = model.nextPlayer(false)
+
+    // Emitting with broadcast.to to the caller doesn't seem to work. Below is a workaround
+    if (model.getCurrPlayersTurn() == nextPlayer) {
+      console.log("Currplayer is only one left and keeps turn");
+      socket.emit("yourTurn");
+      return;
+    }
+
     model.setCurrPlayersTurn(nextPlayer)
+    console.log("Emitting yourTurn to ", nextPlayer)
     socket.broadcast.to(`/${model.getName()}#${nextPlayer}`).emit("yourTurn")
   })
 
@@ -160,7 +170,6 @@ export function game(socket, model: Game, io) {
 
     if (heroType === "archer")
       success = model.bindHero(id, HeroKind.Archer);
-
     else if (heroType === "warrior")
       success = model.bindHero(id, HeroKind.Warrior);
     else if (heroType === "mage")
@@ -490,17 +499,53 @@ export function game(socket, model: Game, io) {
 
 
   /*
-  * End of day
+  * END DAY
   */
+  socket.on('endDay', function(callback) {
+    // Reset this hero's hours and tell all clients to update their hourtracker
+    var resetHoursHk = model.resetHeroHours(socket.conn.id);
+    console.log("tell client to reset hour tracker for", resetHoursHk)
+    socket.emit("sendResetHours", resetHoursHk);
+    socket.broadcast.emit("sendResetHours", resetHoursHk);
+
+    // Hero gets first turn of next day if they were first to end the current day
+    if (model.getActiveHeros().length == model.getHeros().size) {
+      model.setNextDayFirstHero(socket.conn.id);
+    }
+
+    // If they were the last hero to end the day, trigger all actions and pass turn to
+    // the hero who ended the day first
+    var nextPlayer;
+    if (model.getActiveHeros().length == 1) {
+      // Turn goes to the hero that first ended their day
+      nextPlayer = model.nextPlayer(true)
+
+      model.resetActiveHeros();
+      // Tell all clients to move monsters and refresh wells
+      callback(true);
+    } else {
+      // If not the last hero, then don't trigger end of day actions and pass turn to the
+      // next hero by rank as normal
+      nextPlayer = model.nextPlayer(false);
+
+      // Remove hero from active heroes
+      model.removeFromActiveHeros(socket.conn.id);
+      callback(false);
+    }
+
+    // Inform client that gets the next turn
+    model.setCurrPlayersTurn(nextPlayer)
+    console.log("Emitting yourTurn to ", nextPlayer)
+    socket.broadcast.to(`/${model.getName()}#${nextPlayer}`).emit("yourTurn")
+  })
+
   socket.on('moveMonstersEndDay', function () {
-    // console.log("calling move monsters on back end");
     model.moveMonsters();
     // Convert monsters Map into passable object
     let convMonsters = {};
     for (let m of Array.from(model.getMonsters().values())) {
       convMonsters[m.name] = m.getTileID();
     }
-    // console.log(convMonsters);
     socket.broadcast.emit('sendUpdatedMonsters', convMonsters);
     socket.emit('sendUpdatedMonsters', convMonsters);
   })
@@ -511,11 +556,11 @@ export function game(socket, model: Game, io) {
     socket.broadcast.emit("fillWells", replenished);
   })
 
-  socket.on("resetHours", function (callback) {
-    model.resetHeroHours();
-    callback();
-    socket.broadcast.emit("sendResetHours");
-  })
+  // socket.on("resetHours", function (callback) {
+  //   model.resetHeroHours();
+  //   callback();
+  //   socket.broadcast.emit("sendResetHours");
+  // })
 
   function getCurrentDate() {
     var currentDate = new Date();

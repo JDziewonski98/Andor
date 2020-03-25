@@ -38,7 +38,6 @@ export class game {
         this.socket.on("destroyFarmer", callback);
     }
 
-
     public addFarmer(callback){
         this.socket.on("addFarmer", callback);
     }
@@ -97,7 +96,7 @@ export class game {
     public appendToChatLog(msg) {
         this.chatlog.push(msg)
     }
-    // TODO movement
+
     public moveRequest(tileID, callback){
         if(this.myTurn){
             this.socket.emit('moveRequest', tileID, callback)
@@ -108,12 +107,20 @@ export class game {
         this.socket.on("updateMoveRequest", callback);
     }
 
+    /*
+    *  TURN LOGIC
+    */
+    // Note: this is not used when a hero's turn ends because they ended their day.
+    // Logic for turn end on end day is handled on the server.
     public endTurn(){
-        if(this.myTurn){
-            console.log("You have ended your turn.")
-            this.socket.emit('endTurn');
-            this.myTurn = false;
-        }
+        console.log("You have ended your turn.")
+        // The hero that gets the next turn depends on whether the day is over for all heroes
+        this.socket.emit('endTurn');
+        this.myTurn = false;
+    }
+
+    public endTurnOnEndDay() {
+        this.myTurn = false;
     }
     
     public yourTurn(){
@@ -169,7 +176,9 @@ export class game {
         this.socket.emit("getHeroAttributes", type, callback)
     }
 
-    // Collaborative decision making
+    /*
+    * COLLAB DECISIONS
+    */
     // Submitting a decision
     public collabDecisionSubmit(resAllocated, resNames, involvedHeroes) {
         this.socket.emit('collabDecisionSubmit', resAllocated, resNames, involvedHeroes)
@@ -194,9 +203,14 @@ export class game {
         this.socket.on('sendDecisionAccepted', callback)
     }
 
-    // End of day
+    /*
+    * END DAY
+    */
+    public endDay(callback) {
+        this.socket.emit('endDay', callback);
+    }
+
     public moveMonstersEndDay() {
-        console.log("send move monsters to server");
         this.socket.emit('moveMonstersEndDay');
     }
 
@@ -220,7 +234,9 @@ export class game {
         this.socket.on("sendResetHours", callback);
     }
 
-    // Monsters and battling
+    /*
+    * MONSTERS AND BATTLING
+    */
     public killMonster(monstername) {
         this.socket.emit('killMonster', monstername)
     }

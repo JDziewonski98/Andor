@@ -3,7 +3,7 @@ import {
     RietburgCastle, 
     Farmer, 
     Region, 
-    Player, 
+    Player,
     Hero, 
     HeroKind, 
     Monster,
@@ -19,11 +19,17 @@ export class Game {
     private name: string;
     private chatlog;
     public readyplayers: number;
+
     // playerID mapping to Hero.
     private heroList: Map<string, Hero>;
+    // heroes who haven't ended their day yet
+    private activeHeros: string[];
+    // null when the game first starts
+    private nextDayFirstHero: string | null = null;
+
     private regions: Array<Region>;
     private farmers: Array<Farmer>;
-    private monsters:Map<string, Monster>;
+    private monsters: Map<string, Monster>;
     private monstersInCastle: string[];
     private currPlayersTurn: string;
     // collab decision related state
@@ -39,6 +45,7 @@ export class Game {
         this.chatlog = [];
         this.players = new Set<Player>();
         this.heroList = new Map<string, Hero>();
+        this.activeHeros = [];
         this.regions = new Array<Region>();
         this.farmers = new Array<Farmer>();
         this.monsters = new Map<string, Monster>();
@@ -78,18 +85,32 @@ export class Game {
         return heroids
     }
 
-    public nextPlayer(){
-        console.log("nextPlayer")
+    public nextPlayer(endDayAll: boolean){
+        console.log("nextPlayer call with endDayAll:", endDayAll)
         console.log("currentPlayersTurn: ", this.currPlayersTurn)
+
+        // If the last person is ending their day, pass turn to earliest ending player
+        if (endDayAll) {
+            if (this.nextDayFirstHero) {
+                return this.nextDayFirstHero;
+            }
+            console.log("ERROR: nextDayFirstHero is null");
+        }
+        // If only one hero remaining, then the current hero keeps the turn
+        if (this.activeHeros.length == 1) {
+            return this.currPlayersTurn;
+        }
+        // Otherwise, find the hero with the next highest rank
         var minRank = this.getHero(this.currPlayersTurn).getRank();
         var maxRank = Number.MAX_VALUE;
         var socketID = "none";
         this.heroList.forEach((hero,ID) => {
             if(hero.getRank() > minRank && hero.getRank() < maxRank ){
-                maxRank = hero.getRank()
-                socketID = ID
+                maxRank = hero.getRank();
+                socketID = ID;
             }
         })
+        // Or loop back to the lowest rank hero
         if(socketID == "none"){
             minRank = Number.MAX_VALUE
             this.heroList.forEach((hero,ID) => {
@@ -193,6 +214,7 @@ export class Game {
             this.heroList.set(id, new Hero(heroType, this.regions[14]));
         }
 
+        this.activeHeros.push(id);
         this.availableHeros = this.availableHeros.filter(h => h != heroType);
         return true;
 
@@ -206,6 +228,22 @@ export class Game {
         return this.heroList;
     }
 
+    public getActiveHeros() {
+        return this.activeHeros;
+    }
+
+    public removeFromActiveHeros(connID: string) {
+        const index = this.activeHeros.indexOf(connID, 0);
+        if (index == -1) {
+            console.log("Error", connID, "not in activeHeros");
+        }
+        this.activeHeros.splice(index, 1);
+    }
+
+    public resetActiveHeros() {
+        this.activeHeros = Array.from(this.heroList.keys());
+    }
+
     public getHero(id: string): Hero {
         return this.heroList.get(id)!;
     }
@@ -217,6 +255,7 @@ export class Game {
     public getNumOfDesiredPlayers(): number {
         return this.numOfDesiredPlayers;
     }
+
     public getPlayers(): Set<Player> {
         return this.players;
     }
@@ -249,6 +288,12 @@ export class Game {
 
     public getCurrPlayersTurn(){
         return this.currPlayersTurn;
+    }
+
+    // takes connection ID of the hero
+    public setNextDayFirstHero(s: string) {
+        this.nextDayFirstHero = s;
+        console.log("Set nextDayFirstHero to:", s);
     }
 
     public moveHeroTo(hero, tile) {
@@ -293,11 +338,11 @@ export class Game {
     }
 
     // nb: Controller calls on individual APIs rather than this one
-    public endOfDay() {
-        this.moveMonsters();
-        this.replenishWells();
-        this.resetHeroHours();
-    }
+    // public endOfDay() {
+    //     this.moveMonsters();
+    //     this.replenishWells();
+    //     this.resetHeroHours();
+    // }
 
     public moveMonsters() {
         var self = this;
@@ -355,7 +400,6 @@ export class Game {
                     }
                     break;
                 }
-                // TODO endday: will crash on this condition if a wardrak tries to enter the castle twice
             } while (self.regions[nextRegID].getMonster());
 
             // Update the two tiles and the monster
@@ -394,9 +438,12 @@ export class Game {
         return replenishedIDs;
     }
 
-    public resetHeroHours() {
-        for (let hero of Array.from(this.heroList.values())) {
-            hero.setTimeOfDay(1);
+    public resetHeroHours(connID: string) {
+        if (this.heroList.get(connID) == null) {
+            console.log("cannot find", connID, "in heroList");
         }
+        this.heroList.get(connID)?.setTimeOfDay(1);
+        console.log("reset", connID, "hours to", this.heroList.get(connID)?.getTimeOfDay())
+        return this.heroList.get(connID)?.getKind();
     }
 }

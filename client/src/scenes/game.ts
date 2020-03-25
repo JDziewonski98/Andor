@@ -71,7 +71,6 @@ export default class GameScene extends Phaser.Scene {
     let type = data.heroType;
     console.log("GameScene created, client hero type: ", type);
 
-    // Change this: first turn is hardcoded to be the dwarf but it should be dynamic
     if (type === "dwarf")
     {
       this.ownHeroType = HeroKind.Dwarf
@@ -139,7 +138,7 @@ export default class GameScene extends Phaser.Scene {
       WindowManager.create(self, 'deathnotice', DeathWindow, {controller:self.gameinstance});
      
     })
-    this.addGold()
+    // this.addGold()
 
     var numPlayer = 0;
     this.gameinstance.getHeros((herotypes) => {
@@ -172,7 +171,8 @@ export default class GameScene extends Phaser.Scene {
         monsterMap: self.monsterNameMap,
         // gameTweens: self.tweens, not sure if this needs to be passed
         hourTracker: self.hourTracker,
-        wells: self.wells
+        wells: self.wells,
+        hk: self.ownHeroType
       };
       this.scene.add('BoardOverlay', new BoardOverlay(overlayData), true);
     })
