@@ -22,8 +22,9 @@ export default class Options extends Phaser.Scene {
     }
 
     public create() {
-        // let andorGame = this.sys.game as AndorGame
-        // this.model = andorGame.globals.model
+        // Initially sleep the scene
+        this.scene.sleep('Options');
+
         let music = this.game.sound.add('music')
 
         var bg = this.add.image(500, 300, 'beach2').setDisplaySize(1000,600)
@@ -67,7 +68,6 @@ export default class Options extends Phaser.Scene {
 
         this.backText = this.add.text(500, 400, "Back", style1).setOrigin(0.5).setInteractive();
         this.backText.on('pointerdown', function (pointer) {
-            this.scene.sendToBack('Options')
             this.scene.sleep('Options')
         }, this);
     }

@@ -146,9 +146,8 @@ export default class BoardOverlay extends Phaser.Scene {
         var optionsIcon = this.add.image(30, 30, 'optionsIcon').setInteractive();
         optionsIcon.setScale(0.5)
         optionsIcon.on('pointerdown', function (pointer) {
-            this.sys.game.scene.bringToTop('Options')
-            this.sys.game.scene.getScene('Options').scene.setVisible(true, 'Options')
-            this.scene.resume('Options')
+            this.scene.bringToTop('Options')
+            this.scene.wake('Options')
         }, this);
 
         // chat window
