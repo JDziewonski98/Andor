@@ -341,8 +341,11 @@ export class Game {
         this.monsters.delete(monstername)
     }
 
+    // Returns list of shields lost
     public moveMonsters() {
         var self = this;
+        var shieldsLost: number[] = [];
+
         // Move monsters in phases based on MonsterKind: Gors, Skrals, Wardraks
         // Also need to sort the monsters based on tileID
         var gors: Monster[] = [];
@@ -389,7 +392,7 @@ export class Game {
                     // Monster is going to enter the castle
                     // Decrement shields, remove monster, evaluate end of game condition
                     this.monstersInCastle.push(m.name);
-                    self.castle.attackOnCastle();
+                    shieldsLost.push(self.castle.attackOnCastle());
                     self.regions[startReg].setMonster(null);
                     // self.monsters.delete(m.name);
                     break;
@@ -406,6 +409,8 @@ export class Game {
                 self.endOfGame = true;
             }
         }
+
+        return shieldsLost;
     }
 
     public replenishWells() {

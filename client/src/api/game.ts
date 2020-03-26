@@ -176,6 +176,10 @@ export class game {
         this.socket.emit("getNumShields", callback)
     }
 
+    public updateShields(callback) {
+        this.socket.on('updateShields', callback);
+    }
+
     public getHeroAttributes(type, callback){
         this.socket.emit("getHeroAttributes", type, callback)
     }

@@ -19,6 +19,7 @@ export class RietburgCastle {
         this.numDefenseShields--;
         this.numDefenseShieldsUsed++;
         console.log("Castle attacked! shields remaining:", this.numDefenseShields);
+        return this.numDefenseShields;
     }
 
     public incShields(){

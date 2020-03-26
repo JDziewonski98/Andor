@@ -193,6 +193,19 @@ export default class GameScene extends Phaser.Scene {
       // Freeze main game while collab window is active
       self.scene.pause();
     });
+
+    // Listening for shields lost due to monster attack
+    this.gameinstance.updateShields(function(shieldNums, add) {
+      console.log("update shields", shieldNums, ", adding:", add);
+      for (let shieldNum of shieldNums) {
+        if (shieldNum < 0 || shieldNum > 5) continue;
+        if (add) {
+          self.castle.shields[shieldNum].visible = false;
+        } else {
+          self.castle.shields[shieldNum].visible = true;
+        }
+      }
+    })
   }
 
   private cameraSetup() {
@@ -246,12 +259,12 @@ export default class GameScene extends Phaser.Scene {
   }
 
   private addShieldsToRietburg(){
-    let s1 = this.add.sprite(85, 190, '8bit_herb').setDisplaySize(40,40)
-    let s2 = this.add.sprite(155, 190, '8bit_herb').setDisplaySize(40,40)
-    let s3 = this.add.sprite(225, 190, '8bit_herb').setDisplaySize(40,40)
-    let s4 = this.add.sprite(85, 310, '8bit_herb').setDisplaySize(40,40)
-    let s5 = this.add.sprite(155, 310, '8bit_herb').setDisplaySize(40,40)
-    let s6 = this.add.sprite(85, 430, '8bit_herb').setDisplaySize(40,40)
+    let s1 = this.add.sprite(85, 190, 'weed').setDisplaySize(40,40)
+    let s2 = this.add.sprite(155, 190, 'weed').setDisplaySize(40,40)
+    let s3 = this.add.sprite(225, 190, 'weed').setDisplaySize(40,40)
+    let s4 = this.add.sprite(85, 310, 'weed').setDisplaySize(40,40)
+    let s5 = this.add.sprite(155, 310, 'weed').setDisplaySize(40,40)
+    let s6 = this.add.sprite(85, 430, 'weed').setDisplaySize(40,40)
 
     this.castle.shields.push(s1)
     this.castle.shields.push(s2)
