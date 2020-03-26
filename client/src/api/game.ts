@@ -340,5 +340,12 @@ export class game {
 
 
     ///////////////////////////
+
+    /*
+    *   END OF GAME
+    */
+    public receiveEndOfGame(callback) {
+        this.socket.on('endGame', callback);
+    }
 }
 

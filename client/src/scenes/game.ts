@@ -6,6 +6,15 @@ import { game } from '../api';
 import { WindowManager } from "../utils/WindowManager";
 import { CollabWindow } from './collabwindow';
 import {DeathWindow} from './deathwindow'
+import { MerchantWindow } from './merchantwindow';
+import { Monster } from '../objects/monster';
+import { Fight} from './fightwindow';
+import { HeroKind } from '../objects/HeroKind';
+import { RietburgCastle } from './rietburgcastle';
+import { BattleInvWindow } from './battleinvitewindow';
+import { Well } from '../objects/well';
+import BoardOverlay from './boardoverlay';
+import { GameOverWindow } from './gameoverwindow';
 import {
   expandedWidth, expandedHeight, borderWidth,
   fullWidth, fullHeight, htX, htY, scaleFactor,
@@ -15,14 +24,6 @@ import {
   wellTile1, wellTile2, wellTile3, wellTile4,
   mOffset
 } from '../constants'
-import { MerchantWindow } from './merchantwindow';
-import { Monster } from '../objects/monster';
-import { Fight} from './fightwindow';
-import { HeroKind } from '../objects/HeroKind';
-import { RietburgCastle } from './rietburgcastle';
-import { BattleInvWindow } from './battleinvitewindow';
-import { Well } from '../objects/well';
-import BoardOverlay from './boardoverlay';
 
 
 export default class GameScene extends Phaser.Scene {
@@ -177,6 +178,21 @@ export default class GameScene extends Phaser.Scene {
       this.scene.add('BoardOverlay', new BoardOverlay(overlayData), true);
     })
     console.log(numPlayer);
+
+    // Listen for end of game state
+    this.gameinstance.receiveEndOfGame(function() {
+      let windowData = {
+        controller: self.gameinstance,
+        x: reducedWidth / 2 - 200,
+        y: reducedHeight / 2 - 100,
+        w: 400,
+        h: 200,
+      }
+      // Display end of game window
+      WindowManager.create(self, 'gameover', GameOverWindow, windowData);
+      // Freeze main game while collab window is active
+      self.scene.pause();
+    });
   }
 
   private cameraSetup() {

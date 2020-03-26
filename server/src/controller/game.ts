@@ -553,6 +553,11 @@ export function game(socket, model: Game, io) {
     }
     socket.broadcast.emit('sendUpdatedMonsters', convMonsters);
     socket.emit('sendUpdatedMonsters', convMonsters);
+    // Evaluate end of game state - currently only handles end of game due to loss of shields
+    if (model.getEndOfGameState()) {
+      socket.emit('endGame');
+      socket.broadcast.emit('endGame');
+    }
   })
 
   socket.on("resetWells", function (callback) {

@@ -32,6 +32,8 @@ export class Game {
     private monsters: Map<string, Monster>;
     private monstersInCastle: string[];
     private currPlayersTurn: string;
+    private endOfGame: boolean = false;
+
     // collab decision related state
     public numAccepts: number;
 
@@ -390,9 +392,6 @@ export class Game {
                     self.castle.attackOnCastle();
                     self.regions[startReg].setMonster(null);
                     // self.monsters.delete(m.name);
-                    if(self.castle.getShields() == 0){
-                        //ENDGAME
-                    }
                     break;
                 }
             } while (self.regions[nextRegID].getMonster());
@@ -402,6 +401,10 @@ export class Game {
             self.regions[startReg].setMonster(null);
             m.setTileID(nextRegID);
             console.log("moved", m.name, "btw tiles", startReg, nextRegID);
+
+            if(self.castle.getShields() <= 0){
+                self.endOfGame = true;
+            }
         }
     }
 
@@ -442,5 +445,9 @@ export class Game {
             console.log("reset", connID, "hours to", this.heroList.get(connID)?.getTimeOfDay())
             return this.heroList.get(connID)?.getKind();
         }
+    }
+
+    public getEndOfGameState() {
+        return this.endOfGame;
     }
 }
