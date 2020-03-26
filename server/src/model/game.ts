@@ -1,13 +1,14 @@
-import { 
-    GameDifficulty, 
-    RietburgCastle, 
-    Farmer, 
-    Region, 
+import {
+    GameDifficulty,
+    RietburgCastle,
+    Farmer,
+    Region,
     Player,
-    Hero, 
-    HeroKind, 
+    Hero,
+    HeroKind,
     Monster,
-    MonsterKind
+    MonsterKind,
+    Fog
 } from "."
 
 export class Game {
@@ -27,6 +28,7 @@ export class Game {
     // null when the game first starts
     private nextDayFirstHero: string | null = null;
 
+    private fogs: Map<number, Fog>;
     private regions: Array<Region>;
     private farmers: Array<Farmer>;
     private monsters: Map<string, Monster>;
@@ -50,23 +52,23 @@ export class Game {
         this.farmers = new Array<Farmer>();
         this.monsters = new Map<string, Monster>();
         this.monstersInCastle = [];
+        this.fogs = new Map<number, Fog>();
         this.currPlayersTurn = ""
         this.setRegions();
         this.setFarmers();
         this.setMonsters();
         this.setShields();
-        console.log(this.castle.getShields(), "shields");
+        this.setFogs();
         this.readyplayers = 0;
-
         this.numAccepts = 0;
     }
 
-    private setFirstHerosTurn(){
+    private setFirstHerosTurn() {
         var minRank = Number.MAX_VALUE;
         var ID = "none";
-        for(var socketID in this.heroList){
+        for (var socketID in this.heroList) {
             var hero = this.heroList[socketID]
-            if(hero.getRank() < minRank){
+            if (hero.getRank() < minRank) {
                 minRank = hero.getRank()
                 ID = socketID
             }
@@ -75,10 +77,10 @@ export class Game {
         return this.heroList[ID].getKind()
     }
 
-    public getIDsByHeroname(heronames){
-        var heroids : string[] = []
-        this.heroList.forEach((hero,ID) => {
-            if(heronames.includes(hero.getKind())){
+    public getIDsByHeroname(heronames) {
+        var heroids: string[] = []
+        this.heroList.forEach((hero, ID) => {
+            if (heronames.includes(hero.getKind())) {
                 heroids.push(ID)
             }
         })
@@ -88,7 +90,7 @@ export class Game {
     // endDayAll: boolean. True if nextPlayer is being called by the last hero to end their day,
     // in this case we pass the next turn to the day's earliest ending player (nextDayFirstHero).
     // False otherwise, in this case we pass the next turn based on increasing hero rank.
-    public nextPlayer(endDayAll: boolean){
+    public nextPlayer(endDayAll: boolean) {
         console.log("currentPlayersTurn: ", this.currPlayersTurn)
 
         // If the last person is ending their day, pass turn to earliest ending player
@@ -106,17 +108,17 @@ export class Game {
         var minRank = this.getHero(this.currPlayersTurn).getRank();
         var maxRank = Number.MAX_VALUE;
         var socketID = "none";
-        this.heroList.forEach((hero,ID) => {
-            if(hero.getRank() > minRank && hero.getRank() < maxRank ){
+        this.heroList.forEach((hero, ID) => {
+            if (hero.getRank() > minRank && hero.getRank() < maxRank) {
                 maxRank = hero.getRank();
                 socketID = ID;
             }
         })
         // Or loop back to the lowest rank hero
-        if(socketID == "none"){
+        if (socketID == "none") {
             minRank = Number.MAX_VALUE
-            this.heroList.forEach((hero,ID) => {
-                if(hero.getRank() < minRank){
+            this.heroList.forEach((hero, ID) => {
+                if (hero.getRank() < minRank) {
                     minRank = hero.getRank()
                     socketID = ID
                 }
@@ -125,15 +127,15 @@ export class Game {
         return socketID;
     }
 
-    private setShields(){
+    private setShields() {
         var numPlayers = this.numOfDesiredPlayers;
-    
-        if(numPlayers === 2){
+
+        if (numPlayers === 2) {
             console.log(numPlayers, "inside")
             this.castle.setShields(3);
-        }else if(numPlayers === 3){
+        } else if (numPlayers === 3) {
             this.castle.setShields(2);
-        }else if(numPlayers === 4){
+        } else if (numPlayers === 4) {
             this.castle.setShields(1);
         }
     }
@@ -148,11 +150,11 @@ export class Game {
     }
 
     private setMonsters() {
-        let gor1 = new Monster(MonsterKind.Gor, 8, this.numOfDesiredPlayers,'gor1')
+        let gor1 = new Monster(MonsterKind.Gor, 8, this.numOfDesiredPlayers, 'gor1')
         let gor2 = new Monster(MonsterKind.Gor, 20, this.numOfDesiredPlayers, 'gor2')
         let gor3 = new Monster(MonsterKind.Gor, 21, this.numOfDesiredPlayers, 'gor3')
         let gor4 = new Monster(MonsterKind.Gor, 26, this.numOfDesiredPlayers, 'gor4')
-        let gor5 = new Monster(MonsterKind.Gor, 48, this.numOfDesiredPlayers,'gor5')
+        let gor5 = new Monster(MonsterKind.Gor, 48, this.numOfDesiredPlayers, 'gor5')
         let skral = new Monster(MonsterKind.Skral, 19, this.numOfDesiredPlayers, 'skral1')
         // let war = new Monster(MonsterKind.Wardrak, 1, this.numOfDesiredPlayers, 'wardrak1')
 
@@ -181,12 +183,34 @@ export class Game {
             // on top of setting t.something, also set amount of gold on each tile to 0
             this.regions.push(new Region(0, t.id, t.nextRegionId, t.adjRegionsIds, t.hasWell, t.hasMerchant))
         })
-        //console.log(this.regions[2].getNextRegionId())
-        // console.log("regions sanity check:", this.regions);
     }
+
+    private setFogs() {
+        const fogIds = [8, 11, 12, 13, 49, 16, 32, 48, 42, 44, 47, 46, 64, 56, 63];
+        let fogTypes = [Fog.EventCard, Fog.EventCard, Fog.EventCard, Fog.EventCard, Fog.EventCard, Fog.Strength, Fog.WillPower2, Fog.WillPower3, Fog.Gold, Fog.Gold, Fog.Gold, Fog.Gor, Fog.Gor, Fog.Wineskin, Fog.Brew];
+        shuffle(fogTypes);
+
+        fogIds.forEach((id, i) => {
+            this.fogs.set(id, fogTypes[i]);
+        })
+
+        function shuffle(a) {
+            for (let i = a.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [a[i], a[j]] = [a[j], a[i]];
+            }
+            return a;
+        }
+    }
+
+    public getFogs(): Map<number, Fog> {
+        return this.fogs;
+    }
+
     public getRegions(): Region[] {
         return this.regions
     }
+
     public getName(): string {
         return this.name;
     }
@@ -222,7 +246,7 @@ export class Game {
 
     }
 
-    public getCastle(){
+    public getCastle() {
         return this.castle;
     }
 
@@ -283,12 +307,12 @@ export class Game {
         //TO BE IMPLEMENTED
     }
 
-    public setCurrPlayersTurn(s:string){
+    public setCurrPlayersTurn(s: string) {
         this.currPlayersTurn = s;
         console.log("Set currPlayersTurn to: ", s)
     }
 
-    public getCurrPlayersTurn(){
+    public getCurrPlayersTurn() {
         return this.currPlayersTurn;
     }
 
@@ -347,7 +371,7 @@ export class Game {
         var skrals: Monster[] = [];
         var wardraks: Monster[] = [];
 
-        for(let m of Array.from(this.monsters.values())) {
+        for (let m of Array.from(this.monsters.values())) {
             switch (m.getType()) {
                 case MonsterKind.Gor:
                     gors.push(m);
@@ -364,9 +388,9 @@ export class Game {
         }
 
         // Inline custom sort of monsters on tileID
-        gors.sort((a,b) => (a.getTileID() - b.getTileID()));
-        skrals.sort((a,b) => (a.getTileID() - b.getTileID()));
-        wardraks.sort((a,b) => (a.getTileID() - b.getTileID()));
+        gors.sort((a, b) => (a.getTileID() - b.getTileID()));
+        skrals.sort((a, b) => (a.getTileID() - b.getTileID()));
+        wardraks.sort((a, b) => (a.getTileID() - b.getTileID()));
 
         var sortedMonsters = gors.concat(skrals).concat(wardraks).concat(wardraks);
         // Move each monster based on tile and type ordering
@@ -390,7 +414,7 @@ export class Game {
                     self.castle.attackOnCastle();
                     self.regions[startReg].setMonster(null);
                     // self.monsters.delete(m.name);
-                    if(self.castle.getShields() == 0){
+                    if (self.castle.getShields() == 0) {
                         //ENDGAME
                     }
                     break;

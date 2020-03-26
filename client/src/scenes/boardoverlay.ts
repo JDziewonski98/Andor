@@ -174,6 +174,8 @@ export default class BoardOverlay extends Phaser.Scene {
             }
         }, this)
 
+        // this.
+
         // end day setup
         this.endDaySetup();
     }

@@ -561,6 +561,14 @@ export function game(socket, model: Game, io) {
     socket.broadcast.emit("fillWells", replenished);
   })
 
+  /**
+   * Returns all fog after initializing on the server side
+   */
+  socket.on("getFog", function(callback){
+    var fog = model.getFogs();
+    callback(Array.from(fog))
+  })
+
   function getCurrentDate() {
     var currentDate = new Date();
     var hour = (currentDate.getHours() < 10 ? '0' : '') + currentDate.getHours();

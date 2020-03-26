@@ -36,3 +36,6 @@ export const wellTile1 = 5;
 export const wellTile2 = 35;
 export const wellTile3 = 45;
 export const wellTile4 = 55;
+
+// fog tile IDs
+export const fogs = [8, 11, 12, 13, 49, 16, 32, 48, 42, 44, 47, 46, 64, 56, 63];
