@@ -65,6 +65,10 @@ export class game {
         this.socket.on("updateDropGold", callback);       
     }
 
+    public disconnectUpdateDropGold() {
+        this.socket.off("updateDropGold")
+    }
+
     public dropGold(callback) {
         console.log("here2") //is printed at user console
         this.socket.emit("dropGold", callback)
@@ -234,9 +238,9 @@ export class game {
         this.socket.on("sendResetHours", callback);
     }
 
-    /*
-    * MONSTERS AND BATTLING
-    */
+    //////////////////////////////
+    // MONSTERS AND BATTLING
+    /////////////////////////////
     public killMonster(monstername) {
         this.socket.emit('killMonster', monstername)
     }
@@ -318,5 +322,23 @@ export class game {
     public receiveDeathNotice(callback) {
         this.socket.on('receiveDeathNotice', callback)
     }
+    /////////////////////////////
+
+
+    /////////////////////////////
+    //  Trade stuff
+    ////////////////////////////
+
+    public sendTradeInvite(host, recipient) {
+        this.socket.emit('sendTradeInvite', host, recipient)
+    }
+
+    public receiveTradeInvite(callback) {
+        this.socket.on('receiveTradeInvite', callback)
+    }
+
+
+
+    ///////////////////////////
 }
 

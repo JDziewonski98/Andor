@@ -138,7 +138,7 @@ export default class GameScene extends Phaser.Scene {
       WindowManager.create(self, 'deathnotice', DeathWindow, {controller:self.gameinstance});
      
     })
-    // this.addGold()
+    this.addGold()
 
     var numPlayer = 0;
     this.gameinstance.getHeros((herotypes) => {

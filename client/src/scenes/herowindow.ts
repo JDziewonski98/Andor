@@ -16,6 +16,8 @@ export class HeroWindow extends Window {
     private farmtext
     private name
     private gameinstance: game;
+    private clienthero;
+    private windowhero;
 
     public constructor(key: string, data, windowData = { x: 350, y: 30, width: 400, height: 250 }) {
         super(key, windowData);
@@ -26,10 +28,12 @@ export class HeroWindow extends Window {
         this.will = data.will
         this.str = data.strength
         this.farmers = data.farmers
+        this.clienthero = data.clienthero
+        this.windowhero = data.windowhero
 
     }
 
-    protected initialize() {
+    protected initialize() { 
 
         var bg = this.add.image(0, 0, 'scrollbg').setOrigin(0.5)
         var weed = this.add.sprite(50, 50, this.icon);
@@ -57,8 +61,9 @@ export class HeroWindow extends Window {
         });
 
         var self = this
-
-        this.farmtext.setInteractive()
+        if (this.clienthero == this.windowhero){
+            this.farmtext.setInteractive()
+        }
         this.farmtext.on('pointerdown', function (pointer) {
             self.gameinstance.dropFarmer(function (tilenum) {
                 if(self.farmers > 0){
@@ -69,7 +74,9 @@ export class HeroWindow extends Window {
 
         }, this);
 
-        this.goldtext.setInteractive()
+        if (this.clienthero == this.windowhero){ 
+            this.goldtext.setInteractive()
+        }
         var that = this
         this.goldtext.on('pointerdown', function () {            
             console.log("we droppin the gold")
@@ -123,5 +130,11 @@ export class HeroWindow extends Window {
         this.goldtext.setText('Gold: ' + this.gold)
         this.willtext.setText('Willpower: ' + this.will)
         
+    }
+
+    public disconnectListeners() {
+        //MUST be called before deleting the window, or else it will bug when opened subsequently!
+        //turn off any socket.on(...) that u add here!
+        this.gameinstance.disconnectUpdateDropGold()
     }
 }

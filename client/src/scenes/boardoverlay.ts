@@ -71,10 +71,12 @@ export default class BoardOverlay extends Phaser.Scene {
                     this.gameinstance.getHeroAttributes("Mage", (herodata) => {
                     
                         if (this.scene.isVisible('mageCard')) {
+                            var thescene = WindowManager.get(this, 'mageCard')
+                            thescene.disconnectListeners()
                             WindowManager.destroy(this, 'mageCard');
                         } else {
                             console.log(self.gameinstance)
-                            WindowManager.create(this, 'mageCard', HeroWindow,{controller: self.gameinstance, icon: 'weed', ...herodata});
+                            WindowManager.create(this, 'mageCard', HeroWindow,{controller: self.gameinstance, icon: 'weed',clienthero:self.hk,windowhero:'mage', ...herodata});
                             let window = WindowManager.get(this, 'mageCard')
                             window.setName('Mage')
                         }
@@ -89,10 +91,12 @@ export default class BoardOverlay extends Phaser.Scene {
                         this.gameinstance.getHeroAttributes("Archer", (herodata) => {
                     
                             if (this.scene.isVisible('archerCard')) {
+                                var thescene = WindowManager.get(this, 'archerCard')
+                                thescene.disconnectListeners()
                                 WindowManager.destroy(this, 'archerCard');
                             } else {
                                 console.log(self.gameinstance)
-                                WindowManager.create(this, 'archerCard', HeroWindow,{controller: self.gameinstance, icon: 'weed', ...herodata});
+                                WindowManager.create(this, 'archerCard', HeroWindow,{controller: self.gameinstance, icon: 'weed',clienthero:self.hk,windowhero:'archer', ...herodata});
                                 let window = WindowManager.get(this, 'archerCard')
                                 window.setName('Archer')
                             }
@@ -105,10 +109,12 @@ export default class BoardOverlay extends Phaser.Scene {
                         this.gameinstance.getHeroAttributes("Warrior", (herodata) => {
                     
                             if (this.scene.isVisible('warriorCard')) {
+                                var thescene = WindowManager.get(this, 'warriorCard')
+                                thescene.disconnectListeners()
                                 WindowManager.destroy(this, 'warriorCard');
                             } else {
                                 console.log(self.gameinstance)
-                                WindowManager.create(this, 'warriorCard', HeroWindow,{controller: self.gameinstance, icon: 'weed', ...herodata});
+                                WindowManager.create(this, 'warriorCard', HeroWindow,{controller: self.gameinstance, icon: 'weed',clienthero:self.hk,windowhero:'warrior', ...herodata});
                                 let window = WindowManager.get(this, 'warriorCard')
                                 window.setName('Warrior')
                             }
@@ -121,10 +127,12 @@ export default class BoardOverlay extends Phaser.Scene {
                         this.gameinstance.getHeroAttributes("Dwarf", (herodata) => {
                     
                             if (this.scene.isVisible('dwarfCard')) {
+                                var thescene = WindowManager.get(this, 'dwarfCard')
+                                thescene.disconnectListeners()
                                 WindowManager.destroy(this, 'dwarfCard');
                             } else {
                                 console.log(self.gameinstance)
-                                WindowManager.create(this, 'dwarfCard', HeroWindow, {controller: self.gameinstance, icon: 'weed', ...herodata});
+                                WindowManager.create(this, 'dwarfCard', HeroWindow, {controller: self.gameinstance, icon: 'weed',clienthero:self.hk,windowhero:'dwarf', ...herodata});
                                 let window = WindowManager.get(this, 'dwarfCard')
                                 window.setName('Dwarf')
                             }
