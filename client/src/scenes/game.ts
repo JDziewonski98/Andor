@@ -556,11 +556,12 @@ export default class GameScene extends Phaser.Scene {
     // var self = this;
     this.gameinstance.getFog((fogs) => {
       fogs.forEach((fog) => {
-
         const tile: Tile = this.tiles[fog[0]];
         const f = this.add.sprite(tile.x + 50, tile.y - 5, fog[1]).setDisplaySize(60, 60);
-        f.setTint(0x101010);
-        f.setInteractive()
+        f.name = fog[1];
+        f.setTint(0x101010); // darken
+        tile.setFog(f) // add to tile
+        f.setInteractive() 
         this.add.existing(f);
         f.on("pointerdown", (pointer) => {
           f.clearTint()

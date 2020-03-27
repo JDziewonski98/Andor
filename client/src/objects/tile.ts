@@ -28,6 +28,8 @@ export class Tile extends Phaser.GameObjects.Sprite {
 
     public monster!: Monster;
 
+    private fog: Phaser.GameObjects.Sprite;
+
     constructor(id, scene, x, y, texture) {
         super(scene, x, y, 'tiles', texture);
         this.id = id;
@@ -36,8 +38,7 @@ export class Tile extends Phaser.GameObjects.Sprite {
         this.hero = null;
         this.farmer = new Array(2);
         this.gold = 0;
-        //this.on('pointerdown', function (pointer) { this.printstuff() });
-        //this.on('pointerdown', function (pointer) { this.moveRequest() })
+        this.fog = null;
 
         //depricated
         // Set coordinates for hero representations as 2d array
@@ -99,8 +100,8 @@ export class Tile extends Phaser.GameObjects.Sprite {
         */
     }
 
-    public setSprite(texture){
-        this.texture = texture
+    public setFog(fog: Phaser.GameObjects.Sprite){
+        this.fog = fog;
     }
 
     public setGold(amount: number) {
