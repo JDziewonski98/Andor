@@ -93,8 +93,8 @@ export default class GameScene extends Phaser.Scene {
     this.load.multiatlas('tiles', './assets/tilesheet.json', 'assets')
     this.load.image("well", "../assets/well.png");
 
-    this.load.image("WillPower2", "../assets/well2.png");
-    this.load.image("WillPower3", "../assets/well3.png");
+    this.load.image("WillPower2", "../assets/will2.png");
+    this.load.image("WillPower3", "../assets/will3.png");
     this.load.image("Gold", "../assets/gold.png");
     this.load.image("EventCard", "../assets/event.png");
     this.load.image("Gor", "../assets/gorfog.png");
@@ -555,30 +555,25 @@ export default class GameScene extends Phaser.Scene {
   private addFog() {
     // var self = this;
     this.gameinstance.getFog((fogs) => {
-      console.log(fogs)
       fogs.forEach((fog) => {
 
         const tile: Tile = this.tiles[fog[0]];
-        const f = this.add.sprite(tile.x, tile.y, fog[1]).setDisplaySize(60, 60);
+        const f = this.add.sprite(tile.x + 50, tile.y - 5, fog[1]).setDisplaySize(60, 60);
         f.setTint(0x101010);
+        f.setInteractive()
         this.add.existing(f);
+        f.on("pointerdown", (pointer) => {
+          f.clearTint()
+          // CAlL BACKEND
+        }, this)
       })
-      // TODO:  ATTACH CLICK EVENT
-      // fogs.forEach((fog) => {
-      //   f.on("pointerdown", (pointer) => {
-      //     console.log("pwirehifujokw", f)
-      //   })
-      // })
     });
   }
 
   private addGold() {
     var self = this
     for (let id in self.tiles) { // of dattara tile object ga iterate sareru
-      //console.log(id, this)
-
       //create a text Sprite indicating the number of gold. 
-      console.log("adding Gold")
       var goldText = self.add.text(50, 50, "G", { color: "#fff52e" }).setX(self.tiles[id].x - 30).setY(self.tiles[id].y - 30)
       //set to interactive
       goldText.setInteractive()

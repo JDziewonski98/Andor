@@ -75,7 +75,6 @@ export class Game {
                 ID = socketID
             }
         }
-        console.log(ID)
         return this.heroList[ID].getKind()
     }
 
@@ -93,14 +92,12 @@ export class Game {
     // in this case we pass the next turn to the day's earliest ending player (nextDayFirstHero).
     // False otherwise, in this case we pass the next turn based on increasing hero rank.
     public nextPlayer(endDayAll: boolean) {
-        console.log("currentPlayersTurn: ", this.currPlayersTurn)
 
         // If the last person is ending their day, pass turn to earliest ending player
         if (endDayAll) {
             if (this.nextDayFirstHero) {
                 return this.nextDayFirstHero;
             }
-            console.log("ERROR: nextDayFirstHero is null");
         }
         // If only one hero remaining, then the current hero keeps the turn
         if (this.activeHeros.length == 1) {
@@ -133,7 +130,6 @@ export class Game {
         var numPlayers = this.numOfDesiredPlayers;
 
         if (numPlayers === 2) {
-            console.log(numPlayers, "inside")
             this.castle.setShields(3);
         } else if (numPlayers === 3) {
             this.castle.setShields(2);
@@ -148,7 +144,6 @@ export class Game {
         this.farmers.push(new Farmer(1, this.regions[36]));
         this.regions[24].addFarmer(this.farmers[0]);
         this.regions[36].addFarmer(this.farmers[1]);
-        console.log(this.regions[36])
     }
 
     private setMonsters() {
@@ -264,6 +259,7 @@ export class Game {
         const index = this.activeHeros.indexOf(connID, 0);
         if (index == -1) {
             console.log("Error", connID, "not in activeHeros");
+            // return;
         }
         this.activeHeros.splice(index, 1);
     }
@@ -311,7 +307,6 @@ export class Game {
 
     public setCurrPlayersTurn(s: string) {
         this.currPlayersTurn = s;
-        console.log("Set currPlayersTurn to: ", s)
     }
 
     public getCurrPlayersTurn() {
@@ -321,11 +316,9 @@ export class Game {
     // takes string s: the connection ID of the hero
     public setNextDayFirstHero(s: string) {
         this.nextDayFirstHero = s;
-        console.log("Set nextDayFirstHero to:", s);
     }
 
     public moveHeroTo(hero, tile) {
-        console.log("Passed method call")
         hero.moveTo(tile)
     }
 
@@ -427,7 +420,6 @@ export class Game {
             self.regions[nextRegID].setMonster(m);
             self.regions[startReg].setMonster(null);
             m.setTileID(nextRegID);
-            console.log("moved", m.name, "btw tiles", startReg, nextRegID);
 
             if(self.castle.getShields() <= 0){
                 self.endOfGame = true;
@@ -471,7 +463,6 @@ export class Game {
             return;
         } else {
             this.heroList.get(connID)?.setTimeOfDay(1);
-            console.log("reset", connID, "hours to", this.heroList.get(connID)?.getTimeOfDay())
             return this.heroList.get(connID)?.getKind();
         }
     }

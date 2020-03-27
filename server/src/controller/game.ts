@@ -29,7 +29,6 @@ export function game(socket, model: Game, io) {
   });
 
   socket.on("moveHeroTo", function (heroType, tile, callback) {
-    console.log("yoink")
     callback(heroType, tile);
   })
 
@@ -74,7 +73,6 @@ export function game(socket, model: Game, io) {
         //Farmer dropped on reitburg
         if(result[1] === 0){
           model.getCastle().incShields();
-          console.log(model.getCastle());
         }
         io.of("/"+model.getName()).emit("addFarmer", result[1], result[0])
         callback(result[1]);
@@ -98,11 +96,9 @@ export function game(socket, model: Game, io) {
   });
 
   socket.on("getNumShields", function (callback) {
-    let success = false;
     var numShields = model.getCastle().getShields();
 
     if(numShields !== undefined){
-      console.log(numShields)
       callback(numShields)
     }
   });
@@ -110,7 +106,6 @@ export function game(socket, model: Game, io) {
   socket.on("useWell", function (callback) {
     let heroId = socket.conn.id;
     let hero = model.getHero(heroId);
-    console.log("Hero requesting well use: ", hero.getKind());
     if (hero !== undefined) {
       let wpInc = hero.useWell();
       if (wpInc != -1) {
@@ -125,7 +120,6 @@ export function game(socket, model: Game, io) {
   });
 
   socket.on("dropGold", function (callback) {
-    console.log("here3") //printed
     let success_dropGold = false;
     let heroId = socket.conn.id;
     let hero = model.getHero(heroId);
@@ -134,27 +128,23 @@ export function game(socket, model: Game, io) {
         success_dropGold = hero.dropGold();
     }
     if (success_dropGold) {
-        console.log("dropped") //printed
         socket.broadcast.emit("updateDropGold");
         callback()
     }
   });   
 
   socket.on("pickupGold", function (id, callback) { 
-    console.log("picking up gold on server") //is printed
     let success_pickupGold = false;
     let heroId = socket.conn.id;
     let hero = model.getHero(heroId);
     //id is type string. must convert to number
     id = +id
-    //console.log(hero.getRegion().getID(), id) 
 
     if (hero !== undefined && hero.getRegion().getID() === id && hero.getRegion().getGold() > 0) {
         success_pickupGold = hero.pickupGold();
     }
 
     if (success_pickupGold) {
-        console.log("pickupGold successful") //is printed
         socket.broadcast.emit("updatePickupGold");
         callback()
     }
@@ -283,7 +273,6 @@ export function game(socket, model: Game, io) {
     if(model.getCurrPlayersTurn() == ""){
       model.setCurrPlayersTurn(socket.conn.id)
     }
-    console.log(resAllocated);
     // Check that numAccepts equals total num of players-1
     if (model.numAccepts != involvedHeroes.length-1) {
       // Failure: need more accepts before valid submit
