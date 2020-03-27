@@ -30,6 +30,7 @@ export class Fight extends Window {
     private monstertypetxt
     private exitbutton
     private invitetext;
+    //for helm
     private otherdicetext;
     private helmtext;
     //monster stats and attributes
@@ -188,7 +189,7 @@ export class Fight extends Window {
                                 else {
                                     self.gameinstance.getHeroItems(self.hero.getKind(), function(itemdict) {
                                         if (itemdict['helm'] == 'true') {
-                                            self.doHelmet(alldice, str)
+                                            self.doHelm(alldice, str)
                                         }
                                         //TODO handle brew, herb, shield
                                     })
@@ -357,7 +358,7 @@ export class Fight extends Window {
         })
     }
 
-    private doHelmet(alldice, str) {
+    private doHelm(alldice, str) {
         var self = this
         //hero is either warrior or dwarf: display option to use helmet.
         //we don't display it for other classes because its useless: they roll 1 die
@@ -365,11 +366,12 @@ export class Fight extends Window {
         self.helmtext = self.add.text(240,165,'Click to use helm.').setInteractive()
         for (let die of alldice) {
             self.otherdicetext.setText(self.otherdicetext.getWrappedText() + ' ' + die)
-
         }
         self.helmtext.on('pointerdown', function(pointer) {
             //TODO: delete the helmet on client and server side.
+            self.gameinstance.consumeItem('helm')
             self.helmtext.disableInteractive()
+            self.otherdicetext.destroy()
             self.helmtext.destroy()
             var newroll = 0
             for (var i = 0; i < alldice.length; i++) {
@@ -412,20 +414,7 @@ export class Fight extends Window {
 
     private victory() {
         var self = this
-        this.alliedrollstxt.destroy()
-        this.invitetext.destroy()
-        this.monster.destroy()
-        this.yourwilltxt.destroy()
-        this.monstertypetxt.destroy()
-        this.monsterstrtxt.destroy()
-        this.monsterwilltxt.destroy()
-        this.monstergoldtxt.destroy()
-        this.monstericon.destroy()
-        this.notificationtext.destroy()
-        this.fighttext.destroy()
-        this.theirroll.destroy()
-        this.yourroll.destroy()
-        this.exitbutton.destroy()
+        this.destroyTexts(true)
 
         let vic = this.add.text(70, 20, "VICTORY!")
         this.tweens.add({
@@ -509,8 +498,23 @@ export class Fight extends Window {
     public death() {
         //if you died, end your turn and reset the stats.
         var self = this
-        this.invitetext.destroy()
+        this.destroyTexts(false)
+        this.add.text(70, 50, "You lost and lose\n 1 strength. Your turn \n is over. Your \nwill is set to 3.")
+        var text = this.add.text(70, 150, "Click to accept.").setInteractive()
+        text.on('pointerdown', function (pointer) {
+            self.scene.remove(self.windowname)
+            if (self.gameinstance.getTurn()) {
+                self.gameinstance.endTurn();
+            }
+        })
+    }
+
+    private destroyTexts(victory) {
+        if (victory) {
+            this.monster.destroy()
+        }
         this.alliedrollstxt.destroy()
+        this.invitetext.destroy()
         this.yourwilltxt.destroy()
         this.monstertypetxt.destroy()
         this.monsterstrtxt.destroy()
@@ -522,14 +526,6 @@ export class Fight extends Window {
         this.theirroll.destroy()
         this.yourroll.destroy()
         this.exitbutton.destroy()
-        this.add.text(70, 50, "You lost and lose\n 1 strength. Your turn \n is over. Your \nwill is set to 3.")
-        var text = this.add.text(70, 150, "Click to accept.").setInteractive()
-        text.on('pointerdown', function (pointer) {
-            self.scene.remove(self.windowname)
-            if (self.gameinstance.getTurn()) {
-                self.gameinstance.endTurn();
-            }
-        })
     }
 
 }

@@ -12,6 +12,9 @@ export class BattleInvWindow extends Window {
     private abilitytext;
     private abilitybutton;
     private confirmbutton;
+    //for helm
+    private helmtext
+    private otherdicetext
 
     private roll = -1;
     private str = -1;
@@ -47,8 +50,9 @@ export class BattleInvWindow extends Window {
 
             self.gameinstance.heroRoll(function(data) {
                 self.hero.incrementHour()
+                self.str = data.strength
+                var alldice = data.alldice
                 if (self.herokind == 'archer') {
-                    self.str = data.strength
                     var count = 0
                     self.roll = data.rolls[count]
                     self.abilitytext = self.add.text(50,40,'You may reroll ' + (data.rolls.length-1-count) + ' more times.')
@@ -67,7 +71,6 @@ export class BattleInvWindow extends Window {
                 }
                 else {
                     //handle non archer heros
-                    self.str = data.strength
                     self.rolltext.setText('Your roll: ' + data.roll + 'Your str:' + data.strength)
                     self.roll = data.roll
                     //handle mage ability
@@ -80,6 +83,14 @@ export class BattleInvWindow extends Window {
                             self.abilitybutton.disableInteractive()
                             self.roll = oppositeside
                             self.rolltext.setText('Your roll: ' + oppositeside + 'Your str:' + data.strength)
+                        })
+                    }
+                    else {
+                        self.gameinstance.getHeroItems(self.hero.getKind(), function(itemdict) {
+                            if (itemdict['helm'] == 'true') {
+                                self.doHelm(alldice, self.str)
+                            }
+                            //TODO handle brew, herb, shield
                         })
                     }
                 }
@@ -112,6 +123,30 @@ export class BattleInvWindow extends Window {
             self.scene.remove(self.windowname)
         })
 
+    }
+
+    private doHelm(alldice, str) {
+        var self = this
+        //hero is either warrior or dwarf: display option to use helmet.
+        //we don't display it for other classes because its useless: they roll 1 die
+        self.otherdicetext = self.add.text(200,150,'All your dice: ')
+        self.helmtext = self.add.text(200,165,'Click to use helm.').setInteractive()
+        for (let die of alldice) {
+            self.otherdicetext.setText(self.otherdicetext.getWrappedText() + ' ' + die)
+        }
+        self.helmtext.on('pointerdown', function(pointer) {
+            //TODO: delete the helmet on client and server side.
+            self.gameinstance.consumeItem('helm')
+            self.helmtext.disableInteractive()
+            self.otherdicetext.destroy()
+            self.helmtext.destroy()
+            var newroll = 0
+            for (var i = 0; i < alldice.length; i++) {
+                newroll += alldice[i];
+            }
+            self.rolltext.setText('Your roll: ' + newroll + 'Your str: ' + str) 
+            self.roll = newroll
+        })
     }
 
 }

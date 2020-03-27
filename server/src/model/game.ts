@@ -205,10 +205,6 @@ export class Game {
         })
         if (heroType === HeroKind.Dwarf) {
             this.heroList.set(id, new Hero(heroType, this.regions[7]));
-            //remove
-            let dwarf = this.heroList.get(id)
-            dwarf?.pickUpHelm()
-            //
         }
         else if (heroType === HeroKind.Archer) {
             this.heroList.set(id, new Hero(heroType, this.regions[25]));

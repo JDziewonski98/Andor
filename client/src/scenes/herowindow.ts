@@ -46,7 +46,7 @@ export class HeroWindow extends Window {
             if (itemdict['largeItem'] != 'empty') {
                 self.add.text(25,180,'Large item: ' + itemdict['largeItem'])
             }
-            if (itemdict['helm'] != 'empty') {
+            if (itemdict['helm'] != 'false') {
                 self.add.text(25,200,'Helm equipped.')
             }
             //TODO as rest of item types are added

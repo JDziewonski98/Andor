@@ -238,17 +238,6 @@ export function game(socket, model: Game, io) {
       callback(heros);
   })
 
-  socket.on('getHeroItems', function(herokind, callback) {
-    var thehero: Hero
-    model.getHeros().forEach((hero, key) => {
-      if (hero.getKind() == herokind){
-        thehero = hero
-      }
-    })
-    var heroItemDict = thehero!.getItemDict()
-    callback(heroItemDict)
-  })
-
   socket.on("getHeroAttributes", function (type, callback) {
     let data = {};
     let hero: Hero;
@@ -579,5 +568,28 @@ export function game(socket, model: Game, io) {
 
     return hour + ":" + minute + ":" + second;
   }
+
+  /////////////////////////
+  // ITEM STUFF
+  ////////////////////////
+  
+  socket.on('getHeroItems', function(herokind, callback) {
+    var thehero: Hero
+    model.getHeros().forEach((hero, key) => {
+      if (hero.getKind() == herokind){
+        thehero = hero
+      }
+    })
+    var heroItemDict = thehero!.getItemDict()
+    callback(heroItemDict)
+  })
+
+  socket.on('consumeItem', function(item) {
+    var heroID = socket.conn.id
+    let hero = model.getHero(heroID);
+    hero.consumeItem(item)
+  })
+
+  ///////////////////////
 }
 

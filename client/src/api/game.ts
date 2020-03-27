@@ -341,6 +341,10 @@ export class game {
         this.socket.emit('getHeroItems', hero, callback)
     }
 
+    public consumeItem(item) {
+        //goal is to have backend determine item being consumed based on passed string
+        this.socket.emit('consumeItem', item)
+    }
     ///////////////////////////
 }
 

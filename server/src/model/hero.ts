@@ -45,13 +45,6 @@ export class Hero {
         return data;
     }
 
-    public getItemDict() {
-        //TODO
-        let helm = this.helm == true ? 'true' : 'false'
-        let itemdict = {largeItem: this.largeItem, helm:helm}
-        return itemdict
-    }
-
     public getKind(): HeroKind {
         return this.hk;
     }
@@ -296,6 +289,44 @@ export class Hero {
     ///////////////////////
     /// ITEM METHODS
     //////////////////////
+
+    public getItemDict() {
+        /*
+        Format:
+        helm: 'true' || 'false'
+        largeItem: 'falcon' || 'shield' || 'bow' || 'empty'
+        */
+        //TODO
+        let helm = this.helm == true ? 'true' : 'false'
+        let itemdict = {largeItem: this.largeItem, helm:helm}
+        return itemdict
+    }
+
+    public consumeItem(item){
+        switch(item) {
+            case 'helm': 
+                if  (this.helm == true) {
+                    this.helm = false
+                }
+                break;
+
+            case 'shield':
+                break;
+
+            case 'herb':
+                break;
+
+            case 'wineskin':
+                break;
+
+            case 'brew':
+                break;
+
+            default:
+                console.log('Error! check your spelling on item to consume.')
+        }
+
+    }
 
     public pickUpLargeItem(item: LargeItem) {
         if (this.largeItem == LargeItem.Empty) {
