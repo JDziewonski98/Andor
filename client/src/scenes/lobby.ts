@@ -47,9 +47,6 @@ export default class LobbyScene extends Phaser.Scene {
         // larger.
         this.scale.setGameSize(reducedWidth, reducedHeight);
         
-        // Initially hide Options and BoardOverlay scenes
-        this.scene.sleep('Options')
-        
         this.draw()
 
         this.lobbyController.addNewPlayerToLobby()
@@ -98,9 +95,8 @@ export default class LobbyScene extends Phaser.Scene {
 
         this.optionsIcon = this.add.image(930, 80, 'optionsIcon').setInteractive();
         this.optionsIcon.on('pointerdown', function (pointer) {
-            this.sys.game.scene.bringToTop('Options')
-            this.sys.game.scene.getScene('Options').scene.setVisible(true, 'Options')
-            this.scene.resume('Options')
+            this.scene.bringToTop('Options')
+            this.scene.wake('Options')
         }, this);
     }
 

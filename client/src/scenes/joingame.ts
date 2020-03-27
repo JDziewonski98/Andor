@@ -64,11 +64,8 @@ export default class JoinGameScene extends Phaser.Scene {
         //putting select title on the screen just below join game and move left
         var title = this.add.text(110, 165, 'Select from existing games:', regularTextStyle);
 
-
         //HTML - modify 'joinscreen' for HTML file 
         var element = this.add.dom(410, 200).createFromCache('joinscreen');
-
-
         
         this.games.forEach(e => {
             let form = element.getChildByName("Choose Game")
@@ -92,7 +89,6 @@ export default class JoinGameScene extends Phaser.Scene {
                     self.scene.start('Ready', {name: gamename})
                 }
             }
-
         });
 
         //go back
