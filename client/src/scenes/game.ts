@@ -5,7 +5,16 @@ import { HourTracker } from '../objects/hourTracker';
 import { game } from '../api';
 import { WindowManager } from "../utils/WindowManager";
 import { CollabWindow } from './collabwindow';
-import { DeathWindow } from './deathwindow'
+import {DeathWindow} from './deathwindow'
+import { MerchantWindow } from './merchantwindow';
+import { Monster } from '../objects/monster';
+import { Fight} from './fightwindow';
+import { HeroKind } from '../objects/HeroKind';
+import { RietburgCastle } from './rietburgcastle';
+import { BattleInvWindow } from './battleinvitewindow';
+import { Well } from '../objects/well';
+import BoardOverlay from './boardoverlay';
+import { GameOverWindow } from './gameoverwindow';
 import {
   expandedWidth, expandedHeight, borderWidth,
   fullWidth, fullHeight, htX, htY, scaleFactor,
@@ -15,14 +24,6 @@ import {
   wellTile1, wellTile2, wellTile3, wellTile4,
   mOffset
 } from '../constants'
-import { MerchantWindow } from './merchantwindow';
-import { Monster } from '../objects/monster';
-import { Fight } from './fightwindow';
-import { HeroKind } from '../objects/HeroKind';
-import { RietburgCastle } from './rietburgcastle';
-import { BattleInvWindow } from './battleinvitewindow';
-import { Well } from '../objects/well';
-import BoardOverlay from './boardoverlay';
 
 
 export default class GameScene extends Phaser.Scene {
@@ -149,7 +150,7 @@ export default class GameScene extends Phaser.Scene {
       WindowManager.create(self, 'deathnotice', DeathWindow, { controller: self.gameinstance });
 
     })
-    // this.addGold()
+    this.addGold()
 
     var numPlayer = 0;
     this.gameinstance.getHeros((herotypes) => {
@@ -188,6 +189,34 @@ export default class GameScene extends Phaser.Scene {
       this.scene.add('BoardOverlay', new BoardOverlay(overlayData), true);
     })
     console.log(numPlayer);
+
+    // Listen for end of game state
+    this.gameinstance.receiveEndOfGame(function() {
+      let windowData = {
+        controller: self.gameinstance,
+        x: reducedWidth / 2 - 200,
+        y: reducedHeight / 2 - 100,
+        w: 400,
+        h: 200,
+      }
+      // Display end of game window
+      WindowManager.create(self, 'gameover', GameOverWindow, windowData);
+      // Freeze main game while collab window is active
+      self.scene.pause();
+    });
+
+    // Listening for shields lost due to monster attack
+    this.gameinstance.updateShields(function(shieldNums, add) {
+      console.log("update shields", shieldNums, ", adding:", add);
+      for (let shieldNum of shieldNums) {
+        if (shieldNum < 0 || shieldNum > 5) continue;
+        if (add) {
+          self.castle.shields[shieldNum].visible = false;
+        } else {
+          self.castle.shields[shieldNum].visible = true;
+        }
+      }
+    })
   }
 
   private cameraSetup() {
@@ -197,12 +226,12 @@ export default class GameScene extends Phaser.Scene {
     // Set keys for scrolling
     // Set keys for scrolling and zooming
     this.cameraKeys = this.input.keyboard.addKeys({
-      up: 'up',
-      down: 'down',
-      left: 'left',
-      right: 'right',
-      zoomIn: 'plus',
-      zoomOut: 'minus'
+      up: 'w',
+      down: 's',
+      left: 'a',
+      right: 'd',
+      zoomIn: 'q',
+      zoomOut: 'e'
     });
   }
 
@@ -240,13 +269,13 @@ export default class GameScene extends Phaser.Scene {
 
   }
 
-  private addShieldsToRietburg() {
-    let s1 = this.add.sprite(85, 190, '8bit_herb').setDisplaySize(40, 40)
-    let s2 = this.add.sprite(155, 190, '8bit_herb').setDisplaySize(40, 40)
-    let s3 = this.add.sprite(225, 190, '8bit_herb').setDisplaySize(40, 40)
-    let s4 = this.add.sprite(85, 310, '8bit_herb').setDisplaySize(40, 40)
-    let s5 = this.add.sprite(155, 310, '8bit_herb').setDisplaySize(40, 40)
-    let s6 = this.add.sprite(85, 430, '8bit_herb').setDisplaySize(40, 40)
+  private addShieldsToRietburg(){
+    let s1 = this.add.sprite(85, 190, 'weed').setDisplaySize(40,40)
+    let s2 = this.add.sprite(155, 190, 'weed').setDisplaySize(40,40)
+    let s3 = this.add.sprite(225, 190, 'weed').setDisplaySize(40,40)
+    let s4 = this.add.sprite(85, 310, 'weed').setDisplaySize(40,40)
+    let s5 = this.add.sprite(155, 310, 'weed').setDisplaySize(40,40)
+    let s6 = this.add.sprite(85, 430, 'weed').setDisplaySize(40,40)
 
     this.castle.shields.push(s1)
     this.castle.shields.push(s2)

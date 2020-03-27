@@ -34,6 +34,8 @@ export class Game {
     private monsters: Map<string, Monster>;
     private monstersInCastle: string[];
     private currPlayersTurn: string;
+    private endOfGame: boolean = false;
+
     // collab decision related state
     public numAccepts: number;
 
@@ -363,8 +365,11 @@ export class Game {
         this.monsters.delete(monstername)
     }
 
+    // Returns list of shields lost
     public moveMonsters() {
         var self = this;
+        var shieldsLost: number[] = [];
+
         // Move monsters in phases based on MonsterKind: Gors, Skrals, Wardraks
         // Also need to sort the monsters based on tileID
         var gors: Monster[] = [];
@@ -411,12 +416,9 @@ export class Game {
                     // Monster is going to enter the castle
                     // Decrement shields, remove monster, evaluate end of game condition
                     this.monstersInCastle.push(m.name);
-                    self.castle.attackOnCastle();
+                    shieldsLost.push(self.castle.attackOnCastle());
                     self.regions[startReg].setMonster(null);
                     // self.monsters.delete(m.name);
-                    if (self.castle.getShields() == 0) {
-                        //ENDGAME
-                    }
                     break;
                 }
             } while (self.regions[nextRegID].getMonster());
@@ -426,7 +428,13 @@ export class Game {
             self.regions[startReg].setMonster(null);
             m.setTileID(nextRegID);
             console.log("moved", m.name, "btw tiles", startReg, nextRegID);
+
+            if(self.castle.getShields() <= 0){
+                self.endOfGame = true;
+            }
         }
+
+        return shieldsLost;
     }
 
     public replenishWells() {
@@ -466,5 +474,9 @@ export class Game {
             console.log("reset", connID, "hours to", this.heroList.get(connID)?.getTimeOfDay())
             return this.heroList.get(connID)?.getKind();
         }
+    }
+
+    public getEndOfGameState() {
+        return this.endOfGame;
     }
 }

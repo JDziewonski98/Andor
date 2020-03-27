@@ -540,7 +540,7 @@ export function game(socket, model: Game, io) {
   })
 
   socket.on('moveMonstersEndDay', function () {
-    model.moveMonsters();
+    var shieldsLost = model.moveMonsters();
     // Convert monsters Map into passable object
     let convMonsters = {};
     for (let m of Array.from(model.getMonsters().values())) {
@@ -548,6 +548,15 @@ export function game(socket, model: Game, io) {
     }
     socket.broadcast.emit('sendUpdatedMonsters', convMonsters);
     socket.emit('sendUpdatedMonsters', convMonsters);
+
+    socket.broadcast.emit('updateShields', shieldsLost, false);
+    socket.emit('updateShields', shieldsLost, false);
+
+    // Evaluate end of game state - currently only handles end of game due to loss of shields
+    if (model.getEndOfGameState()) {
+      socket.emit('endGame');
+      socket.broadcast.emit('endGame');
+    }
   })
 
   socket.on("resetWells", function (callback) {
