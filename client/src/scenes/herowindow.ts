@@ -18,8 +18,9 @@ export class HeroWindow extends Window {
     private gameinstance: game;
     private clienthero;
     private windowhero;
+    private largeItem;
 
-    public constructor(key: string, data, windowData = { x: 350, y: 30, width: 400, height: 250 }) {
+    public constructor(key: string, data, windowData = { x: 350, y: 30, width: 400, height: 400 }) {
         super(key, windowData);
         this.icon = data.icon
         this.name = data.name
@@ -30,19 +31,27 @@ export class HeroWindow extends Window {
         this.farmers = data.farmers
         this.clienthero = data.clienthero
         this.windowhero = data.windowhero
-
+        this.largeItem = data.largeItem
     }
 
     protected initialize() { 
-
+        var self = this
         var bg = this.add.image(0, 0, 'scrollbg').setOrigin(0.5)
         var weed = this.add.sprite(50, 50, this.icon);
         this.goldtext = this.add.text(25, 100, 'Gold: ' + this.gold, { backgroundColor: 'fx00' })
         this.willtext = this.add.text(25, 120, 'Willpower: ' + this.will, { backgroundColor: 'fx00' })
         this.strtext = this.add.text(25, 140, 'Strength: ' + this.str, { backgroundColor: 'fx00' })
         this.farmtext = this.add.text(25, 160, 'Farmers: ' + this.farmers, { backgroundColor: 'fx00' })
-        this.add.text(25, 180, 'Items ....', { backgroundColor: 'fx00' })
-        this.add.text(25, 200, 'Special ability text ....', { backgroundColor: 'fx00' })
+        this.gameinstance.getHeroItems(self.windowhero, function(itemdict) {
+            if (itemdict['largeItem'] != 'empty') {
+                self.add.text(25,180,'Large item: ' + itemdict['largeItem'])
+            }
+            if (itemdict['helm'] != 'empty') {
+                self.add.text(25,200,'Helm equipped.')
+            }
+            //TODO as rest of item types are added
+        })
+        this.add.text(25, 240, 'Special ability text ....', { backgroundColor: 'fx00' })
 
         bg.setInteractive()
         this.input.setDraggable(bg)

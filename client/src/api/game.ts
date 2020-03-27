@@ -326,7 +326,7 @@ export class game {
 
 
     /////////////////////////////
-    //  Trade stuff
+    //  Trade stuff + item stuff
     ////////////////////////////
 
     public sendTradeInvite(host, recipient) {
@@ -337,7 +337,9 @@ export class game {
         this.socket.on('receiveTradeInvite', callback)
     }
 
-
+    public getHeroItems(hero, callback) {
+        this.socket.emit('getHeroItems', hero, callback)
+    }
 
     ///////////////////////////
 }

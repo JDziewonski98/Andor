@@ -1,6 +1,7 @@
 import { HeroKind } from "./HeroKind";
 import { Region } from './region';
 import { Farmer } from '.';
+import {LargeItem} from './LargeItem'
 
 export class Hero {
     public hk: HeroKind;
@@ -15,7 +16,10 @@ export class Hero {
     private rank: number;
     private dice
 
+    //items
     private wineskin: boolean = false;
+    private largeItem: LargeItem = LargeItem.Empty
+    private helm: boolean = false;
 
     constructor(hk: HeroKind, region:Region) {
         this.hk = hk
@@ -37,8 +41,15 @@ export class Hero {
     }
 
     public getData(){
-        let data = {hk: this.hk, gold: this.gold, strength: this.strength, will: this.will, farmers: this.farmers.length};
+        let data = {hk: this.hk, gold: this.gold, strength: this.strength, will: this.will, farmers: this.farmers.length, largeItem: this.largeItem};
         return data;
+    }
+
+    public getItemDict() {
+        //TODO
+        let helm = this.helm == true ? 'true' : 'false'
+        let itemdict = {largeItem: this.largeItem, helm:helm}
+        return itemdict
     }
 
     public getKind(): HeroKind {
@@ -243,11 +254,13 @@ export class Hero {
         if (this.hk != HeroKind.Archer){
             let max = Math.max(...rolls)
             //var attack = this.strength + max
-            return {roll:max, strength:this.strength}
+            //we need to return all rolls in case dwarf or warrior wants to use helmet.
+            return {roll:max, strength:this.strength, alldice:rolls}
         }
         else {
             //in case of archer we need to roll one at a time...
-            return {rolls:rolls, strength:this.strength}
+            //alldice will not be used in this case
+            return {rolls:rolls, strength:this.strength, alldice:rolls}
         }
     }
 
@@ -280,7 +293,52 @@ export class Hero {
         }
     }
 
+    ///////////////////////
+    /// ITEM METHODS
+    //////////////////////
 
+    public pickUpLargeItem(item: LargeItem) {
+        if (this.largeItem == LargeItem.Empty) {
+            this.largeItem = item;
+            return true
+        }
+        else {
+            return false
+        }
+    }
 
+    public dropLargeItem() {
+        //TODO: add this item onto the tile hero is currently on. How to graphically represent?
+        if (this.largeItem != LargeItem.Empty) {
+            //do shit here
+            this.largeItem = LargeItem.Empty;
+            return true
+        }
+        else {
+            return false
+        }
+    }
 
+    public pickUpHelm() {
+        if (this.helm == false) {
+            this.helm = true
+            return true
+        }
+        else {
+            return false
+        }
+    }
+
+    public dropHelm() {
+        if (this.helm == true) {
+            //TODO display it on the region
+            this.helm = false
+            return true
+        }
+        else {
+            return false
+        }
+    }
+
+    //////////////////////
 }

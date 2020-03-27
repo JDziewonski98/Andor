@@ -238,6 +238,16 @@ export function game(socket, model: Game, io) {
       callback(heros);
   })
 
+  socket.on('getHeroItems', function(herokind, callback) {
+    var thehero: Hero
+    model.getHeros().forEach((hero, key) => {
+      if (hero.getKind() == herokind){
+        thehero = hero
+      }
+    })
+    var heroItemDict = thehero!.getItemDict()
+    callback(heroItemDict)
+  })
 
   socket.on("getHeroAttributes", function (type, callback) {
     let data = {};

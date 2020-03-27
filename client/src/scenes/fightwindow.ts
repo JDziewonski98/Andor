@@ -30,6 +30,8 @@ export class Fight extends Window {
     private monstertypetxt
     private exitbutton
     private invitetext;
+    private otherdicetext;
+    private helmtext;
     //monster stats and attributes
     private monstername;
     private monstertexture;
@@ -139,6 +141,8 @@ export class Fight extends Window {
                         haveyourolled = true
                         self.gameinstance.heroRoll(function (data) {
                             //handle archer ability
+                            var alldice = data.alldice
+                            console.log('alldice', alldice)
                             if (self.hero.getKind() == 'archer') {
                                 var count = 0
                                 var curroll = data.rolls[count]
@@ -166,7 +170,7 @@ export class Fight extends Window {
                                 var str = data.strength
                                 var urroll = data.roll
                                 self.yourattack = attack
-                                self.yourroll.setText('Your roll: ' + urroll + 'Your str: ' + str)
+                                self.yourroll.setText('Your roll: ' + urroll + 'Your str: ' + str) 
                                 //handle mage ability
                                 if (self.hero.getKind() == 'mage') {
                                     rollbutton.setInteractive()
@@ -179,6 +183,14 @@ export class Fight extends Window {
                                         self.yourattack = oppositeside + data.strength
                                         urroll = oppositeside
                                         self.yourroll.setText('Your roll: ' + urroll + 'Your str: ' + str)
+                                    })
+                                }
+                                else {
+                                    self.gameinstance.getHeroItems(self.hero.getKind(), function(itemdict) {
+                                        if (itemdict['helm'] == 'true') {
+                                            self.doHelmet(alldice, str)
+                                        }
+                                        //TODO handle brew, herb, shield
                                     })
                                 }
                             }
@@ -342,6 +354,30 @@ export class Fight extends Window {
                 console.log('yes ' + herokind)
                 self.actuallyjoinedheros.push(herokind)
             }
+        })
+    }
+
+    private doHelmet(alldice, str) {
+        var self = this
+        //hero is either warrior or dwarf: display option to use helmet.
+        //we don't display it for other classes because its useless: they roll 1 die
+        self.otherdicetext = self.add.text(240,150,'All your dice: ')
+        self.helmtext = self.add.text(240,165,'Click to use helm.').setInteractive()
+        for (let die of alldice) {
+            self.otherdicetext.setText(self.otherdicetext.getWrappedText() + ' ' + die)
+
+        }
+        self.helmtext.on('pointerdown', function(pointer) {
+            //TODO: delete the helmet on client and server side.
+            self.helmtext.disableInteractive()
+            self.helmtext.destroy()
+            var newroll = 0
+            for (var i = 0; i < alldice.length; i++) {
+                newroll += alldice[i];
+            }
+            let attack = newroll + str
+            self.yourattack = attack
+            self.yourroll.setText('Your roll: ' + newroll + 'Your str: ' + str) 
         })
     }
 
