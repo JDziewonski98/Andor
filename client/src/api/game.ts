@@ -302,8 +302,8 @@ export class game {
         this.socket.off('battleRewardsPopup')
     }
 
-    public heroRoll(callback) {
-        this.socket.emit('heroRoll',callback)
+    public heroRoll(bow, callback) {
+        this.socket.emit('heroRoll',bow , callback)
     }
 
     public confirmroll(herokind, roll, str) {

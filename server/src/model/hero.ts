@@ -221,7 +221,7 @@ export class Hero {
         this.timeOfDay++
     }
 
-    public roll() {
+    public roll(usingBow = false) {
 
         var dicefaces = [1, 2, 3, 4, 5, 6]
         var rollamt = 0
@@ -244,7 +244,7 @@ export class Hero {
 
         var attack = 0
 
-        if (this.hk != HeroKind.Archer){
+        if (this.hk != HeroKind.Archer && usingBow == false){
             let max = Math.max(...rolls)
             //var attack = this.strength + max
             //we need to return all rolls in case dwarf or warrior wants to use helmet.
@@ -326,6 +326,10 @@ export class Hero {
                 console.log('Error! check your spelling on item to consume.')
         }
 
+    }
+
+    public getLargeItem() {
+        return this.largeItem
     }
 
     public pickUpLargeItem(item: LargeItem) {

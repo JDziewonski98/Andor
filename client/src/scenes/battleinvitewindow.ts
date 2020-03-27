@@ -48,23 +48,25 @@ export class BattleInvWindow extends Window {
             headertext.setText('In battle.')
             self.rolltext = self.add.text(50, 25, 'Your roll: ' + self.roll + ' Your str: ' + self.str)
 
-            self.gameinstance.heroRoll(function(data) {
+            self.gameinstance.heroRoll(false, function(data) {
                 self.hero.incrementHour()
                 self.str = data.strength
                 var alldice = data.alldice
                 if (self.herokind == 'archer') {
                     var count = 0
                     self.roll = data.rolls[count]
-                    self.abilitytext = self.add.text(50,40,'You may reroll ' + (data.rolls.length-1-count) + ' more times.')
-                    self.rolltext.setText('Your roll: ' + self.roll + ' Your str: ' + self.str)
-                    self.abilitybutton = self.add.text(50,55,'Click to use ability.').setInteractive()
-
+                    if (count > data.rolls.length - 1) {
+                        self.abilitytext = self.add.text(50,40,'You may reroll ' + (data.rolls.length-1-count) + ' more times.')
+                        self.rolltext.setText('Your roll: ' + self.roll + ' Your str: ' + self.str)
+                        self.abilitybutton = self.add.text(50,55,'Click to use ability.').setInteractive()
+                    }
                     self.abilitybutton.on('pointerdown', function(pointer) {
                         count++
                         self.abilitytext.setText('You may reroll ' + (data.rolls.length-1-count) + ' more times.')
                         self.roll = data.rolls[count]
                         self.rolltext.setText('Your roll: ' + self.roll + ' Your str: ' + self.str)
-                        if (count == data.rolls.length - 1) {
+                        if (count <= data.rolls.length - 1) {
+                            self.abilitybutton.disableInteractive()
                             self.abilitybutton.destroy()
                         }
                     })                 

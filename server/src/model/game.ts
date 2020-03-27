@@ -9,6 +9,7 @@ import {
     Monster,
     MonsterKind
 } from "."
+import { LargeItem } from './LargeItem';
 
 export class Game {
 
@@ -207,6 +208,8 @@ export class Game {
         })
         if (heroType === HeroKind.Dwarf) {
             this.heroList.set(id, new Hero(heroType, this.regions[7]));
+            let dwarf = this.heroList.get(id)
+            dwarf?.pickUpLargeItem(LargeItem.Bow)
         }
         else if (heroType === HeroKind.Archer) {
             this.heroList.set(id, new Hero(heroType, this.regions[25]));

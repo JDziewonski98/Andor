@@ -115,8 +115,7 @@ export class Fight extends Window {
             self.actuallyjoinedheros = []
             self.fighttext.setText('Fight again!')
             self.fighttext.disableInteractive()
-            self.gameinstance.rollMonsterDice(self.monstername, function (result) {
-                console.log('here??')
+            self.gameinstance.rollMonsterDice(self.monstername, function (result, bow) {
                 if (self.gameinstance.getTurn() == false) {
                     console.log('case1')
                     self.notificationtext.setText('Not your Turn!')
@@ -140,17 +139,18 @@ export class Fight extends Window {
                     var rollbutton = self.add.text(220, 123, 'ROLL.', { backgroundColor: '#3b44af' }).setInteractive()
                     rollbutton.on('pointerdown', function (pointer) {
                         haveyourolled = true
-                        self.gameinstance.heroRoll(function (data) {
+                        self.gameinstance.heroRoll(bow, function (data) {
                             //handle archer ability
                             var alldice = data.alldice
                             console.log('alldice', alldice)
-                            if (self.hero.getKind() == 'archer') {
+                            //in case of archer or non-archer using a bow from adjacent space...
+                            if (self.hero.getKind() == 'archer' || (bow)) {
                                 var count = 0
                                 var curroll = data.rolls[count]
                                 var str = data.strength
                                 self.notificationtext.setText('You may reroll ' + (data.rolls.length-1-count) + ' more times.')
                                 self.yourroll.setText('Your roll: ' + curroll + ' Your str: ' + str)
-                                rollbutton.setText('Click to use ability.')
+                                rollbutton.setText('Click to use bow/archer ability.')
                                 rollbutton.removeAllListeners('pointerdown')
                                 self.yourattack = str + curroll
                                 rollbutton.on('pointerdown', function(pointer) {
@@ -159,8 +159,9 @@ export class Fight extends Window {
                                     curroll = data.rolls[count]
                                     self.yourroll.setText('Your roll: ' + curroll + ' Your str: ' + str)
                                     self.yourattack = str + curroll
-                                    if (count == data.rolls.length - 1) {
+                                    if (count <= data.rolls.length - 1) {
                                         rollbutton.disableInteractive()
+                                        rollbutton.destroy()
                                     }
                                 })
                             }
@@ -187,6 +188,7 @@ export class Fight extends Window {
                                     })
                                 }
                                 else {
+                                    //mage gets no benefit from helm, so offer helm option only for dwarf and warrior
                                     self.gameinstance.getHeroItems(self.hero.getKind(), function(itemdict) {
                                         if (itemdict['helm'] == 'true') {
                                             self.doHelm(alldice, str)
