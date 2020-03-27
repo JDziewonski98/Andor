@@ -194,7 +194,6 @@ export function game(socket, model: Game, io) {
    * CHAT RELATED
    */
   socket.on("send message", function (sent_msg, callback) {
-    console.log(socket.conn.id, "said: ", sent_msg)
     let raw_sent_msg = sent_msg
     let name = ""
     let heroID = socket.conn.id;
@@ -211,13 +210,11 @@ export function game(socket, model: Game, io) {
   });
 
   socket.on('removeListener', function (object) {
-    console.log('removing ', object)
     socket.broadcast.emit('removeObjListener', object)
   })
 
   socket.on('playerReady', function () {
     model.readyplayers += 1;
-    console.log('ready players: ', model.readyplayers)
     socket.broadcast.emit('recieveDesiredPlayerCount', model.getNumOfDesiredPlayers())
   })
 
@@ -325,7 +322,6 @@ export function game(socket, model: Game, io) {
   // Accepting a decision
   socket.on('collabDecisionAccept', function () {
     model.numAccepts += 1;
-    console.log('number of players accepted decision: ', model.numAccepts)
     // Tell the client that accepted to update their status
     socket.emit('sendDecisionAccepted', model.numAccepts)
   })
@@ -347,7 +343,6 @@ export function game(socket, model: Game, io) {
     let monstertile = model.getMonsters().get(monstername)?.getTileID()
     let monsterregion = model.getRegions()[monstertile!]
     monsterregion.setMonster(null)
-    console.log(model.getRegions()[monstertile!].getMonster(), 'should be null!')
     model.deleteMonster(monstername)
     // console.log(convMonsters);
     socket.broadcast.emit('sendKilledMonsters', monstername);

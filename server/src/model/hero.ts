@@ -258,25 +258,15 @@ export class Hero {
         if (this.hk === HeroKind.Archer) {
             this.gold = 1
             this.dice = [3,4,5]
-            //this.region = new Region(25, false, 24, [23, 24, 31, 27, 26], false)
         } else if (this.hk === HeroKind.Dwarf) {
             this.gold = 2
             this.dice = [1,2,3]
-           // this.region = new Region(7, false, 0, [
-             //   15, 9, 8, 0, 11
-            //], false)
         } else if (this.hk === HeroKind.Mage) {
             this.gold = 4;
             this.dice = [1,1,1]
-            /* this.region = new Region(24, false, 23, [   //SHOULD BE 34!!!!!!
-                72, 23, 35, 30, 29
-            ], false) */
         } else if (this.hk === HeroKind.Warrior) {
             this.gold = 1
             this.dice = [2,3,4]
-            /* this.region = new Region(14, false, 2, [
-                2, 3, 6, 10, 17, 18
-            ], false) */
         }
     }
 
