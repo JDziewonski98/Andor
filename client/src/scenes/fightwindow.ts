@@ -55,7 +55,6 @@ export class Fight extends Window {
 
     public constructor(key, data, windowData = { x: 10, y: 10, width: 500, height: 380 }) {
         super(key, windowData);
-        console.log(data)
         this.windowname = key
         this.gameinstance = data.controller
         this.monstertexture = data.monster.texture
@@ -109,19 +108,23 @@ export class Fight extends Window {
 
         //click the fight text to enter the fight.
         this.fighttext.on('pointerdown', function (pointer) {
+
             self.inviteresponses = 0
             var haveyourolled = false
             self.alliedrollstxt.setText('Allied rolls: ')
             self.actuallyjoinedheros = []
             self.fighttext.setText('Fight again!')
             self.fighttext.disableInteractive()
+
+            //the monster roll dice determines if you are actually in range to fight it and if you need to use bow.
             self.gameinstance.rollMonsterDice(self.monstername, function (result, bow) {
+
                 if (self.gameinstance.getTurn() == false) {
-                    console.log('case1')
                     self.notificationtext.setText('Not your Turn!')
                 }
+
                 else if (result != 'outofrange') {
-                    console.log('case2')
+
                     //only generate the list of heroes in range text first time.
                     self.exitbutton.visible = false
                     if (self.firstfight == true) {
@@ -140,9 +143,8 @@ export class Fight extends Window {
                     rollbutton.on('pointerdown', function (pointer) {
                         haveyourolled = true
                         self.gameinstance.heroRoll(bow, function (data) {
-                            //handle archer ability
                             var alldice = data.alldice
-                            console.log('alldice', alldice)
+
                             //in case of archer or non-archer using a bow from adjacent space...
                             if (self.hero.getKind() == 'archer' || (bow)) {
                                 var count = 0
@@ -159,13 +161,15 @@ export class Fight extends Window {
                                     curroll = data.rolls[count]
                                     self.yourroll.setText('Your roll: ' + curroll + ' Your str: ' + str)
                                     self.yourattack = str + curroll
-                                    if (count <= data.rolls.length - 1) {
+                                    if (count >= data.rolls.length - 1) {
                                         rollbutton.disableInteractive()
                                         rollbutton.destroy()
                                     }
                                 })
                             }
+
                             else {
+
                                 rollbutton.setText('Rolled.')
                                 rollbutton.disableInteractive()
                                 let attack = data.roll + data.strength
@@ -173,6 +177,7 @@ export class Fight extends Window {
                                 var urroll = data.roll
                                 self.yourattack = attack
                                 self.yourroll.setText('Your roll: ' + urroll + 'Your str: ' + str) 
+
                                 //handle mage ability
                                 if (self.hero.getKind() == 'mage') {
                                     rollbutton.setInteractive()
@@ -187,6 +192,8 @@ export class Fight extends Window {
                                         self.yourroll.setText('Your roll: ' + urroll + 'Your str: ' + str)
                                     })
                                 }
+
+                                //this else means we are dwarf or warrior using standard attack.
                                 else {
                                     //mage gets no benefit from helm, so offer helm option only for dwarf and warrior
                                     self.gameinstance.getHeroItems(self.hero.getKind(), function(itemdict) {

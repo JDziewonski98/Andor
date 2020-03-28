@@ -493,7 +493,7 @@ export function game(socket, model: Game, io) {
   socket.on('sendBattleInvite', function(id, herosinrange) {
     var heroids = model.getIDsByHeroname(herosinrange)
     for (let playerid of heroids) {
-      socket.broadcast.to(`/${model.getName()}#${playerid}`).emit("receiveBattleInvite")
+      socket.broadcast.to(`/${model.getName()}#${playerid}`).emit("receiveBattleInvite", id)
     }
   })
 

@@ -20,6 +20,7 @@ export class BattleInvWindow extends Window {
     private str = -1;
     private hero
     private gamescene
+    private monstertileid;
 
     public constructor(key: string, data, windowData = { x: 350, y: 30, width: 400, height: 250 }) {
         super(key, windowData);
@@ -28,10 +29,10 @@ export class BattleInvWindow extends Window {
         this.herokind = data.hero.getKind()
         this.hero = data.hero
         this.gamescene = data.gamescene
+        this.monstertileid = data.monstertileid
     }
 
     protected initialize() {
-        console.log('in init')
         var bg = this.add.image(0, 0, 'scrollbg').setOrigin(0.5)
         bg.tint = 0xff0000
 
@@ -47,29 +48,35 @@ export class BattleInvWindow extends Window {
             nobutton.destroy()
             headertext.setText('In battle.')
             self.rolltext = self.add.text(50, 25, 'Your roll: ' + self.roll + ' Your str: ' + self.str)
+            //determine if we are a non-archer hero using the bow from adjacent space
+            var bow = false 
+            if (self.herokind != 'archer' && self.hero.tile.id != self.monstertileid) {
+                bow = true
+            }
 
-            self.gameinstance.heroRoll(false, function(data) {
+            self.gameinstance.heroRoll(bow, function(data) {
                 self.hero.incrementHour()
                 self.str = data.strength
                 var alldice = data.alldice
-                if (self.herokind == 'archer') {
+                //the case of either an archer or non archer attacking with bow from adjacent space
+                if (self.herokind == 'archer' || bow) {
                     var count = 0
                     self.roll = data.rolls[count]
-                    if (count > data.rolls.length - 1) {
-                        self.abilitytext = self.add.text(50,40,'You may reroll ' + (data.rolls.length-1-count) + ' more times.')
-                        self.rolltext.setText('Your roll: ' + self.roll + ' Your str: ' + self.str)
+                    self.abilitytext = self.add.text(50,40,'You may reroll ' + (data.rolls.length-1-count) + ' more times.')
+                    self.rolltext.setText('Your roll: ' + self.roll + ' Your str: ' + self.str)
+                    if (count < data.rolls.length - 1) {
                         self.abilitybutton = self.add.text(50,55,'Click to use ability.').setInteractive()
-                    }
-                    self.abilitybutton.on('pointerdown', function(pointer) {
-                        count++
-                        self.abilitytext.setText('You may reroll ' + (data.rolls.length-1-count) + ' more times.')
-                        self.roll = data.rolls[count]
-                        self.rolltext.setText('Your roll: ' + self.roll + ' Your str: ' + self.str)
-                        if (count <= data.rolls.length - 1) {
-                            self.abilitybutton.disableInteractive()
-                            self.abilitybutton.destroy()
-                        }
-                    })                 
+                        self.abilitybutton.on('pointerdown', function(pointer) {
+                            count++
+                            self.abilitytext.setText('You may reroll ' + (data.rolls.length-1-count) + ' more times.')
+                            self.roll = data.rolls[count]
+                            self.rolltext.setText('Your roll: ' + self.roll + ' Your str: ' + self.str)
+                            if (count >= data.rolls.length - 1) {
+                                self.abilitybutton.disableInteractive()
+                                self.abilitybutton.destroy()
+                            }
+                        }) 
+                    }                
                 }
                 else {
                     //handle non archer heros

@@ -120,14 +120,14 @@ export default class GameScene extends Phaser.Scene {
     // Listen for turn to be passed to yourself
     this.gameinstance.yourTurn()
 
-    this.gameinstance.receiveBattleInvite(function() {
+    this.gameinstance.receiveBattleInvite(function(monstertileid) {
       if (self.scene.isVisible('battleinv')){
         console.log('destroying battleinv')
         WindowManager.destroy(self, 'battleinv');
       }
       console.log('creating battleinv')
       console.log('attempting to create battleinv window')
-      WindowManager.create(self, 'battleinv', BattleInvWindow, {controller:self.gameinstance, hero:self.hero, gamescene:self});
+      WindowManager.create(self, 'battleinv', BattleInvWindow, {controller:self.gameinstance, hero:self.hero, gamescene:self, monstertileid:monstertileid});
       
     })
     this.gameinstance.receiveDeathNotice(function() {
