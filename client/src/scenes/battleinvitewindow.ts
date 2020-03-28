@@ -150,8 +150,18 @@ export class BattleInvWindow extends Window {
             self.otherdicetext.destroy()
             self.helmtext.destroy()
             var newroll = 0
+            var used = []
             for (var i = 0; i < alldice.length; i++) {
-                newroll += alldice[i];
+                var count = 0
+                for (var j = 0; j< alldice.length; j++) {
+                    if (alldice[i] == alldice[j]) {
+                        count++
+                    }
+                }
+                if (count > 1 && !used.includes(alldice[i])) {
+                    newroll += count * alldice[i]
+                    used.push(alldice[i])
+                }
             }
             self.rolltext.setText('Your roll: ' + newroll + 'Your str: ' + str) 
             self.roll = newroll
