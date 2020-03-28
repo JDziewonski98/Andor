@@ -520,10 +520,9 @@ export default class GameScene extends Phaser.Scene {
         tile.setFog(f) // add to tile
         f.setInteractive()
         this.add.existing(f);
-
+        console.log(fogs)
         f.on("pointerdown", (pointer) => {
-          console.log(pointer)
-          this.gameinstance.useFog(f.name, () => {
+          this.gameinstance.useFog(f.name, tile.id, () => {
             f.clearTint();
             setTimeout(()=>{
               f.destroy()

@@ -348,8 +348,8 @@ export class game {
     /*
     *   FOGS
     */
-    public useFog(fogType, callback){
-        this.socket.emit("useFog", fogType, callback);
+    public useFog(fogType, tile, callback){
+        this.socket.emit("useFog", fogType, tile, callback);
     }
 
 

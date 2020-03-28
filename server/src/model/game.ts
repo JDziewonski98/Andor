@@ -459,7 +459,6 @@ export class Game {
     }
 
     public useFog(fog: Fog, tile: number): boolean {
-        console.log(fog, tile)
         if (this.fogs.get(tile) != undefined && this.fogs.get(tile) == fog) { // make sure tile has a fog and its the same
             if (fog == Fog.Gor) {
                 this.addMonster(MonsterKind.Gor, tile, `gor${this.monsters.size + 1}`)

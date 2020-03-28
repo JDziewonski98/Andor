@@ -119,11 +119,12 @@ export function game(socket, model: Game, io) {
     }
   });
 
-  socket.on("useFog", function (fogType, callback) {
+  socket.on("useFog", function (fogType, tile, callback) {
     let heroId = socket.conn.id;
     let hero = model.getHero(heroId);
-    if(hero != undefined){
-      const success = model.useFog(fogType, hero.getRegion().getID());
+    console.log(tile, hero.getRegion().getID());
+    if(hero != undefined && tile == hero.getRegion().getID()){
+      const success = model.useFog(fogType, +tile);
       if(success){
         callback();
       }
