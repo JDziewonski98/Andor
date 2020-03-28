@@ -26,7 +26,7 @@ export class Tile extends Phaser.GameObjects.Sprite {
 
     public gold: number;
 
-    public monster!: Monster;
+    public monster: Monster;
 
     private fog: Phaser.GameObjects.Sprite;
 
@@ -39,6 +39,7 @@ export class Tile extends Phaser.GameObjects.Sprite {
         this.farmer = new Array(2);
         this.gold = 0;
         this.fog = null;
+        this.monster = null;
 
         //depricated
         // Set coordinates for hero representations as 2d array
@@ -107,6 +108,11 @@ export class Tile extends Phaser.GameObjects.Sprite {
     public setGold(amount: number) {
         this.gold = amount;
     }
+
+    public setMonster(m: Monster){
+        this.monster = m;
+    }
+
     public getGold() {
         return this.gold;
     }

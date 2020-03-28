@@ -1,20 +1,9 @@
-import { Tile } from '../objects/tile';
-import { Farmer } from '../objects/farmer';
-import { Hero } from '../objects/hero';
-import { HourTracker } from '../objects/hourTracker';
+import { Farmer, Hero, HourTracker, Monster, HeroKind, Well, Tile } from '../objects';
 import { game } from '../api';
-import { WindowManager } from "../utils/WindowManager";
-import { CollabWindow } from './collabwindow';
-import {DeathWindow} from './deathwindow'
-import { MerchantWindow } from './merchantwindow';
-import { Monster } from '../objects/monster';
-import { Fight} from './fightwindow';
-import { HeroKind } from '../objects/HeroKind';
+import { WindowManager, CollabWindow, MerchantWindow, DeathWindow, Fight, BattleInvWindow, GameOverWindow} from "./windows";
 import { RietburgCastle } from './rietburgcastle';
-import { BattleInvWindow } from './battleinvitewindow';
-import { Well } from '../objects/well';
 import BoardOverlay from './boardoverlay';
-import { GameOverWindow } from './gameoverwindow';
+
 import {
   expandedWidth, expandedHeight, borderWidth,
   fullWidth, fullHeight, htX, htY, scaleFactor,
@@ -116,9 +105,9 @@ export default class GameScene extends Phaser.Scene {
     this.setRegions();
 
     this.addMerchants();
-    this.addFarmers()
-    this.addMonsters()
-    this.addShieldsToRietburg()
+    this.addFarmers();
+    this.addMonsters();
+    this.addShieldsToRietburg();
 
     // x and y coordinates
     this.addWell(209, 2244, wellTile1)
@@ -191,7 +180,7 @@ export default class GameScene extends Phaser.Scene {
     console.log(numPlayer);
 
     // Listen for end of game state
-    this.gameinstance.receiveEndOfGame(function() {
+    this.gameinstance.receiveEndOfGame(function () {
       let windowData = {
         controller: self.gameinstance,
         x: reducedWidth / 2 - 200,
@@ -206,7 +195,7 @@ export default class GameScene extends Phaser.Scene {
     });
 
     // Listening for shields lost due to monster attack
-    this.gameinstance.updateShields(function(shieldNums, add) {
+    this.gameinstance.updateShields(function (shieldNums, add) {
       console.log("update shields", shieldNums, ", adding:", add);
       for (let shieldNum of shieldNums) {
         if (shieldNum < 0 || shieldNum > 5) continue;
@@ -269,13 +258,13 @@ export default class GameScene extends Phaser.Scene {
 
   }
 
-  private addShieldsToRietburg(){
-    let s1 = this.add.sprite(85, 190, 'weed').setDisplaySize(40,40)
-    let s2 = this.add.sprite(155, 190, 'weed').setDisplaySize(40,40)
-    let s3 = this.add.sprite(225, 190, 'weed').setDisplaySize(40,40)
-    let s4 = this.add.sprite(85, 310, 'weed').setDisplaySize(40,40)
-    let s5 = this.add.sprite(155, 310, 'weed').setDisplaySize(40,40)
-    let s6 = this.add.sprite(85, 430, 'weed').setDisplaySize(40,40)
+  private addShieldsToRietburg() {
+    let s1 = this.add.sprite(85, 190, 'weed').setDisplaySize(40, 40)
+    let s2 = this.add.sprite(155, 190, 'weed').setDisplaySize(40, 40)
+    let s3 = this.add.sprite(225, 190, 'weed').setDisplaySize(40, 40)
+    let s4 = this.add.sprite(85, 310, 'weed').setDisplaySize(40, 40)
+    let s5 = this.add.sprite(155, 310, 'weed').setDisplaySize(40, 40)
+    let s6 = this.add.sprite(85, 430, 'weed').setDisplaySize(40, 40)
 
     this.castle.shields.push(s1)
     this.castle.shields.push(s2)
@@ -346,65 +335,33 @@ export default class GameScene extends Phaser.Scene {
   }
 
   private addMonsters() {
+    this.addMonster(8, 'gor', 'gor1');
+    this.addMonster(20, 'gor', 'gor2');
+    this.addMonster(21, 'gor', 'gor3');
+    this.addMonster(26, 'gor', 'gor4');
+    this.addMonster(48, 'gor', 'gor5');
+    this.addMonster(19, 'skral', 'skral1');
+  }
 
-    const gortile1: Tile = this.tiles[8];
-    const gortile2: Tile = this.tiles[20];
-    const gortile3: Tile = this.tiles[21];
-    const gortile4: Tile = this.tiles[26];
-    const gortile5: Tile = this.tiles[48];
-    const skraltile1: Tile = this.tiles[19];
-    // const wtile1: Tile = this.tiles[1];
-
-    let gor1: Monster = new Monster(this, gortile1, 'gor', 'gor1').setInteractive().setScale(.5);
-    let gor2: Monster = new Monster(this, gortile2, 'gor', 'gor2').setInteractive().setScale(.5);
-    let gor3: Monster = new Monster(this, gortile3, 'gor', 'gor3').setInteractive().setScale(.5);
-    let gor4: Monster = new Monster(this, gortile4, 'gor', 'gor4').setInteractive().setScale(.5);
-    let gor5: Monster = new Monster(this, gortile5, 'gor', 'gor5').setInteractive().setScale(.5);
-    let skral1: Monster = new Monster(this, skraltile1, 'skral', 'skral1').setInteractive().setScale(.5);
-    // let wardrak1: Monster = new Monster(this, wtile1, 'wardrak', 'wardrak1').setInteractive().setScale(.5);
-
-    this.monsters.push(gor1);
-    this.monsters.push(gor2);
-    this.monsters.push(gor3);
-    this.monsters.push(gor4);
-    this.monsters.push(gor5);
-    this.monsters.push(skral1);
-    // this.monsters.push(wardrak1);
-
-    this.monsterNameMap[gor1.name] = gor1;
-    this.monsterNameMap[gor2.name] = gor2;
-    this.monsterNameMap[gor3.name] = gor3;
-    this.monsterNameMap[gor4.name] = gor4;
-    this.monsterNameMap[gor5.name] = gor5;
-    this.monsterNameMap[skral1.name] = skral1;
-    // this.monsterNameMap[wardrak1.name] = wardrak1;
-
-    gortile1.monster = gor1
-    gortile2.monster = gor2
-    gortile3.monster = gor3
-    gortile4.monster = gor4
-    gortile5.monster = gor5
-    skraltile1.monster = skral1
-    // wtile1.monster = wardrak1
-
-    this.monsters.forEach(monster =>
-      this.add.existing(monster)
-    );
-
-    for (let i = 0; i < this.monsters.length; i++) {
-      this.monsters[i].on('pointerdown', function (pointer) {
-        if (this.scene.isVisible(this.monsters[i].name)) {
-          WindowManager.destroy(this, this.monsters[i].name);
-        }
-        else {
-          WindowManager.create(this, this.monsters[i].name, Fight, {
-            controller: this.gameinstance,
-            hero: this.hero, monster: this.monsters[i], heroes: this.heroes
-          });
-          this.scene.pause()
-        }
-      }, this)
-    }
+  private addMonster(monsterTile: number, type: string, id: string) {
+    const tile: Tile = this.tiles[monsterTile];
+    let monster: Monster = new Monster(this, tile, type, id).setInteractive().setScale(.5);
+    this.monsters.push(monster);
+    this.monsterNameMap[monster.name] = monster;
+    tile.setMonster(monster);
+    this.add.existing(monster);
+    monster.on('pointerdown', function (pointer) {
+      if (this.scene.isVisible(monster.name)) {
+        WindowManager.destroy(this, monster.name);
+      }
+      else {
+        WindowManager.create(this, monster.name, Fight, {
+          controller: this.gameinstance,
+          hero: this.hero, monster: monster, heroes: this.heroes
+        });
+        this.scene.pause()
+      }
+    }, this)
 
   }
 
@@ -561,7 +518,7 @@ export default class GameScene extends Phaser.Scene {
         f.name = fog[1];
         f.setTint(0x101010); // darken
         tile.setFog(f) // add to tile
-        f.setInteractive() 
+        f.setInteractive()
         this.add.existing(f);
         f.on("pointerdown", (pointer) => {
           f.clearTint()
