@@ -32,7 +32,7 @@ export function game(socket, model: Game, io) {
     callback(heroType, tile);
   })
 
-  socket.on("endTurn", function() {
+  socket.on("endTurn", function () {
     var nextPlayer = model.nextPlayer(false)
 
     // Emitting with broadcast.to to the caller doesn't seem to work. Below is a workaround
@@ -48,7 +48,7 @@ export function game(socket, model: Game, io) {
   })
 
   socket.on("pickupFarmer", function (callback) {
-    var region:Region;
+    var region: Region;
     let heroId = socket.conn.id;
     let hero = model.getHero(heroId);
     if (hero !== undefined) {
@@ -61,7 +61,7 @@ export function game(socket, model: Game, io) {
     }
   });
 
-  socket.on("dropFarmer", function(callback){
+  socket.on("dropFarmer", function (callback) {
     var result = new Array()
     let heroId = socket.conn.id;
     let hero = model.getHero(heroId);
@@ -71,10 +71,10 @@ export function game(socket, model: Game, io) {
       //result[1] = dropped region id, result[0] = farmer id
       if (result !== undefined) {
         //Farmer dropped on reitburg
-        if(result[1] === 0){
+        if (result[1] === 0) {
           model.getCastle().incShields();
         }
-        io.of("/"+model.getName()).emit("addFarmer", result[1], result[0])
+        io.of("/" + model.getName()).emit("addFarmer", result[1], result[0])
         callback(result[1]);
       }
     }
@@ -98,7 +98,7 @@ export function game(socket, model: Game, io) {
   socket.on("getNumShields", function (callback) {
     var numShields = model.getCastle().getShields();
 
-    if(numShields !== undefined){
+    if (numShields !== undefined) {
       callback(numShields)
     }
   });
@@ -119,21 +119,32 @@ export function game(socket, model: Game, io) {
     }
   });
 
+  socket.on("useFog", function (fogType, callback) {
+    let heroId = socket.conn.id;
+    let hero = model.getHero(heroId);
+    if(hero != undefined){
+      const success = model.useFog(fogType, hero.getRegion().getID());
+      if(success){
+        callback();
+      }
+    }
+  });
+
   socket.on("dropGold", function (callback) {
     let success_dropGold = false;
     let heroId = socket.conn.id;
     let hero = model.getHero(heroId);
-    
+
     if (hero !== undefined) {
-        success_dropGold = hero.dropGold();
+      success_dropGold = hero.dropGold();
     }
     if (success_dropGold) {
-        socket.broadcast.emit("updateDropGold");
-        callback()
+      socket.broadcast.emit("updateDropGold");
+      callback()
     }
-  });   
+  });
 
-  socket.on("pickupGold", function (id, callback) { 
+  socket.on("pickupGold", function (id, callback) {
     let success_pickupGold = false;
     let heroId = socket.conn.id;
     let hero = model.getHero(heroId);
@@ -141,12 +152,12 @@ export function game(socket, model: Game, io) {
     id = +id
 
     if (hero !== undefined && hero.getRegion().getID() === id && hero.getRegion().getGold() > 0) {
-        success_pickupGold = hero.pickupGold();
+      success_pickupGold = hero.pickupGold();
     }
 
     if (success_pickupGold) {
-        socket.broadcast.emit("updatePickupGold");
-        callback()
+      socket.broadcast.emit("updatePickupGold");
+      callback()
     }
   });
 
@@ -269,12 +280,12 @@ export function game(socket, model: Game, io) {
    * COLLAB DECISION
    */
   // Submitting a decision
-  socket.on('collabDecisionSubmit', function(resAllocated, resNames, involvedHeroes) {
-    if(model.getCurrPlayersTurn() == ""){
+  socket.on('collabDecisionSubmit', function (resAllocated, resNames, involvedHeroes) {
+    if (model.getCurrPlayersTurn() == "") {
       model.setCurrPlayersTurn(socket.conn.id)
     }
     // Check that numAccepts equals total num of players-1
-    if (model.numAccepts != involvedHeroes.length-1) {
+    if (model.numAccepts != involvedHeroes.length - 1) {
       // Failure: need more accepts before valid submit
       socket.emit('sendDecisionSubmitFailure');
       return;
@@ -287,12 +298,12 @@ export function game(socket, model: Game, io) {
       if (resAllocated[heroTypeString]) {
         let currHero = hero;
         // Iterate through resNames and map index to amount specified in resAllocated
-        for (let i=0; i<resNames.length; i++) {
+        for (let i = 0; i < resNames.length; i++) {
           if (resNames[i] == "gold") {
             currHero?.updateGold(resAllocated[heroTypeString][i]);
-          } 
+          }
           else if (resNames[i] == "wineskin") {
-            currHero?.setWineskin(resAllocated[heroTypeString][i]>0);
+            currHero?.setWineskin(resAllocated[heroTypeString][i] > 0);
           }
           else if (resNames[i] == 'will') {
             currHero?.setWill(resAllocated[heroTypeString][i])
@@ -321,7 +332,7 @@ export function game(socket, model: Game, io) {
   socket.on('getMonsterStats', function (monstername, callback) {
     try {
       let monster = model.getMonsters().get(monstername)
-      callback({str:monster!.getStrength(), will:monster!.getWill(), reward:monster!.getGold(), type:monster!.getType()})
+      callback({ str: monster!.getStrength(), will: monster!.getWill(), reward: monster!.getGold(), type: monster!.getType() })
     }
     catch {
       console.log("invalid monster name!")
@@ -338,7 +349,7 @@ export function game(socket, model: Game, io) {
     //socket.emit('sendKilledMonsters', monstername);
   })
 
-  socket.on('heroRoll', function(callback) {
+  socket.on('heroRoll', function (callback) {
     let heroId = socket.conn.id
     var hero = model.getHero(heroId)
     var roll = hero.roll()
@@ -346,11 +357,11 @@ export function game(socket, model: Game, io) {
     callback(roll)
   })
 
-  socket.on('confirmroll', function(herokind, roll, str) {
-    socket.broadcast.emit('receiveAlliedRoll',herokind, roll, str)
+  socket.on('confirmroll', function (herokind, roll, str) {
+    socket.broadcast.emit('receiveAlliedRoll', herokind, roll, str)
   })
 
-  socket.on('monsterRoll', function(m, callback) {
+  socket.on('monsterRoll', function (m, callback) {
     var heroId = socket.conn.id;
     let hero = model.getHero(heroId);
     let heroregion = hero.getRegion().getID()
@@ -360,7 +371,7 @@ export function game(socket, model: Game, io) {
       let monsterroll = monster!.rollDice()
       callback(monsterroll)
     }
-    else if (hero.getKind() == HeroKind.Archer ){
+    else if (hero.getKind() == HeroKind.Archer) {
       if (hero.getRegion().getAdjRegionsIds().includes(monsterregion) || heroregion == monsterregion) {
         let monsterroll = monster!.rollDice()
         callback(monsterroll)
@@ -368,20 +379,20 @@ export function game(socket, model: Game, io) {
       else {
         callback('outofrange')
       }
-      
+
     }
     else {
       callback('outofrange')
     }
   })
 
-  socket.on('doDamageToMonster', function(themonster, dmg) {
+  socket.on('doDamageToMonster', function (themonster, dmg) {
     let monster = model.getMonsters().get(themonster)
     monster!.setWill(monster!.getWill() - dmg)
     //dont have to handle monster death here. a seperate message gets sent from fight window upon death.
   })
 
-  socket.on('doDamageToHero', function(thehero, damage) {
+  socket.on('doDamageToHero', function (thehero, damage) {
     let modelHeros = model.getHeros();
     for (let hero of modelHeros.values()) {
       let heroTypeString = hero.getKind().toString();
@@ -398,14 +409,14 @@ export function game(socket, model: Game, io) {
     }
   })
 
-  socket.on('getHerosInRange', function(id, callback) {
+  socket.on('getHerosInRange', function (id, callback) {
     var centraltile = model.getRegions()[id]
     var centraltileid = centraltile.getID()
     var adjregionids = centraltile.getAdjRegionsIds()
-    let dwarftile: number = -1 
-    let archertile: number = -1 
-    let magetile: number = -1  
-    let warriortile: number = -1 
+    let dwarftile: number = -1
+    let archertile: number = -1
+    let magetile: number = -1
+    let warriortile: number = -1
 
     model.getHeros().forEach((hero, key) => {
       if (hero.hk === HeroKind.Mage) {
@@ -413,22 +424,22 @@ export function game(socket, model: Game, io) {
         if (hero !== undefined && hero.getTimeOfDay() < 10) {
           magetile = hero.getRegion().getID();
         }
-      } 
-      
+      }
+
       else if (hero.hk === HeroKind.Archer) {
         hero = model.getHero(key);
         if (hero !== undefined && hero.getTimeOfDay() < 10) {
           archertile = hero.getRegion().getID()
         }
-      } 
-      
+      }
+
       else if (hero.hk === HeroKind.Warrior) {
         hero = model.getHero(key);
         if (hero !== undefined && hero.getTimeOfDay() < 10) {
           warriortile = hero.getRegion().getID()
         }
-      } 
-      
+      }
+
       else if (hero.hk === HeroKind.Dwarf) {
         hero = model.getHero(key);
         if (hero !== undefined && hero.getTimeOfDay() < 10) {
@@ -437,7 +448,7 @@ export function game(socket, model: Game, io) {
       }
     });
 
-    var heroeswithinrange : string[] = []
+    var heroeswithinrange: string[] = []
     if (centraltileid == dwarftile) {
       heroeswithinrange.push('dwarf')
     }
@@ -453,25 +464,25 @@ export function game(socket, model: Game, io) {
     callback(heroeswithinrange)
   })
 
-  socket.on('sendBattleInvite', function(id, herosinrange) {
+  socket.on('sendBattleInvite', function (id, herosinrange) {
     var heroids = model.getIDsByHeroname(herosinrange)
     for (let playerid of heroids) {
       socket.broadcast.to(`/${model.getName()}#${playerid}`).emit("receiveBattleInvite")
     }
   })
 
-  socket.on('sendBattleInviteResponse', function(response, herokind) {
+  socket.on('sendBattleInviteResponse', function (response, herokind) {
     socket.broadcast.emit('recieveBattleInviteResponse', response, herokind)
   })
 
-  socket.on('battleCollabApprove', function(windowname) {
-    socket.broadcast.emit('battleRewardsPopup',windowname)
+  socket.on('battleCollabApprove', function (windowname) {
+    socket.broadcast.emit('battleRewardsPopup', windowname)
   })
 
   //TODO test this further
-  socket.on('deathNotice', function(hero) {
+  socket.on('deathNotice', function (hero) {
     //could also just emit it to everyone....
-    var deadheroid = model.getIDsByHeroname([hero]) 
+    var deadheroid = model.getIDsByHeroname([hero])
     for (let playerid of deadheroid) {
       socket.broadcast.to(`/${model.getName()}#${playerid}`).emit("receiveDeathNotice")
     }
@@ -481,7 +492,7 @@ export function game(socket, model: Game, io) {
   /*
   * END DAY
   */
-  socket.on('endDay', function(callback) {
+  socket.on('endDay', function (callback) {
     // Reset this hero's hours and tell all clients to update their hourtracker
     var resetHoursHk = model.resetHeroHours(socket.conn.id);
     console.log("tell client to reset hour tracker for", resetHoursHk)
@@ -557,7 +568,7 @@ export function game(socket, model: Game, io) {
   /**
    * Returns all fog after initializing on the server side
    */
-  socket.on("getFog", function(callback){
+  socket.on("getFog", function (callback) {
     var fog = model.getFogs();
     callback(Array.from(fog))
   })

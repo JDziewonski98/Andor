@@ -12,7 +12,6 @@ import {
 } from "."
 
 export class Game {
-
     private numOfDesiredPlayers: number;
     private difficulty: GameDifficulty;
     private castle: RietburgCastle;
@@ -139,7 +138,6 @@ export class Game {
     }
 
     private setFarmers() {
-        //this.regions[24].initFarmer()
         this.farmers.push(new Farmer(0, this.regions[24]));
         this.farmers.push(new Farmer(1, this.regions[36]));
         this.regions[24].addFarmer(this.farmers[0]);
@@ -147,29 +145,18 @@ export class Game {
     }
 
     private setMonsters() {
-        let gor1 = new Monster(MonsterKind.Gor, 8, this.numOfDesiredPlayers, 'gor1')
-        let gor2 = new Monster(MonsterKind.Gor, 20, this.numOfDesiredPlayers, 'gor2')
-        let gor3 = new Monster(MonsterKind.Gor, 21, this.numOfDesiredPlayers, 'gor3')
-        let gor4 = new Monster(MonsterKind.Gor, 26, this.numOfDesiredPlayers, 'gor4')
-        let gor5 = new Monster(MonsterKind.Gor, 48, this.numOfDesiredPlayers, 'gor5')
-        let skral = new Monster(MonsterKind.Skral, 19, this.numOfDesiredPlayers, 'skral1')
-        // let war = new Monster(MonsterKind.Wardrak, 1, this.numOfDesiredPlayers, 'wardrak1')
+        this.addMonster(MonsterKind.Gor, 8, 'gor1');
+        this.addMonster(MonsterKind.Gor, 20, 'gor2');
+        this.addMonster(MonsterKind.Gor, 21, 'gor3');
+        this.addMonster(MonsterKind.Gor, 26, 'gor4');
+        this.addMonster(MonsterKind.Gor, 48, 'gor5');
+        this.addMonster(MonsterKind.Skral, 19, 'skral1');
+    }
 
-        this.monsters.set(gor1.name, gor1)
-        this.monsters.set(gor2.name, gor2)
-        this.monsters.set(gor3.name, gor3)
-        this.monsters.set(gor4.name, gor4)
-        this.monsters.set(gor5.name, gor5)
-        this.monsters.set(skral.name, skral)
-        // this.monsters.set(war.name, war)
-
-        this.regions[8].setMonster(gor1)
-        this.regions[20].setMonster(gor2)
-        this.regions[21].setMonster(gor3)
-        this.regions[26].setMonster(gor4)
-        this.regions[48].setMonster(gor5)
-        this.regions[19].setMonster(skral)
-        // this.regions[1].setMonster(war)
+    private addMonster(kind: MonsterKind, tile: number, id: string) {
+        let monster = new Monster(kind, tile, this.numOfDesiredPlayers, id)
+        this.monsters.set(monster.name, monster);
+        this.regions[tile].setMonster(monster);
     }
 
     private setRegions() {
@@ -421,7 +408,7 @@ export class Game {
             self.regions[startReg].setMonster(null);
             m.setTileID(nextRegID);
 
-            if(self.castle.getShields() <= 0){
+            if (self.castle.getShields() <= 0) {
                 self.endOfGame = true;
             }
         }
@@ -469,5 +456,37 @@ export class Game {
 
     public getEndOfGameState() {
         return this.endOfGame;
+    }
+
+    public useFog(fog: Fog, tile: number): boolean {
+        console.log(fog, tile)
+        if (this.fogs.get(tile) != undefined && this.fogs.get(tile) == fog) { // make sure tile has a fog and its the same
+            if (fog == Fog.Gor) {
+                this.addMonster(MonsterKind.Gor, tile, `gor${this.monsters.size + 1}`)
+            } else if (fog == Fog.Gold) {
+                this.heroList.get(this.getCurrPlayersTurn())?.updateGold(1);
+                return true;
+            } else if (fog == Fog.WillPower2) {
+                this.heroList.get(this.getCurrPlayersTurn())?.setWill(2);
+                return true;
+            } else if (fog == Fog.WillPower3) {
+                this.heroList.get(this.getCurrPlayersTurn())?.setWill(3);
+                return true;
+            } else if (fog == Fog.Strength) {
+                this.heroList.get(this.getCurrPlayersTurn())?.setWill(2);
+                return true;
+            } else if (fog == Fog.Brew) {
+
+            } else if (fog == Fog.Wineskin) {
+
+            } else if (fog == Fog.EventCard) {
+
+            }
+
+
+        }
+        return false;
+
+
     }
 }

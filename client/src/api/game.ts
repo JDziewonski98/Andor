@@ -345,6 +345,13 @@ export class game {
     }
 
 
+    /*
+    *   FOGS
+    */
+    public useFog(fogType, callback){
+        this.socket.emit("useFog", fogType, callback);
+    }
+
 
     ///////////////////////////
 

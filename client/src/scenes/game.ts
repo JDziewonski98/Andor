@@ -1,6 +1,6 @@
 import { Farmer, Hero, HourTracker, Monster, HeroKind, Well, Tile } from '../objects';
 import { game } from '../api';
-import { WindowManager, CollabWindow, MerchantWindow, DeathWindow, Fight, BattleInvWindow, GameOverWindow} from "./windows";
+import { WindowManager, CollabWindow, MerchantWindow, DeathWindow, Fight, BattleInvWindow, GameOverWindow } from "./windows";
 import { RietburgCastle } from './rietburgcastle';
 import BoardOverlay from './boardoverlay';
 
@@ -520,9 +520,15 @@ export default class GameScene extends Phaser.Scene {
         tile.setFog(f) // add to tile
         f.setInteractive()
         this.add.existing(f);
+
         f.on("pointerdown", (pointer) => {
-          f.clearTint()
-          // CAlL BACKEND
+          console.log(pointer)
+          this.gameinstance.useFog(f.name, () => {
+            f.clearTint();
+            setTimeout(()=>{
+              f.destroy()
+            }, 800);
+          })
         }, this)
       })
     });
