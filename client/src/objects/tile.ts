@@ -26,7 +26,9 @@ export class Tile extends Phaser.GameObjects.Sprite {
 
     public gold: number;
 
-    public monster!: Monster;
+    public monster: Monster;
+
+    private fog: Phaser.GameObjects.Sprite;
 
     constructor(id, scene, x, y, texture) {
         super(scene, x, y, 'tiles', texture);
@@ -36,23 +38,23 @@ export class Tile extends Phaser.GameObjects.Sprite {
         this.hero = null;
         this.farmer = new Array(2);
         this.gold = 0;
-        //this.on('pointerdown', function (pointer) { this.printstuff() });
-        //this.on('pointerdown', function (pointer) { this.moveRequest() })
+        this.fog = null;
+        this.monster = null;
 
         //depricated
         // Set coordinates for hero representations as 2d array
         this.heroCoords = [
-            [this.x-30, this.y-30],
-            [this.x+30, this.y-30],
-            [this.x-30, this.y+30],
-            [this.x+30, this.y+30]
+            [this.x - 30, this.y - 30],
+            [this.x + 30, this.y - 30],
+            [this.x - 30, this.y + 30],
+            [this.x + 30, this.y + 30]
         ]
 
         this.farmerCoords = [
-            [this.x, this.y+30],
-            [this.x, this.y-30]
+            [this.x, this.y + 30],
+            [this.x, this.y - 30]
         ]
-        
+
     }
 
     // Unused
@@ -99,34 +101,26 @@ export class Tile extends Phaser.GameObjects.Sprite {
         */
     }
 
-    public setSprite(texture){
-        this.texture = texture
+    public setFog(fog: Phaser.GameObjects.Sprite) {
+        this.fog = fog;
+    }
+
+    public getFog(): Phaser.GameObjects.Sprite {
+        return this.fog;
     }
 
     public setGold(amount: number) {
         this.gold = amount;
     }
+
+    public setMonster(m: Monster) {
+        this.monster = m;
+    }
+
     public getGold() {
         return this.gold;
     }
     public getID() {
         return this.id;
     }
-
-    // public getAdjecent(){
-
-    // }
-    
-    //  public adjacent: Tile[] = [];
-    // public adjRegionsIds: number[] = [];
-    // public id: number;
-    // public heroexist: boolean = false;
-    // public farmerexist: boolean = false;
-    // public x: number;
-    // public y: number;
-    // // Should support multiple heroes
-    // public hero: Hero;
-    // public farmer: Array<Farmer>;
-    // public heroCoords;
-    // public farmerCoords;
 }
