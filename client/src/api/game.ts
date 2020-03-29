@@ -352,15 +352,20 @@ export class game {
         //goal is to have backend determine item being consumed based on passed string
         this.socket.emit('consumeItem', item)
     }
+
+    public useWineskin(half_or_full, callback) {
+        //half_or_full must be either 'half' or 'full'
+        this.socket.emit('useWineskin', half_or_full, callback)
+    }
+
+
+
     /*
     *   FOGS
     */
     public useFog(fogType, tile, callback){
         this.socket.emit("useFog", fogType, tile, callback);
     }
-
-
-    ///////////////////////////
 
     /*
     *   END OF GAME

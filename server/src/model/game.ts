@@ -11,6 +11,7 @@ import {
     Fog
 } from "."
 import { LargeItem } from './LargeItem';
+import { SmallItem } from './SmallItem';
 
 export class Game {
     private numOfDesiredPlayers: number;
@@ -214,8 +215,10 @@ export class Game {
         })
         if (heroType === HeroKind.Dwarf) {
             this.heroList.set(id, new Hero(heroType, this.regions[7]));
+            //REMOVE before merging to master
             let dwarf = this.heroList.get(id)
             dwarf?.pickUpLargeItem(LargeItem.Bow)
+            dwarf?.pickUpSmallItem(SmallItem.Wineskin)
         }
         else if (heroType === HeroKind.Archer) {
             this.heroList.set(id, new Hero(heroType, this.regions[25]));

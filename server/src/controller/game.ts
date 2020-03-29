@@ -628,6 +628,18 @@ export function game(socket, model: Game, io) {
     hero.consumeItem(item)
   })
 
+  socket.on('useWineskin', function(halforfull, callback) {
+    var heroID = socket.conn.id
+    let hero = model.getHero(heroID);
+    if (halforfull == 'full'){
+      hero.consumeItem('wineskin')
+    }
+    else {
+      hero.consumeItem('half_wineskin')
+    }
+    callback()
+  })
+
   ///////////////////////
 }
 

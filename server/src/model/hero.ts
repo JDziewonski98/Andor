@@ -2,6 +2,7 @@ import { HeroKind } from "./HeroKind";
 import { Region } from './region';
 import { Farmer } from '.';
 import {LargeItem} from './LargeItem'
+import {SmallItem} from './SmallItem'
 
 export class Hero {
     public hk: HeroKind;
@@ -15,11 +16,13 @@ export class Hero {
     private farmers: Array<Farmer>;
     private rank: number;
     private dice
+    private freeMoves:number = 0;
 
     //items
     private wineskin: boolean = false;
     private largeItem: LargeItem = LargeItem.Empty
     private helm: boolean = false;
+    private smallItems: SmallItem[] = []
 
     constructor(hk: HeroKind, region:Region) {
         this.hk = hk
@@ -55,7 +58,13 @@ export class Hero {
 
     public moveTo(newTile: Region) {
         this.region = newTile
-        this.timeOfDay++
+        if (this.freeMoves == 0) {
+            this.timeOfDay++
+        }
+        else {
+            this.freeMoves--
+        }
+        //TODO: DONT UPDATE THE HOUR TRACKER THING.
     }
 
     public useItem(item) {
@@ -288,7 +297,7 @@ export class Hero {
         */
         //TODO
         let helm = this.helm == true ? 'true' : 'false'
-        let itemdict = {largeItem: this.largeItem, helm:helm}
+        let itemdict = {largeItem: this.largeItem, helm:helm, smallItems:this.smallItems}
         return itemdict
     }
 
@@ -307,6 +316,20 @@ export class Hero {
                 break;
 
             case 'wineskin':
+                let index_w = this.smallItems.indexOf(SmallItem.Wineskin);
+                if (index_w > -1) {
+                    this.smallItems.splice(index_w, 1);
+                    this.freeMoves++
+                    this.pickUpSmallItem(SmallItem.HalfWineskin)
+                }
+                break;
+
+            case "half_wineskin":
+                let index_hw = this.smallItems.indexOf(SmallItem.HalfWineskin);
+                if (index_hw > -1) {
+                    this.smallItems.splice(index_hw, 1);
+                    this.freeMoves++
+                }
                 break;
 
             case 'brew':
@@ -316,6 +339,34 @@ export class Hero {
                 console.log('Error! check your spelling on item to consume.')
         }
 
+    }
+
+    public getSmallItems() {
+        return this.smallItems
+    }
+
+    public pickUpSmallItem(item: SmallItem) {
+        if (this.smallItems.length < 4) {
+            this.smallItems.push(item)
+            return true
+        }
+        else {
+            return false
+        }
+    }
+
+    public dropSmallItem(item:SmallItem) {
+        if (this.smallItems.includes(item)) {
+            const index = this.smallItems.indexOf(item);
+            if (index > -1) {
+            this.smallItems.splice(index, 1);
+            //TODO: logic for actually putting it on the tile
+            return true
+            }
+        }
+        else {
+            return false
+        }
     }
 
     public getLargeItem() {

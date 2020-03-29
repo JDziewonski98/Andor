@@ -18,7 +18,12 @@ export class HeroWindow extends Window {
     private gameinstance: game;
     private clienthero;
     private windowhero;
+
+    //items
     private largeItem;
+    private smallItem1;
+    private smallItem2;
+    private smallItem3;
 
     public constructor(key: string, data, windowData = { x: 350, y: 30, width: 400, height: 400 }) {
         super(key, windowData);
@@ -49,7 +54,13 @@ export class HeroWindow extends Window {
             if (itemdict['helm'] != 'false') {
                 self.add.text(25,200,'Helm equipped.')
             }
-            //TODO as rest of item types are added
+            if (itemdict['smallItems'].length > 0) {
+                var smallItemList = itemdict['smallItems']
+                for (var i = 0; i < smallItemList.length; i++) {
+                    self.setSmallItemText(i, smallItemList[i])
+                }
+            }
+            //todo add other items as theyre added
         })
         this.add.text(25, 240, 'Special ability text ....', { backgroundColor: 'fx00' })
 
@@ -112,6 +123,68 @@ export class HeroWindow extends Window {
 
 
 
+    }
+
+    private setSmallItemText(slot:number, item) {
+        var self = this
+
+        function defineOnclick(itemText:Phaser.GameObjects.Text, itemtype) {
+            itemText.setInteractive()
+            switch(itemtype) {
+                case 'wineskin':
+                    itemText.on('pointerdown', function(pointer) {
+                        //TODO: give free move and replace item with a half_wineskin
+                        self.gameinstance.useWineskin('full', function() {
+                            itemText.setText('half wineskin')
+                            itemText.removeAllListeners('pointerdown')
+                            defineOnclick(itemText,'half_wineskin')
+                        })
+                    })
+                    break;
+                case 'half_wineskin':
+                    itemText.on('pointerdown', function(pointer) {
+                        self.gameinstance.useWineskin('half', function() {
+                            console.log('dont get drunk')
+                        })
+                    })
+                    break;
+                case 'telescope':
+                    itemText.on('pointerdown', function(pointer) {
+                        //TODO: @omar?
+                    })
+                    break;
+                case 'herb':
+                    itemText.on('pointerdown', function(pointer) {
+                        //TODO: nothing i think
+                    })
+                    break;
+                default:
+                    console.log(itemtype, 'does nothing from herowindow.')
+                    
+
+            }
+        }
+
+        switch (slot) {
+            case 0:
+                self.smallItem1 = self.add.text(25,220,item)
+                if (self.clienthero == self.windowhero){
+                    defineOnclick(self.smallItem1, item)
+                }
+                break;
+            case 1:
+                self.smallItem2 = self.add.text(60,220,item)
+                if (self.clienthero == self.windowhero){
+                    defineOnclick(self.smallItem2, item)
+                }
+                break;
+            case 2:
+                self.smallItem3 = self.add.text(95,220,item)
+                if (self.clienthero == self.windowhero){
+                    defineOnclick(self.smallItem3, item)
+                }
+                break;
+        }
     }
 
     public setGold(amt: number) {
