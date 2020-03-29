@@ -1,7 +1,7 @@
 
 //server controller
 
-import { Game, HeroKind, Region, Hero, Monster } from '../model';
+import { Game, HeroKind, Region, Hero, Monster, Fog, MonsterKind } from '../model';
 
 export function game(socket, model: Game, io) {
 
@@ -122,12 +122,20 @@ export function game(socket, model: Game, io) {
   socket.on("useFog", function (fogType, tile, callback) {
     let heroId = socket.conn.id;
     let hero = model.getHero(heroId);
-    console.log(tile, hero.getRegion().getID());
-    if(hero != undefined && tile == hero.getRegion().getID()){
-      const success = model.useFog(fogType, +tile);
-      if(success){
-        callback();
+    if (hero != undefined && tile == hero.getRegion().getID()) {
+      let { success, id } = model.useFog(fogType, +tile);
+      
+      console.log(success, id, fogType, Fog.Gor);
+      if (success) {
+        if (fogType === Fog.Gor) {
+          console.log("We out here")
+          io.of("/" + model.getName()).emit("addMonster", MonsterKind.Gor, tile, id);
+        }
+
+        callback(tile);
+        socket.broadcast.emit("destroyFog", tile);
       }
+
     }
   });
 

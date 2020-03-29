@@ -44,17 +44,17 @@ export class Tile extends Phaser.GameObjects.Sprite {
         //depricated
         // Set coordinates for hero representations as 2d array
         this.heroCoords = [
-            [this.x-30, this.y-30],
-            [this.x+30, this.y-30],
-            [this.x-30, this.y+30],
-            [this.x+30, this.y+30]
+            [this.x - 30, this.y - 30],
+            [this.x + 30, this.y - 30],
+            [this.x - 30, this.y + 30],
+            [this.x + 30, this.y + 30]
         ]
 
         this.farmerCoords = [
-            [this.x, this.y+30],
-            [this.x, this.y-30]
+            [this.x, this.y + 30],
+            [this.x, this.y - 30]
         ]
-        
+
     }
 
     // Unused
@@ -101,15 +101,19 @@ export class Tile extends Phaser.GameObjects.Sprite {
         */
     }
 
-    public setFog(fog: Phaser.GameObjects.Sprite){
+    public setFog(fog: Phaser.GameObjects.Sprite) {
         this.fog = fog;
+    }
+
+    public getFog(): Phaser.GameObjects.Sprite {
+        return this.fog;
     }
 
     public setGold(amount: number) {
         this.gold = amount;
     }
 
-    public setMonster(m: Monster){
+    public setMonster(m: Monster) {
         this.monster = m;
     }
 
@@ -119,21 +123,4 @@ export class Tile extends Phaser.GameObjects.Sprite {
     public getID() {
         return this.id;
     }
-
-    // public getAdjecent(){
-
-    // }
-    
-    //  public adjacent: Tile[] = [];
-    // public adjRegionsIds: number[] = [];
-    // public id: number;
-    // public heroexist: boolean = false;
-    // public farmerexist: boolean = false;
-    // public x: number;
-    // public y: number;
-    // // Should support multiple heroes
-    // public hero: Hero;
-    // public farmer: Array<Farmer>;
-    // public heroCoords;
-    // public farmerCoords;
 }

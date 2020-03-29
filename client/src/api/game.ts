@@ -352,6 +352,13 @@ export class game {
         this.socket.emit("useFog", fogType, tile, callback);
     }
 
+    public destroyFog(callback){
+        this.socket.on("destroyFog", callback);
+    }
+
+    public addMonster(callback){
+        this.socket.on("addMonster", callback)
+    }
 
     ///////////////////////////
 
