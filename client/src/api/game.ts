@@ -30,6 +30,10 @@ export class game {
         this.socket.on("updateHeroList", callback)
     }
 
+    public getBoundHeros(callback){
+        this.socket.emit("getBoundHeros", callback);
+    }
+
     public pickupFarmer(callback){
         this.socket.emit("pickupFarmer",  callback);
     }
@@ -120,7 +124,6 @@ export class game {
     // Note: this is not used when a hero's turn ends because they ended their day.
     // Logic for turn end on end day is handled on the server.
     public endTurn(){
-        console.log("You have ended your turn.")
         // The hero that gets the next turn depends on whether the day is over for all heroes
         this.socket.emit('endTurn');
         this.myTurn = false;
@@ -133,7 +136,6 @@ export class game {
     public yourTurn(){
         var self = this
         this.socket.on("yourTurn", function() {
-            console.log("It is now your turn.")
             self.myTurn = true
         })
     }

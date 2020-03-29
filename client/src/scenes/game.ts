@@ -117,12 +117,9 @@ export default class GameScene extends Phaser.Scene {
 
     this.addFog();
 
-    console.log("aepwirejb")
     this.gameinstance.addMonster((type, tile, id) => {
-      console.log("heowripqoeiworeibn", type, tile, id)
       this.addMonster(tile, type, id);
     })
-    console.log("wewgrbejklw")
 
     // Listen for turn to be passed to yourself
     this.gameinstance.yourTurn()
