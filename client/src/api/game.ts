@@ -53,8 +53,11 @@ export class game {
     // Server uses the passed callback to tell the calling client to update the well
     // Server broadcasts to update the other clients
     public useWell(callback) {
-        console.log("Emitting useWell to server");
         this.socket.emit("useWell", callback);
+    }
+
+    public getFog(callback){
+        this.socket.emit("getFog", callback);
     }
 
     public updateWell(callback) {
@@ -349,6 +352,14 @@ export class game {
         //goal is to have backend determine item being consumed based on passed string
         this.socket.emit('consumeItem', item)
     }
+    /*
+    *   FOGS
+    */
+    public useFog(fogType, tile, callback){
+        this.socket.emit("useFog", fogType, tile, callback);
+    }
+
+
     ///////////////////////////
 
     /*

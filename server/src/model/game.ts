@@ -1,18 +1,18 @@
-import { 
-    GameDifficulty, 
-    RietburgCastle, 
-    Farmer, 
-    Region, 
+import {
+    GameDifficulty,
+    RietburgCastle,
+    Farmer,
+    Region,
     Player,
-    Hero, 
-    HeroKind, 
+    Hero,
+    HeroKind,
     Monster,
-    MonsterKind
+    MonsterKind,
+    Fog
 } from "."
 import { LargeItem } from './LargeItem';
 
 export class Game {
-
     private numOfDesiredPlayers: number;
     private difficulty: GameDifficulty;
     private castle: RietburgCastle;
@@ -28,6 +28,7 @@ export class Game {
     // null when the game first starts
     private nextDayFirstHero: string | null = null;
 
+    private fogs: Map<number, Fog>;
     private regions: Array<Region>;
     private farmers: Array<Farmer>;
     private monsters: Map<string, Monster>;
@@ -53,35 +54,34 @@ export class Game {
         this.farmers = new Array<Farmer>();
         this.monsters = new Map<string, Monster>();
         this.monstersInCastle = [];
+        this.fogs = new Map<number, Fog>();
         this.currPlayersTurn = ""
         this.setRegions();
         this.setFarmers();
         this.setMonsters();
         this.setShields();
-        console.log(this.castle.getShields(), "shields");
+        this.setFogs();
         this.readyplayers = 0;
-
         this.numAccepts = 0;
     }
 
-    private setFirstHerosTurn(){
+    private setFirstHerosTurn() {
         var minRank = Number.MAX_VALUE;
         var ID = "none";
-        for(var socketID in this.heroList){
+        for (var socketID in this.heroList) {
             var hero = this.heroList[socketID]
-            if(hero.getRank() < minRank){
+            if (hero.getRank() < minRank) {
                 minRank = hero.getRank()
                 ID = socketID
             }
         }
-        console.log(ID)
         return this.heroList[ID].getKind()
     }
 
-    public getIDsByHeroname(heronames){
-        var heroids : string[] = []
-        this.heroList.forEach((hero,ID) => {
-            if(heronames.includes(hero.getKind())){
+    public getIDsByHeroname(heronames) {
+        var heroids: string[] = []
+        this.heroList.forEach((hero, ID) => {
+            if (heronames.includes(hero.getKind())) {
                 heroids.push(ID)
             }
         })
@@ -91,15 +91,13 @@ export class Game {
     // endDayAll: boolean. True if nextPlayer is being called by the last hero to end their day,
     // in this case we pass the next turn to the day's earliest ending player (nextDayFirstHero).
     // False otherwise, in this case we pass the next turn based on increasing hero rank.
-    public nextPlayer(endDayAll: boolean){
-        console.log("currentPlayersTurn: ", this.currPlayersTurn)
+    public nextPlayer(endDayAll: boolean) {
 
         // If the last person is ending their day, pass turn to earliest ending player
         if (endDayAll) {
             if (this.nextDayFirstHero) {
                 return this.nextDayFirstHero;
             }
-            console.log("ERROR: nextDayFirstHero is null");
         }
         // If only one hero remaining, then the current hero keeps the turn
         if (this.activeHeros.length == 1) {
@@ -109,17 +107,17 @@ export class Game {
         var minRank = this.getHero(this.currPlayersTurn).getRank();
         var maxRank = Number.MAX_VALUE;
         var socketID = "none";
-        this.heroList.forEach((hero,ID) => {
-            if(hero.getRank() > minRank && hero.getRank() < maxRank ){
+        this.heroList.forEach((hero, ID) => {
+            if (hero.getRank() > minRank && hero.getRank() < maxRank) {
                 maxRank = hero.getRank();
                 socketID = ID;
             }
         })
         // Or loop back to the lowest rank hero
-        if(socketID == "none"){
+        if (socketID == "none") {
             minRank = Number.MAX_VALUE
-            this.heroList.forEach((hero,ID) => {
-                if(hero.getRank() < minRank){
+            this.heroList.forEach((hero, ID) => {
+                if (hero.getRank() < minRank) {
                     minRank = hero.getRank()
                     socketID = ID
                 }
@@ -128,52 +126,38 @@ export class Game {
         return socketID;
     }
 
-    private setShields(){
+    private setShields() {
         var numPlayers = this.numOfDesiredPlayers;
-    
-        if(numPlayers === 2){
-            console.log(numPlayers, "inside")
+
+        if (numPlayers === 2) {
             this.castle.setShields(3);
-        }else if(numPlayers === 3){
+        } else if (numPlayers === 3) {
             this.castle.setShields(2);
-        }else if(numPlayers === 4){
+        } else if (numPlayers === 4) {
             this.castle.setShields(1);
         }
     }
 
     private setFarmers() {
-        //this.regions[24].initFarmer()
         this.farmers.push(new Farmer(0, this.regions[24]));
         this.farmers.push(new Farmer(1, this.regions[36]));
         this.regions[24].addFarmer(this.farmers[0]);
         this.regions[36].addFarmer(this.farmers[1]);
-        console.log(this.regions[36])
     }
 
     private setMonsters() {
-        let gor1 = new Monster(MonsterKind.Gor, 8, this.numOfDesiredPlayers,'gor1')
-        let gor2 = new Monster(MonsterKind.Gor, 20, this.numOfDesiredPlayers, 'gor2')
-        let gor3 = new Monster(MonsterKind.Gor, 21, this.numOfDesiredPlayers, 'gor3')
-        let gor4 = new Monster(MonsterKind.Gor, 26, this.numOfDesiredPlayers, 'gor4')
-        let gor5 = new Monster(MonsterKind.Gor, 48, this.numOfDesiredPlayers,'gor5')
-        let skral = new Monster(MonsterKind.Skral, 19, this.numOfDesiredPlayers, 'skral1')
-        // let war = new Monster(MonsterKind.Wardrak, 1, this.numOfDesiredPlayers, 'wardrak1')
+        this.addMonster(MonsterKind.Gor, 8, 'gor1');
+        this.addMonster(MonsterKind.Gor, 20, 'gor2');
+        this.addMonster(MonsterKind.Gor, 21, 'gor3');
+        this.addMonster(MonsterKind.Gor, 26, 'gor4');
+        this.addMonster(MonsterKind.Gor, 48, 'gor5');
+        this.addMonster(MonsterKind.Skral, 19, 'skral1');
+    }
 
-        this.monsters.set(gor1.name, gor1)
-        this.monsters.set(gor2.name, gor2)
-        this.monsters.set(gor3.name, gor3)
-        this.monsters.set(gor4.name, gor4)
-        this.monsters.set(gor5.name, gor5)
-        this.monsters.set(skral.name, skral)
-        // this.monsters.set(war.name, war)
-
-        this.regions[8].setMonster(gor1)
-        this.regions[20].setMonster(gor2)
-        this.regions[21].setMonster(gor3)
-        this.regions[26].setMonster(gor4)
-        this.regions[48].setMonster(gor5)
-        this.regions[19].setMonster(skral)
-        // this.regions[1].setMonster(war)
+    private addMonster(kind: MonsterKind, tile: number, id: string) {
+        let monster = new Monster(kind, tile, this.numOfDesiredPlayers, id)
+        this.monsters.set(monster.name, monster);
+        this.regions[tile].setMonster(monster);
     }
 
     private setRegions() {
@@ -184,12 +168,34 @@ export class Game {
             // on top of setting t.something, also set amount of gold on each tile to 0
             this.regions.push(new Region(0, t.id, t.nextRegionId, t.adjRegionsIds, t.hasWell, t.hasMerchant))
         })
-        //console.log(this.regions[2].getNextRegionId())
-        // console.log("regions sanity check:", this.regions);
     }
+
+    private setFogs() {
+        const fogIds = [8, 11, 12, 13, 49, 16, 32, 48, 42, 44, 47, 46, 64, 56, 63];
+        let fogTypes = [Fog.EventCard, Fog.EventCard, Fog.EventCard, Fog.EventCard, Fog.EventCard, Fog.Strength, Fog.WillPower2, Fog.WillPower3, Fog.Gold, Fog.Gold, Fog.Gold, Fog.Gor, Fog.Gor, Fog.Wineskin, Fog.Brew];
+        shuffle(fogTypes);
+
+        fogIds.forEach((id, i) => {
+            this.fogs.set(id, fogTypes[i]);
+        })
+
+        function shuffle(a) {
+            for (let i = a.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [a[i], a[j]] = [a[j], a[i]];
+            }
+            return a;
+        }
+    }
+
+    public getFogs(): Map<number, Fog> {
+        return this.fogs;
+    }
+
     public getRegions(): Region[] {
         return this.regions
     }
+
     public getName(): string {
         return this.name;
     }
@@ -227,7 +233,7 @@ export class Game {
 
     }
 
-    public getCastle(){
+    public getCastle() {
         return this.castle;
     }
 
@@ -243,6 +249,7 @@ export class Game {
         const index = this.activeHeros.indexOf(connID, 0);
         if (index == -1) {
             console.log("Error", connID, "not in activeHeros");
+            // return;
         }
         this.activeHeros.splice(index, 1);
     }
@@ -288,23 +295,20 @@ export class Game {
         //TO BE IMPLEMENTED
     }
 
-    public setCurrPlayersTurn(s:string){
+    public setCurrPlayersTurn(s: string) {
         this.currPlayersTurn = s;
-        console.log("Set currPlayersTurn to: ", s)
     }
 
-    public getCurrPlayersTurn(){
+    public getCurrPlayersTurn() {
         return this.currPlayersTurn;
     }
 
     // takes string s: the connection ID of the hero
     public setNextDayFirstHero(s: string) {
         this.nextDayFirstHero = s;
-        console.log("Set nextDayFirstHero to:", s);
     }
 
     public moveHeroTo(hero, tile) {
-        console.log("Passed method call")
         hero.moveTo(tile)
     }
 
@@ -355,7 +359,7 @@ export class Game {
         var skrals: Monster[] = [];
         var wardraks: Monster[] = [];
 
-        for(let m of Array.from(this.monsters.values())) {
+        for (let m of Array.from(this.monsters.values())) {
             switch (m.getType()) {
                 case MonsterKind.Gor:
                     gors.push(m);
@@ -372,9 +376,9 @@ export class Game {
         }
 
         // Inline custom sort of monsters on tileID
-        gors.sort((a,b) => (a.getTileID() - b.getTileID()));
-        skrals.sort((a,b) => (a.getTileID() - b.getTileID()));
-        wardraks.sort((a,b) => (a.getTileID() - b.getTileID()));
+        gors.sort((a, b) => (a.getTileID() - b.getTileID()));
+        skrals.sort((a, b) => (a.getTileID() - b.getTileID()));
+        wardraks.sort((a, b) => (a.getTileID() - b.getTileID()));
 
         var sortedMonsters = gors.concat(skrals).concat(wardraks).concat(wardraks);
         // Move each monster based on tile and type ordering
@@ -406,9 +410,8 @@ export class Game {
             self.regions[nextRegID].setMonster(m);
             self.regions[startReg].setMonster(null);
             m.setTileID(nextRegID);
-            console.log("moved", m.name, "btw tiles", startReg, nextRegID);
 
-            if(self.castle.getShields() <= 0){
+            if (self.castle.getShields() <= 0) {
                 self.endOfGame = true;
             }
         }
@@ -450,12 +453,42 @@ export class Game {
             return;
         } else {
             this.heroList.get(connID)?.setTimeOfDay(1);
-            console.log("reset", connID, "hours to", this.heroList.get(connID)?.getTimeOfDay())
             return this.heroList.get(connID)?.getKind();
         }
     }
 
     public getEndOfGameState() {
         return this.endOfGame;
+    }
+
+    public useFog(fog: Fog, tile: number): boolean {
+        if (this.fogs.get(tile) != undefined && this.fogs.get(tile) == fog) { // make sure tile has a fog and its the same
+            if (fog == Fog.Gor) {
+                this.addMonster(MonsterKind.Gor, tile, `gor${this.monsters.size + 1}`)
+            } else if (fog == Fog.Gold) {
+                this.heroList.get(this.getCurrPlayersTurn())?.updateGold(1);
+                return true;
+            } else if (fog == Fog.WillPower2) {
+                this.heroList.get(this.getCurrPlayersTurn())?.setWill(2);
+                return true;
+            } else if (fog == Fog.WillPower3) {
+                this.heroList.get(this.getCurrPlayersTurn())?.setWill(3);
+                return true;
+            } else if (fog == Fog.Strength) {
+                this.heroList.get(this.getCurrPlayersTurn())?.setWill(2);
+                return true;
+            } else if (fog == Fog.Brew) {
+
+            } else if (fog == Fog.Wineskin) {
+
+            } else if (fog == Fog.EventCard) {
+
+            }
+
+
+        }
+        return false;
+
+
     }
 }

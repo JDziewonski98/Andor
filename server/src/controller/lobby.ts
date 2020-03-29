@@ -8,7 +8,6 @@ export function lobby(socket, model: Lobby, io) {
     const d = difficulty === "Easy" ? GameDifficulty.Easy : GameDifficulty.Hard;
     let g = new Game(name, numPlayers, d);
     model.createGame(g);
-    console.log("Created game", name, "with", numPlayers, "players");
 
     var gamensp = io.of("/" + name)
     gamensp.on("connection", function (socket) {
@@ -25,13 +24,11 @@ export function lobby(socket, model: Lobby, io) {
         filteredGames.push(k)
       }
     })
-    console.log(Object.keys(io.nsps))
     callback(filteredGames)
   })
 
   socket.on("newPlayer", function () {
-    let id = model.connectNewPlayer(socket.conn.id)
-    console.log(model.getPlayers());
+    let id = model.connectNewPlayer(socket.conn.id);
   });
 
   socket.on("joinGame", function (gameName, callback) {
@@ -40,7 +37,6 @@ export function lobby(socket, model: Lobby, io) {
       let g: Game = <Game> games.get(gameName);
       if (g.getNumOfDesiredPlayers() > g.getPlayers().size) {
         g.addPlayer(<Player> model.getPlayers().get(socket.conn.id))
-        console.log("Added", socket.conn.id, " to ", g.getName())
       }
     }
   })
@@ -48,8 +44,6 @@ export function lobby(socket, model: Lobby, io) {
   socket.on('disconnect', function (x) {
     let id = socket.conn.id
     model.disconnectPlayer(socket.conn.id)
-    console.log('Lobby disconnected', id);
-    console.log('remaining players: ', model.getPlayers())
   });
 
 
