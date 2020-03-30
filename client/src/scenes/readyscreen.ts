@@ -42,8 +42,6 @@ export default class ReadyScreenScene extends Phaser.Scene {
             y: 200
         }
 
-        //quickly isntantiating chat log
-
         this.add.image(500, 300, 'andordude').setDisplaySize(1000, 600)
         this.archer = this.add.image(200, 200, 'archer').setDisplaySize(heroSize.x, heroSize.y)
         this.add.text(176, 320, "Archer");
@@ -102,19 +100,15 @@ export default class ReadyScreenScene extends Phaser.Scene {
         this.chatText.on('pointerdown', function (pointer) {
             if (this.scene.isVisible('chat')) {
                 WindowManager.destroy(this, "chat")
-                // this.scene.sendToBack('chat')
-                // this.scene.sleep('chat')
             }
             else {
-                WindowManager.create(this, "chat", Chat, { controller: self.gameController})
-                // this.sys.game.scene.bringToTop('chat')
-                // this.sys.game.scene.getScene('chat').scene.setVisible(true, 'chat')
-                // this.scene.resume('chat')
+                WindowManager.create(this, "chat", Chat, { controller: self.gameController })
             }
 
         }, this);
+        WindowManager.destroy(this, "chat")
 
-        this.gameController.updateHeroList(function (heros) {
+        function updateTints(heros) {
             heros.taken.forEach(hero => {
                 self[hero].setTint(0x404040)
                 self.gameController.removeListener(hero)
@@ -122,7 +116,10 @@ export default class ReadyScreenScene extends Phaser.Scene {
             heros.remaining.forEach(hero => {
                 self[hero].setTint()
             })
-        })
+        }
+
+        this.gameController.updateHeroList(updateTints)
+        this.gameController.getBoundHeros(updateTints);
 
         //callbacks
         function remListener(hero) {
@@ -131,7 +128,7 @@ export default class ReadyScreenScene extends Phaser.Scene {
         //ready players callback
         function setRdy(num) {
             self.readyplayers = num
-            console.log('Retrieved num players from server: ' , self.readyplayers)
+            console.log('Retrieved num players from server: ', self.readyplayers)
         }
 
         function setDesPlayers(n) {

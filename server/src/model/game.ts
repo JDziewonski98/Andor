@@ -466,22 +466,24 @@ export class Game {
         return this.endOfGame;
     }
 
-    public useFog(fog: Fog, tile: number): boolean {
+    public useFog(fog: Fog, tile: number) {
         if (this.fogs.get(tile) != undefined && this.fogs.get(tile) == fog) { // make sure tile has a fog and its the same
             if (fog == Fog.Gor) {
-                this.addMonster(MonsterKind.Gor, tile, `gor${this.monsters.size + 1}`)
+                const id = `gor${this.monsters.size + 1}`;
+                this.addMonster(MonsterKind.Gor, tile, id)
+                return { success: true, id: id };
             } else if (fog == Fog.Gold) {
                 this.heroList.get(this.getCurrPlayersTurn())?.updateGold(1);
-                return true;
+                return { success: true };
             } else if (fog == Fog.WillPower2) {
                 this.heroList.get(this.getCurrPlayersTurn())?.setWill(2);
-                return true;
+                return { success: true };
             } else if (fog == Fog.WillPower3) {
                 this.heroList.get(this.getCurrPlayersTurn())?.setWill(3);
-                return true;
+                return { success: true };
             } else if (fog == Fog.Strength) {
-                this.heroList.get(this.getCurrPlayersTurn())?.setWill(2);
-                return true;
+                this.heroList.get(this.getCurrPlayersTurn())?.setStrength(2);
+                return { success: true };
             } else if (fog == Fog.Brew) {
 
             } else if (fog == Fog.Wineskin) {
@@ -492,7 +494,7 @@ export class Game {
 
 
         }
-        return false;
+        return { success: false };
 
 
     }

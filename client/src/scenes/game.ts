@@ -117,6 +117,10 @@ export default class GameScene extends Phaser.Scene {
 
     this.addFog();
 
+    this.gameinstance.addMonster((type, tile, id) => {
+      this.addMonster(tile, type, id);
+    })
+
     // Listen for turn to be passed to yourself
     this.gameinstance.yourTurn()
 
@@ -510,8 +514,8 @@ export default class GameScene extends Phaser.Scene {
   }
 
   private addFog() {
-    // var self = this;
     this.gameinstance.getFog((fogs) => {
+      console.log(fogs)
       fogs.forEach((fog) => {
         const tile: Tile = this.tiles[fog[0]];
         const f = this.add.sprite(tile.x + 50, tile.y - 5, fog[1]).setDisplaySize(60, 60);
@@ -520,16 +524,26 @@ export default class GameScene extends Phaser.Scene {
         tile.setFog(f) // add to tile
         f.setInteractive()
         this.add.existing(f);
-        console.log(fogs)
         f.on("pointerdown", (pointer) => {
-          this.gameinstance.useFog(f.name, tile.id, () => {
+          this.gameinstance.useFog(f.name, tile.id, (tile) => {
+            console.log(tile, typeof tile)
+            let f = this.tiles[+tile].getFog();
             f.clearTint();
-            setTimeout(()=>{
+            setTimeout(() => {
               f.destroy()
             }, 800);
           })
         }, this)
       })
+    });
+
+
+    this.gameinstance.destroyFog((tile) => {
+      let f = this.tiles[+tile].getFog();
+      f.clearTint();
+      setTimeout(() => {
+        f.destroy()
+      }, 800);
     });
   }
 

@@ -1,7 +1,5 @@
 
-//server controller
-
-import { Game, HeroKind, Region, Hero, Monster } from '../model';
+import { Game, HeroKind, Region, Hero, Monster, Fog, MonsterKind } from '../model';
 
 export function game(socket, model: Game, io) {
 
@@ -17,7 +15,6 @@ export function game(socket, model: Game, io) {
       for (var regionID of adjRegions) {
         var timeLeft = hero.getTimeOfDay() <= 7 || (hero.getTimeOfDay() <= 10 && hero.getWill() >= 2)
         if (regionID === id && timeLeft) { // successful move
-          console.log("You can move!")
           let targetRegion: Region = model.getRegions()[id];
           hero.moveTo(targetRegion)
 
@@ -37,13 +34,11 @@ export function game(socket, model: Game, io) {
 
     // Emitting with broadcast.to to the caller doesn't seem to work. Below is a workaround
     if (model.getCurrPlayersTurn() == nextPlayer) {
-      console.log("Currplayer is only one left and keeps turn");
       socket.emit("yourTurn");
       return;
     }
 
     model.setCurrPlayersTurn(nextPlayer)
-    console.log("Emitting yourTurn to ", nextPlayer)
     socket.broadcast.to(`/${model.getName()}#${nextPlayer}`).emit("yourTurn")
   })
 
@@ -90,7 +85,6 @@ export function game(socket, model: Game, io) {
     }
 
     if (success) {
-      console.log(hero);
       callback();
     }
   });
@@ -122,12 +116,17 @@ export function game(socket, model: Game, io) {
   socket.on("useFog", function (fogType, tile, callback) {
     let heroId = socket.conn.id;
     let hero = model.getHero(heroId);
-    console.log(tile, hero.getRegion().getID());
-    if(hero != undefined && tile == hero.getRegion().getID()){
-      const success = model.useFog(fogType, +tile);
-      if(success){
-        callback();
+    if (hero != undefined && tile == hero.getRegion().getID()) {
+      let { success, id } = model.useFog(fogType, +tile);
+      if (success) {
+        if (fogType === Fog.Gor) {
+          io.of("/" + model.getName()).emit("addMonster", MonsterKind.Gor, tile, id);
+        }
+
+        callback(tile);
+        socket.broadcast.emit("destroyFog", tile);
       }
+
     }
   });
 
@@ -163,17 +162,8 @@ export function game(socket, model: Game, io) {
   });
 
   socket.on('bind hero', function (heroType, callback) {
-    let success = false;
     let id = socket.conn.id;
-
-    if (heroType === "archer")
-      success = model.bindHero(id, HeroKind.Archer);
-    else if (heroType === "warrior")
-      success = model.bindHero(id, HeroKind.Warrior);
-    else if (heroType === "mage")
-      success = model.bindHero(id, HeroKind.Mage);
-    else if (heroType === "dwarf")
-      success = model.bindHero(id, HeroKind.Dwarf);
+    const success = model.bindHero(id, heroType);
 
     if (success) {
       let remaining = model.getAvailableHeros();
@@ -186,15 +176,20 @@ export function game(socket, model: Game, io) {
     }
   });
 
+  socket.on("getBoundHeros", (callback) => {
+    let remaining = model.getAvailableHeros();
+    let heros = {
+      taken: ["archer", "warrior", "mage", "dwarf"].filter(f => !remaining.toString().includes(f)),
+      remaining: remaining
+    }
+    callback(heros);
+  });
+
   socket.on('disconnect', function () {
     console.log('user disconnected', socket.conn.id, ' in game.');
     // model.removePlayer(socket.conn.id);
   });
 
-
-  /*
-   * CHAT RELATED
-   */
   socket.on("send message", function (sent_msg, callback) {
     let raw_sent_msg = sent_msg
     let name = ""
