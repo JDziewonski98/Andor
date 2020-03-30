@@ -25,7 +25,7 @@ export class HeroWindow extends Window {
     private smallItem2;
     private smallItem3;
 
-    public constructor(key: string, data, windowData = { x: 350, y: 30, width: 400, height: 400 }) {
+    public constructor(key: string, data, windowData = { x: 350, y: 30, width: 500, height: 400 }) {
         super(key, windowData);
         this.icon = data.icon
         this.name = data.name
@@ -173,13 +173,13 @@ export class HeroWindow extends Window {
                 }
                 break;
             case 1:
-                self.smallItem2 = self.add.text(60,220,item)
+                self.smallItem2 = self.add.text(85,220,item)
                 if (self.clienthero == self.windowhero){
                     defineOnclick(self.smallItem2, item)
                 }
                 break;
             case 2:
-                self.smallItem3 = self.add.text(95,220,item)
+                self.smallItem3 = self.add.text(145,220,item)
                 if (self.clienthero == self.windowhero){
                     defineOnclick(self.smallItem3, item)
                 }

@@ -182,6 +182,7 @@ export class Fight extends Window {
 
                                 //handle mage ability
                                 if (self.hero.getKind() == 'mage') {
+                                    //TODO: handle black die faces
                                     rollbutton.setInteractive()
                                     rollbutton.removeAllListeners('pointerdown')
                                     var oppositeside = 7 - data.roll

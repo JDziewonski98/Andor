@@ -233,6 +233,7 @@ export class Hero {
     public roll(usingBow = false) {
 
         var dicefaces = [1, 2, 3, 4, 5, 6]
+        var blackdie = [6, 6, 8, 10, 10, 12]
         var rollamt = 0
         var rolls: number[] = []
 
@@ -247,7 +248,15 @@ export class Hero {
         }
 
         for (let i = 0; i < rollamt; i++) {
-            let roll = dicefaces[Math.floor(Math.random() * dicefaces.length)]
+            let roll
+            //the black die is always the first one rolled.
+            if (this.smallItems.includes(SmallItem.BlueRunestone) && this.smallItems.includes(SmallItem.YellowRunestone) && this.smallItems.includes(SmallItem.GreenRunestone) && i == 0) {
+                console.log('a black die has been rolled due to runestone triple threat!')
+                roll = blackdie[Math.floor(Math.random() * blackdie.length)]
+            }
+            else {
+                roll = dicefaces[Math.floor(Math.random() * dicefaces.length)]
+            }
             rolls.push(roll)
         }
 
