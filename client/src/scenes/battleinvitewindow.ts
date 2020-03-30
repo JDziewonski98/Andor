@@ -13,8 +13,10 @@ export class BattleInvWindow extends Window {
     private abilitybutton;
     private confirmbutton;
     //for helm
-    private helmtext
-    private otherdicetext
+    private helmtext;
+    private otherdicetext;
+    //for brew
+    private brewtext;
 
     private roll = -1;
     private str = -1;
@@ -103,6 +105,33 @@ export class BattleInvWindow extends Window {
                         })
                     }
                 }
+                //handle brew here:
+                self.gameinstance.getHeroItems(self.hero.getKind(), function(itemdict) {
+                    if (itemdict['smallItems'].includes('half_brew') || itemdict['smallItems'].includes('brew')) {
+                        self.brewtext = self.add.text(260,190,'Click to use\n witch\'s brew.').setInteractive();
+                        self.brewtext.on('pointerdown', function(pointer) {
+                            var doubled_roll = self.roll * 2
+                            self.rolltext.setText('Your roll: ' + doubled_roll + 'Your str: ' + data.strength)
+                            self.roll = doubled_roll
+                            self.brewtext.destroy()
+                            try {
+                                self.helmtext.destroy()
+                                self.otherdicetext.destroy()
+                            }
+                            catch {
+                                //its fine
+                            }
+                            //prioritize consuming a half_brew
+                            if (itemdict['smallItems'].includes('half_brew')) {
+                                self.gameinstance.consumeItem('half_brew')
+                            }
+                            else {
+                                self.gameinstance.consumeItem('brew')
+                            }
+                        })
+
+                    }
+                })
                 
                 self.confirmbutton = self.add.text(50,70,'Click to confirm your attack.').setInteractive()
                 self.confirmbutton.on('pointerdown', function(pointer) {
@@ -144,7 +173,11 @@ export class BattleInvWindow extends Window {
             self.otherdicetext.setText(self.otherdicetext.getWrappedText() + ' ' + die)
         }
         self.helmtext.on('pointerdown', function(pointer) {
-            //TODO: delete the helmet on client and server side.
+            try {
+                self.brewtext.disableInteractive()
+                self.brewtext.setText('')
+            }
+            catch {}
             self.gameinstance.consumeItem('helm')
             self.helmtext.disableInteractive()
             self.otherdicetext.destroy()

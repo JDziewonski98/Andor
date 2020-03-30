@@ -333,6 +333,18 @@ export class Hero {
                 break;
 
             case 'brew':
+                let index_brew = this.smallItems.indexOf(SmallItem.Brew);
+                if (index_brew > -1) {
+                    this.smallItems.splice(index_brew, 1);
+                    this.pickUpSmallItem(SmallItem.HalfBrew)
+                }
+                break;
+
+            case 'half_brew':
+                let index_hbrew = this.smallItems.indexOf(SmallItem.HalfBrew);
+                if (index_hbrew > -1) {
+                    this.smallItems.splice(index_hbrew, 1);
+                }
                 break;
 
             default:

@@ -33,6 +33,8 @@ export class Fight extends Window {
     //for helm
     private otherdicetext;
     private helmtext;
+    //for brew
+    private brewtext;
     //monster stats and attributes
     private monstername;
     private monstertexture;
@@ -204,6 +206,34 @@ export class Fight extends Window {
                                     })
                                 }
                             }
+                            //handle brew here:
+                            self.gameinstance.getHeroItems(self.hero.getKind(), function(itemdict) {
+                                if (itemdict['smallItems'].includes('half_brew') || itemdict['smallItems'].includes('brew')) {
+                                    self.brewtext = self.add.text(260,190,'Click to use\n witch\'s brew.').setInteractive();
+                                    self.brewtext.on('pointerdown', function(pointer) {
+                                        var cur_roll = self.yourattack - data.strength
+                                        var doubled_roll = cur_roll * 2
+                                        self.yourroll.setText('Your roll: ' + doubled_roll + 'Your str: ' + data.strength)
+                                        self.yourattack = doubled_roll + data.strength
+                                        self.brewtext.destroy()
+                                        try {
+                                            self.helmtext.destroy()
+                                            self.otherdicetext.destroy()
+                                        }
+                                        catch {
+                                            //its fine
+                                        }
+                                        //prioritize consuming a half_brew
+                                        if (itemdict['smallItems'].includes('half_brew')) {
+                                            self.gameinstance.consumeItem('half_brew')
+                                        }
+                                        else {
+                                            self.gameinstance.consumeItem('brew')
+                                        }
+                                    })
+
+                                }
+                            })
                         })
                     })
 
@@ -377,7 +407,11 @@ export class Fight extends Window {
             self.otherdicetext.setText(self.otherdicetext.getWrappedText() + ' ' + die)
         }
         self.helmtext.on('pointerdown', function(pointer) {
-            //TODO: delete the helmet on client and server side.
+            try {
+                self.brewtext.disableInteractive()
+                self.brewtext.setText('')
+            }
+            catch {}
             self.gameinstance.consumeItem('helm')
             self.helmtext.disableInteractive()
             self.otherdicetext.destroy()
