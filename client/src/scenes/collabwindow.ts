@@ -4,6 +4,7 @@ import { Hero } from '../objects/hero';
 import { game } from '../api/game';
 import { collabTextHeight, collabColWidth, collabRowHeight } from '../constants'
 import { ResourceToggle } from "../widgets/ResourceToggle";
+import BoardOverlay from "./boardoverlay";
 
 export class CollabWindow extends Window {
     private submitText;
@@ -30,6 +31,8 @@ export class CollabWindow extends Window {
     private gameinstance: game;
     private infight: boolean = false;
 
+    private overlayRef: BoardOverlay;
+
     private name;
 
     public constructor(key: string, data) {
@@ -42,6 +45,7 @@ export class CollabWindow extends Window {
         this.width = data.w;
         this.height = data.h;
         this.infight = data.infight;
+        this.overlayRef = data.overlayRef;
         this.name = key
 
         if (this.isOwner) {
@@ -53,6 +57,10 @@ export class CollabWindow extends Window {
 
     protected initialize() {
         var self = this
+
+        // Set overlay not interactive: this doesn't work for start of game because elements of the
+        // overlay may not be instantiated yet
+        // this.overlayRef.toggleInteractive(false);
 
         // Initialize list of resource names
         if (this.resources) {
@@ -94,6 +102,9 @@ export class CollabWindow extends Window {
             // Resume main game scene when collab decision is complete
             
             self.scene.resume('Game');
+
+            // Reset overlay interactive
+            self.overlayRef.toggleInteractive(true);
             
             self.scene.remove(self.name);
             self.gameinstance.unsubscribeListeners()
