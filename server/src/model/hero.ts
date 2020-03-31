@@ -306,8 +306,8 @@ export class Hero {
         */
         //TODO
         let helm = this.helm == true ? 'true' : 'false'
-        let itemdict = {largeItem: this.largeItem, helm:helm, smallItems:this.smallItems}
-        return itemdict
+        let itemdict = {largeItem: this.largeItem, helm:helm, smallItems:this.smallItems, gold:this.gold}
+        return itemdict 
     }
 
     public consumeItem(item){

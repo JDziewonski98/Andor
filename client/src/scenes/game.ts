@@ -87,8 +87,21 @@ export default class GameScene extends Phaser.Scene {
     this.load.image("Gold", "../assets/gold.png");
     this.load.image("EventCard", "../assets/event.png");
     this.load.image("Gor", "../assets/gorfog.png");
+    //items
     this.load.image("Brew", "../assets/brew.png");
     this.load.image("Wineskin", "../assets/wineskin.png");
+    this.load.image("brew", "../assets/brew.png");
+    this.load.image("wineskin", "../assets/wineskin.png");
+    this.load.image("bow", "../assets/bow.PNG");
+    this.load.image("falcon", "../assets/falcon.PNG");
+    this.load.image("helm", "../assets/helm.PNG");
+    this.load.image("menubackground", "../assets/menubackground.png");
+    this.load.image("blue_runestone", "../assets/runestone_b.PNG");
+    this.load.image("green_runestone", "../assets/runestone_g.PNG");
+    this.load.image("yellow_runestone", "../assets/runestone_y.PNG");
+    this.load.image("shield", "../assets/shield.PNG");
+    this.load.image("telescope", "../assets/telescope.PNG");
+
     this.load.image("Strength", "../assets/strength.png");
 
   }

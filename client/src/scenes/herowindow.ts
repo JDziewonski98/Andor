@@ -1,6 +1,8 @@
 import { Window } from "./window";
 import { game } from '../api/game';
 import { Farmer } from "../objects/farmer";
+import {WindowManager} from "../utils/WindowManager";
+import {TradeWindow} from './tradewindow';
 
 export class HeroWindow extends Window {
 
@@ -18,6 +20,7 @@ export class HeroWindow extends Window {
     private gameinstance: game;
     private clienthero;
     private windowhero;
+    private key
 
     //items
     private largeItem;
@@ -27,6 +30,7 @@ export class HeroWindow extends Window {
 
     public constructor(key: string, data, windowData = { x: 350, y: 30, width: 500, height: 400 }) {
         super(key, windowData);
+        this.key = key
         this.icon = data.icon
         this.name = data.name
         this.gameinstance = data.controller
@@ -121,7 +125,9 @@ export class HeroWindow extends Window {
             //same code as above to show gold being dropped
         })
 
-
+        this.add.text(450,350, 'TRADE').setInteractive().on('pointerdown', function(pointer) {
+            WindowManager.create(this, 'tradwindow', TradeWindow, {gameinstance:self.gameinstance, hosthero:self.clienthero, inviteehero:self.windowhero, parentkey:self.key, clienthero:self.clienthero})
+        }, this)
 
     }
 
