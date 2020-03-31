@@ -11,7 +11,7 @@ import {
   reducedWidth, reducedHeight,
   collabTextHeight, collabColWidth, collabRowHeight,
   wellTile1, wellTile2, wellTile3, wellTile4,
-  mOffset
+  mOffset, enumPositionOfNarraton
 } from '../constants'
 
 
@@ -519,12 +519,14 @@ export default class GameScene extends Phaser.Scene {
     }
 
 
-    private addNarrator() {
-        const newNarrator = new Narrator(this, 9450 * scaleFactor + borderWidth,
-            6100 * scaleFactor + borderWidth, "pawn", this.gameinstance).setDisplaySize(40, 40);
-        this.add.existing(newNarrator);
-        
+    private addNarrator(character = 'A') {
+        // let A be the default. can change the .A to anything under N. checked that it works
+        var posNarrator = enumPositionOfNarraton.A
 
+        const newNarrator = new Narrator(this, posNarrator, "pawn", this.gameinstance).setDisplaySize(40, 40);
+        this.add.existing(newNarrator);
+       
+        newNarrator.advance() // first time calling it, will go into the this.posNarrator === A branch of the switch        
     }
 
   private addFog() {
