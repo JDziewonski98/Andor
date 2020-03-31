@@ -1,4 +1,4 @@
-import { Farmer, Hero, HourTracker, Monster, HeroKind, Well, Tile } from '../objects';
+import { Farmer, Hero, HourTracker, Monster, HeroKind, Well, Tile, Narrator} from '../objects';
 import { game } from '../api';
 import { WindowManager, CollabWindow, MerchantWindow, DeathWindow, Fight, BattleInvWindow, GameOverWindow } from "./windows";
 import { RietburgCastle } from './rietburgcastle';
@@ -11,7 +11,7 @@ import {
   reducedWidth, reducedHeight,
   collabTextHeight, collabColWidth, collabRowHeight,
   wellTile1, wellTile2, wellTile3, wellTile4,
-  mOffset
+  mOffset, enumPositionOfNarrator
 } from '../constants'
 
 
@@ -41,7 +41,7 @@ export default class GameScene extends Phaser.Scene {
   private maxZoom = 1;
   private zoomAmount = 0.01;
 
-  private sceneplugin
+  private sceneplugin;
   private turntext;
 
   private overlay;
@@ -92,6 +92,7 @@ export default class GameScene extends Phaser.Scene {
     this.load.image("Brew", "../assets/brew.png");
     this.load.image("Wineskin", "../assets/wineskin.png");
     this.load.image("Strength", "../assets/strength.png");
+    this.load.image("pawn", "../assets/pawn.png");
 
   }
 
@@ -117,7 +118,11 @@ export default class GameScene extends Phaser.Scene {
     this.addWell(7073, 3333, wellTile3)
     this.addWell(5962, 770, wellTile4)
 
+    this.addGold()
+
     this.addFog();
+
+    this.addNarrator();
 
     this.gameinstance.addMonster((type, tile, id) => {
       this.addMonster(tile, type, id);
@@ -145,7 +150,7 @@ export default class GameScene extends Phaser.Scene {
       WindowManager.create(self, 'deathnotice', DeathWindow, { controller: self.gameinstance });
 
     })
-    this.addGold()
+    
 
     var numPlayer = 0;
     this.gameinstance.getHeros((herotypes) => {
@@ -515,7 +520,18 @@ export default class GameScene extends Phaser.Scene {
       y * scaleFactor + borderWidth, "well", tile, this.gameinstance).setDisplaySize(40, 45);
     this.add.existing(newWell);
     this.wells.set("" + newWell.getTileID(), newWell);
-  }
+    }
+
+
+    private addNarrator(character = enumPositionOfNarrator.A) {
+        // let A be the default. can change the .A to anything under N. checked that it works
+        var posNarrator = character
+
+        const newNarrator = new Narrator(this, posNarrator, "pawn", this.gameinstance).setDisplaySize(40, 40);
+        this.add.existing(newNarrator);
+       
+        newNarrator.advance() // first time calling it, will go into the this.posNarrator === A branch of the switch        
+    }
 
   private addFog() {
     this.gameinstance.getFog((fogs) => {
@@ -589,7 +605,9 @@ export default class GameScene extends Phaser.Scene {
         }
       }, this)
     }
-  }
+    }
+
+
 
   private startingCollabDecisionSetup() {
     var self = this;
