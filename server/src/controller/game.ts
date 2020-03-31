@@ -634,5 +634,23 @@ export function game(socket, model: Game, io) {
   })
 
   ///////////////////////
+
+  //////////////////////
+  // TRADE STUFF
+  /////////////////////
+
+  socket.on('sendTradeInvite', function(host, invitee) {
+    var invitee_id = model.getIDsByHeroname([invitee])
+    for (let playerid of invitee_id) {
+      socket.broadcast.to(`/${model.getName()}#${playerid}`).emit("receiveTradeInvite", host, invitee)
+    }
+  })
+
+  socket.on('sendTradeOfferChanged', function(otherplayer, itemindex) {
+    var otherplayer_id = model.getIDsByHeroname([otherplayer])
+    for (let playerid of otherplayer_id) {
+      socket.broadcast.to(`/${model.getName()}#${playerid}`).emit("receiveTradeOfferChanged", itemindex)
+    }
+  })
 }
 

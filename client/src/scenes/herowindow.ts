@@ -125,9 +125,12 @@ export class HeroWindow extends Window {
             //same code as above to show gold being dropped
         })
 
-        this.add.text(450,350, 'TRADE').setInteractive().on('pointerdown', function(pointer) {
-            WindowManager.create(this, 'tradwindow', TradeWindow, {gameinstance:self.gameinstance, hosthero:self.clienthero, inviteehero:self.windowhero, parentkey:self.key, clienthero:self.clienthero})
-        }, this)
+        if (this.clienthero != this.windowhero) {
+            this.gameinstance.sendTradeInvite(this.clienthero, this.windowhero)
+            this.add.text(450,350, 'TRADE').setInteractive().on('pointerdown', function(pointer) {
+                WindowManager.create(this, 'tradewindow', TradeWindow, {gameinstance:self.gameinstance, hosthero:self.clienthero, inviteehero:self.windowhero, parentkey:self.key, clienthero:self.clienthero})
+            }, this)
+        }
 
     }
 

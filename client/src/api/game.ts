@@ -346,6 +346,14 @@ export class game {
         this.socket.on('receiveTradeInvite', callback)
     }
 
+    public receiveTradeOfferChanged(callback) {
+        this.socket.on('receiveTradeOfferChanged', callback)
+    }
+
+    public sendTradeOfferChanged(otherplayer, itemindex) {
+        this.socket.emit('sendTradeOfferChanged', otherplayer, itemindex)
+    }
+
     public getHeroItems(hero, callback) {
         this.socket.emit('getHeroItems', hero, callback)
     }

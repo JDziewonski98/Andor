@@ -1,6 +1,6 @@
 import { Farmer, Hero, HourTracker, Monster, HeroKind, Well, Tile } from '../objects';
 import { game } from '../api';
-import { WindowManager, CollabWindow, MerchantWindow, DeathWindow, Fight, BattleInvWindow, GameOverWindow } from "./windows";
+import { WindowManager, CollabWindow, MerchantWindow, DeathWindow, Fight, BattleInvWindow, GameOverWindow, TradeWindow } from "./windows";
 import { RietburgCastle } from './rietburgcastle';
 import BoardOverlay from './boardoverlay';
 
@@ -222,6 +222,10 @@ export default class GameScene extends Phaser.Scene {
           self.castle.shields[shieldNum].visible = true;
         }
       }
+    })
+
+    this.gameinstance.receiveTradeInvite(function(host, invitee) {
+        WindowManager.create(self, 'tradewindow', TradeWindow, {gameinstance:self.gameinstance, hosthero:host, inviteehero:invitee, parentkey:'None', clienthero:invitee})
     })
   }
 
