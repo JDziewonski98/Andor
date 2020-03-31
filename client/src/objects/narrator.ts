@@ -1,7 +1,7 @@
 import { Tile } from "./tile";
 import { game } from "../api/game";
 import {
-    borderWidth, scaleFactor, enumPositionOfNarraton, narratorXCoord  
+    borderWidth, scaleFactor, enumPositionOfNarrator, narratorXCoord  
 } from '../constants'
 
 
@@ -50,7 +50,7 @@ export class Narrator extends Phaser.GameObjects.Image {
 
     public advance() {
 
-        if (enumPositionOfNarraton[(this.posNarrator)] === "A") {
+        if (enumPositionOfNarrator[(this.posNarrator)] === "A") {
             // at beginning of game. position A
             console.log("narrator at A")
 
@@ -58,7 +58,7 @@ export class Narrator extends Phaser.GameObjects.Image {
             this.posNarrator += 1
             
         }
-        else if (enumPositionOfNarraton[(this.posNarrator)] === "N") {
+        else if (enumPositionOfNarrator[(this.posNarrator)] === "N") {
             // cannot advance any more. end game. 
             // check if player wins(witch's brew at castle && THE monster is defeated)
         }
@@ -72,7 +72,7 @@ export class Narrator extends Phaser.GameObjects.Image {
             //this.Phaser.GameObjects.Image.setDisplayOrigin(x * scaleFactor + borderWidth, y * scaleFactor + borderWidth)
 
 
-            switch (enumPositionOfNarraton[(this.posNarrator)]) {
+            switch (enumPositionOfNarrator[(this.posNarrator)]) {
                 
                 case "B": { }
                 case "C": { }

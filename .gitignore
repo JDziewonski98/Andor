@@ -3,3 +3,4 @@
 .DS_Store
 client/src/config/env.js
 *.sqlite
+.vs/361March_31/v16/.suo
