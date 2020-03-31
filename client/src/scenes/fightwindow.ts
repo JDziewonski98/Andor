@@ -5,6 +5,7 @@ import { CollabWindow } from "./collabwindow"
 import {
     reducedWidth, reducedHeight, collabColWidth, collabRowHeight
 } from '../constants'
+import BoardOverlay from "./boardoverlay";
 
 export class Fight extends Window {
     //  Class to display a fight window through which you can see mosnter stats and engage in a fight.
@@ -54,6 +55,8 @@ export class Fight extends Window {
     private heroobjectsforcollab
     private firstfight = true
     private inviteresponses = 0
+    // To toggle interactivity of overlay
+    private overlayRef: BoardOverlay;
 
     public constructor(key, data, windowData = { x: 10, y: 10, width: 500, height: 380 }) {
         super(key, windowData);
@@ -63,6 +66,7 @@ export class Fight extends Window {
         this.monstername = data.monster.name
         this.hero = data.hero
         this.monster = data.monster
+        this.overlayRef = data.overlayRef;
         this.yourwill = this.hero.getWillPower()
         this.heroobjectsforcollab = data.heroes
         this.allyrolls = new Map<string, number>();
@@ -87,6 +91,9 @@ export class Fight extends Window {
         var bg = this.add.image(0, 0, 'scrollbg').setOrigin(0.5)
         bg.tint = 0xff0000
         this.monstericon = this.add.image(40, 40, this.monstertexture)
+
+        // disable the overlay
+        this.overlayRef.toggleInteractive(false);
 
         //fetch monster stats from backend
         this.gameinstance.getMonsterStats(this.monstername, function (data) {
@@ -362,6 +369,7 @@ export class Fight extends Window {
         }
         this.exitbutton = this.add.text(300, 10, 'X', style).setInteractive()
         this.exitbutton.on('pointerdown', function (pointer) {
+            self.overlayRef.toggleInteractive(true);
             self.scene.resume("Game")
             self.scene.remove(self.windowname)
         })
@@ -510,7 +518,8 @@ export class Fight extends Window {
                 y: reducedHeight / 2 - height / 2,
                 w: width,
                 h: (involvedheros.length + 2) * collabRowHeight,
-                infight: true
+                infight: true,
+                overlayRef: self.overlayRef
             }
 
             WindowManager.create(this, self.monstername + 'collab', CollabWindow, collabwindowdata)
@@ -537,7 +546,8 @@ export class Fight extends Window {
                 y: reducedHeight / 2 - height / 2,
                 w: width,
                 h: (involvedheros.length + 2) * collabRowHeight,
-                infight: true
+                infight: true,
+                overlayRef: self.overlayRef
             }
 
             WindowManager.create(this, self.monstername + 'collab', CollabWindow, collabwindowdata)
@@ -548,7 +558,6 @@ export class Fight extends Window {
         this.gameinstance.killMonster(self.monstername)
     }
 
-
     public death() {
         //if you died, end your turn and reset the stats.
         var self = this
@@ -556,7 +565,9 @@ export class Fight extends Window {
         this.add.text(70, 50, "You lost and lose\n 1 strength. Your turn \n is over. Your \nwill is set to 3.")
         var text = this.add.text(70, 150, "Click to accept.").setInteractive()
         text.on('pointerdown', function (pointer) {
-            self.scene.remove(self.windowname)
+            self.overlayRef.toggleInteractive(true);
+            self.scene.resume("Game");
+            self.scene.remove(self.windowname);
             if (self.gameinstance.getTurn()) {
                 self.gameinstance.endTurn();
             }

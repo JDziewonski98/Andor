@@ -44,6 +44,8 @@ export default class GameScene extends Phaser.Scene {
   private sceneplugin
   private turntext;
 
+  private overlay;
+  
   constructor() {
     super({ key: 'Game' });
     this.heroes = Array<Hero>();
@@ -159,14 +161,6 @@ export default class GameScene extends Phaser.Scene {
         }
       });
 
-      // Need to wait for heroes to be created before creating collab decision
-      self.startingCollabDecisionSetup();
-      // Note that starting hero rank gets determined in collab setup
-      if (self.hero.tile.id == self.startingHeroRank) {
-        console.log("first turn goes to hero rank", self.startingHeroRank);
-        self.gameinstance.setMyTurn(true);
-      }
-
       this.hourTrackerSetup();
 
       // Add overlay to game
@@ -179,7 +173,16 @@ export default class GameScene extends Phaser.Scene {
         wells: self.wells,
         hk: self.ownHeroType
       };
-      this.scene.add('BoardOverlay', new BoardOverlay(overlayData), true);
+      this.overlay = new BoardOverlay(overlayData);
+      this.scene.add('BoardOverlay', this.overlay, true);
+
+      // Need to wait for heroes to be created before creating collab decision
+      self.startingCollabDecisionSetup();
+      // Note that starting hero rank gets determined in collab setup
+      if (self.hero.tile.id == self.startingHeroRank) {
+        console.log("first turn goes to hero rank", self.startingHeroRank);
+        self.gameinstance.setMyTurn(true);
+      }
     })
     console.log(numPlayer);
 
@@ -361,7 +364,8 @@ export default class GameScene extends Phaser.Scene {
       else {
         WindowManager.create(this, monster.name, Fight, {
           controller: this.gameinstance,
-          hero: this.hero, monster: monster, heroes: this.heroes
+          hero: this.hero, monster: monster, heroes: this.heroes,
+          overlayRef: this.overlay
         });
         this.scene.pause()
       }
@@ -620,7 +624,8 @@ export default class GameScene extends Phaser.Scene {
         y: reducedHeight / 2 - height / 2,
         w: width,
         h: height,
-        infight: false
+        infight:false,
+        overlayRef: self.overlay
       } :
       {
         controller: self.gameinstance,
@@ -629,7 +634,8 @@ export default class GameScene extends Phaser.Scene {
         y: reducedHeight / 2 - height / 2,
         w: 200,
         h: 100,
-        infight: false
+        infight:false,
+        overlayRef: self.overlay
       }
     WindowManager.create(this, 'collab', CollabWindow, collabWindowData);
     // Freeze main game while collab window is active
