@@ -11,12 +11,13 @@ import { HeroKind } from '../objects/HeroKind';
 
 export default class BoardOverlay extends Phaser.Scene {
     private parent: Phaser.GameObjects.Zone
-    private gameText;
+    private heroButtons: Map<string, Phaser.GameObjects.Text> = new Map();
     private gameinstance: game;
-    private endturntext;
+    private endTurnButton: Phaser.GameObjects.Text;
+    private chatButton: Phaser.GameObjects.Text;
 
     // End Day
-    private endDayText;
+    private endDayButton: Phaser.GameObjects.Text;
     private tiles: Tile[];
     private monsterNameMap: Map<string, Monster>;
     private hourTracker: HourTracker;
@@ -55,9 +56,9 @@ export default class BoardOverlay extends Phaser.Scene {
         }
         var self = this;
 
-        this.gameText = this.add.text(x, 10, type, style2)
-        this.gameText.setInteractive();
-        this.gameText.on('pointerdown', (pointer) => {
+        this.heroButtons.set(type, this.add.text(x, 10, type, style2));
+        // this.heroButtons.get(type).setInteractive();
+        this.heroButtons.get(type).on('pointerdown', (pointer) => {
             this.gameinstance.getHeroAttributes(type, (herodata) => {
                 const cardID = `${type}Card`;
                 if (this.scene.isVisible(cardID)) {
@@ -112,9 +113,9 @@ export default class BoardOverlay extends Phaser.Scene {
         }, this);
 
         // chat window
-        this.gameText = this.add.text(750, 560, "CHAT", style2)
-        this.gameText.setInteractive();
-        this.gameText.on('pointerdown', function (pointer) {
+        this.chatButton = this.add.text(750, 560, "CHAT", style2)
+        this.chatButton.setInteractive();
+        this.chatButton.on('pointerdown', function (pointer) {
             console.log(this.scene, ' in overlay')
             if (this.scene.isVisible('chat')) {
                 WindowManager.destroy(this, 'chat');
@@ -126,9 +127,10 @@ export default class BoardOverlay extends Phaser.Scene {
         }, this);
 
         // end turn button
-        this.endturntext = this.add.text(850, 560, "END TURN", style2)
-        this.endturntext.setInteractive();
-        this.endturntext.on('pointerdown', function (pointer) {
+        this.endTurnButton = this.add.text(850, 560, "END TURN", style2)
+        // console.log("created endTurnButton", this.endTurnButton)
+        // this.endTurnButton.setInteractive();
+        this.endTurnButton.on('pointerdown', function (pointer){
             if (this.gameinstance.myTurn) {
                 this.gameinstance.endTurn();
                 this.tweens.add({
@@ -146,6 +148,8 @@ export default class BoardOverlay extends Phaser.Scene {
 
         // end day setup
         this.endDaySetup();
+
+        console.log("finished overlay create()")
     }
 
     private endDaySetup() {
@@ -156,10 +160,10 @@ export default class BoardOverlay extends Phaser.Scene {
             fontSize: "20px",
             backgroundColor: '#f00'
         }
-
-        this.endDayText = this.add.text(600, 560, "END DAY", style2)
-        this.endDayText.setInteractive();
-        this.endDayText.on('pointerdown', function (pointer) {
+    
+        this.endDayButton = this.add.text(600, 560, "END DAY", style2)
+        // this.endDayButton.setInteractive();
+        this.endDayButton.on('pointerdown', function (pointer) {
             // does nothing if not your turn
             if (!self.gameinstance.getTurn()) {
                 console.log("cannot end your day when it is not your turn");
@@ -250,5 +254,22 @@ export default class BoardOverlay extends Phaser.Scene {
             onComplete: function () { monster.moveToTile(newTile) }
         });
 
+    }
+
+    public toggleInteractive(interactive: boolean) {
+        if (interactive) {
+            this.endTurnButton.setInteractive();
+            this.endDayButton.setInteractive();
+            this.heroButtons.forEach(function(button) {
+                button.setInteractive();
+            })
+        } else {
+            console.log(this.endTurnButton)
+            this.endTurnButton.disableInteractive();
+            this.endDayButton.disableInteractive();
+            this.heroButtons.forEach(function(button) {
+                button.disableInteractive();
+            })
+        }
     }
 }
