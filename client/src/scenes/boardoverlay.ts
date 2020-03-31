@@ -57,7 +57,6 @@ export default class BoardOverlay extends Phaser.Scene {
         var self = this;
 
         this.heroButtons.set(type, this.add.text(x, 10, type, style2));
-        // this.heroButtons.get(type).setInteractive();
         this.heroButtons.get(type).on('pointerdown', (pointer) => {
             this.gameinstance.getHeroAttributes(type, (herodata) => {
                 const cardID = `${type}Card`;
@@ -128,13 +127,11 @@ export default class BoardOverlay extends Phaser.Scene {
 
         // end turn button
         this.endTurnButton = this.add.text(850, 560, "END TURN", style2)
-        // console.log("created endTurnButton", this.endTurnButton)
-        // this.endTurnButton.setInteractive();
         this.endTurnButton.on('pointerdown', function (pointer){
             if (this.gameinstance.myTurn) {
                 this.gameinstance.endTurn();
                 this.tweens.add({
-                    targets: this.endturntext,
+                    targets: this.endTurnButton,
                     alpha: 0.3,
                     duration: 350,
                     ease: 'Power3',
@@ -143,8 +140,6 @@ export default class BoardOverlay extends Phaser.Scene {
 
             }
         }, this)
-
-        // this.
 
         // end day setup
         this.endDaySetup();
@@ -162,7 +157,6 @@ export default class BoardOverlay extends Phaser.Scene {
         }
     
         this.endDayButton = this.add.text(600, 560, "END DAY", style2)
-        // this.endDayButton.setInteractive();
         this.endDayButton.on('pointerdown', function (pointer) {
             // does nothing if not your turn
             if (!self.gameinstance.getTurn()) {

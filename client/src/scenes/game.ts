@@ -364,7 +364,8 @@ export default class GameScene extends Phaser.Scene {
       else {
         WindowManager.create(this, monster.name, Fight, {
           controller: this.gameinstance,
-          hero: this.hero, monster: monster, heroes: this.heroes
+          hero: this.hero, monster: monster, heroes: this.heroes,
+          overlayRef: this.overlay
         });
         this.scene.pause()
       }
