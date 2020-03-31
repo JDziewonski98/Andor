@@ -106,7 +106,7 @@ export class Monster {
         else if (this.dice == 'black') {
 
             if (this.willpower < 7) {
-                var dicefaces = [6, 8, 10, 10, 12]
+                var dicefaces = [6, 6, 8, 10, 10, 12]
                 var roll1 = Math.floor(Math.random() * dicefaces.length)
                 var roll2 = Math.floor(Math.random() * dicefaces.length)
                 if (roll1 == roll2) {

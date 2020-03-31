@@ -232,7 +232,6 @@ export function game(socket, model: Game, io) {
       callback(heros);
   })
 
-
   socket.on("getHeroAttributes", function (type, callback) {
     let data = {};
     let hero: Hero;
@@ -345,10 +344,10 @@ export function game(socket, model: Game, io) {
     //socket.emit('sendKilledMonsters', monstername);
   })
 
-  socket.on('heroRoll', function (callback) {
+  socket.on('heroRoll', function(bow, callback) {
     let heroId = socket.conn.id
     var hero = model.getHero(heroId)
-    var roll = hero.roll()
+    var roll = hero.roll(bow)
     hero.incrementHour()
     callback(roll)
   })
@@ -357,28 +356,38 @@ export function game(socket, model: Game, io) {
     socket.broadcast.emit('receiveAlliedRoll', herokind, roll, str)
   })
 
-  socket.on('monsterRoll', function (m, callback) {
+  socket.on('monsterRoll', function(m, callback) {
+    //the boolean parameter in the callback is to determine if the bow special ability will be used for the hero roll.
     var heroId = socket.conn.id;
     let hero = model.getHero(heroId);
     let heroregion = hero.getRegion().getID()
     let monster = model.getMonsters().get(m)
     let monsterregion = monster!.getTileID()
+    //if hero is on same tile as monster.
     if (heroregion == monsterregion) {
       let monsterroll = monster!.rollDice()
-      callback(monsterroll)
+      callback(monsterroll, false)
     }
-    else if (hero.getKind() == HeroKind.Archer) {
+    //if hero is adjacent, but has a bow, and is not archer
+    else if (hero.getKind() != HeroKind.Archer && (hero.getRegion().getAdjRegionsIds().includes(monsterregion)) && hero.getLargeItem() == 'bow') {
+      let monsterroll = monster!.rollDice()
+      console.log('here!')
+      callback(monsterroll, true)
+    }
+    //if hero is archer
+    else if (hero.getKind() == HeroKind.Archer ){
       if (hero.getRegion().getAdjRegionsIds().includes(monsterregion) || heroregion == monsterregion) {
         let monsterroll = monster!.rollDice()
-        callback(monsterroll)
+        callback(monsterroll, false)
       }
       else {
-        callback('outofrange')
+        callback('outofrange', false)
       }
 
     }
+    //otherwise hero is not in range.
     else {
-      callback('outofrange')
+      callback('outofrange', false)
     }
   })
 
@@ -409,16 +418,22 @@ export function game(socket, model: Game, io) {
     var centraltile = model.getRegions()[id]
     var centraltileid = centraltile.getID()
     var adjregionids = centraltile.getAdjRegionsIds()
-    let dwarftile: number = -1
-    let archertile: number = -1
-    let magetile: number = -1
-    let warriortile: number = -1
+    let dwarftile: number = -1 
+    var dwarfbow = false
+    let archertile: number = -1 
+    let magetile: number = -1  
+    var magebow = false
+    let warriortile: number = -1 
+    var warriorbow = false
 
     model.getHeros().forEach((hero, key) => {
       if (hero.hk === HeroKind.Mage) {
         hero = model.getHero(key);
         if (hero !== undefined && hero.getTimeOfDay() < 10) {
           magetile = hero.getRegion().getID();
+          if (hero.getLargeItem() == 'bow') {
+            magebow = true
+          }
         }
       }
 
@@ -433,6 +448,9 @@ export function game(socket, model: Game, io) {
         hero = model.getHero(key);
         if (hero !== undefined && hero.getTimeOfDay() < 10) {
           warriortile = hero.getRegion().getID()
+          if (hero.getLargeItem() == 'bow') {
+            warriorbow = true
+          }
         }
       }
 
@@ -440,21 +458,24 @@ export function game(socket, model: Game, io) {
         hero = model.getHero(key);
         if (hero !== undefined && hero.getTimeOfDay() < 10) {
           dwarftile = hero.getRegion().getID()
+          if (hero.getLargeItem() == 'bow') {
+            dwarfbow = true
+          }
         }
       }
     });
 
-    var heroeswithinrange: string[] = []
-    if (centraltileid == dwarftile) {
+    var heroeswithinrange : string[] = []
+    if (centraltileid == dwarftile || (adjregionids.includes(dwarftile) && dwarfbow)) {
       heroeswithinrange.push('dwarf')
     }
     if (adjregionids.includes(archertile) || centraltileid == archertile) {
       heroeswithinrange.push('archer')
     }
-    if (centraltileid == magetile) {
+    if (centraltileid == magetile || (adjregionids.includes(magetile) && magebow)) {
       heroeswithinrange.push('mage')
     }
-    if (centraltileid == warriortile) {
+    if (centraltileid == warriortile || (adjregionids.includes(warriortile) && warriorbow)) {
       heroeswithinrange.push('warrior')
     }
     callback(heroeswithinrange)
@@ -463,7 +484,7 @@ export function game(socket, model: Game, io) {
   socket.on('sendBattleInvite', function (id, herosinrange) {
     var heroids = model.getIDsByHeroname(herosinrange)
     for (let playerid of heroids) {
-      socket.broadcast.to(`/${model.getName()}#${playerid}`).emit("receiveBattleInvite")
+      socket.broadcast.to(`/${model.getName()}#${playerid}`).emit("receiveBattleInvite", id)
     }
   })
 
@@ -577,5 +598,41 @@ export function game(socket, model: Game, io) {
 
     return hour + ":" + minute + ":" + second;
   }
+
+  /////////////////////////
+  // ITEM STUFF
+  ////////////////////////
+  
+  socket.on('getHeroItems', function(herokind, callback) {
+    var thehero: Hero
+    model.getHeros().forEach((hero, key) => {
+      console.log(hero.getKind())
+      if (hero.getKind() == herokind){
+        thehero = hero
+      }
+    })
+    var heroItemDict = thehero!.getItemDict()
+    callback(heroItemDict)
+  })
+
+  socket.on('consumeItem', function(item) {
+    var heroID = socket.conn.id
+    let hero = model.getHero(heroID);
+    hero.consumeItem(item)
+  })
+
+  socket.on('useWineskin', function(halforfull, callback) {
+    var heroID = socket.conn.id
+    let hero = model.getHero(heroID);
+    if (halforfull == 'full'){
+      hero.consumeItem('wineskin')
+    }
+    else {
+      hero.consumeItem('half_wineskin')
+    }
+    callback()
+  })
+
+  ///////////////////////
 }
 

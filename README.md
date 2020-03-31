@@ -52,3 +52,8 @@ Simply run
 ```
 npm run dev
 ```
+
+### Game interface
+```
+localhost:8080
+```

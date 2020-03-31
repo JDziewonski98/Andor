@@ -1,4 +1,4 @@
-import { Farmer, Hero, HourTracker, Monster, HeroKind, Well, Tile } from '../objects';
+import { Farmer, Hero, HourTracker, Monster, HeroKind, Well, Tile, Narrator} from '../objects';
 import { game } from '../api';
 import { WindowManager, CollabWindow, MerchantWindow, DeathWindow, Fight, BattleInvWindow, GameOverWindow } from "./windows";
 import { RietburgCastle } from './rietburgcastle';
@@ -11,7 +11,7 @@ import {
   reducedWidth, reducedHeight,
   collabTextHeight, collabColWidth, collabRowHeight,
   wellTile1, wellTile2, wellTile3, wellTile4,
-  mOffset
+  mOffset, enumPositionOfNarrator
 } from '../constants'
 
 
@@ -41,9 +41,11 @@ export default class GameScene extends Phaser.Scene {
   private maxZoom = 1;
   private zoomAmount = 0.01;
 
-  private sceneplugin
+  private sceneplugin;
   private turntext;
 
+  private overlay;
+  
   constructor() {
     super({ key: 'Game' });
     this.heroes = Array<Hero>();
@@ -90,6 +92,7 @@ export default class GameScene extends Phaser.Scene {
     this.load.image("Brew", "../assets/brew.png");
     this.load.image("Wineskin", "../assets/wineskin.png");
     this.load.image("Strength", "../assets/strength.png");
+    this.load.image("pawn", "../assets/pawn.png");
 
   }
 
@@ -115,7 +118,11 @@ export default class GameScene extends Phaser.Scene {
     this.addWell(7073, 3333, wellTile3)
     this.addWell(5962, 770, wellTile4)
 
+    this.addGold()
+
     this.addFog();
+
+    this.addNarrator();
 
     this.gameinstance.addMonster((type, tile, id) => {
       this.addMonster(tile, type, id);
@@ -124,15 +131,15 @@ export default class GameScene extends Phaser.Scene {
     // Listen for turn to be passed to yourself
     this.gameinstance.yourTurn()
 
-    this.gameinstance.receiveBattleInvite(function () {
-      if (self.scene.isVisible('battleinv')) {
+    this.gameinstance.receiveBattleInvite(function(monstertileid) {
+      if (self.scene.isVisible('battleinv')){
         console.log('destroying battleinv')
         WindowManager.destroy(self, 'battleinv');
       }
       console.log('creating battleinv')
       console.log('attempting to create battleinv window')
-      WindowManager.create(self, 'battleinv', BattleInvWindow, { controller: self.gameinstance, hero: self.hero, gamescene: self });
-
+      WindowManager.create(self, 'battleinv', BattleInvWindow, {controller:self.gameinstance, hero:self.hero, gamescene:self, monstertileid:monstertileid});
+      
     })
     this.gameinstance.receiveDeathNotice(function () {
       if (self.scene.isVisible('deathnotice')) {
@@ -143,7 +150,7 @@ export default class GameScene extends Phaser.Scene {
       WindowManager.create(self, 'deathnotice', DeathWindow, { controller: self.gameinstance });
 
     })
-    this.addGold()
+    
 
     var numPlayer = 0;
     this.gameinstance.getHeros((herotypes) => {
@@ -159,14 +166,6 @@ export default class GameScene extends Phaser.Scene {
         }
       });
 
-      // Need to wait for heroes to be created before creating collab decision
-      self.startingCollabDecisionSetup();
-      // Note that starting hero rank gets determined in collab setup
-      if (self.hero.tile.id == self.startingHeroRank) {
-        console.log("first turn goes to hero rank", self.startingHeroRank);
-        self.gameinstance.setMyTurn(true);
-      }
-
       this.hourTrackerSetup();
 
       // Add overlay to game
@@ -179,7 +178,16 @@ export default class GameScene extends Phaser.Scene {
         wells: self.wells,
         hk: self.ownHeroType
       };
-      this.scene.add('BoardOverlay', new BoardOverlay(overlayData), true);
+      this.overlay = new BoardOverlay(overlayData);
+      this.scene.add('BoardOverlay', this.overlay, true);
+
+      // Need to wait for heroes to be created before creating collab decision
+      self.startingCollabDecisionSetup();
+      // Note that starting hero rank gets determined in collab setup
+      if (self.hero.tile.id == self.startingHeroRank) {
+        console.log("first turn goes to hero rank", self.startingHeroRank);
+        self.gameinstance.setMyTurn(true);
+      }
     })
     console.log(numPlayer);
 
@@ -361,7 +369,8 @@ export default class GameScene extends Phaser.Scene {
       else {
         WindowManager.create(this, monster.name, Fight, {
           controller: this.gameinstance,
-          hero: this.hero, monster: monster, heroes: this.heroes
+          hero: this.hero, monster: monster, heroes: this.heroes,
+          overlayRef: this.overlay
         });
         this.scene.pause()
       }
@@ -511,7 +520,18 @@ export default class GameScene extends Phaser.Scene {
       y * scaleFactor + borderWidth, "well", tile, this.gameinstance).setDisplaySize(40, 45);
     this.add.existing(newWell);
     this.wells.set("" + newWell.getTileID(), newWell);
-  }
+    }
+
+
+    private addNarrator(character = enumPositionOfNarrator.A) {
+        // let A be the default. can change the .A to anything under N. checked that it works
+        var posNarrator = character
+
+        const newNarrator = new Narrator(this, posNarrator, "pawn", this.gameinstance).setDisplaySize(40, 40);
+        this.add.existing(newNarrator);
+       
+        newNarrator.advance() // first time calling it, will go into the this.posNarrator === A branch of the switch        
+    }
 
   private addFog() {
     this.gameinstance.getFog((fogs) => {
@@ -524,14 +544,26 @@ export default class GameScene extends Phaser.Scene {
         tile.setFog(f) // add to tile
         f.setInteractive()
         this.add.existing(f);
+        var self = this
         f.on("pointerdown", (pointer) => {
-          this.gameinstance.useFog(f.name, tile.id, (tile) => {
-            console.log(tile, typeof tile)
-            let f = this.tiles[+tile].getFog();
-            f.clearTint();
-            setTimeout(() => {
-              f.destroy()
-            }, 800);
+          self.gameinstance.getHeroItems(self.hero.getKind(), function(itemdict) {
+            if (itemdict['smallItems'].includes('telescope') && self.tiles[fog[0]].adjRegionsIds.includes(self.hero.tile.id)) {
+              console.log('using telescope.')
+              f.clearTint();
+              setTimeout(() => {
+                f.setTint(0x101010);
+              }, 800);
+            }
+            else {
+              self.gameinstance.useFog(f.name, tile.id, (tile) => {
+                console.log(tile, typeof tile)
+                let f = self.tiles[+tile].getFog();
+                f.clearTint();
+                setTimeout(() => {
+                  f.destroy()
+                }, 800);
+              })
+            }
           })
         }, this)
       })
@@ -573,7 +605,9 @@ export default class GameScene extends Phaser.Scene {
         }
       }, this)
     }
-  }
+    }
+
+
 
   private startingCollabDecisionSetup() {
     var self = this;
@@ -608,7 +642,8 @@ export default class GameScene extends Phaser.Scene {
         y: reducedHeight / 2 - height / 2,
         w: width,
         h: height,
-        infight: false
+        infight:false,
+        overlayRef: self.overlay
       } :
       {
         controller: self.gameinstance,
@@ -617,7 +652,8 @@ export default class GameScene extends Phaser.Scene {
         y: reducedHeight / 2 - height / 2,
         w: 200,
         h: 100,
-        infight: false
+        infight:false,
+        overlayRef: self.overlay
       }
     WindowManager.create(this, 'collab', CollabWindow, collabWindowData);
     // Freeze main game while collab window is active

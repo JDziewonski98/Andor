@@ -5,6 +5,7 @@ import { CollabWindow } from "./collabwindow"
 import {
     reducedWidth, reducedHeight, collabColWidth, collabRowHeight
 } from '../constants'
+import BoardOverlay from "./boardoverlay";
 
 export class Fight extends Window {
     //  Class to display a fight window through which you can see mosnter stats and engage in a fight.
@@ -30,6 +31,11 @@ export class Fight extends Window {
     private monstertypetxt
     private exitbutton
     private invitetext;
+    //for helm
+    private otherdicetext;
+    private helmtext;
+    //for brew
+    private brewtext;
     //monster stats and attributes
     private monstername;
     private monstertexture;
@@ -49,16 +55,18 @@ export class Fight extends Window {
     private heroobjectsforcollab
     private firstfight = true
     private inviteresponses = 0
+    // To toggle interactivity of overlay
+    private overlayRef: BoardOverlay;
 
     public constructor(key, data, windowData = { x: 10, y: 10, width: 500, height: 380 }) {
         super(key, windowData);
-        console.log(data)
         this.windowname = key
         this.gameinstance = data.controller
         this.monstertexture = data.monster.texture
         this.monstername = data.monster.name
         this.hero = data.hero
         this.monster = data.monster
+        this.overlayRef = data.overlayRef;
         this.yourwill = this.hero.getWillPower()
         this.heroobjectsforcollab = data.heroes
         this.allyrolls = new Map<string, number>();
@@ -84,6 +92,9 @@ export class Fight extends Window {
         bg.tint = 0xff0000
         this.monstericon = this.add.image(40, 40, this.monstertexture)
 
+        // disable the overlay
+        this.overlayRef.toggleInteractive(false);
+
         //fetch monster stats from backend
         this.gameinstance.getMonsterStats(this.monstername, function (data) {
             self.monsterstr = data.str;
@@ -106,20 +117,23 @@ export class Fight extends Window {
 
         //click the fight text to enter the fight.
         this.fighttext.on('pointerdown', function (pointer) {
+
             self.inviteresponses = 0
             var haveyourolled = false
             self.alliedrollstxt.setText('Allied rolls: ')
             self.actuallyjoinedheros = []
             self.fighttext.setText('Fight again!')
             self.fighttext.disableInteractive()
-            self.gameinstance.rollMonsterDice(self.monstername, function (result) {
-                console.log('here??')
+
+            //the monster roll dice determines if you are actually in range to fight it and if you need to use bow.
+            self.gameinstance.rollMonsterDice(self.monstername, function (result, bow) {
+
                 if (self.gameinstance.getTurn() == false) {
-                    console.log('case1')
                     self.notificationtext.setText('Not your Turn!')
                 }
+
                 else if (result != 'outofrange') {
-                    console.log('case2')
+
                     //only generate the list of heroes in range text first time.
                     self.exitbutton.visible = false
                     if (self.firstfight == true) {
@@ -137,15 +151,17 @@ export class Fight extends Window {
                     var rollbutton = self.add.text(220, 123, 'ROLL.', { backgroundColor: '#3b44af' }).setInteractive()
                     rollbutton.on('pointerdown', function (pointer) {
                         haveyourolled = true
-                        self.gameinstance.heroRoll(function (data) {
-                            //handle archer ability
-                            if (self.hero.getKind() == 'archer') {
+                        self.gameinstance.heroRoll(bow, function (data) {
+                            var alldice = data.alldice
+
+                            //in case of archer or non-archer using a bow from adjacent space...
+                            if (self.hero.getKind() == 'archer' || (bow)) {
                                 var count = 0
                                 var curroll = data.rolls[count]
                                 var str = data.strength
                                 self.notificationtext.setText('You may reroll ' + (data.rolls.length-1-count) + ' more times.')
                                 self.yourroll.setText('Your roll: ' + curroll + ' Your str: ' + str)
-                                rollbutton.setText('Click to use ability.')
+                                rollbutton.setText('Click to use bow/archer ability.')
                                 rollbutton.removeAllListeners('pointerdown')
                                 self.yourattack = str + curroll
                                 rollbutton.on('pointerdown', function(pointer) {
@@ -154,21 +170,26 @@ export class Fight extends Window {
                                     curroll = data.rolls[count]
                                     self.yourroll.setText('Your roll: ' + curroll + ' Your str: ' + str)
                                     self.yourattack = str + curroll
-                                    if (count == data.rolls.length - 1) {
+                                    if (count >= data.rolls.length - 1) {
                                         rollbutton.disableInteractive()
+                                        rollbutton.destroy()
                                     }
                                 })
                             }
+
                             else {
+
                                 rollbutton.setText('Rolled.')
                                 rollbutton.disableInteractive()
                                 let attack = data.roll + data.strength
                                 var str = data.strength
                                 var urroll = data.roll
                                 self.yourattack = attack
-                                self.yourroll.setText('Your roll: ' + urroll + 'Your str: ' + str)
+                                self.yourroll.setText('Your roll: ' + urroll + 'Your str: ' + str) 
+
                                 //handle mage ability
                                 if (self.hero.getKind() == 'mage') {
+                                    //TODO: handle black die faces
                                     rollbutton.setInteractive()
                                     rollbutton.removeAllListeners('pointerdown')
                                     var oppositeside = 7 - data.roll
@@ -181,7 +202,46 @@ export class Fight extends Window {
                                         self.yourroll.setText('Your roll: ' + urroll + 'Your str: ' + str)
                                     })
                                 }
+
+                                //this else means we are dwarf or warrior using standard attack.
+                                else {
+                                    //mage gets no benefit from helm, so offer helm option only for dwarf and warrior
+                                    self.gameinstance.getHeroItems(self.hero.getKind(), function(itemdict) {
+                                        if (itemdict['helm'] == 'true') {
+                                            self.doHelm(alldice, str)
+                                        }
+                                        //TODO handle brew, herb, shield
+                                    })
+                                }
                             }
+                            //handle brew here:
+                            self.gameinstance.getHeroItems(self.hero.getKind(), function(itemdict) {
+                                if (itemdict['smallItems'].includes('half_brew') || itemdict['smallItems'].includes('brew')) {
+                                    self.brewtext = self.add.text(260,190,'Click to use\n witch\'s brew.').setInteractive();
+                                    self.brewtext.on('pointerdown', function(pointer) {
+                                        var cur_roll = self.yourattack - data.strength
+                                        var doubled_roll = cur_roll * 2
+                                        self.yourroll.setText('Your roll: ' + doubled_roll + 'Your str: ' + data.strength)
+                                        self.yourattack = doubled_roll + data.strength
+                                        self.brewtext.destroy()
+                                        try {
+                                            self.helmtext.destroy()
+                                            self.otherdicetext.destroy()
+                                        }
+                                        catch {
+                                            //its fine
+                                        }
+                                        //prioritize consuming a half_brew
+                                        if (itemdict['smallItems'].includes('half_brew')) {
+                                            self.gameinstance.consumeItem('half_brew')
+                                        }
+                                        else {
+                                            self.gameinstance.consumeItem('brew')
+                                        }
+                                    })
+
+                                }
+                            })
                         })
                     })
 
@@ -309,6 +369,7 @@ export class Fight extends Window {
         }
         this.exitbutton = this.add.text(300, 10, 'X', style).setInteractive()
         this.exitbutton.on('pointerdown', function (pointer) {
+            self.overlayRef.toggleInteractive(true);
             self.scene.resume("Game")
             self.scene.remove(self.windowname)
         })
@@ -345,6 +406,45 @@ export class Fight extends Window {
         })
     }
 
+    private doHelm(alldice, str) {
+        var self = this
+        //hero is either warrior or dwarf: display option to use helmet.
+        //we don't display it for other classes because its useless: they roll 1 die
+        self.otherdicetext = self.add.text(240,150,'All your dice: ')
+        self.helmtext = self.add.text(240,165,'Click to use helm.').setInteractive()
+        for (let die of alldice) {
+            self.otherdicetext.setText(self.otherdicetext.getWrappedText() + ' ' + die)
+        }
+        self.helmtext.on('pointerdown', function(pointer) {
+            try {
+                self.brewtext.disableInteractive()
+                self.brewtext.setText('')
+            }
+            catch {}
+            self.gameinstance.consumeItem('helm')
+            self.helmtext.disableInteractive()
+            self.otherdicetext.destroy()
+            self.helmtext.destroy()
+            var newroll = 0
+            var used = []
+            for (var i = 0; i < alldice.length; i++) {
+                var count = 0
+                for (var j = 0; j< alldice.length; j++) {
+                    if (alldice[i] == alldice[j]) {
+                        count++
+                    }
+                }
+                if (count > 1 && !used.includes(alldice[i])) {
+                    newroll += count * alldice[i]
+                    used.push(alldice[i])
+                }
+            }
+            let attack = newroll + str
+            self.yourattack = attack
+            self.yourroll.setText('Your roll: ' + newroll + 'Your str: ' + str) 
+        })
+    }
+
     public tween() {
         //  Flash the mosntericon
         this.fighttext.disableInteractive()
@@ -376,20 +476,7 @@ export class Fight extends Window {
 
     private victory() {
         var self = this
-        this.alliedrollstxt.destroy()
-        this.invitetext.destroy()
-        this.monster.destroy()
-        this.yourwilltxt.destroy()
-        this.monstertypetxt.destroy()
-        this.monsterstrtxt.destroy()
-        this.monsterwilltxt.destroy()
-        this.monstergoldtxt.destroy()
-        this.monstericon.destroy()
-        this.notificationtext.destroy()
-        this.fighttext.destroy()
-        this.theirroll.destroy()
-        this.yourroll.destroy()
-        this.exitbutton.destroy()
+        this.destroyTexts(true)
 
         let vic = this.add.text(70, 20, "VICTORY!")
         this.tweens.add({
@@ -431,7 +518,8 @@ export class Fight extends Window {
                 y: reducedHeight / 2 - height / 2,
                 w: width,
                 h: (involvedheros.length + 2) * collabRowHeight,
-                infight: true
+                infight: true,
+                overlayRef: self.overlayRef
             }
 
             WindowManager.create(this, self.monstername + 'collab', CollabWindow, collabwindowdata)
@@ -458,7 +546,8 @@ export class Fight extends Window {
                 y: reducedHeight / 2 - height / 2,
                 w: width,
                 h: (involvedheros.length + 2) * collabRowHeight,
-                infight: true
+                infight: true,
+                overlayRef: self.overlayRef
             }
 
             WindowManager.create(this, self.monstername + 'collab', CollabWindow, collabwindowdata)
@@ -469,12 +558,28 @@ export class Fight extends Window {
         this.gameinstance.killMonster(self.monstername)
     }
 
-
     public death() {
         //if you died, end your turn and reset the stats.
         var self = this
-        this.invitetext.destroy()
+        this.destroyTexts(false)
+        this.add.text(70, 50, "You lost and lose\n 1 strength. Your turn \n is over. Your \nwill is set to 3.")
+        var text = this.add.text(70, 150, "Click to accept.").setInteractive()
+        text.on('pointerdown', function (pointer) {
+            self.overlayRef.toggleInteractive(true);
+            self.scene.resume("Game");
+            self.scene.remove(self.windowname);
+            if (self.gameinstance.getTurn()) {
+                self.gameinstance.endTurn();
+            }
+        })
+    }
+
+    private destroyTexts(victory) {
+        if (victory) {
+            this.monster.destroy()
+        }
         this.alliedrollstxt.destroy()
+        this.invitetext.destroy()
         this.yourwilltxt.destroy()
         this.monstertypetxt.destroy()
         this.monsterstrtxt.destroy()
@@ -486,14 +591,6 @@ export class Fight extends Window {
         this.theirroll.destroy()
         this.yourroll.destroy()
         this.exitbutton.destroy()
-        this.add.text(70, 50, "You lost and lose\n 1 strength. Your turn \n is over. Your \nwill is set to 3.")
-        var text = this.add.text(70, 150, "Click to accept.").setInteractive()
-        text.on('pointerdown', function (pointer) {
-            self.scene.remove(self.windowname)
-            if (self.gameinstance.getTurn()) {
-                self.gameinstance.endTurn();
-            }
-        })
     }
 
 }

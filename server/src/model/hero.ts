@@ -1,6 +1,8 @@
 import { HeroKind } from "./HeroKind";
 import { Region } from './region';
 import { Farmer } from '.';
+import {LargeItem} from './LargeItem'
+import {SmallItem} from './SmallItem'
 
 export class Hero {
     public hk: HeroKind;
@@ -14,8 +16,13 @@ export class Hero {
     private farmers: Array<Farmer>;
     private rank: number;
     private dice
+    private freeMoves:number = 0;
 
+    //items
     private wineskin: boolean = false;
+    private largeItem: LargeItem = LargeItem.Empty
+    private helm: boolean = false;
+    private smallItems: SmallItem[] = []
 
     constructor(hk: HeroKind, region:Region) {
         this.hk = hk
@@ -37,7 +44,7 @@ export class Hero {
     }
 
     public getData(){
-        let data = {hk: this.hk, gold: this.gold, strength: this.strength, will: this.will, farmers: this.farmers.length};
+        let data = {hk: this.hk, gold: this.gold, strength: this.strength, will: this.will, farmers: this.farmers.length, largeItem: this.largeItem};
         return data;
     }
 
@@ -51,7 +58,13 @@ export class Hero {
 
     public moveTo(newTile: Region) {
         this.region = newTile
-        this.timeOfDay++
+        if (this.freeMoves == 0) {
+            this.timeOfDay++
+        }
+        else {
+            this.freeMoves--
+        }
+        //TODO: DONT UPDATE THE HOUR TRACKER THING.
     }
 
     public useItem(item) {
@@ -217,9 +230,10 @@ export class Hero {
         this.timeOfDay++
     }
 
-    public roll() {
+    public roll(usingBow = false) {
 
         var dicefaces = [1, 2, 3, 4, 5, 6]
+        var blackdie = [6, 6, 8, 10, 10, 12]
         var rollamt = 0
         var rolls: number[] = []
 
@@ -234,20 +248,30 @@ export class Hero {
         }
 
         for (let i = 0; i < rollamt; i++) {
-            let roll = dicefaces[Math.floor(Math.random() * dicefaces.length)]
+            let roll
+            //the black die is always the first one rolled.
+            if (this.smallItems.includes(SmallItem.BlueRunestone) && this.smallItems.includes(SmallItem.YellowRunestone) && this.smallItems.includes(SmallItem.GreenRunestone) && i == 0) {
+                console.log('a black die has been rolled due to runestone triple threat!')
+                roll = blackdie[Math.floor(Math.random() * blackdie.length)]
+            }
+            else {
+                roll = dicefaces[Math.floor(Math.random() * dicefaces.length)]
+            }
             rolls.push(roll)
         }
 
         var attack = 0
 
-        if (this.hk != HeroKind.Archer){
+        if (this.hk != HeroKind.Archer && usingBow == false){
             let max = Math.max(...rolls)
             //var attack = this.strength + max
-            return {roll:max, strength:this.strength}
+            //we need to return all rolls in case dwarf or warrior wants to use helmet.
+            return {roll:max, strength:this.strength, alldice:rolls}
         }
         else {
             //in case of archer we need to roll one at a time...
-            return {rolls:rolls, strength:this.strength}
+            //alldice will not be used in this case
+            return {rolls:rolls, strength:this.strength, alldice:rolls}
         }
     }
 
@@ -270,7 +294,148 @@ export class Hero {
         }
     }
 
+    ///////////////////////
+    /// ITEM METHODS
+    //////////////////////
 
+    public getItemDict() {
+        /*
+        Format:
+        helm: 'true' || 'false'
+        largeItem: 'falcon' || 'shield' || 'bow' || 'empty'
+        */
+        //TODO
+        let helm = this.helm == true ? 'true' : 'false'
+        let itemdict = {largeItem: this.largeItem, helm:helm, smallItems:this.smallItems}
+        return itemdict
+    }
 
+    public consumeItem(item){
+        switch(item) {
+            case 'helm': 
+                if  (this.helm == true) {
+                    this.helm = false
+                }
+                break;
 
+            case 'shield':
+                break;
+
+            case 'herb':
+                break;
+
+            case 'wineskin':
+                let index_w = this.smallItems.indexOf(SmallItem.Wineskin);
+                if (index_w > -1) {
+                    this.smallItems.splice(index_w, 1);
+                    this.freeMoves++
+                    this.pickUpSmallItem(SmallItem.HalfWineskin)
+                }
+                break;
+
+            case "half_wineskin":
+                let index_hw = this.smallItems.indexOf(SmallItem.HalfWineskin);
+                if (index_hw > -1) {
+                    this.smallItems.splice(index_hw, 1);
+                    this.freeMoves++
+                }
+                break;
+
+            case 'brew':
+                let index_brew = this.smallItems.indexOf(SmallItem.Brew);
+                if (index_brew > -1) {
+                    this.smallItems.splice(index_brew, 1);
+                    this.pickUpSmallItem(SmallItem.HalfBrew)
+                }
+                break;
+
+            case 'half_brew':
+                let index_hbrew = this.smallItems.indexOf(SmallItem.HalfBrew);
+                if (index_hbrew > -1) {
+                    this.smallItems.splice(index_hbrew, 1);
+                }
+                break;
+
+            default:
+                console.log('Error! check your spelling on item to consume.')
+        }
+
+    }
+
+    public getSmallItems() {
+        return this.smallItems
+    }
+
+    public pickUpSmallItem(item: SmallItem) {
+        if (this.smallItems.length < 4) {
+            this.smallItems.push(item)
+            return true
+        }
+        else {
+            return false
+        }
+    }
+
+    public dropSmallItem(item:SmallItem) {
+        if (this.smallItems.includes(item)) {
+            const index = this.smallItems.indexOf(item);
+            if (index > -1) {
+            this.smallItems.splice(index, 1);
+            //TODO: logic for actually putting it on the tile
+            return true
+            }
+        }
+        else {
+            return false
+        }
+    }
+
+    public getLargeItem() {
+        return this.largeItem
+    }
+
+    public pickUpLargeItem(item: LargeItem) {
+        if (this.largeItem == LargeItem.Empty) {
+            this.largeItem = item;
+            return true
+        }
+        else {
+            return false
+        }
+    }
+
+    public dropLargeItem() {
+        //TODO: add this item onto the tile hero is currently on. How to graphically represent?
+        if (this.largeItem != LargeItem.Empty) {
+            //do shit here
+            this.largeItem = LargeItem.Empty;
+            return true
+        }
+        else {
+            return false
+        }
+    }
+
+    public pickUpHelm() {
+        if (this.helm == false) {
+            this.helm = true
+            return true
+        }
+        else {
+            return false
+        }
+    }
+
+    public dropHelm() {
+        if (this.helm == true) {
+            //TODO display it on the region
+            this.helm = false
+            return true
+        }
+        else {
+            return false
+        }
+    }
+
+    //////////////////////
 }

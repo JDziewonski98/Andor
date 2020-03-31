@@ -72,6 +72,10 @@ export class game {
         this.socket.on("updateDropGold", callback);       
     }
 
+    public advanceNarrator(callback) {
+        //  nothins?
+    }
+
     public disconnectUpdateDropGold() {
         this.socket.off("updateDropGold")
     }
@@ -307,8 +311,8 @@ export class game {
         this.socket.off('battleRewardsPopup')
     }
 
-    public heroRoll(callback) {
-        this.socket.emit('heroRoll',callback)
+    public heroRoll(bow, callback) {
+        this.socket.emit('heroRoll',bow , callback)
     }
 
     public confirmroll(herokind, roll, str) {
@@ -335,7 +339,7 @@ export class game {
 
 
     /////////////////////////////
-    //  Trade stuff
+    //  Trade stuff + item stuff
     ////////////////////////////
 
     public sendTradeInvite(host, recipient) {
@@ -345,6 +349,21 @@ export class game {
     public receiveTradeInvite(callback) {
         this.socket.on('receiveTradeInvite', callback)
     }
+
+    public getHeroItems(hero, callback) {
+        this.socket.emit('getHeroItems', hero, callback)
+    }
+
+    public consumeItem(item) {
+        //goal is to have backend determine item being consumed based on passed string
+        this.socket.emit('consumeItem', item)
+    }
+
+    public useWineskin(half_or_full, callback) {
+        //half_or_full must be either 'half' or 'full'
+        this.socket.emit('useWineskin', half_or_full, callback)
+    }
+
 
 
     /*
