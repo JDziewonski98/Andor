@@ -524,14 +524,26 @@ export default class GameScene extends Phaser.Scene {
         tile.setFog(f) // add to tile
         f.setInteractive()
         this.add.existing(f);
+        var self = this
         f.on("pointerdown", (pointer) => {
-          this.gameinstance.useFog(f.name, tile.id, (tile) => {
-            console.log(tile, typeof tile)
-            let f = this.tiles[+tile].getFog();
-            f.clearTint();
-            setTimeout(() => {
-              f.destroy()
-            }, 800);
+          self.gameinstance.getHeroItems(self.hero.getKind(), function(itemdict) {
+            if (self.hero.tile.id != self.tiles[fog[0]].id && itemdict['smallItems'].includes('telescope')) {
+              console.log('using telescope.')
+              f.clearTint();
+              setTimeout(() => {
+                f.setTint(0x101010);
+              }, 800);
+            }
+            else {
+              self.gameinstance.useFog(f.name, tile.id, (tile) => {
+                console.log(tile, typeof tile)
+                let f = self.tiles[+tile].getFog();
+                f.clearTint();
+                setTimeout(() => {
+                  f.destroy()
+                }, 800);
+              })
+            }
           })
         }, this)
       })

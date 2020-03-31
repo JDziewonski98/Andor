@@ -218,9 +218,7 @@ export class Game {
             //REMOVE before merging to master
             let dwarf = this.heroList.get(id)
             dwarf?.pickUpLargeItem(LargeItem.Bow)
-            dwarf?.pickUpSmallItem(SmallItem.BlueRunestone)
-            dwarf?.pickUpSmallItem(SmallItem.GreenRunestone)
-            dwarf?.pickUpSmallItem(SmallItem.YellowRunestone)
+            dwarf?.pickUpSmallItem(SmallItem.Telescope)
         }
         else if (heroType === HeroKind.Archer) {
             this.heroList.set(id, new Hero(heroType, this.regions[25]));

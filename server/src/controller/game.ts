@@ -605,11 +605,9 @@ export function game(socket, model: Game, io) {
   
   socket.on('getHeroItems', function(herokind, callback) {
     var thehero: Hero
-    console.log(herokind)
     model.getHeros().forEach((hero, key) => {
       console.log(hero.getKind())
       if (hero.getKind() == herokind){
-
         thehero = hero
       }
     })
