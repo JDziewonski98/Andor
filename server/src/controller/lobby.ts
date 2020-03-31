@@ -29,6 +29,7 @@ export function lobby(socket, model: Lobby, io) {
 
   socket.on("newPlayer", function () {
     let id = model.connectNewPlayer(socket.conn.id);
+    console.log("Connected ", id);
   });
 
   socket.on("joinGame", function (gameName, callback) {
@@ -42,8 +43,9 @@ export function lobby(socket, model: Lobby, io) {
   })
 
   socket.on('disconnect', function (x) {
-    let id = socket.conn.id
-    model.disconnectPlayer(socket.conn.id)
+    const id = socket.conn.id
+    model.disconnectPlayer(id)
+    console.log(id, " disconnected in lobby!!!!")
   });
 
 
