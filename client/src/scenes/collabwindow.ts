@@ -58,7 +58,6 @@ export class CollabWindow extends Window {
     protected initialize() {
         var self = this
 
-        // console.log("overlay instance", this.overlayRef)
         // Set overlay not interactive: this doesn't work for start of game because elements of the
         // overlay may not be instantiated yet
         // this.overlayRef.toggleInteractive(false);
