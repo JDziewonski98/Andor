@@ -7,10 +7,6 @@ export class Narrator extends Phaser.GameObjects.Image {
     // let 1 be A. each advance is represented as an incrementation. B=2, C=3, ..., N = 14
     private positionOfNarrator: number = 1;
 
-    //initialize at A x= 9450, y=6100 
-    private x = 9450
-    private y = 6100
-
     constructor(scene: Phaser.Scene, inputX: number, inputY: number, texture: string, gameController: game) {
         super(scene, inputX, inputY, texture);        
         this.gameController = gameController;
