@@ -527,7 +527,7 @@ export default class GameScene extends Phaser.Scene {
         var self = this
         f.on("pointerdown", (pointer) => {
           self.gameinstance.getHeroItems(self.hero.getKind(), function(itemdict) {
-            if (self.hero.tile.id != self.tiles[fog[0]].id && itemdict['smallItems'].includes('telescope')) {
+            if (itemdict['smallItems'].includes('telescope') && self.tiles[fog[0]].adjRegionsIds.includes(self.hero.tile.id)) {
               console.log('using telescope.')
               f.clearTint();
               setTimeout(() => {
