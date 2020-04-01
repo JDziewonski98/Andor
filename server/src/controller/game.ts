@@ -652,5 +652,12 @@ export function game(socket, model: Game, io) {
       socket.broadcast.to(`/${model.getName()}#${playerid}`).emit("receiveTradeOfferChanged", itemindex)
     }
   })
+
+  
+  socket.on('submitOffer', function(youroffer) {
+    console.log(youroffer)
+    socket.broadcast.emit('receiveOffer', youroffer)
+  })
+
 }
 

@@ -20,11 +20,13 @@ export class TradeWindow extends Window {
 
     private host_offers = {'smallItems':[],'largeItem':'None','helm':'None','gold':0}
     private invitee_offers = {'smallItems':[],'largeItem':'None','helm':'None','gold':0}
+    private your_offers_ptr
     private their_item_icons = []
     private your_item_icons = []
 
     private hostconfirmtext
     private inviteeconfirmtext
+    private yourconfirmtext_pointer
     private confirmed: boolean = false
 
     public constructor(key: string, data, windowData = { x: 350, y: 30, width: 624, height: 624 }) {
@@ -34,8 +36,8 @@ export class TradeWindow extends Window {
         this.windowname = key
         this.hosthero = data.hosthero
         this.inviteehero = data.inviteehero
-        //add
         this.clienthero = data.clienthero
+        this.your_offers_ptr = (this.clienthero == this.hosthero) ? this.host_offers : this.invitee_offers
     }
 
     protected initialize() {
@@ -120,6 +122,7 @@ export class TradeWindow extends Window {
         })
 
         this.gameinstance.receiveTradeOfferChanged(function(their_item_index) {
+            self.unconfirm()
             if (self.clienthero == self.hosthero) {
                 if (self.their_item_icons[their_item_index].x == self.INVITEE_ITEM_X) {
                     self.their_item_icons[their_item_index].x -= self.OFFER_OFFSET
@@ -138,6 +141,41 @@ export class TradeWindow extends Window {
             }
         })
 
+        this.hostconfirmtext = this.add.text(this.HOST_ITEM_X - 20, this.GOLD_Y + 20, 'UNCONFIRMED', {color:"#BC2B2B"})
+        this.inviteeconfirmtext = this.add.text(this.INVITEE_ITEM_X - 45, this.GOLD_Y + 20, 'UNCONFIRMED', {color:"#BC2B2B"})
+        this.yourconfirmtext_pointer = (this.clienthero == this.hosthero) ? this.hostconfirmtext : this.inviteeconfirmtext
+        this.yourconfirmtext_pointer.setInteractive()
+        this.yourconfirmtext_pointer.on('pointerdown', function(pointer){
+            if (self.confirmed == false) {
+                this.setText('CONFIRMED')
+                this.setColor("#3FC936")
+                self.gameinstance.submitOffer(self.your_offers_ptr)
+                self.confirmed = true
+            }
+            else {
+                self.unconfirm()
+                self.gameinstance.submitOffer('unconfirm')
+            }
+        })
+        this.gameinstance.receiveOffer(function(theiroffers) {
+            console.log('here', theiroffers)
+            var theirconfirmtext = (self.clienthero == self.hosthero) ? self.inviteeconfirmtext : self.hostconfirmtext
+            if (self.clienthero == self.hosthero ) {
+                self.invitee_offers = theiroffers
+            }
+            else {
+                self.host_offers = theiroffers
+            }
+            theirconfirmtext.setText("CONFIRMED")
+            theirconfirmtext.setColor("#3FC936")
+            if (self.confirmed == true) {
+                //do logic to actually give the items to the heros on backend TODO
+                //TODO close the trade windows
+                console.log('done', self.host_offers, self.invitee_offers)
+            }
+            //no else? its the first window to confirm that will execute the trade for both heros?
+        }) 
+
     }
 
 
@@ -146,6 +184,13 @@ export class TradeWindow extends Window {
         var self = this
         console.log('here')
         icon.on('pointerdown', function(pointer) {
+            if (self.clienthero == self.hosthero) {
+                self.inviteeconfirmtext.setText("UNCONFIRMED")
+                self.inviteeconfirmtext.setColor("#BC2B2B")
+            } else {
+                self.hostconfirmtext.setText("UNCONFIRMED")
+                self.hostconfirmtext.setColor("#BC2B2B")
+            }
             console.log('here2')
             if (self.clienthero == hero) {
                 var itemname = icon.texture.key
@@ -214,6 +259,12 @@ export class TradeWindow extends Window {
         this.add.text(this.HOST_ITEM_X + this.OFFER_OFFSET - 15, this.HEADERTEXT_Y, 'Host offers:',{color: "#4944A4"})
         this.add.text(this.INVITEE_ITEM_X - this.OFFER_OFFSET -100, this.HEADERTEXT_Y, 'Invitee offers:', {color: "#4944A4"})
         this.add.text(this.INVITEE_ITEM_X - 70, this.HEADERTEXT_Y, 'Invitee items:',{color: "#4944A4"})
+    }
+
+    private unconfirm() {
+        this.confirmed = false;
+        this.yourconfirmtext_pointer.setText("UNCONFIRMED")
+        this.yourconfirmtext_pointer.setColor("#BC2B2B")
     }
 
 }
