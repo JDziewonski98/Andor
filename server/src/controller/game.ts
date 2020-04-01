@@ -185,6 +185,12 @@ export function game(socket, model: Game, io) {
     callback(heros);
   });
 
+  socket.on('getAdjacentTiles', function(centraltileid, callback) {
+    var region = model.getRegions()[centraltileid]
+    var adjacentregions = region.getAdjRegionsIds()
+    callback(adjacentregions)
+  })
+
   socket.on('disconnect', function () {
     console.log('user disconnected', socket.conn.id, ' in game.');
     // model.removePlayer(socket.conn.id);

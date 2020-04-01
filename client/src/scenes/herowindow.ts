@@ -126,8 +126,8 @@ export class HeroWindow extends Window {
         })
 
         if (this.clienthero != this.windowhero) {
-            this.gameinstance.sendTradeInvite(this.clienthero, this.windowhero)
             this.add.text(450,350, 'TRADE').setInteractive().on('pointerdown', function(pointer) {
+                self.gameinstance.sendTradeInvite(self.clienthero, self.windowhero)
                 WindowManager.create(this, 'tradewindow', TradeWindow, {gameinstance:self.gameinstance, hosthero:self.clienthero, inviteehero:self.windowhero, parentkey:self.key, clienthero:self.clienthero})
             }, this)
         }

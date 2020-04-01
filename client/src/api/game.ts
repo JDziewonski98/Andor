@@ -118,6 +118,10 @@ export class game {
         this.socket.on("updateMoveRequest", callback);
     }
 
+    public getAdjacentTiles(centraltileid, callback) {
+        this.socket.emit('getAdjacentTiles',centraltileid, callback)
+    }
+
     /*
     *  TURN LOGIC
     */

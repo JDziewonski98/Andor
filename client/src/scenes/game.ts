@@ -101,6 +101,8 @@ export default class GameScene extends Phaser.Scene {
     this.load.image("yellow_runestone", "../assets/runestone_y.PNG");
     this.load.image("shield", "../assets/shield.PNG");
     this.load.image("telescope", "../assets/telescope.PNG");
+    this.load.image("half_wineskin", "../assets/half_wineskin.jpg")
+    this.load.image("half_brew", "../assets/half_brew.jpg")
 
     this.load.image("Strength", "../assets/strength.png");
 
@@ -544,23 +546,33 @@ export default class GameScene extends Phaser.Scene {
         var self = this
         f.on("pointerdown", (pointer) => {
           self.gameinstance.getHeroItems(self.hero.getKind(), function(itemdict) {
-            if (itemdict['smallItems'].includes('telescope') && self.tiles[fog[0]].adjRegionsIds.includes(self.hero.tile.id)) {
-              console.log('using telescope.')
-              f.clearTint();
-              setTimeout(() => {
-                f.setTint(0x101010);
-              }, 800);
-            }
-            else {
-              self.gameinstance.useFog(f.name, tile.id, (tile) => {
-                console.log(tile, typeof tile)
-                let f = self.tiles[+tile].getFog();
+            self.gameinstance.getAdjacentTiles(self.hero.tile.id, function(adjtileids) {
+              var flag = false
+              //why are we using a loop like this instead of .includes()?? good question, includes() was not working for some reason.
+              for (let i = 0; i < adjtileids.length; i++){
+                console.log(adjtileids[i], tile.id)
+                if (adjtileids[i] == tile.id) {
+                  flag = true
+                }
+              }
+              if (itemdict['smallItems'].includes('telescope') && flag) {
+                console.log('using telescope.')
                 f.clearTint();
                 setTimeout(() => {
-                  f.destroy()
+                  f.setTint(0x101010);
                 }, 800);
-              })
-            }
+              }
+              else {
+                self.gameinstance.useFog(f.name, tile.id, (tile) => {
+                  console.log(tile, typeof tile)
+                  let f = self.tiles[+tile].getFog();
+                  f.clearTint();
+                  setTimeout(() => {
+                    f.destroy()
+                  }, 800);
+                })
+              }
+            })
           })
         }, this)
       })
