@@ -384,6 +384,20 @@ export class game {
         this.socket.emit('executeTrade', hero, items_given, items_gained)
     }
 
+    public tradeDone() {
+        this.socket.emit('tradeDone')
+    }
+
+    public endTradeListener(callback) {
+        this.socket.on('endTrade', callback)
+    }
+
+    public unsubscribeTradeListeners() {
+        this.socket.off('receiveOffer')
+        this.socket.off('receiveTradeOfferChanged')
+        this.socket.off('endTrade')
+    }
+
 
     /*
     *   FOGS

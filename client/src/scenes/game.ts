@@ -192,7 +192,8 @@ export default class GameScene extends Phaser.Scene {
         // gameTweens: self.tweens, not sure if this needs to be passed
         hourTracker: self.hourTracker,
         wells: self.wells,
-        hk: self.ownHeroType
+        hk: self.ownHeroType,
+        clientheroobject: this.hero
       };
       this.scene.add('BoardOverlay', new BoardOverlay(overlayData), true);
     })

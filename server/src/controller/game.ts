@@ -732,5 +732,9 @@ export function game(socket, model: Game, io) {
       default: return LargeItem.Empty
     }
   }
+
+  socket.on('tradeDone', function() {
+    socket.broadcast.emit('endTrade')
+  })
 }
 

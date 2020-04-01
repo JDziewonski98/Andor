@@ -175,10 +175,19 @@ export class TradeWindow extends Window {
                 console.log('done', self.host_offers, self.invitee_offers)
                 self.gameinstance.executeTrade(self.hosthero,self.host_offers, self.invitee_offers)
                 self.gameinstance.executeTrade(self.inviteehero, self.invitee_offers, self.host_offers)
-                self.scene.remove(self.windowname)
+                self.closeWindow()
             }
-            //no else? its the first window to confirm that will execute the trade for both heros?
+            //no else its the first window to confirm that will execute the trade for both heros
         }) 
+
+        this.add.text(this.INVITEE_ITEM_X / 2 + this.HOST_ITEM_X,this.GOLD_Y + 20, 'EXIT', {color:"#BC2B2B"})
+        .setInteractive().on('pointerdown', function(pointer) {
+            self.closeWindow()
+        })
+
+        this.gameinstance.endTradeListener(function() {
+            self.closeWindow()
+        })
 
     }
 
@@ -265,4 +274,9 @@ export class TradeWindow extends Window {
         this.yourconfirmtext_pointer.setColor("#BC2B2B")
     }
 
+    private closeWindow() {
+        this.gameinstance.unsubscribeTradeListeners()
+        this.gameinstance.tradeDone()
+        this.scene.remove(this.windowname)
+    }
 }
