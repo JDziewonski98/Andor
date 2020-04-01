@@ -1,6 +1,6 @@
 import { Farmer, Hero, HourTracker, Monster, HeroKind, Well, Tile, Narrator} from '../objects';
 import { game } from '../api';
-import { WindowManager, CollabWindow, MerchantWindow, DeathWindow, Fight, BattleInvWindow, GameOverWindow } from "./windows";
+import { WindowManager, CollabWindow, MerchantWindow, DeathWindow, Fight, BattleInvWindow, GameOverWindow, TradeWindow } from "./windows";
 import { RietburgCastle } from './rietburgcastle';
 import BoardOverlay from './boardoverlay';
 
@@ -89,8 +89,23 @@ export default class GameScene extends Phaser.Scene {
     this.load.image("Gold", "../assets/gold.png");
     this.load.image("EventCard", "../assets/event.png");
     this.load.image("Gor", "../assets/gorfog.png");
+    //items
     this.load.image("Brew", "../assets/brew.png");
     this.load.image("Wineskin", "../assets/wineskin.png");
+    this.load.image("brew", "../assets/brew.png");
+    this.load.image("wineskin", "../assets/wineskin.png");
+    this.load.image("bow", "../assets/bow.PNG");
+    this.load.image("falcon", "../assets/falcon.PNG");
+    this.load.image("helm", "../assets/helm.PNG");
+    this.load.image("menubackground", "../assets/menubackground.png");
+    this.load.image("blue_runestone", "../assets/runestone_b.PNG");
+    this.load.image("green_runestone", "../assets/runestone_g.PNG");
+    this.load.image("yellow_runestone", "../assets/runestone_y.PNG");
+    this.load.image("shield", "../assets/shield.PNG");
+    this.load.image("telescope", "../assets/telescope.PNG");
+    this.load.image("half_wineskin", "../assets/half_wineskin.jpg")
+    this.load.image("half_brew", "../assets/half_brew.jpg")
+
     this.load.image("Strength", "../assets/strength.png");
     this.load.image("pawn", "../assets/pawn.png");
 
@@ -183,7 +198,8 @@ export default class GameScene extends Phaser.Scene {
         // gameTweens: self.tweens, not sure if this needs to be passed
         hourTracker: self.hourTracker,
         wells: self.wells,
-        hk: self.ownHeroType
+        hk: self.ownHeroType,
+        clientheroobject: this.hero
       };
       this.overlay = new BoardOverlay(overlayData);
       this.scene.add('BoardOverlay', this.overlay, true);
@@ -224,6 +240,10 @@ export default class GameScene extends Phaser.Scene {
           self.castle.shields[shieldNum].visible = true;
         }
       }
+    })
+
+    this.gameinstance.receiveTradeInvite(function(host, invitee) {
+        WindowManager.create(self, 'tradewindow', TradeWindow, {gameinstance:self.gameinstance, hosthero:host, inviteehero:invitee, parentkey:'None', clienthero:invitee})
     })
   }
 
@@ -554,23 +574,33 @@ export default class GameScene extends Phaser.Scene {
         var self = this
         f.on("pointerdown", (pointer) => {
           self.gameinstance.getHeroItems(self.hero.getKind(), function(itemdict) {
-            if (itemdict['smallItems'].includes('telescope') && self.tiles[fog[0]].adjRegionsIds.includes(self.hero.tile.id)) {
-              console.log('using telescope.')
-              f.clearTint();
-              setTimeout(() => {
-                f.setTint(0x101010);
-              }, 800);
-            }
-            else {
-              self.gameinstance.useFog(f.name, tile.id, (tile) => {
-                console.log(tile, typeof tile)
-                let f = self.tiles[+tile].getFog();
+            self.gameinstance.getAdjacentTiles(self.hero.tile.id, function(adjtileids) {
+              var flag = false
+              //why are we using a loop like this instead of .includes()?? good question, includes() was not working for some reason.
+              for (let i = 0; i < adjtileids.length; i++){
+                console.log(adjtileids[i], tile.id)
+                if (adjtileids[i] == tile.id) {
+                  flag = true
+                }
+              }
+              if (itemdict['smallItems'].includes('telescope') && flag) {
+                console.log('using telescope.')
                 f.clearTint();
                 setTimeout(() => {
-                  f.destroy()
+                  f.setTint(0x101010);
                 }, 800);
-              })
-            }
+              }
+              else {
+                self.gameinstance.useFog(f.name, tile.id, (tile) => {
+                  console.log(tile, typeof tile)
+                  let f = self.tiles[+tile].getFog();
+                  f.clearTint();
+                  setTimeout(() => {
+                    f.destroy()
+                  }, 800);
+                })
+              }
+            })
           })
         }, this)
       })

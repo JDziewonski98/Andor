@@ -44,7 +44,7 @@ export class Hero {
     }
 
     public getData(){
-        let data = {hk: this.hk, gold: this.gold, strength: this.strength, will: this.will, farmers: this.farmers.length, largeItem: this.largeItem};
+        let data = {hk: this.hk, gold: this.gold, strength: this.strength, will: this.will, farmers: this.farmers.length, largeItem: this.largeItem, currtileid:this.region.getID()};
         return data;
     }
 
@@ -306,8 +306,8 @@ export class Hero {
         */
         //TODO
         let helm = this.helm == true ? 'true' : 'false'
-        let itemdict = {largeItem: this.largeItem, helm:helm, smallItems:this.smallItems}
-        return itemdict
+        let itemdict = {largeItem: this.largeItem, helm:helm, smallItems:this.smallItems, gold:this.gold}
+        return itemdict 
     }
 
     public consumeItem(item){
@@ -435,6 +435,22 @@ export class Hero {
         else {
             return false
         }
+    }
+
+    public deleteSmallItem(item:SmallItem) {
+        let index = this.smallItems.indexOf(item);
+        if (index > -1) {
+            this.smallItems.splice(index, 1);
+            console.log('new small items:', this.smallItems)
+        }
+    }
+
+    public deleteLargeItem() {
+        this.largeItem = LargeItem.Empty
+    }
+
+    public deleteHelm() {
+        this.helm = false
     }
 
     //////////////////////

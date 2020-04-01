@@ -38,6 +38,7 @@ export default class LobbyScene extends Phaser.Scene {
         this.load.image('fantasyhome', './assets/fantasyhome.jpg')
         this.load.image('optionsIcon', './assets/icons/settings_icon.png')
         this.load.image('scrollbg','./assets/windowbg.jpg')
+        this.load.image('trademenubg','./assets/menubackground.png')
     }
 
     public create() {

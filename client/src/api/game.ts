@@ -122,6 +122,10 @@ export class game {
         this.socket.on("updateMoveRequest", callback);
     }
 
+    public getAdjacentTiles(centraltileid, callback) {
+        this.socket.emit('getAdjacentTiles',centraltileid, callback)
+    }
+
     /*
     *  TURN LOGIC
     */
@@ -350,6 +354,22 @@ export class game {
         this.socket.on('receiveTradeInvite', callback)
     }
 
+    public receiveTradeOfferChanged(callback) {
+        this.socket.on('receiveTradeOfferChanged', callback)
+    }
+
+    public sendTradeOfferChanged(otherplayer, itemindex) {
+        this.socket.emit('sendTradeOfferChanged', otherplayer, itemindex)
+    }
+
+    public submitOffer(youroffers){
+        this.socket.emit('submitOffer', youroffers)
+    }
+
+    public receiveOffer(callback) {
+        this.socket.on('receiveOffer',callback)
+    }
+
     public getHeroItems(hero, callback) {
         this.socket.emit('getHeroItems', hero, callback)
     }
@@ -364,6 +384,23 @@ export class game {
         this.socket.emit('useWineskin', half_or_full, callback)
     }
 
+    public executeTrade(hero, items_given, items_gained) {
+        this.socket.emit('executeTrade', hero, items_given, items_gained)
+    }
+
+    public tradeDone() {
+        this.socket.emit('tradeDone')
+    }
+
+    public endTradeListener(callback) {
+        this.socket.on('endTrade', callback)
+    }
+
+    public unsubscribeTradeListeners() {
+        this.socket.off('receiveOffer')
+        this.socket.off('receiveTradeOfferChanged')
+        this.socket.off('endTrade')
+    }
 
 
     /*

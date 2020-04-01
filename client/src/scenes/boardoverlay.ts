@@ -15,6 +15,8 @@ export default class BoardOverlay extends Phaser.Scene {
     private gameinstance: game;
     private endTurnButton: Phaser.GameObjects.Text;
     private chatButton: Phaser.GameObjects.Text;
+    private endturntext;
+    private clientheroobject;
 
     // End Day
     private endDayButton: Phaser.GameObjects.Text;
@@ -40,6 +42,7 @@ export default class BoardOverlay extends Phaser.Scene {
         this.hourTracker = data.hourTracker;
         this.wells = data.wells;
         this.hk = data.hk
+        this.clientheroobject = data.clientheroobject
     }
 
     public init() { }
@@ -66,7 +69,8 @@ export default class BoardOverlay extends Phaser.Scene {
                     thescene.disconnectListeners()
                     WindowManager.destroy(this, cardID);
                 } else {
-                    WindowManager.create(this, cardID, HeroWindow, { controller: this.gameinstance, icon: 'weed', clienthero: this.hk, windowhero: type, ...herodata });
+                    console.log('in board overlay:xxxxxxxxxxxxxxx', this.clientheroobject)
+                    WindowManager.create(this, cardID, HeroWindow, { controller: this.gameinstance, icon: 'weed', clienthero: this.hk, windowhero: type, ...herodata , clientherotile: this.clientheroobject.tile.id});
                     let window = WindowManager.get(this, cardID)
                     window.setName(type)
                 }
