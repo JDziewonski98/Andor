@@ -138,7 +138,14 @@ export default class GameScene extends Phaser.Scene {
       }
       console.log('creating battleinv')
       console.log('attempting to create battleinv window')
-      WindowManager.create(self, 'battleinv', BattleInvWindow, {controller:self.gameinstance, hero:self.hero, gamescene:self, monstertileid:monstertileid});
+      WindowManager.create(self, 'battleinv', BattleInvWindow, 
+        {
+          controller: self.gameinstance, 
+          hero: self.hero, 
+          gamescene: self, 
+          monstertileid: monstertileid,
+          overlayRef: self.overlay
+        });
       
     })
     this.gameinstance.receiveDeathNotice(function () {
