@@ -380,6 +380,9 @@ export class game {
         this.socket.emit('useWineskin', half_or_full, callback)
     }
 
+    public executeTrade(hero, items_given, items_gained) {
+        this.socket.emit('executeTrade', hero, items_given, items_gained)
+    }
 
 
     /*

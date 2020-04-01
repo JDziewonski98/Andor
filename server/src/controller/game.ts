@@ -1,5 +1,6 @@
-
 import { Game, HeroKind, Region, Hero, Monster, Fog, MonsterKind } from '../model';
+import { SmallItem } from '../model/SmallItem';
+import { LargeItem } from '../model/LargeItem';
 
 export function game(socket, model: Game, io) {
 
@@ -665,5 +666,71 @@ export function game(socket, model: Game, io) {
     socket.broadcast.emit('receiveOffer', youroffer)
   })
 
+  socket.on('executeTrade', function(herokind, items_given, items_gained) {
+    var thehero: Hero
+
+    //deleting given items
+    console.log('xxxxxxxxxxxxx')
+    console.log(Object.values(SmallItem))
+    console.log(herokind,items_given, items_gained)
+    console.log('xxxxxxxxxxxxx')
+    model.getHeros().forEach((hero, key) => {
+      if (hero.getKind() == herokind){
+        thehero = hero
+      }
+    })
+
+
+    for (let smallitem of items_given['smallItems']) {
+      thehero!.deleteSmallItem(smallItemStrToEnum(smallitem))
+    }
+    if (items_given['largeItem'] != 'None') {
+      thehero!.deleteLargeItem()
+    }
+    if (items_given['helm'] != 'None') {
+      thehero!.deleteHelm()
+    }
+    thehero!.updateGold(-items_given['gold'])
+
+
+
+    //adding received items
+    for (let smallitem of items_gained['smallItems']) {
+      thehero!.pickUpSmallItem(smallItemStrToEnum(smallitem))
+    }
+    thehero!.pickUpLargeItem(largeItemStrToEnum(items_gained['largeItem']))
+    if (items_gained['helm'] != 'None') {
+      thehero!.pickUpHelm()
+    }
+    thehero!.updateGold(+items_gained['gold'])
+
+  })
+
+  function smallItemStrToEnum(str) : SmallItem {
+    console.log(str,'in converter')
+    switch(str){
+      case "wineskin" : return SmallItem.Wineskin
+      case "half_wineskin": return SmallItem.HalfWineskin
+      case "telescope":return SmallItem.Telescope
+      case "brew":return SmallItem.Brew
+      case "half_brew": return SmallItem.HalfBrew
+      case "herb": return SmallItem.Herb
+      case "blue_runestone": return SmallItem.BlueRunestone
+      case "yellow_runestone": return SmallItem.YellowRunestone
+      case "green_runestone": return SmallItem.GreenRunestone
+      default: return SmallItem.Brew //should never happen!?!?
+    }
+  }
+
+  function largeItemStrToEnum(str) : LargeItem {
+    console.log(str,'in converter')
+    switch(str){
+      case "falcon": return LargeItem.Falcon
+      case "shield": return LargeItem.Shield
+      case "bow": return LargeItem.Bow
+      case "None": return LargeItem.Empty
+      default: return LargeItem.Empty
+    }
+  }
 }
 

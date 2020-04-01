@@ -32,6 +32,7 @@ export class TradeWindow extends Window {
     public constructor(key: string, data, windowData = { x: 350, y: 30, width: 624, height: 624 }) {
         super(key, windowData);
         this.gameinstance = data.gameinstance
+        this.windowname = key
         this.parentkey = data.parentkey
         this.windowname = key
         this.hosthero = data.hosthero
@@ -158,7 +159,7 @@ export class TradeWindow extends Window {
             }
         })
         this.gameinstance.receiveOffer(function(theiroffers) {
-            console.log('here', theiroffers)
+            console.log('offer received: ', theiroffers)
             var theirconfirmtext = (self.clienthero == self.hosthero) ? self.inviteeconfirmtext : self.hostconfirmtext
             if (self.clienthero == self.hosthero ) {
                 self.invitee_offers = theiroffers
@@ -172,6 +173,9 @@ export class TradeWindow extends Window {
                 //do logic to actually give the items to the heros on backend TODO
                 //TODO close the trade windows
                 console.log('done', self.host_offers, self.invitee_offers)
+                self.gameinstance.executeTrade(self.hosthero,self.host_offers, self.invitee_offers)
+                self.gameinstance.executeTrade(self.inviteehero, self.invitee_offers, self.host_offers)
+                self.scene.remove(self.windowname)
             }
             //no else? its the first window to confirm that will execute the trade for both heros?
         }) 
@@ -182,7 +186,6 @@ export class TradeWindow extends Window {
 
     private addOnClick(icon, hero, itemtype, offsetcount) {
         var self = this
-        console.log('here')
         icon.on('pointerdown', function(pointer) {
             if (self.clienthero == self.hosthero) {
                 self.inviteeconfirmtext.setText("UNCONFIRMED")
@@ -191,12 +194,10 @@ export class TradeWindow extends Window {
                 self.hostconfirmtext.setText("UNCONFIRMED")
                 self.hostconfirmtext.setColor("#BC2B2B")
             }
-            console.log('here2')
             if (self.clienthero == hero) {
                 var itemname = icon.texture.key
 
                 if (hero == self.hosthero ) {
-                    console.log('here3')
                     if (icon.x == self.HOST_ITEM_X) {
                         icon.x = icon.x + self.OFFER_OFFSET
                         if (itemtype == 'smallItems') {
@@ -222,7 +223,6 @@ export class TradeWindow extends Window {
                 }
 
                 else {
-                    console.log('here4')
                     if (icon.x == self.INVITEE_ITEM_X) {
                         icon.x = icon.x - self.OFFER_OFFSET
                         if (itemtype == 'smallItems') {
@@ -247,8 +247,6 @@ export class TradeWindow extends Window {
                     self.gameinstance.sendTradeOfferChanged(self.hosthero, offsetcount)
                 }
             }
-            console.log(self.host_offers)
-            console.log(self.invitee_offers)
         })
     }
 

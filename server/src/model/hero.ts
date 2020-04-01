@@ -437,5 +437,21 @@ export class Hero {
         }
     }
 
+    public deleteSmallItem(item:SmallItem) {
+        let index = this.smallItems.indexOf(item);
+        if (index > -1) {
+            this.smallItems.splice(index, 1);
+            console.log('new small items:', this.smallItems)
+        }
+    }
+
+    public deleteLargeItem() {
+        this.largeItem = LargeItem.Empty
+    }
+
+    public deleteHelm() {
+        this.helm = false
+    }
+
     //////////////////////
 }
