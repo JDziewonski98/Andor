@@ -224,9 +224,17 @@ export class TradeWindow extends Window {
                 //do logic to actually give the items to the heros on backend TODO
                 //TODO close the trade windows
                 console.log('done', self.host_offers, self.invitee_offers)
-                self.gameinstance.executeTrade(self.hosthero,self.host_offers, self.invitee_offers)
-                self.gameinstance.executeTrade(self.inviteehero, self.invitee_offers, self.host_offers)
-                self.closeWindow()
+                self.gameinstance.validateTrade(self.hosthero, self.inviteehero, self.invitee_offers, self.host_offers, function(result) {
+                    if (result == 'pass') {
+                        self.gameinstance.executeTrade(self.hosthero,self.host_offers, self.invitee_offers)
+                        self.gameinstance.executeTrade(self.inviteehero, self.invitee_offers, self.host_offers)
+                        self.closeWindow()
+                    }
+                    else {
+                        //alert em
+                    }
+                })
+
             }
             //no else its the first window to confirm that will execute the trade for both heros
         }) 

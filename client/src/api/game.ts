@@ -342,6 +342,10 @@ export class game {
     //  Trade stuff + item stuff
     ////////////////////////////
 
+    public validateTrade(hero1, hero2, hero1receives, hero2receives, callback) {
+        this.socket.emit('validateTrade', hero1, hero2, hero1receives, hero2receives, callback)
+    }
+
     public sendTradeInvite(host, recipient) {
         this.socket.emit('sendTradeInvite', host, recipient)
     }

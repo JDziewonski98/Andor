@@ -736,5 +736,49 @@ export function game(socket, model: Game, io) {
   socket.on('tradeDone', function() {
     socket.broadcast.emit('endTrade')
   })
+
+  socket.on('validateTrade', function(hero1, hero2, hero1receives, hero2receives, callback) {
+    var hero1ref: Hero
+    var hero2ref: Hero
+    model.getHeros().forEach((hero, key) => {
+      if (hero.getKind() == hero1){
+        hero1ref = hero
+      }
+      if (hero.getKind() == hero2) {
+        hero2ref = hero
+      }
+    })
+
+    if (hero1receives['helm']!='None' && hero2receives['helm'] == 'None' && hero1ref!.getItemDict['helm'] != 'false') {
+      console.log('xxxxxxxxxxxxxxxxxxxxxx1')
+      callback('fail')
+    }
+    if (hero2receives['helm']!='None' && hero1receives['helm'] == 'None' && hero2ref!.getItemDict['helm'] != 'false') {
+      console.log('xxxxxxxxxxxxxxxxxxxxxx2')
+      callback('fail')
+    }
+
+    if (hero1receives['largeItem']!='None' && hero2receives['largeItem'] == 'None' && hero1ref!.getItemDict['largeItem'] != 'empty') {
+      console.log('xxxxxxxxxxxxxxxxxxxxxx3')
+      callback('fail')
+    }
+    if (hero2receives['helm']!='None' && hero1receives['helm'] == 'None' && hero2ref!.getItemDict['helm'] != 'empty') {
+      console.log('xxxxxxxxxxxxxxxxxxxxxx4')
+      callback('fail')
+    }
+
+    if (hero1receives['smallItems'].length + hero1ref!.getItemDict()['smallItems'].length - hero2receives['smallItems'].length > 3){
+      console.log('xxxxxxxxxxxxxxxxxxxxxx5')
+      callback('fail')
+    }
+
+    if (hero2receives['smallItems'].length + hero2ref!.getItemDict()['smallItems'].length - hero1receives['smallItems'].length > 3){
+      console.log('xxxxxxxxxxxxxxxxxxxxxx6')
+      callback('fail')
+    }
+
+    callback('pass')
+
+  })
 }
 
