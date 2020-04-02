@@ -81,7 +81,33 @@ export class TradeWindow extends Window {
                     }
                 }
             }
-            self.add.text(self.HOST_ITEM_X - 20, self.GOLD_Y, 'Gold: ' + itemdict['gold'],{color: "#4944A4"}).setInteractive()
+            var host_gold = self.add.text(self.HOST_ITEM_X - 20, self.GOLD_Y, 'Gold: ' + itemdict['gold'],{color: "#4944A4"}).setInteractive()
+            var host_offer_gold = self.add.text(self.HOST_ITEM_X - 20 + self.OFFER_OFFSET, self.GOLD_Y,'').setInteractive()
+            var hostgoldcnt = itemdict['gold']
+            var hostoffergoldcnt = 0
+            if (self.clienthero == self.hosthero) {
+                host_gold.on('pointerdown', function(pointer) {
+                    console.log('here')
+                    if (hostgoldcnt > 0) {
+                        hostgoldcnt--
+                        hostoffergoldcnt++
+                        host_gold.setText('Gold: ' + hostgoldcnt)
+                        host_offer_gold.setText('Gold: ' + hostoffergoldcnt)
+                        self.host_offers['gold'] = hostoffergoldcnt
+                    }
+                })
+            }
+            if (self.clienthero == self.hosthero) {
+                host_offer_gold.on('pointerdown', function(pointer) {
+                    if (hostoffergoldcnt > 0) {
+                        hostgoldcnt++
+                        hostoffergoldcnt--
+                        host_gold.setText('Gold: ' + hostgoldcnt)
+                        host_offer_gold.setText('Gold: ' + hostoffergoldcnt)
+                        self.host_offers['gold'] = hostoffergoldcnt
+                    }
+                })
+            }
         })
 
 
@@ -119,7 +145,32 @@ export class TradeWindow extends Window {
                     }
                 }
             }
-            self.add.text(self.INVITEE_ITEM_X - 20, self.GOLD_Y, 'Gold: ' + itemdict['gold'], {color: "#4944A4"}).setInteractive()
+            var inv_gold = self.add.text(self.INVITEE_ITEM_X - 20, self.GOLD_Y, 'Gold: ' + itemdict['gold'], {color: "#4944A4"}).setInteractive()
+            var inv_offer_gold = self.add.text(self.INVITEE_ITEM_X - 20 - self.OFFER_OFFSET, self.GOLD_Y,'').setInteractive()
+            var invgoldcnt = itemdict['gold']
+            var invoffergoldcnt = 0
+            if (self.clienthero == self.inviteehero) {
+                inv_gold.on('pointerdown', function(pointer) {
+                    if (invgoldcnt > 0) {
+                        invgoldcnt--
+                        invoffergoldcnt++
+                        inv_gold.setText('Gold: ' + invgoldcnt)
+                        inv_offer_gold.setText('Gold: ' + invoffergoldcnt)
+                        self.invitee_offers['gold'] = invoffergoldcnt
+                    }
+                })
+            }
+            if (self.clienthero == self.inviteehero) {
+                inv_offer_gold.on('pointerdown', function(pointer) {
+                    if (invoffergoldcnt > 0) {
+                        invgoldcnt++
+                        invoffergoldcnt--
+                        inv_gold.setText('Gold: ' + invgoldcnt)
+                        inv_offer_gold.setText('Gold: ' + invoffergoldcnt)
+                        self.invitee_offers['gold'] = invoffergoldcnt
+                    }
+                })
+            }
         })
 
         this.gameinstance.receiveTradeOfferChanged(function(their_item_index) {
