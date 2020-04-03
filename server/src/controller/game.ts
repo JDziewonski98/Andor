@@ -131,6 +131,12 @@ export function game(socket, model: Game, io) {
     }
   });
 
+  // Send amount of gold on tileID back to client
+  socket.on("getTileGold", function (tileID, callback) {
+    var goldAmount = model.getRegions()[tileID].getGold();
+    callback(goldAmount);
+  });
+
   socket.on("dropGold", function (callback) {
     let success_dropGold = false;
     let heroId = socket.conn.id;
@@ -140,8 +146,12 @@ export function game(socket, model: Game, io) {
       success_dropGold = hero.dropGold();
     }
     if (success_dropGold) {
-      socket.broadcast.emit("updateDropGold");
-      callback()
+      // Tell any active TileWindows of all clients to update
+      socket.broadcast.emit("updateDropGoldTile", hero.getRegion().getID(), hero.getRegion().getGold());
+      socket.emit("updateDropGoldTile", hero.getRegion().getID(), hero.getRegion().getGold());
+      // Tell any active HeroWindows of all clients to update
+      socket.broadcast.emit("updateDropGold", hero.getKind(), -1);
+      socket.emit("updateDropGold", hero.getKind(), -1);
     }
   });
 
@@ -153,12 +163,17 @@ export function game(socket, model: Game, io) {
     id = +id
 
     if (hero !== undefined && hero.getRegion().getID() === id && hero.getRegion().getGold() > 0) {
+      // TODO_PICKUP: validation could be moved into this pickupGold method instead
       success_pickupGold = hero.pickupGold();
     }
 
     if (success_pickupGold) {
-      socket.broadcast.emit("updatePickupGold");
-      callback()
+      // Tell any active TileWindows of all clients to update
+      socket.broadcast.emit("updatePickupGoldTile", id, hero.getRegion().getGold());
+      socket.emit("updatePickupGoldTile", id, hero.getRegion().getGold());
+      // Tell any active HeroWindows of all clients to update
+      socket.broadcast.emit("updatePickupGold", hero.getKind(), 1);
+      socket.emit("updatePickupGold", hero.getKind(), 1);
     }
   });
 

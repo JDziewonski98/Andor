@@ -1,8 +1,8 @@
 import { HeroKind } from "./HeroKind";
 import { Region } from './region';
 import { Farmer } from '.';
-import {LargeItem} from './LargeItem'
-import {SmallItem} from './SmallItem'
+import { LargeItem } from './LargeItem'
+import { SmallItem } from './SmallItem'
 
 export class Hero {
     public hk: HeroKind;
