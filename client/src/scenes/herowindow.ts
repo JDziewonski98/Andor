@@ -1,6 +1,8 @@
 import { Window } from "./window";
 import { game } from '../api/game';
 import { Farmer } from "../objects/farmer";
+import {WindowManager} from "../utils/WindowManager";
+import {TradeWindow} from './tradewindow';
 
 export class HeroWindow extends Window {
 
@@ -18,6 +20,9 @@ export class HeroWindow extends Window {
     private gameinstance: game;
     private clienthero;
     private windowhero;
+    private key
+    private windowherotile
+    private clientherotile
 
     //items
     private largeItem;
@@ -27,6 +32,7 @@ export class HeroWindow extends Window {
 
     public constructor(key: string, data, windowData = { x: 350, y: 30, width: 500, height: 400 }) {
         super(key, windowData);
+        this.key = key
         this.icon = data.icon
         this.name = data.name
         this.gameinstance = data.controller
@@ -37,6 +43,8 @@ export class HeroWindow extends Window {
         this.clienthero = data.clienthero
         this.windowhero = data.windowhero
         this.largeItem = data.largeItem
+        this.windowherotile = data.currtileid
+        this.clientherotile  = data.clientherotile
     }
 
     protected initialize() { 
@@ -121,7 +129,14 @@ export class HeroWindow extends Window {
             //same code as above to show gold being dropped
         })
 
-
+        //todo account for falcon
+        console.log('ids:xxxxxxxxxxx', this.windowherotile, this.clientherotile)
+        if (this.clienthero != this.windowhero && (this.windowherotile == this.clientherotile )) {
+            this.add.text(450,350, 'TRADE',{color: "#4944A4"}).setInteractive().on('pointerdown', function(pointer) {
+                self.gameinstance.sendTradeInvite(self.clienthero, self.windowhero)
+                WindowManager.create(this, 'tradewindow', TradeWindow, {gameinstance:self.gameinstance, hosthero:self.clienthero, inviteehero:self.windowhero, parentkey:self.key, clienthero:self.clienthero})
+            }, this)
+        }
 
     }
 
@@ -148,11 +163,6 @@ export class HeroWindow extends Window {
                         })
                     })
                     break;
-                case 'telescope':
-                    itemText.on('pointerdown', function(pointer) {
-                        //TODO: @omar?
-                    })
-                    break;
                 case 'herb':
                     itemText.on('pointerdown', function(pointer) {
                         //TODO: nothing i think
@@ -173,13 +183,13 @@ export class HeroWindow extends Window {
                 }
                 break;
             case 1:
-                self.smallItem2 = self.add.text(85,220,item)
+                self.smallItem2 = self.add.text(105,220,item)
                 if (self.clienthero == self.windowhero){
                     defineOnclick(self.smallItem2, item)
                 }
                 break;
             case 2:
-                self.smallItem3 = self.add.text(145,220,item)
+                self.smallItem3 = self.add.text(175,220,item)
                 if (self.clienthero == self.windowhero){
                     defineOnclick(self.smallItem3, item)
                 }
