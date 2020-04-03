@@ -108,10 +108,7 @@ export class HeroWindow extends Window {
         }
 
         this.goldtext.on('pointerdown', function () {            
-            self.gameinstance.dropGold(function () {
-                self.gold -= 1
-                self.refreshText()
-            })
+            self.gameinstance.dropGold();
         });
 
         // While window is active, respond to updates in gold amount

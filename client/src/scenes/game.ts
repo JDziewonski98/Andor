@@ -300,14 +300,11 @@ export default class GameScene extends Phaser.Scene {
                   controller: this.gameinstance,
                   x: pointer.x + 20,
                   y: pointer.y + 20,
-                  w: 90,
+                  w: 100,
                   h: 60,
-                  tiles: this.tiles,
                   tileID: tile.getID()
                 }
               );
-              let window = WindowManager.get(this, tileWindowID)
-              // window.setName(type)
           }
         } else {
           console.log("It is my turn: ", self.gameinstance.myTurn)

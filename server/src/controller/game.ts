@@ -137,7 +137,7 @@ export function game(socket, model: Game, io) {
     callback(goldAmount);
   });
 
-  socket.on("dropGold", function (callback) {
+  socket.on("dropGold", function () {
     let success_dropGold = false;
     let heroId = socket.conn.id;
     let hero = model.getHero(heroId);
@@ -155,7 +155,7 @@ export function game(socket, model: Game, io) {
     }
   });
 
-  socket.on("pickupGold", function (id, callback) {
+  socket.on("pickupGold", function (id) {
     let success_pickupGold = false;
     let heroId = socket.conn.id;
     let hero = model.getHero(heroId);
