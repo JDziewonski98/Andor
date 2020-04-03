@@ -3,6 +3,7 @@ import { game } from '../api/game';
 import { Farmer } from "../objects/farmer";
 import {WindowManager} from "../utils/WindowManager";
 import {TradeWindow} from './tradewindow';
+import { heroCardInfo } from '../constants';
 
 export class HeroWindow extends Window {
 
@@ -13,7 +14,6 @@ export class HeroWindow extends Window {
     public farmers: number
     private goldtext
     private willtext
-    private nametext
     private strtext
     private farmtext
     private name
@@ -30,8 +30,8 @@ export class HeroWindow extends Window {
     private smallItem2;
     private smallItem3;
 
-    public constructor(key: string, data, windowData = { x: 350, y: 30, width: 500, height: 400 }) {
-        super(key, windowData);
+    public constructor(key: string, data) {
+        super(key, { x: data.x, y: data.y, width: 400, height: 350 });
         this.key = key
         this.icon = data.icon
         this.name = data.name
@@ -50,11 +50,18 @@ export class HeroWindow extends Window {
     protected initialize() { 
         var self = this
         var bg = this.add.image(0, 0, 'scrollbg').setOrigin(0.5)
-        var weed = this.add.sprite(50, 50, this.icon);
-        this.goldtext = this.add.text(25, 100, 'Gold: ' + this.gold, { backgroundColor: 'fx00' })
-        this.willtext = this.add.text(25, 120, 'Willpower: ' + this.will, { backgroundColor: 'fx00' })
-        this.strtext = this.add.text(25, 140, 'Strength: ' + this.str, { backgroundColor: 'fx00' })
-        this.farmtext = this.add.text(25, 160, 'Farmers: ' + this.farmers, { backgroundColor: 'fx00' })
+        this.add.sprite(20, 20, this.icon).setDisplaySize(70, 70).setOrigin(0);
+
+        var buttonStyle = { 
+            color: 'fx00',
+            // backgroundColor: '#cf9a6c'
+        }
+        this.add.text(100, 20, heroCardInfo[`${this.name}Name`], { color: 'fx00', fontSize: 30 });
+        this.add.text(100, 60, heroCardInfo[`${this.name}Desc`], { color: 'fx00', fontSize: 14 });
+        this.goldtext = this.add.text(170, 100, 'Gold: ' + this.gold, buttonStyle)
+        this.farmtext = this.add.text(170, 120, 'Farmers: ' + this.farmers, buttonStyle)
+        this.willtext = this.add.text(20, 100, 'Willpower: ' + this.will, buttonStyle)
+        this.strtext = this.add.text(20, 120, 'Strength: ' + this.str, buttonStyle)
         
         this.gameinstance.getHeroItems(self.windowhero, function(itemdict) {
             if (itemdict['largeItem'] != 'empty') {
@@ -71,7 +78,7 @@ export class HeroWindow extends Window {
             }
             //TODO_PICKUP: add other items as theyre added
         })
-        this.add.text(25, 240, 'Special ability text ....', { backgroundColor: 'fx00' })
+        this.add.text(25, 240, heroCardInfo[`${this.name}Ability`], { color: 'fx00', fontSize: 12 })
 
         bg.setInteractive()
         this.input.setDraggable(bg)
@@ -161,8 +168,6 @@ export class HeroWindow extends Window {
                     break;
                 default:
                     console.log(itemtype, 'does nothing from herowindow.')
-                    
-
             }
         }
 

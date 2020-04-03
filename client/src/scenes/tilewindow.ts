@@ -4,7 +4,7 @@ import { Window } from "./window";
 export class TileWindow extends Window {
     private goldButton: Phaser.GameObjects.Text;
     private startX = 5;
-    private xInc = 40;
+    private xInc = 35;
 
     private gameController: game;
     private tileID: number;
@@ -61,5 +61,8 @@ export class TileWindow extends Window {
         //turn off any socket.on(...) that u add here!
         this.gameController.disconnectUpdateDropGoldTile()
         this.gameController.disconnectUpdatePickupGoldTile()
+
+        // event listeners
+        this.goldButton.removeAllListeners('pointerdown');
     }
 }
