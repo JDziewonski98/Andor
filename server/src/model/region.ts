@@ -1,16 +1,26 @@
 import { Monster, Farmer } from '.';
+import { LargeItem } from './LargeItem'
+import { SmallItem } from './SmallItem'
 
 export class Region {
     private adjRegionsIds: Array<number>;
     private nextRegionId: number;
     private id: number;
     private gold;
-    // private wineskins: Wineskin[] = [];
     private farmers: Array<Farmer>;
     private hasWell: boolean;
     private hasMerchant: boolean;
     private wellUsed: boolean = false;
     private curMonster!: Monster | null;
+
+    // Items, or maybe it's easier with a single list of itemIDs, since we don't actually
+    // care how they're used/how they're different functionally
+    private wineskins: number = 0;
+    private largeItems: Map<LargeItem, number> = new Map();
+    private helms: number = 0;
+    private smallItems: Map<SmallItem, number> = new Map();
+
+    private items: Map<string, number> = new Map();
     
     constructor(gold:number, id: number, nextRegion: number, adjRegions: Array<number>, hasWell: boolean = false, hasMerchant: boolean = false) {
         this.id = id;
@@ -86,4 +96,9 @@ export class Region {
     public getAdjRegionsIds(): number[]{
         return this.adjRegionsIds
     }
+
+    /*
+    *   ITEM METHODS
+    */
+
 }

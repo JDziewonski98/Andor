@@ -224,12 +224,15 @@ export class Game {
         if (heroType === HeroKind.Dwarf) {
             this.heroList.set(id, new Hero(heroType, this.regions[7]));
             //REMOVE before merging to master
-            // let dwarf = this.heroList.get(id)
-            // dwarf?.pickUpLargeItem(LargeItem.Bow)
-            // dwarf?.pickUpSmallItem(SmallItem.Telescope)
+            let dwarf = this.heroList.get(id)
+            dwarf?.pickUpLargeItem(LargeItem.Bow)
+            dwarf?.pickUpSmallItem(SmallItem.Telescope)
         }
         else if (heroType === HeroKind.Archer) {
             this.heroList.set(id, new Hero(heroType, this.regions[25]));
+            let archer = this.heroList.get(id)
+            archer?.pickUpSmallItem(SmallItem.Wineskin)
+            archer?.pickUpSmallItem(SmallItem.GreenRunestone)
         }
         else if (heroType === HeroKind.Mage) {
             this.heroList.set(id, new Hero(heroType, this.regions[34]));

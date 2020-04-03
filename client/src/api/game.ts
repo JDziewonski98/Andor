@@ -22,10 +22,6 @@ export class game {
         this.socket.emit("bind hero", herotype, callback)
     }
 
-    public getTurn() {
-        return this.myTurn
-    }
-
     public updateHeroList(callback){
         this.socket.on("updateHeroList", callback)
     }
@@ -68,27 +64,59 @@ export class game {
         this.socket.on("updateWell", callback);
     }
 
-    public updateDropGold(callback) {       
+    public advanceNarrator(callback) {
+        //  nothins?
+    }
+
+    /*
+    *   GOLD RELATED START
+    */
+    public getTileGold(tileID, callback) {
+        this.socket.emit("getTileGold", tileID, callback);
+    }
+
+    public dropGold(callback) {
+        this.socket.emit("dropGold", callback)
+    }
+
+    public pickupGold(id, callback) {
+        this.socket.emit("pickupGold", id, callback)
+    }
+
+    // Updates for HeroWindows
+    public updateDropGold(callback) {
         this.socket.on("updateDropGold", callback);       
+    }
+
+    public updatePickupGold(callback) {
+        this.socket.on("updatePickupGold", callback)
     }
 
     public disconnectUpdateDropGold() {
         this.socket.off("updateDropGold")
     }
 
-    public dropGold(callback) {
-        console.log("here2") //is printed at user console
-        this.socket.emit("dropGold", callback)
+    public disconnectUpdatePickupGold() {
+        this.socket.off("updatePickupGold")
     }
 
-    public pickupGold(id, callback) {
-        console.log("api pickupGold()") //is printed
-        this.socket.emit("pickupGold", id, callback)
+    // Updates for TileWindows
+    public updateDropGoldTile(callback) {
+        this.socket.on("updateDropGoldTile", callback);       
     }
 
-    public updatePickupGold(callback) {
-        this.socket.on("updatePickupGold", callback)
+    public updatePickupGoldTile(callback) {
+        this.socket.on("updatePickupGoldTile", callback)
     }
+
+    public disconnectUpdateDropGoldTile() {
+        this.socket.off("updateDropGoldTile")
+    }
+
+    public disconnectUpdatePickupGoldTile() {
+        this.socket.off("updatePickupGoldTile")
+    }
+    /////////////////////////////
 
     public send(msg, callback) {
         this.socket.emit("send message", msg, callback);
@@ -118,11 +146,19 @@ export class game {
         this.socket.on("updateMoveRequest", callback);
     }
 
+    public getAdjacentTiles(centraltileid, callback) {
+        this.socket.emit('getAdjacentTiles',centraltileid, callback)
+    }
+
     /*
     *  TURN LOGIC
     */
     // Note: this is not used when a hero's turn ends because they ended their day.
     // Logic for turn end on end day is handled on the server.
+    public getTurn() {
+        return this.myTurn
+    }
+    
     public endTurn(){
         // The hero that gets the next turn depends on whether the day is over for all heroes
         this.socket.emit('endTurn');
@@ -143,6 +179,7 @@ export class game {
     public setMyTurn(b:boolean){
         this.myTurn = b;
     }
+    /////////////////////////////
 
     public removeListener(object){
         console.log('removing ', object)
@@ -215,6 +252,7 @@ export class game {
     public receiveDecisionAccepted(callback) {
         this.socket.on('sendDecisionAccepted', callback)
     }
+    /////////////////////////////
 
     /*
     * END DAY
@@ -246,6 +284,7 @@ export class game {
     public receiveResetHours(callback) {
         this.socket.on("sendResetHours", callback);
     }
+    /////////////////////////////
 
     //////////////////////////////
     // MONSTERS AND BATTLING
@@ -338,12 +377,32 @@ export class game {
     //  Trade stuff + item stuff
     ////////////////////////////
 
+    public validateTrade(hero1, hero2, hero1receives, hero2receives, callback) {
+        this.socket.emit('validateTrade', hero1, hero2, hero1receives, hero2receives, callback)
+    }
+
     public sendTradeInvite(host, recipient) {
         this.socket.emit('sendTradeInvite', host, recipient)
     }
 
     public receiveTradeInvite(callback) {
         this.socket.on('receiveTradeInvite', callback)
+    }
+
+    public receiveTradeOfferChanged(callback) {
+        this.socket.on('receiveTradeOfferChanged', callback)
+    }
+
+    public sendTradeOfferChanged(otherplayer, itemindex) {
+        this.socket.emit('sendTradeOfferChanged', otherplayer, itemindex)
+    }
+
+    public submitOffer(youroffers){
+        this.socket.emit('submitOffer', youroffers)
+    }
+
+    public receiveOffer(callback) {
+        this.socket.on('receiveOffer',callback)
     }
 
     public getHeroItems(hero, callback) {
@@ -360,6 +419,23 @@ export class game {
         this.socket.emit('useWineskin', half_or_full, callback)
     }
 
+    public executeTrade(hero, items_given, items_gained) {
+        this.socket.emit('executeTrade', hero, items_given, items_gained)
+    }
+
+    public tradeDone() {
+        this.socket.emit('tradeDone')
+    }
+
+    public endTradeListener(callback) {
+        this.socket.on('endTrade', callback)
+    }
+
+    public unsubscribeTradeListeners() {
+        this.socket.off('receiveOffer')
+        this.socket.off('receiveTradeOfferChanged')
+        this.socket.off('endTrade')
+    }
 
 
     /*

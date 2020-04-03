@@ -1,5 +1,6 @@
-
 import { Game, HeroKind, Region, Hero, Monster, Fog, MonsterKind } from '../model';
+import { SmallItem } from '../model/SmallItem';
+import { LargeItem } from '../model/LargeItem';
 
 export function game(socket, model: Game, io) {
 
@@ -133,6 +134,12 @@ export function game(socket, model: Game, io) {
     }
   });
 
+  // Send amount of gold on tileID back to client
+  socket.on("getTileGold", function (tileID, callback) {
+    var goldAmount = model.getRegions()[tileID].getGold();
+    callback(goldAmount);
+  });
+
   socket.on("dropGold", function (callback) {
     let success_dropGold = false;
     let heroId = socket.conn.id;
@@ -142,8 +149,12 @@ export function game(socket, model: Game, io) {
       success_dropGold = hero.dropGold();
     }
     if (success_dropGold) {
-      socket.broadcast.emit("updateDropGold");
-      callback()
+      // Tell any active TileWindows of all clients to update
+      socket.broadcast.emit("updateDropGoldTile", hero.getRegion().getID(), hero.getRegion().getGold());
+      socket.emit("updateDropGoldTile", hero.getRegion().getID(), hero.getRegion().getGold());
+      // Tell any active HeroWindows of all clients to update
+      socket.broadcast.emit("updateDropGold", hero.getKind(), -1);
+      socket.emit("updateDropGold", hero.getKind(), -1);
     }
   });
 
@@ -155,12 +166,17 @@ export function game(socket, model: Game, io) {
     id = +id
 
     if (hero !== undefined && hero.getRegion().getID() === id && hero.getRegion().getGold() > 0) {
+      // TODO_PICKUP: validation could be moved into this pickupGold method instead
       success_pickupGold = hero.pickupGold();
     }
 
     if (success_pickupGold) {
-      socket.broadcast.emit("updatePickupGold");
-      callback()
+      // Tell any active TileWindows of all clients to update
+      socket.broadcast.emit("updatePickupGoldTile", id, hero.getRegion().getGold());
+      socket.emit("updatePickupGoldTile", id, hero.getRegion().getGold());
+      // Tell any active HeroWindows of all clients to update
+      socket.broadcast.emit("updatePickupGold", hero.getKind(), 1);
+      socket.emit("updatePickupGold", hero.getKind(), 1);
     }
   });
 
@@ -187,6 +203,12 @@ export function game(socket, model: Game, io) {
     }
     callback(heros);
   });
+
+  socket.on('getAdjacentTiles', function(centraltileid, callback) {
+    var region = model.getRegions()[centraltileid]
+    var adjacentregions = region.getAdjRegionsIds()
+    callback(adjacentregions)
+  })
 
   socket.on('disconnect', function () {
     console.log('user disconnected', socket.conn.id, ' in game.');
@@ -637,9 +659,151 @@ export function game(socket, model: Game, io) {
   })
 
   ///////////////////////
+<<<<<<< HEAD
   //EVENT CARDS
   // socket.on('drawEventCard'){
 
   // }
+=======
+
+  //////////////////////
+  // TRADE STUFF
+  /////////////////////
+
+  socket.on('sendTradeInvite', function(host, invitee) {
+    var invitee_id = model.getIDsByHeroname([invitee])
+    for (let playerid of invitee_id) {
+      socket.broadcast.to(`/${model.getName()}#${playerid}`).emit("receiveTradeInvite", host, invitee)
+    }
+  })
+
+  socket.on('sendTradeOfferChanged', function(otherplayer, itemindex) {
+    var otherplayer_id = model.getIDsByHeroname([otherplayer])
+    for (let playerid of otherplayer_id) {
+      socket.broadcast.to(`/${model.getName()}#${playerid}`).emit("receiveTradeOfferChanged", itemindex)
+    }
+  })
+
+  
+  socket.on('submitOffer', function(youroffer) {
+    console.log(youroffer)
+    socket.broadcast.emit('receiveOffer', youroffer)
+  })
+
+  socket.on('executeTrade', function(herokind, items_given, items_gained) {
+    var thehero: Hero
+
+    //deleting given items
+    console.log('xxxxxxxxxxxxx')
+    console.log(Object.values(SmallItem))
+    console.log(herokind,items_given, items_gained)
+    console.log('xxxxxxxxxxxxx')
+    model.getHeros().forEach((hero, key) => {
+      if (hero.getKind() == herokind){
+        thehero = hero
+      }
+    })
+
+
+    for (let smallitem of items_given['smallItems']) {
+      thehero!.deleteSmallItem(smallItemStrToEnum(smallitem))
+    }
+    if (items_given['largeItem'] != 'None') {
+      thehero!.deleteLargeItem()
+    }
+    if (items_given['helm'] != 'None') {
+      thehero!.deleteHelm()
+    }
+    thehero!.updateGold(-items_given['gold'])
+
+
+
+    //adding received items
+    for (let smallitem of items_gained['smallItems']) {
+      thehero!.pickUpSmallItem(smallItemStrToEnum(smallitem))
+    }
+    thehero!.pickUpLargeItem(largeItemStrToEnum(items_gained['largeItem']))
+    if (items_gained['helm'] != 'None') {
+      thehero!.pickUpHelm()
+    }
+    thehero!.updateGold(+items_gained['gold'])
+
+  })
+
+  function smallItemStrToEnum(str) : SmallItem {
+    console.log(str,'in converter')
+    switch(str){
+      case "wineskin" : return SmallItem.Wineskin
+      case "half_wineskin": return SmallItem.HalfWineskin
+      case "telescope":return SmallItem.Telescope
+      case "brew":return SmallItem.Brew
+      case "half_brew": return SmallItem.HalfBrew
+      case "herb": return SmallItem.Herb
+      case "blue_runestone": return SmallItem.BlueRunestone
+      case "yellow_runestone": return SmallItem.YellowRunestone
+      case "green_runestone": return SmallItem.GreenRunestone
+      default: return SmallItem.Brew //should never happen!?!?
+    }
+  }
+
+  function largeItemStrToEnum(str) : LargeItem {
+    console.log(str,'in converter')
+    switch(str){
+      case "falcon": return LargeItem.Falcon
+      case "shield": return LargeItem.Shield
+      case "bow": return LargeItem.Bow
+      case "None": return LargeItem.Empty
+      default: return LargeItem.Empty
+    }
+  }
+
+  socket.on('tradeDone', function() {
+    socket.broadcast.emit('endTrade')
+  })
+
+  socket.on('validateTrade', function(hero1, hero2, hero1receives, hero2receives, callback) {
+    var hero1ref: Hero
+    var hero2ref: Hero
+    model.getHeros().forEach((hero, key) => {
+      if (hero.getKind() == hero1){
+        hero1ref = hero
+      }
+      if (hero.getKind() == hero2) {
+        hero2ref = hero
+      }
+    })
+
+    if (hero1receives['helm']!='None' && hero2receives['helm'] == 'None' && hero1ref!.getItemDict['helm'] != 'false') {
+      console.log('xxxxxxxxxxxxxxxxxxxxxx1')
+      callback('fail')
+    }
+    if (hero2receives['helm']!='None' && hero1receives['helm'] == 'None' && hero2ref!.getItemDict['helm'] != 'false') {
+      console.log('xxxxxxxxxxxxxxxxxxxxxx2')
+      callback('fail')
+    }
+
+    if (hero1receives['largeItem']!='None' && hero2receives['largeItem'] == 'None' && hero1ref!.getItemDict['largeItem'] != 'empty') {
+      console.log('xxxxxxxxxxxxxxxxxxxxxx3')
+      callback('fail')
+    }
+    if (hero2receives['helm']!='None' && hero1receives['helm'] == 'None' && hero2ref!.getItemDict['helm'] != 'empty') {
+      console.log('xxxxxxxxxxxxxxxxxxxxxx4')
+      callback('fail')
+    }
+
+    if (hero1receives['smallItems'].length + hero1ref!.getItemDict()['smallItems'].length - hero2receives['smallItems'].length > 3){
+      console.log('xxxxxxxxxxxxxxxxxxxxxx5')
+      callback('fail')
+    }
+
+    if (hero2receives['smallItems'].length + hero2ref!.getItemDict()['smallItems'].length - hero1receives['smallItems'].length > 3){
+      console.log('xxxxxxxxxxxxxxxxxxxxxx6')
+      callback('fail')
+    }
+
+    callback('pass')
+
+  })
+>>>>>>> 1d08a21b38602b5851ce73af5f94bbab1d6c6fbf
 }
 

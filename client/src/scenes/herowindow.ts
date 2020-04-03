@@ -1,6 +1,8 @@
 import { Window } from "./window";
 import { game } from '../api/game';
 import { Farmer } from "../objects/farmer";
+import {WindowManager} from "../utils/WindowManager";
+import {TradeWindow} from './tradewindow';
 
 export class HeroWindow extends Window {
 
@@ -18,6 +20,9 @@ export class HeroWindow extends Window {
     private gameinstance: game;
     private clienthero;
     private windowhero;
+    private key
+    private windowherotile
+    private clientherotile
 
     //items
     private largeItem;
@@ -27,6 +32,7 @@ export class HeroWindow extends Window {
 
     public constructor(key: string, data, windowData = { x: 350, y: 30, width: 500, height: 400 }) {
         super(key, windowData);
+        this.key = key
         this.icon = data.icon
         this.name = data.name
         this.gameinstance = data.controller
@@ -37,6 +43,8 @@ export class HeroWindow extends Window {
         this.clienthero = data.clienthero
         this.windowhero = data.windowhero
         this.largeItem = data.largeItem
+        this.windowherotile = data.currtileid
+        this.clientherotile  = data.clientherotile
     }
 
     protected initialize() { 
@@ -47,6 +55,7 @@ export class HeroWindow extends Window {
         this.willtext = this.add.text(25, 120, 'Willpower: ' + this.will, { backgroundColor: 'fx00' })
         this.strtext = this.add.text(25, 140, 'Strength: ' + this.str, { backgroundColor: 'fx00' })
         this.farmtext = this.add.text(25, 160, 'Farmers: ' + this.farmers, { backgroundColor: 'fx00' })
+        
         this.gameinstance.getHeroItems(self.windowhero, function(itemdict) {
             if (itemdict['largeItem'] != 'empty') {
                 self.add.text(25,180,'Large item: ' + itemdict['largeItem'])
@@ -60,7 +69,7 @@ export class HeroWindow extends Window {
                     self.setSmallItemText(i, smallItemList[i])
                 }
             }
-            //todo add other items as theyre added
+            //TODO_PICKUP: add other items as theyre added
         })
         this.add.text(25, 240, 'Special ability text ....', { backgroundColor: 'fx00' })
 
@@ -97,31 +106,31 @@ export class HeroWindow extends Window {
         if (this.clienthero == this.windowhero){ 
             this.goldtext.setInteractive()
         }
-        var that = this
-        this.goldtext.on('pointerdown', function () {            
-            console.log("we droppin the gold")
-            console.log(that.gold)
-            if (that.gold > 0 ) {
-                that.gold -= 1
-                that.refreshText()
-                console.log(that.gold)
-                that.gameinstance.dropGold(function () {
-                    //create a token on the tile 
-                    //indicate the amount of gold on tile
 
-                })
-            }           
+        this.goldtext.on('pointerdown', function () {            
+            self.gameinstance.dropGold(function () {
+                self.gold -= 1
+                self.refreshText()
+            })
         });
 
+        // While window is active, respond to updates in gold amount
+        function updateGold(hk: string, goldDelta: number) {
+            if (hk != self.name) return;
+            self.gold += goldDelta;
+            self.refreshText();
+        }
+        this.gameinstance.updateDropGold(updateGold);
+        this.gameinstance.updatePickupGold(updateGold);
 
-        this.gameinstance.updateDropGold(function () {
-            console.log("here4")// is printed
-            that.gold -= 1
-            that.refreshText()
-            //same code as above to show gold being dropped
-        })
-
-
+        //todo account for falcon
+        console.log('ids:xxxxxxxxxxx', this.windowherotile, this.clientherotile)
+        if (this.clienthero != this.windowhero && (this.windowherotile == this.clientherotile )) {
+            this.add.text(450,350, 'TRADE',{color: "#4944A4"}).setInteractive().on('pointerdown', function(pointer) {
+                self.gameinstance.sendTradeInvite(self.clienthero, self.windowhero)
+                WindowManager.create(this, 'tradewindow', TradeWindow, {gameinstance:self.gameinstance, hosthero:self.clienthero, inviteehero:self.windowhero, parentkey:self.key, clienthero:self.clienthero})
+            }, this)
+        }
 
     }
 
@@ -148,11 +157,6 @@ export class HeroWindow extends Window {
                         })
                     })
                     break;
-                case 'telescope':
-                    itemText.on('pointerdown', function(pointer) {
-                        //TODO: @omar?
-                    })
-                    break;
                 case 'herb':
                     itemText.on('pointerdown', function(pointer) {
                         //TODO: nothing i think
@@ -173,13 +177,13 @@ export class HeroWindow extends Window {
                 }
                 break;
             case 1:
-                self.smallItem2 = self.add.text(85,220,item)
+                self.smallItem2 = self.add.text(105,220,item)
                 if (self.clienthero == self.windowhero){
                     defineOnclick(self.smallItem2, item)
                 }
                 break;
             case 2:
-                self.smallItem3 = self.add.text(145,220,item)
+                self.smallItem3 = self.add.text(175,220,item)
                 if (self.clienthero == self.windowhero){
                     defineOnclick(self.smallItem3, item)
                 }
@@ -208,7 +212,6 @@ export class HeroWindow extends Window {
     }
 
     private refreshText() {
-        console.log('refeshing')
         this.goldtext.setText('Gold: ' + this.gold)
         this.willtext.setText('Willpower: ' + this.will)
         
@@ -217,6 +220,7 @@ export class HeroWindow extends Window {
     public disconnectListeners() {
         //MUST be called before deleting the window, or else it will bug when opened subsequently!
         //turn off any socket.on(...) that u add here!
-        this.gameinstance.disconnectUpdateDropGold()
+        this.gameinstance.disconnectUpdateDropGold();
+        this.gameinstance.disconnectUpdatePickupGold();
     }
 }
