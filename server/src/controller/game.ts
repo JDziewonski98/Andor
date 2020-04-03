@@ -659,12 +659,6 @@ export function game(socket, model: Game, io) {
   })
 
   ///////////////////////
-<<<<<<< HEAD
-  //EVENT CARDS
-  // socket.on('drawEventCard'){
-
-  // }
-=======
 
   //////////////////////
   // TRADE STUFF
@@ -804,6 +798,5 @@ export function game(socket, model: Game, io) {
     callback('pass')
 
   })
->>>>>>> 1d08a21b38602b5851ce73af5f94bbab1d6c6fbf
 }
 
