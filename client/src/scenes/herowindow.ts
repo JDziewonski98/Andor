@@ -55,6 +55,7 @@ export class HeroWindow extends Window {
         this.willtext = this.add.text(25, 120, 'Willpower: ' + this.will, { backgroundColor: 'fx00' })
         this.strtext = this.add.text(25, 140, 'Strength: ' + this.str, { backgroundColor: 'fx00' })
         this.farmtext = this.add.text(25, 160, 'Farmers: ' + this.farmers, { backgroundColor: 'fx00' })
+        
         this.gameinstance.getHeroItems(self.windowhero, function(itemdict) {
             if (itemdict['largeItem'] != 'empty') {
                 self.add.text(25,180,'Large item: ' + itemdict['largeItem'])
@@ -68,7 +69,7 @@ export class HeroWindow extends Window {
                     self.setSmallItemText(i, smallItemList[i])
                 }
             }
-            //todo add other items as theyre added
+            //TODO_PICKUP: add other items as theyre added
         })
         this.add.text(25, 240, 'Special ability text ....', { backgroundColor: 'fx00' })
 
@@ -105,29 +106,22 @@ export class HeroWindow extends Window {
         if (this.clienthero == this.windowhero){ 
             this.goldtext.setInteractive()
         }
-        var that = this
-        this.goldtext.on('pointerdown', function () {            
-            console.log("we droppin the gold")
-            console.log(that.gold)
-            if (that.gold > 0 ) {
-                that.gold -= 1
-                that.refreshText()
-                console.log(that.gold)
-                that.gameinstance.dropGold(function () {
-                    //create a token on the tile 
-                    //indicate the amount of gold on tile
 
-                })
-            }           
+        this.goldtext.on('pointerdown', function () {            
+            self.gameinstance.dropGold(function () {
+                self.gold -= 1
+                self.refreshText()
+            })
         });
 
-
-        this.gameinstance.updateDropGold(function () {
-            console.log("here4")// is printed
-            that.gold -= 1
-            that.refreshText()
-            //same code as above to show gold being dropped
-        })
+        // While window is active, respond to updates in gold amount
+        function updateGold(hk: string, goldDelta: number) {
+            if (hk != self.name) return;
+            self.gold += goldDelta;
+            self.refreshText();
+        }
+        this.gameinstance.updateDropGold(updateGold);
+        this.gameinstance.updatePickupGold(updateGold);
 
         //todo account for falcon
         console.log('ids:xxxxxxxxxxx', this.windowherotile, this.clientherotile)
@@ -218,7 +212,6 @@ export class HeroWindow extends Window {
     }
 
     private refreshText() {
-        console.log('refeshing')
         this.goldtext.setText('Gold: ' + this.gold)
         this.willtext.setText('Willpower: ' + this.will)
         
@@ -227,6 +220,7 @@ export class HeroWindow extends Window {
     public disconnectListeners() {
         //MUST be called before deleting the window, or else it will bug when opened subsequently!
         //turn off any socket.on(...) that u add here!
-        this.gameinstance.disconnectUpdateDropGold()
+        this.gameinstance.disconnectUpdateDropGold();
+        this.gameinstance.disconnectUpdatePickupGold();
     }
 }
