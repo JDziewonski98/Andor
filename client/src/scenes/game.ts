@@ -37,6 +37,7 @@ export default class GameScene extends Phaser.Scene {
   private castle: RietburgCastle;
 
   private event: EventCard
+  private activeEvents: Array<EventCard>
   private mockText;
 
   private cameraKeys;
@@ -226,12 +227,17 @@ export default class GameScene extends Phaser.Scene {
     //Event Card adding at start of game
     //this.gameinstance.newEvent()
     //this.addEventCard("YOOOOOOOOOO")
-    
-    this.gameinstance.newEventListener(applyEvent)
-    function applyEvent(event){
-      console.log("Wassup mf")
-      this.addEventCard(event.flavorText, event.desc)
-    }
+    // this.gameinstance.addMonster((type, tile, id) => {
+    //   this.addMonster(tile, type, id);
+    // })
+    this.gameinstance.newEventListener((event) => {
+      this.applyEvent(event)
+    })
+    // function applyEvent(event, this){
+    //   console.log("Wassup mf")
+    //   this.addEventCard(event)
+    // }
+
     // Listen for end of game state
     this.gameinstance.receiveEndOfGame(function () {
       let windowData = {
@@ -687,17 +693,29 @@ export default class GameScene extends Phaser.Scene {
   //   }
   // }
 
-  private addEventCard(event){
-    var newEvent = new EventCard(this, event.flavorText, event.desc)
+ 
+  //for specific events which need to apply a unique ui effect, or something of that nature
+  private applyEvent(event: EventCard){
+    console.log("Applying event")
+    if(event.id == 2){
+      //wind accross screen or something like that
+    }
+    this.addEventCard(event)
+  }
+
+  private addEventCard(event: EventCard){
+    var newEvent = new EventCard(this, event.id, event.flavorText, event.desc)
+
+    //remove current event from scene
     if(this.event != null){
       this.event.destroy(true)
     }
 
-    //this.event.text.destroy()
+    //add new event to scene
     this.event = newEvent
-
     this.add.existing(newEvent)
   }
+
   private startingCollabDecisionSetup() {
     var self = this;
 

@@ -3,35 +3,16 @@ import {
   } from '../constants'
 
 export class EventCard extends Phaser.GameObjects.Text {
+    id: Number
     flavorText: String
     desc: String
-    
 
-    //ideally, front end has all event cards mapped by id but for now
-    constructor(scene, flavorText, text) {
-        //scene.load.image('weed', './assets/8bit_herb.jpeg')
-        //var weed = scene.add.sprite(85, 190, 'weed').setDisplaySize(40, 40)
+    constructor(scene, id, flavorText, text) {
         super(scene, 2753 * scaleFactor + borderWidth, 377 * scaleFactor + borderWidth, flavorText + "\n" + text, null);
+        this.id = id
+        this.flavorText = flavorText
         this.desc = text
-        //super(scene, 200, 200, 'weed');
-        //this.id = id;
-        
-        //this.setDisplaySize(100,100)
-        //console.log("muthafuckka")
-        this.setInteractive()
-        this.on('pointerdown', function () {
-            // this.destroy()
-            //this.text.destroy()
-            scene.addEventCard(1, "NEWWWWW CARDDDDDDDD")
-            //this.removeFromScene()
-        }
-        )
-        console.log(this)
+        console.log("New event created: ", this)
     }
 
-    // public removeFromScene(){
-    //     //this.text.destroy()
-    //     this.destroy()
-        
-    // }
 } 
