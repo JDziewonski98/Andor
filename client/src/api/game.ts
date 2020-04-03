@@ -378,6 +378,15 @@ export class game {
     }
 
     ///////////////////////////
+    /*
+    *   Event Cards
+    */
+    public newEventListener(callback){
+        this.socket.on("newEvent", callback)
+    }
+
+    //////
+
 
     /*
     *   END OF GAME

@@ -1,4 +1,4 @@
-import { Farmer, Hero, HourTracker, Monster, HeroKind, Well, Tile } from '../objects';
+import { Farmer, Hero, HourTracker, Monster, HeroKind, Well, Tile, EventCard } from '../objects';
 import { game } from '../api';
 import { WindowManager, CollabWindow, MerchantWindow, DeathWindow, Fight, BattleInvWindow, GameOverWindow } from "./windows";
 import { RietburgCastle } from './rietburgcastle';
@@ -13,6 +13,8 @@ import {
   wellTile1, wellTile2, wellTile3, wellTile4,
   mOffset
 } from '../constants'
+import { TradeHostWindow } from './tradehostwindow';
+
 
 
 export default class GameScene extends Phaser.Scene {
@@ -33,6 +35,7 @@ export default class GameScene extends Phaser.Scene {
   private monsterNameMap: Map<string, Monster>;
   private castle: RietburgCastle;
 
+  private event: EventCard
   private mockText;
 
   private cameraKeys;
@@ -186,6 +189,15 @@ export default class GameScene extends Phaser.Scene {
     })
     console.log(numPlayer);
 
+    //Event Card adding at start of game
+    //this.gameinstance.newEvent()
+    //this.addEventCard("YOOOOOOOOOO")
+    
+    this.gameinstance.newEventListener(applyEvent)
+    function applyEvent(event){
+      console.log("Wassup mf")
+      this.addEventCard(event.flavorText, event.desc)
+    }
     // Listen for end of game state
     this.gameinstance.receiveEndOfGame(function () {
       let windowData = {
@@ -591,6 +603,17 @@ export default class GameScene extends Phaser.Scene {
     }
   }
 
+  private addEventCard(event){
+    var newEvent = new EventCard(this, event.flavorText, event.desc)
+    if(this.event != null){
+      this.event.destroy(true)
+    }
+
+    //this.event.text.destroy()
+    this.event = newEvent
+
+    this.add.existing(newEvent)
+  }
   private startingCollabDecisionSetup() {
     var self = this;
 
