@@ -74,15 +74,9 @@ export const heroCardInfo = {
     
     mageName: "Liphardus",
     mageDesc: "Wizard from the north\nRank 34",
-    mageAbility: "Special ability: Each battle round, Liphardus\n"+
-                 "can turn his rolled die onto its opposite side\n"+
-                 "immediately after rolling. When fighting with\n"+
-                 "other heroes in a collectibe battle, he can\n"+
-                 "apply this ability to another hero's roll\n"+
-                 "instead of his own.",
+    mageAbility: "Special ability: Each battle round, Liphardus\ncan turn his rolled die onto its opposite side\nimmediately after rolling. When fighting with\nother heroes in a collectibe battle, he can\napply this ability to another hero's roll\ninstead of his own.",
     
     warriorName: "Thorn",
     warriorDesc: "Warrior from Rietland\nRank 14",
-    warriorAbility: "Special ability: Thorn gets 5 willpower points\n"+
-                    "instead of 3 when he empties a well.",
+    warriorAbility: "Special ability: Thorn gets 5 willpower points\ninstead of 3 when he empties a well."
 }
