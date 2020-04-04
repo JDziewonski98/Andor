@@ -88,9 +88,11 @@ export class game {
         this.socket.on("updateDropGold", callback);       
     }
 
+
     public updatePickupGold(callback) {
         this.socket.on("updatePickupGold", callback)
     }
+
 
     public disconnectUpdateDropGold() {
         this.socket.off("updateDropGold")
