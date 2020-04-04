@@ -5,3 +5,5 @@ client/src/config/env.js
 
 
 .vscode/launch.json
+.vs/slnx.sqlite
+.vs/361March_31/v16/.suo
