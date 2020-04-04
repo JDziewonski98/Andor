@@ -130,7 +130,7 @@ export class HeroWindow extends Window {
         //todo account for falcon
         console.log('ids:xxxxxxxxxxx', this.windowherotile, this.clientherotile)
         if (this.clienthero != this.windowhero && (this.windowherotile == this.clientherotile )) {
-            this.add.text(450,350, 'TRADE',{color: "#4944A4"}).setInteractive().on('pointerdown', function(pointer) {
+            this.add.text(320,20, 'TRADE',{color: "#4944A4"}).setInteractive().on('pointerdown', function(pointer) {
                 self.gameinstance.sendTradeInvite(self.clienthero, self.windowhero)
                 WindowManager.create(this, 'tradewindow', TradeWindow, {gameinstance:self.gameinstance, hosthero:self.clienthero, inviteehero:self.windowhero, parentkey:self.key, clienthero:self.clienthero})
             }, this)
