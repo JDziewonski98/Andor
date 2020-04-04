@@ -357,25 +357,36 @@ export default class GameScene extends Phaser.Scene {
 
   private addMonster(monsterTile: number, type: string, id: string) {
     const tile: Tile = this.tiles[monsterTile];
-    let monster: Monster = new Monster(this, tile, type, id).setInteractive().setScale(.5);
-    this.monsters.push(monster);
-    this.monsterNameMap[monster.name] = monster;
-    tile.setMonster(monster);
-    this.add.existing(monster);
-    monster.on('pointerdown', function (pointer) {
-      if (this.scene.isVisible(monster.name)) {
-        WindowManager.destroy(this, monster.name);
-      }
-      else {
-        WindowManager.create(this, monster.name, Fight, {
-          controller: this.gameinstance,
-          hero: this.hero, monster: monster, heroes: this.heroes,
-          overlayRef: this.overlay
-        });
-        this.scene.pause()
-      }
-    }, this)
 
+      //check if tile has a monster already
+      if (tile.monster !== null) {
+          //get next region. do I have to get it from the backend? couldn't find region.next in frontend
+          // do recursive call. something like: this.addMonster(tile.nextRegion, type, id)
+          // exit condition of recursive call: if tile.id === 0 then we add the monster to the castle tile
+          // ie. decrease a shield count
+
+      }
+      else { // tile is empty. no monster on this tile
+
+          let monster: Monster = new Monster(this, tile, type, id).setInteractive().setScale(.5);
+          this.monsters.push(monster);
+          this.monsterNameMap[monster.name] = monster;
+          tile.setMonster(monster);
+          this.add.existing(monster);
+          monster.on('pointerdown', function (pointer) {
+              if (this.scene.isVisible(monster.name)) {
+                  WindowManager.destroy(this, monster.name);
+              }
+              else {
+                  WindowManager.create(this, monster.name, Fight, {
+                      controller: this.gameinstance,
+                      hero: this.hero, monster: monster, heroes: this.heroes,
+                      overlayRef: this.overlay
+                  });
+                  this.scene.pause()
+              }
+          }, this)
+      }
   }
 
   private addFarmers() {
@@ -529,8 +540,12 @@ export default class GameScene extends Phaser.Scene {
 
         const newNarrator = new Narrator(this, posNarrator, "pawn", this.gameinstance).setDisplaySize(40, 40);
         this.add.existing(newNarrator);
-       
-        newNarrator.advance() // first time calling it, will go into the this.posNarrator === A branch of the switch        
+        
+        //newNarrator.advance() // first time calling it, will go into the this.posNarrator === A branch of the switch                        
+        //newNarrator.advance()
+        //newNarrator.advance()
+        
+        
     }
 
   private addFog() {

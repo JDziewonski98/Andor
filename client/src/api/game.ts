@@ -72,9 +72,6 @@ export class game {
         this.socket.on("updateDropGold", callback);       
     }
 
-    public advanceNarrator(callback) {
-        //  nothins?
-    }
 
     public disconnectUpdateDropGold() {
         this.socket.off("updateDropGold")
