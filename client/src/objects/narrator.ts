@@ -47,7 +47,77 @@ export class Narrator extends Phaser.GameObjects.Image {
 
         this.posNarrator = posNarrator
 
-        console.log(this.posNarrator)
+        if (enumPositionOfNarrator[(this.posNarrator)] === "A") {
+            /*
+                        A1 & A2 - description of the game. (move, fight, free action, easy/hard mode)
+                        ===============================================================
+                        A3 (easy)
+
+                        story: 
+                        "A gloomy mood has fallen upon the people. 
+                        Rumors are making the rounds that skrals have set up a stronghold in some undiscovered location. 
+                        The heroes have scattered themselves across the entire land in search of this location. 
+                        The defense of the castle is in their hands alone.
+
+                        Many farmers have asked for help and are seeking shelter behind the high walls of Rietburg Castle"
+                    
+                        *** place dwarf on 7, warrior on 14, archer on 25, wizard on 34
+
+                        *** place gors on spaces 8, 20, 21, 26, 48
+                        *** place skral on space 19
+
+                        *** place farmer on space 24 & 36
+                     
+                        ===============================================================
+                        A4 - description about famer.
+                     
+                        story:
+                        "At first sunlight, the heroes receive a message: 
+                        Old King Brandmur's willposer seems to have weakened with the passage of time. 
+                        But there is said to be a herb growing in the mountain passes that can revive a person's life."
+
+                        Task:
+                        "The heroes must heal the king with the medicinal herb.
+                        To do that, they must find the witch. 
+                        Only she know the locations where this herb grows.
+                        The witch is hiding behind one of the fog tokens."
+
+                        ===============================================================
+                        A5 - description of fog
+                        1) when hero enters a space with fog showing the witch's brew, "The Witch" card is uncovered and read.
+                        2) gors are under two of the fog tokens. when uncovered, gors a placed on that tile
+
+                        *** Decide when "The Rune Stones" Legend card comes into play
+                        Roll Dice. place "The Rune Stones Legend" card as shown below 
+                        1 -> B
+                        2 -> D
+                        3 -> E
+                        4 -> F
+                        5 -> F (not a typo)
+                        6 -> H
+                        It is read when narrator arrives at respective positions.
+                        
+
+                        From now on, any articles and strength points may be purchased from merchants on spaces 18, 57, 71 for 2 gold each.
+
+                        each hero starts with 2 strength points. The group gets 5 gold and 2 wineskins. collaborative decision.
+                        hero with lowest rank begin
+
+                        */
+
+
+
+            // decide when RuneStones come into play
+            const outcome = this.randomInteger(1, 6)
+            if (outcome === 1) { this.triggerRunestone = "B"; }
+            else if (outcome === 2) { this.triggerRunestone = "D"; }
+            else if (outcome === 3) { this.triggerRunestone = "E"; }
+            else if (outcome === 4 || outcome === 5) { this.triggerRunestone = "F"; }
+            else { this.triggerRunestone = "H" }
+
+                    //console.log(this.triggerRunestone) //make sure triggerrRuneStone works. it does
+
+        }
 
     }
 
@@ -120,81 +190,7 @@ export class Narrator extends Phaser.GameObjects.Image {
 
         else {
 
-            switch (enumPositionOfNarrator[(this.posNarrator)]) {
-
-                case "A": {
-                    
-                    /*
-                        A1 & A2 - description of the game. (move, fight, free action, easy/hard mode)
-                        ===============================================================
-                        A3 (easy)
-
-                        story: 
-                        "A gloomy mood has fallen upon the people. 
-                        Rumors are making the rounds that skrals have set up a stronghold in some undiscovered location. 
-                        The heroes have scattered themselves across the entire land in search of this location. 
-                        The defense of the castle is in their hands alone.
-
-                        Many farmers have asked for help and are seeking shelter behind the high walls of Rietburg Castle"
-                    
-                        *** place dwarf on 7, warrior on 14, archer on 25, wizard on 34
-
-                        *** place gors on spaces 8, 20, 21, 26, 48
-                        *** place skral on space 19
-
-                        *** place farmer on space 24 & 36
-                     
-                        ===============================================================
-                        A4 - description about famer.
-                     
-                        story:
-                        "At first sunlight, the heroes receive a message: 
-                        Old King Brandmur's willposer seems to have weakened with the passage of time. 
-                        But there is said to be a herb growing in the mountain passes that can revive a person's life."
-
-                        Task:
-                        "The heroes must heal the king with the medicinal herb.
-                        To do that, they must find the witch. 
-                        Only she know the locations where this herb grows.
-                        The witch is hiding behind one of the fog tokens."
-
-                        ===============================================================
-                        A5 - description of fog
-                        1) when hero enters a space with fog showing the witch's brew, "The Witch" card is uncovered and read.
-                        2) gors are under two of the fog tokens. when uncovered, gors a placed on that tile
-
-                        *** Decide when "The Rune Stones" Legend card comes into play
-                        Roll Dice. place "The Rune Stones Legend" card as shown below 
-                        1 -> B
-                        2 -> D
-                        3 -> E
-                        4 -> F
-                        5 -> F (not a typo)
-                        6 -> H
-                        It is read when narrator arrives at respective positions.
-                        
-
-                        From now on, any articles and strength points may be purchased from merchants on spaces 18, 57, 71 for 2 gold each.
-
-                        each hero starts with 2 strength points. The group gets 5 gold and 2 wineskins. collaborative decision.
-                        hero with lowest rank begin
-
-                        */
-
-
-
-                    // decide when RuneStones come into play
-                    const outcome = this.randomInteger(1, 6)
-                    if (outcome === 1) { this.triggerRunestone = "B"; }
-                    else if (outcome === 2) { this.triggerRunestone = "D"; }
-                    else if (outcome === 3) { this.triggerRunestone = "E"; }
-                    else if (outcome === 4 || outcome === 5) { this.triggerRunestone = "F"; }
-                    else {this.triggerRunestone = "H"}
-
-                    //console.log(this.triggerRunestone) //make sure this works. it does
-
-                    break;
-                }
+            switch (enumPositionOfNarrator[(this.posNarrator)]) {              
 
                 case "B": {
                     if (this.triggerRunestone === "B") {
