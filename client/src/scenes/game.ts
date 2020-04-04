@@ -1,6 +1,6 @@
 import { Farmer, Hero, HourTracker, Monster, HeroKind, Well, Tile, Narrator} from '../objects';
 import { game } from '../api';
-import { WindowManager, CollabWindow, MerchantWindow, DeathWindow, Fight, BattleInvWindow, GameOverWindow } from "./windows";
+import { WindowManager, CollabWindow, MerchantWindow, DeathWindow, Fight, BattleInvWindow, GameOverWindow, TradeWindow } from "./windows";
 import { RietburgCastle } from './rietburgcastle';
 import BoardOverlay from './boardoverlay';
 
@@ -13,6 +13,7 @@ import {
   wellTile1, wellTile2, wellTile3, wellTile4,
   mOffset, enumPositionOfNarrator
 } from '../constants'
+import { TileWindow } from './tilewindow';
 
 
 export default class GameScene extends Phaser.Scene {
@@ -45,6 +46,8 @@ export default class GameScene extends Phaser.Scene {
   private turntext;
 
   private overlay;
+
+  private shiftKey;
   
   constructor() {
     super({ key: 'Game' });
@@ -89,8 +92,25 @@ export default class GameScene extends Phaser.Scene {
     this.load.image("Gold", "../assets/gold.png");
     this.load.image("EventCard", "../assets/event.png");
     this.load.image("Gor", "../assets/gorfog.png");
+
+    //items
     this.load.image("Brew", "../assets/brew.png");
     this.load.image("Wineskin", "../assets/wineskin.png");
+    this.load.image("brew", "../assets/brew.png");
+    this.load.image("wineskin", "../assets/wineskin.png");
+    this.load.image("bow", "../assets/bow.PNG");
+    this.load.image("falcon", "../assets/falcon.PNG");
+    this.load.image("helm", "../assets/helm.PNG");
+    this.load.image("menubackground", "../assets/menubackground.png");
+    this.load.image("blue_runestone", "../assets/runestone_b.PNG");
+    this.load.image("green_runestone", "../assets/runestone_g.PNG");
+    this.load.image("yellow_runestone", "../assets/runestone_y.PNG");
+    this.load.image("shield", "../assets/shield.PNG");
+    this.load.image("telescope", "../assets/telescope.PNG");
+    this.load.image("half_wineskin", "../assets/half_wineskin.jpg")
+    this.load.image("half_brew", "../assets/half_brew.jpg")
+    this.load.image("gold", "../assets/gold.png")
+
     this.load.image("Strength", "../assets/strength.png");
     this.load.image("pawn", "../assets/pawn.png");
 
@@ -100,6 +120,7 @@ export default class GameScene extends Phaser.Scene {
     var self = this;
 
     this.cameraSetup();
+    this.shiftKey = this.input.keyboard.addKey('shift');
     this.sceneplugin = this.scene
     // Centered gameboard with border
     this.add.image(fullWidth / 2, fullHeight / 2, 'gameboard')
@@ -118,7 +139,7 @@ export default class GameScene extends Phaser.Scene {
     this.addWell(7073, 3333, wellTile3)
     this.addWell(5962, 770, wellTile4)
 
-    this.addGold()
+    // this.addGold()
 
     this.addFog();
 
@@ -138,7 +159,14 @@ export default class GameScene extends Phaser.Scene {
       }
       console.log('creating battleinv')
       console.log('attempting to create battleinv window')
-      WindowManager.create(self, 'battleinv', BattleInvWindow, {controller:self.gameinstance, hero:self.hero, gamescene:self, monstertileid:monstertileid});
+      WindowManager.create(self, 'battleinv', BattleInvWindow, 
+        {
+          controller: self.gameinstance, 
+          hero: self.hero, 
+          gamescene: self, 
+          monstertileid: monstertileid,
+          overlayRef: self.overlay
+        });
       
     })
     this.gameinstance.receiveDeathNotice(function () {
@@ -176,7 +204,8 @@ export default class GameScene extends Phaser.Scene {
         // gameTweens: self.tweens, not sure if this needs to be passed
         hourTracker: self.hourTracker,
         wells: self.wells,
-        hk: self.ownHeroType
+        hk: self.ownHeroType,
+        clientheroobject: this.hero
       };
       this.overlay = new BoardOverlay(overlayData);
       this.scene.add('BoardOverlay', this.overlay, true);
@@ -218,6 +247,10 @@ export default class GameScene extends Phaser.Scene {
         }
       }
     })
+
+    this.gameinstance.receiveTradeInvite(function(host, invitee) {
+        WindowManager.create(self, 'tradewindow', TradeWindow, {gameinstance:self.gameinstance, hosthero:host, inviteehero:invitee, parentkey:'None', clienthero:invitee})
+    })
   }
 
   private cameraSetup() {
@@ -249,14 +282,36 @@ export default class GameScene extends Phaser.Scene {
       this.add.existing(tile);
     }
 
-    /// for movement callback, ties pointerdown to move request
+    // click: for movement callback, ties pointerdown to move request
+    // shift+click: tile items pickup interface
     var self = this
     this.tiles.map(function (tile) {
-      tile.on('pointerdown', function () {
-        console.log("It is my turn: ", self.gameinstance.myTurn)
-        self.gameinstance.moveRequest(tile.id, updateMoveRequest)
-      })
-    })
+      tile.on('pointerdown', function (pointer) {
+        if (this.shiftKey.isDown) {
+          const tileWindowID = `tileWindow${tile.getID()}`;
+          if (this.scene.isVisible(tileWindowID)) {
+            console.log(this)
+            var thescene = WindowManager.get(this, tileWindowID)
+            thescene.disconnectListeners()
+            WindowManager.destroy(this, tileWindowID);
+          } else {
+              WindowManager.create(this, tileWindowID, TileWindow, 
+                { 
+                  controller: this.gameinstance,
+                  x: pointer.x + 20,
+                  y: pointer.y + 20,
+                  w: 100,
+                  h: 60,
+                  tileID: tile.getID()
+                }
+              );
+          }
+        } else {
+          console.log("It is my turn: ", self.gameinstance.myTurn)
+          self.gameinstance.moveRequest(tile.id, updateMoveRequest)
+        }
+      }, this)
+    }, this)
 
     this.gameinstance.updateMoveRequest(updateMoveRequest)
 
@@ -562,23 +617,33 @@ export default class GameScene extends Phaser.Scene {
         var self = this
         f.on("pointerdown", (pointer) => {
           self.gameinstance.getHeroItems(self.hero.getKind(), function(itemdict) {
-            if (itemdict['smallItems'].includes('telescope') && self.tiles[fog[0]].adjRegionsIds.includes(self.hero.tile.id)) {
-              console.log('using telescope.')
-              f.clearTint();
-              setTimeout(() => {
-                f.setTint(0x101010);
-              }, 800);
-            }
-            else {
-              self.gameinstance.useFog(f.name, tile.id, (tile) => {
-                console.log(tile, typeof tile)
-                let f = self.tiles[+tile].getFog();
+            self.gameinstance.getAdjacentTiles(self.hero.tile.id, function(adjtileids) {
+              var flag = false
+              //why are we using a loop like this instead of .includes()?? good question, includes() was not working for some reason.
+              for (let i = 0; i < adjtileids.length; i++){
+                console.log(adjtileids[i], tile.id)
+                if (adjtileids[i] == tile.id) {
+                  flag = true
+                }
+              }
+              if (itemdict['smallItems'].includes('telescope') && flag) {
+                console.log('using telescope.')
                 f.clearTint();
                 setTimeout(() => {
-                  f.destroy()
+                  f.setTint(0x101010);
                 }, 800);
-              })
-            }
+              }
+              else {
+                self.gameinstance.useFog(f.name, tile.id, (tile) => {
+                  console.log(tile, typeof tile)
+                  let f = self.tiles[+tile].getFog();
+                  f.clearTint();
+                  setTimeout(() => {
+                    f.destroy()
+                  }, 800);
+                })
+              }
+            })
           })
         }, this)
       })
@@ -594,35 +659,33 @@ export default class GameScene extends Phaser.Scene {
     });
   }
 
-  private addGold() {
-    var self = this
-    for (let id in self.tiles) { // of dattara tile object ga iterate sareru
-      //create a text Sprite indicating the number of gold. 
-      var goldText = self.add.text(50, 50, "G", { color: "#fff52e" }).setX(self.tiles[id].x - 30).setY(self.tiles[id].y - 30)
-      //set to interactive
-      goldText.setInteractive()
-      self.add.existing(goldText);
-      goldText.on("pointerdown", function (pointer) {
-        self.gameinstance.pickupGold(id, function () {
-          if (self.tiles[id].getGold() > 0) {
-            console.log("amount on client-tile: ", self.tiles[id].getGold())
-            self.tiles[id].setGold(self.tiles[id].getGold() - 1)
-            console.log("amount on client-tile: ", self.tiles[id].getGold())   //amount of gold on tile is updated
-          }
-        })
-      }, this)
+  // private addGold() {
+  //   var self = this
+  //   for (let id in self.tiles) { // of dattara tile object ga iterate sareru
+  //     //create a text Sprite indicating the number of gold. 
+  //     var goldText = self.add.text(50, 50, "G", { color: "#fff52e" }).setX(self.tiles[id].x - 30).setY(self.tiles[id].y - 30)
+  //     //set to interactive
+  //     goldText.setInteractive()
+  //     self.add.existing(goldText);
+  //     goldText.on("pointerdown", function (pointer) {
+  //       self.gameinstance.pickupGold(id, function () {
+  //         if (self.tiles[id].getGold() > 0) {
+  //           console.log("amount on client-tile: ", self.tiles[id].getGold())
+  //           self.tiles[id].setGold(self.tiles[id].getGold() - 1)
+  //           console.log("amount on client-tile: ", self.tiles[id].getGold())   //amount of gold on tile is updated
+  //         }
+  //       })
+  //     }, this)
 
-      self.gameinstance.updatePickupGold(function (pointer) {
-        if (self.tiles[id].getGold() > 0) {
-          console.log(self.tiles[id].getGold())
-          self.tiles[id].setGold(self.tiles[id].getGold() - 1)
-          console.log(self.tiles[id].getGold())
-        }
-      }, this)
-    }
-    }
-
-
+  //     self.gameinstance.updatePickupGold(function (pointer) {
+  //       if (self.tiles[id].getGold() > 0) {
+  //         console.log(self.tiles[id].getGold())
+  //         self.tiles[id].setGold(self.tiles[id].getGold() - 1)
+  //         console.log(self.tiles[id].getGold())
+  //       }
+  //     }, this)
+  //   }
+  // }
 
   private startingCollabDecisionSetup() {
     var self = this;

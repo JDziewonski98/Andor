@@ -61,3 +61,22 @@ export enum enumPositionOfNarrator {
     'M' = 12,
     'N' = 13
 };
+
+// Hero card info
+export const heroCardInfo = {
+    dwarfName: "Kram",
+    dwarfDesc: "Dwarf from the deep mines\nRank 7",
+    dwarfAbility: "Special ability: Kram can buy strength\npoints at the dwarf mine (space 71) for\n1 gold each instead of 2 gold.",
+    
+    archerName: "Pasco",
+    archerDesc: "Archer from the Watchful Woods\nRank 25",
+    archerAbility: "Special ability: Each battle round, Pasco rolls\nhis dice one at a time and decides when to stop\nrolling. Only his final roll counts. He can also\nattack a creature in an adjacent space.",
+    
+    mageName: "Liphardus",
+    mageDesc: "Wizard from the north\nRank 34",
+    mageAbility: "Special ability: Each battle round, Liphardus\ncan turn his rolled die onto its opposite side\nimmediately after rolling. When fighting with\nother heroes in a collectibe battle, he can\napply this ability to another hero's roll\ninstead of his own.",
+    
+    warriorName: "Thorn",
+    warriorDesc: "Warrior from Rietland\nRank 14",
+    warriorAbility: "Special ability: Thorn gets 5 willpower points\ninstead of 3 when he empties a well."
+}

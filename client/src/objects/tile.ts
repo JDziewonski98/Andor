@@ -109,17 +109,18 @@ export class Tile extends Phaser.GameObjects.Sprite {
         return this.fog;
     }
 
-    public setGold(amount: number) {
-        this.gold = amount;
-    }
-
     public setMonster(m: Monster) {
         this.monster = m;
     }
 
-    public getGold() {
-        return this.gold;
-    }
+    // public setGold(amount: number) {
+    //     this.gold = amount;
+    // }
+
+    // public getGold() {
+    //     return this.gold;
+    // }
+
     public getID() {
         return this.id;
     }

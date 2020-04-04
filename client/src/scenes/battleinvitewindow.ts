@@ -23,6 +23,7 @@ export class BattleInvWindow extends Window {
     private hero
     private gamescene
     private monstertileid;
+    private overlayRef;
 
     public constructor(key: string, data, windowData = { x: 350, y: 30, width: 400, height: 250 }) {
         super(key, windowData);
@@ -32,6 +33,7 @@ export class BattleInvWindow extends Window {
         this.hero = data.hero
         this.gamescene = data.gamescene
         this.monstertileid = data.monstertileid
+        this.overlayRef = data.overlayRef;
     }
 
     protected initialize() {
@@ -147,7 +149,8 @@ export class BattleInvWindow extends Window {
                             y: 250,
                             w: 200,
                             h: 100,
-                            infight:false
+                            infight:false,
+                            overlayRef: self.overlayRef
                           }
                           WindowManager.create(self.gamescene, windowname, CollabWindow, collabWindowData);
                     })
