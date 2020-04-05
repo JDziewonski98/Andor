@@ -245,6 +245,63 @@
    "monsters": "[[\"gor1\",{\"strength\":2,\"willpower\":4,\"dice\":\"red\",\"gold\":2,\"name\":\"gor1\",\"type\":\"gor\",\"tileID\":8}],[\"gor2\",{\"strength\":2,\"willpower\":4,\"dice\":\"red\",\"gold\":2,\"name\":\"gor2\",\"type\":\"gor\",\"tileID\":20}],[\"gor3\",{\"strength\":2,\"willpower\":4,\"dice\":\"red\",\"gold\":2,\"name\":\"gor3\",\"type\":\"gor\",\"tileID\":21}],[\"gor4\",{\"strength\":2,\"willpower\":4,\"dice\":\"red\",\"gold\":2,\"name\":\"gor4\",\"type\":\"gor\",\"tileID\":26}],[\"gor5\",{\"strength\":2,\"willpower\":4,\"dice\":\"red\",\"gold\":2,\"name\":\"gor5\",\"type\":\"gor\",\"tileID\":48}],[\"skral1\",{\"strength\":6,\"willpower\":6,\"dice\":\"red\",\"gold\":4,\"name\":\"skral1\",\"type\":\"skral\",\"tileID\":19}]]",
    "monstersInCastle": [],
    "endOfGame": false
+  },
+  "Omar": {
+   "name": "Omar",
+   "difficulty": 0,
+   "numOfDesiredPlayers": 1,
+   "castle": "{\"numDefenseShields\":0,\"numDefenseShieldsUsed\":0}",
+   "fogs": "[[8,\"Gor\"],[11,\"EventCard\"],[12,\"Strength\"],[13,\"Gold\"],[49,\"EventCard\"],[16,\"EventCard\"],[32,\"Gold\"],[48,\"Gold\"],[42,\"WillPower3\"],[44,\"EventCard\"],[47,\"Wineskin\"],[46,\"WillPower2\"],[64,\"Brew\"],[56,\"Gor\"],[63,\"EventCard\"]]",
+   "heros": [
+    {
+     "moveCompleted": false,
+     "timeOfDay": 1,
+     "freeMoves": 0,
+     "wineskin": false,
+     "largeItem": "empty",
+     "helm": false,
+     "smallItems": [
+      "wineskin",
+      "green_runestone"
+     ],
+     "hk": "archer",
+     "rank": 25,
+     "region": {
+      "wellUsed": false,
+      "wineskins": 0,
+      "largeItems": {},
+      "helms": 0,
+      "smallItems": {},
+      "items": {},
+      "id": 25,
+      "hasWell": false,
+      "hasMerchant": false,
+      "nextRegionId": 24,
+      "adjRegionsIds": [
+       23,
+       24,
+       31,
+       27,
+       26
+      ],
+      "farmers": [],
+      "gold": 0
+     },
+     "farmers": [],
+     "will": 7,
+     "strength": 1,
+     "gold": 1,
+     "dice": [
+      3,
+      4,
+      5
+     ]
+    }
+   ],
+   "farmers": "[{\"id\":0,\"tileID\":24},{\"id\":1,\"tileID\":36}]",
+   "monsters": "[[\"gor1\",{\"strength\":2,\"willpower\":4,\"dice\":\"red\",\"gold\":2,\"name\":\"gor1\",\"type\":\"gor\",\"tileID\":8}],[\"gor2\",{\"strength\":2,\"willpower\":4,\"dice\":\"red\",\"gold\":2,\"name\":\"gor2\",\"type\":\"gor\",\"tileID\":20}],[\"gor3\",{\"strength\":2,\"willpower\":4,\"dice\":\"red\",\"gold\":2,\"name\":\"gor3\",\"type\":\"gor\",\"tileID\":21}],[\"gor4\",{\"strength\":2,\"willpower\":4,\"dice\":\"red\",\"gold\":2,\"name\":\"gor4\",\"type\":\"gor\",\"tileID\":26}],[\"gor5\",{\"strength\":2,\"willpower\":4,\"dice\":\"red\",\"gold\":2,\"name\":\"gor5\",\"type\":\"gor\",\"tileID\":48}],[\"skral1\",{\"strength\":6,\"willpower\":6,\"dice\":\"red\",\"gold\":4,\"name\":\"skral1\",\"type\":\"skral\",\"tileID\":19}]]",
+   "monstersInCastle": [],
+   "endOfGame": false
   }
  }
 }

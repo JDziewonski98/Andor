@@ -59,7 +59,7 @@ export class Game {
         this.fogs = new Map<number, Fog>();
         this.currPlayersTurn = ""
         this.setRegions();
-        this.setFarmers();
+        this.setFarmers(null);
         this.setMonsters(null);
         this.setShields();
         this.setFogs(null);
@@ -142,7 +142,14 @@ export class Game {
         }
     }
 
-    private setFarmers() {
+    public setFarmers(f) {
+        if(f != null){
+            this.farmers = f;
+            this.farmers.forEach((farmer) => {
+                this.regions[farmer.getTileID()].addFarmer(farmer);
+            })
+            return;
+        }
         this.farmers.push(new Farmer(0, 24));
         this.farmers.push(new Farmer(1, 36));
         this.regions[24].addFarmer(this.farmers[0]);

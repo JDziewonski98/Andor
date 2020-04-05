@@ -1,6 +1,6 @@
 import { Lobby, Game, GameDifficulty, Player } from '../model';
 import { game } from '.';
-import { jsonToMap } from 'src/utils/helpers';
+import { jsonToMap } from "../utils/helpers";
 
 
 export function lobby(socket, model: Lobby, io) {
@@ -36,7 +36,8 @@ export function lobby(socket, model: Lobby, io) {
       g.setCastle(JSON.parse(game.castle));
       g.setFogs(jsonToMap(game.fogs));
       g.setMonsters(jsonToMap(game.monsters));
-      
+      g.setFarmers(JSON.parse(game.farmers));
+      // TODO: how are we dealing with heros? JSON.parse will give you an array of hero objects.
 
       // add player to game
       if (g.getNumOfDesiredPlayers() > g.getPlayers().size) {

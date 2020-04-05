@@ -18,8 +18,8 @@ export function game(socket, model: Game, io) {
     game['numOfDesiredPlayers'] = model.numOfDesiredPlayers;
     game['castle'] = JSON.stringify(model.getCastle());
     game['fogs'] = mapToJson(model.getFogs());
-    game['heros'] = Array.from(model.getHeros().values());
-    // game['farmers'] = model.getFarmers();
+    game['heros'] = JSON.stringify(Array.from(model.getHeros().values()));
+    game['farmers'] = JSON.stringify(model.getFarmers());
     game['monsters'] = mapToJson(model.getMonsters());
     game['monstersInCastle'] = model.getMonstersInCastle();
     game['endOfGame'] = model.getEndOfGameState();
