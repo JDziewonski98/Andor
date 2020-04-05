@@ -245,6 +245,10 @@ export default class GameScene extends Phaser.Scene {
     this.gameinstance.receiveTradeInvite(function(host, invitee) {
         WindowManager.create(self, 'tradewindow', TradeWindow, {gameinstance:self.gameinstance, hosthero:host, inviteehero:invitee, parentkey:'None', clienthero:invitee})
     })
+
+
+    console.log("********* SAVING GAME");
+    this.gameinstance.save();
   }
 
   private cameraSetup() {

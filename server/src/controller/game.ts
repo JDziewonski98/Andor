@@ -4,6 +4,11 @@ import { LargeItem } from '../model/LargeItem';
 
 export function game(socket, model: Game, io) {
 
+  socket.on("save", function(){
+    var fs = require('fs');
+    fs.writeFile("../db/db.json", JSON.stringify(model, null, 1));
+  })
+
   socket.on("moveRequest", function (id, callback) {
     id = +id // turning Id from string to number
     var heroID = socket.conn.id

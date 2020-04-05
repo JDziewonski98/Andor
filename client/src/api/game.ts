@@ -430,5 +430,9 @@ export class game {
     public receiveEndOfGame(callback) {
         this.socket.on('endGame', callback);
     }
+
+    public save(){
+        this.socket.emit("save");
+    }
 }
 
