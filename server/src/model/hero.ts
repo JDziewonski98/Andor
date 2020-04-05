@@ -1,8 +1,8 @@
 import { HeroKind } from "./HeroKind";
 import { Region } from './region';
 import { Farmer } from '.';
-import {LargeItem} from './LargeItem'
-import {SmallItem} from './SmallItem'
+import { LargeItem } from './LargeItem'
+import { SmallItem } from './SmallItem'
 
 export class Hero {
     public hk: HeroKind;
@@ -44,7 +44,15 @@ export class Hero {
     }
 
     public getData(){
-        let data = {hk: this.hk, gold: this.gold, strength: this.strength, will: this.will, farmers: this.farmers.length, largeItem: this.largeItem, currtileid:this.region.getID()};
+        let data = {
+            hk: this.hk, 
+            gold: this.gold, 
+            strength: this.strength,
+            will: this.will, 
+            farmers: this.farmers.length, 
+            largeItem: this.largeItem, 
+            currtileid:this.region.getID()
+        };
         return data;
     }
 

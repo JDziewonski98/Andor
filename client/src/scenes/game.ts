@@ -13,6 +13,7 @@ import {
   wellTile1, wellTile2, wellTile3, wellTile4,
   mOffset, enumPositionOfNarrator
 } from '../constants'
+import { TileWindow } from './tilewindow';
 
 
 export default class GameScene extends Phaser.Scene {
@@ -45,6 +46,8 @@ export default class GameScene extends Phaser.Scene {
   private turntext;
 
   private overlay;
+
+  private shiftKey;
   
   constructor() {
     super({ key: 'Game' });
@@ -89,6 +92,7 @@ export default class GameScene extends Phaser.Scene {
     this.load.image("Gold", "../assets/gold.png");
     this.load.image("EventCard", "../assets/event.png");
     this.load.image("Gor", "../assets/gorfog.png");
+
     //items
     this.load.image("Brew", "../assets/brew.png");
     this.load.image("Wineskin", "../assets/wineskin.png");
@@ -105,6 +109,7 @@ export default class GameScene extends Phaser.Scene {
     this.load.image("telescope", "../assets/telescope.PNG");
     this.load.image("half_wineskin", "../assets/half_wineskin.jpg")
     this.load.image("half_brew", "../assets/half_brew.jpg")
+    this.load.image("gold", "../assets/gold.png")
 
     this.load.image("Strength", "../assets/strength.png");
     this.load.image("pawn", "../assets/pawn.png");
@@ -115,6 +120,7 @@ export default class GameScene extends Phaser.Scene {
     var self = this;
 
     this.cameraSetup();
+    this.shiftKey = this.input.keyboard.addKey('shift');
     this.sceneplugin = this.scene
     // Centered gameboard with border
     this.add.image(fullWidth / 2, fullHeight / 2, 'gameboard')
@@ -133,7 +139,7 @@ export default class GameScene extends Phaser.Scene {
     this.addWell(7073, 3333, wellTile3)
     this.addWell(5962, 770, wellTile4)
 
-    this.addGold()
+    // this.addGold()
 
     this.addFog();
 
@@ -280,14 +286,36 @@ export default class GameScene extends Phaser.Scene {
       this.add.existing(tile);
     }
 
-    /// for movement callback, ties pointerdown to move request
+    // click: for movement callback, ties pointerdown to move request
+    // shift+click: tile items pickup interface
     var self = this
     this.tiles.map(function (tile) {
-      tile.on('pointerdown', function () {
-        console.log("It is my turn: ", self.gameinstance.myTurn)
-        self.gameinstance.moveRequest(tile.id, updateMoveRequest)
-      })
-    })
+      tile.on('pointerdown', function (pointer) {
+        if (this.shiftKey.isDown) {
+          const tileWindowID = `tileWindow${tile.getID()}`;
+          if (this.scene.isVisible(tileWindowID)) {
+            console.log(this)
+            var thescene = WindowManager.get(this, tileWindowID)
+            thescene.disconnectListeners()
+            WindowManager.destroy(this, tileWindowID);
+          } else {
+              WindowManager.create(this, tileWindowID, TileWindow, 
+                { 
+                  controller: this.gameinstance,
+                  x: pointer.x + 20,
+                  y: pointer.y + 20,
+                  w: 100,
+                  h: 60,
+                  tileID: tile.getID()
+                }
+              );
+          }
+        } else {
+          console.log("It is my turn: ", self.gameinstance.myTurn)
+          self.gameinstance.moveRequest(tile.id, updateMoveRequest)
+        }
+      }, this)
+    }, this)
 
     this.gameinstance.updateMoveRequest(updateMoveRequest)
 
@@ -388,25 +416,36 @@ export default class GameScene extends Phaser.Scene {
 
   private addMonster(monsterTile: number, type: string, id: string) {
     const tile: Tile = this.tiles[monsterTile];
-    let monster: Monster = new Monster(this, tile, type, id).setInteractive().setScale(.5);
-    this.monsters.push(monster);
-    this.monsterNameMap[monster.name] = monster;
-    tile.setMonster(monster);
-    this.add.existing(monster);
-    monster.on('pointerdown', function (pointer) {
-      if (this.scene.isVisible(monster.name)) {
-        WindowManager.destroy(this, monster.name);
-      }
-      else {
-        WindowManager.create(this, monster.name, Fight, {
-          controller: this.gameinstance,
-          hero: this.hero, monster: monster, heroes: this.heroes,
-          overlayRef: this.overlay
-        });
-        this.scene.pause()
-      }
-    }, this)
 
+      //check if tile has a monster already
+      if (tile.monster !== null) {
+          //get next region. do I have to get it from the backend? couldn't find region.next in frontend
+          // do recursive call. something like: this.addMonster(tile.nextRegion, type, id)
+          // exit condition of recursive call: if tile.id === 0 then we add the monster to the castle tile
+          // ie. decrease a shield count
+
+      }
+      else { // tile is empty. no monster on this tile
+
+          let monster: Monster = new Monster(this, tile, type, id).setInteractive().setScale(.5);
+          this.monsters.push(monster);
+          this.monsterNameMap[monster.name] = monster;
+          tile.setMonster(monster);
+          this.add.existing(monster);
+          monster.on('pointerdown', function (pointer) {
+              if (this.scene.isVisible(monster.name)) {
+                  WindowManager.destroy(this, monster.name);
+              }
+              else {
+                  WindowManager.create(this, monster.name, Fight, {
+                      controller: this.gameinstance,
+                      hero: this.hero, monster: monster, heroes: this.heroes,
+                      overlayRef: this.overlay
+                  });
+                  this.scene.pause()
+              }
+          }, this)
+      }
   }
 
   private addFarmers() {
@@ -560,8 +599,12 @@ export default class GameScene extends Phaser.Scene {
 
         const newNarrator = new Narrator(this, posNarrator, "pawn", this.gameinstance).setDisplaySize(40, 40);
         this.add.existing(newNarrator);
-       
-        newNarrator.advance() // first time calling it, will go into the this.posNarrator === A branch of the switch        
+        
+        //newNarrator.advance() // first time calling it, will go into the this.posNarrator === A branch of the switch                        
+        //newNarrator.advance()
+        //newNarrator.advance()
+        
+        
     }
 
   private addFog() {
@@ -620,35 +663,33 @@ export default class GameScene extends Phaser.Scene {
     });
   }
 
-  private addGold() {
-    var self = this
-    for (let id in self.tiles) { // of dattara tile object ga iterate sareru
-      //create a text Sprite indicating the number of gold. 
-      var goldText = self.add.text(50, 50, "G", { color: "#fff52e" }).setX(self.tiles[id].x - 30).setY(self.tiles[id].y - 30)
-      //set to interactive
-      goldText.setInteractive()
-      self.add.existing(goldText);
-      goldText.on("pointerdown", function (pointer) {
-        self.gameinstance.pickupGold(id, function () {
-          if (self.tiles[id].getGold() > 0) {
-            console.log("amount on client-tile: ", self.tiles[id].getGold())
-            self.tiles[id].setGold(self.tiles[id].getGold() - 1)
-            console.log("amount on client-tile: ", self.tiles[id].getGold())   //amount of gold on tile is updated
-          }
-        })
-      }, this)
+  // private addGold() {
+  //   var self = this
+  //   for (let id in self.tiles) { // of dattara tile object ga iterate sareru
+  //     //create a text Sprite indicating the number of gold. 
+  //     var goldText = self.add.text(50, 50, "G", { color: "#fff52e" }).setX(self.tiles[id].x - 30).setY(self.tiles[id].y - 30)
+  //     //set to interactive
+  //     goldText.setInteractive()
+  //     self.add.existing(goldText);
+  //     goldText.on("pointerdown", function (pointer) {
+  //       self.gameinstance.pickupGold(id, function () {
+  //         if (self.tiles[id].getGold() > 0) {
+  //           console.log("amount on client-tile: ", self.tiles[id].getGold())
+  //           self.tiles[id].setGold(self.tiles[id].getGold() - 1)
+  //           console.log("amount on client-tile: ", self.tiles[id].getGold())   //amount of gold on tile is updated
+  //         }
+  //       })
+  //     }, this)
 
-      self.gameinstance.updatePickupGold(function (pointer) {
-        if (self.tiles[id].getGold() > 0) {
-          console.log(self.tiles[id].getGold())
-          self.tiles[id].setGold(self.tiles[id].getGold() - 1)
-          console.log(self.tiles[id].getGold())
-        }
-      }, this)
-    }
-    }
-
-
+  //     self.gameinstance.updatePickupGold(function (pointer) {
+  //       if (self.tiles[id].getGold() > 0) {
+  //         console.log(self.tiles[id].getGold())
+  //         self.tiles[id].setGold(self.tiles[id].getGold() - 1)
+  //         console.log(self.tiles[id].getGold())
+  //       }
+  //     }, this)
+  //   }
+  // }
 
   private startingCollabDecisionSetup() {
     var self = this;
