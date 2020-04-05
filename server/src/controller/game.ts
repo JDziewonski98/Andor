@@ -2,7 +2,7 @@ import { Game, HeroKind, Region, Hero, Monster, Fog, MonsterKind } from '../mode
 import { SmallItem } from '../model/SmallItem';
 import { LargeItem } from '../model/LargeItem';
 
-import { serializeMap } from "../utils/helpers";
+import { mapToJson } from "../utils/helpers";
 
 export function game(socket, model: Game, io) {
 
@@ -17,10 +17,10 @@ export function game(socket, model: Game, io) {
     game['difficulty'] = model.difficulty;
     game['numOfDesiredPlayers'] = model.numOfDesiredPlayers;
     game['castle'] = JSON.stringify(model.getCastle());
-    game['fogs'] = serializeMap(model.getFogs());
+    game['fogs'] = mapToJson(model.getFogs());
     game['heros'] = Array.from(model.getHeros().values());
     // game['farmers'] = model.getFarmers();
-    game['monsters'] = serializeMap(model.getMonsters());
+    game['monsters'] = mapToJson(model.getMonsters());
     game['monstersInCastle'] = model.getMonstersInCastle();
     game['endOfGame'] = model.getEndOfGameState();
 

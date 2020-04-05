@@ -12,6 +12,7 @@ import {
 } from "."
 import { LargeItem } from './LargeItem';
 import { SmallItem } from './SmallItem';
+import { isUndefined } from 'util';
 
 export class Game {
     public numOfDesiredPlayers: number;
@@ -59,12 +60,14 @@ export class Game {
         this.currPlayersTurn = ""
         this.setRegions();
         this.setFarmers();
-        this.setMonsters();
+        this.setMonsters(null);
         this.setShields();
-        this.setFogs();
+        this.setFogs(null);
         this.readyplayers = 0;
         this.numAccepts = 0;
     }
+
+
 
     private setFirstHerosTurn() {
         var minRank = Number.MAX_VALUE;
@@ -127,7 +130,7 @@ export class Game {
         return socketID;
     }
 
-    private setShields() {
+    public setShields() {
         var numPlayers = this.numOfDesiredPlayers;
 
         if (numPlayers === 2) {
@@ -146,7 +149,11 @@ export class Game {
         this.regions[36].addFarmer(this.farmers[1]);
     }
 
-    private setMonsters() {
+    public setMonsters(m) { 
+        if(m != null){
+            this.monsters = m;
+            return;
+        }
         this.addMonster(MonsterKind.Gor, 8, 'gor1');
         this.addMonster(MonsterKind.Gor, 20, 'gor2');
         this.addMonster(MonsterKind.Gor, 21, 'gor3');
@@ -171,7 +178,11 @@ export class Game {
         })
     }
 
-    private setFogs() {
+    public setFogs(f) {
+        if(f != null){ // if loading game
+            this.fogs = f!;
+            return;
+        }
         const fogIds = [8, 11, 12, 13, 49, 16, 32, 48, 42, 44, 47, 46, 64, 56, 63];
         let fogTypes = [Fog.EventCard, Fog.EventCard, Fog.EventCard, Fog.EventCard, Fog.EventCard, Fog.Strength, Fog.WillPower2, Fog.WillPower3, Fog.Gold, Fog.Gold, Fog.Gold, Fog.Gor, Fog.Gor, Fog.Wineskin, Fog.Brew];
         shuffle(fogTypes);
@@ -196,7 +207,7 @@ export class Game {
     public getFarmers() {
         return this.farmers;
     }
-    
+
     public getRegions(): Region[] {
         return this.regions
     }
@@ -241,6 +252,10 @@ export class Game {
         this.availableHeros = this.availableHeros.filter(h => h != heroType);
         return true;
 
+    }
+
+    public setCastle(c: RietburgCastle){
+        this.castle = c;
     }
 
     public getCastle() {
