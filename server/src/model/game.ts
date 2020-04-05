@@ -143,8 +143,8 @@ export class Game {
     }
 
     private setFarmers() {
-        this.farmers.push(new Farmer(0, this.regions[24]));
-        this.farmers.push(new Farmer(1, this.regions[36]));
+        this.farmers.push(new Farmer(0, 24));
+        this.farmers.push(new Farmer(1, 36));
         this.regions[24].addFarmer(this.farmers[0]);
         this.regions[36].addFarmer(this.farmers[1]);
     }
