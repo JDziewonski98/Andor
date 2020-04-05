@@ -143,7 +143,7 @@ export class Game {
     }
 
     public setFarmers(f) {
-        if(f != null){
+        if (f != null) {
             this.farmers = f;
             this.farmers.forEach((farmer) => {
                 this.regions[farmer.getTileID()].addFarmer(farmer);
@@ -156,8 +156,8 @@ export class Game {
         this.regions[36].addFarmer(this.farmers[1]);
     }
 
-    public setMonsters(m) { 
-        if(m != null){
+    public setMonsters(m) {
+        if (m != null) {
             this.monsters = m;
             return;
         }
@@ -186,7 +186,7 @@ export class Game {
     }
 
     public setFogs(f) {
-        if(f != null){ // if loading game
+        if (f != null) { // if loading game
             this.fogs = f!;
             return;
         }
@@ -261,7 +261,7 @@ export class Game {
 
     }
 
-    public setCastle(c: RietburgCastle){
+    public setCastle(c: RietburgCastle) {
         this.castle = c;
     }
 
@@ -489,11 +489,18 @@ export class Game {
         }
     }
 
+    public setEndOfGameState(b: boolean) {
+        this.endOfGame = b;
+    }
     public getEndOfGameState() {
         return this.endOfGame;
     }
 
-    public getMonstersInCastle(){
+    public setMonstersInCastle(arr) {
+        this.monstersInCastle = arr;
+    }
+
+    public getMonstersInCastle() {
         return this.monstersInCastle;
     }
 

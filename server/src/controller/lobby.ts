@@ -37,6 +37,8 @@ export function lobby(socket, model: Lobby, io) {
       g.setFogs(jsonToMap(game.fogs));
       g.setMonsters(jsonToMap(game.monsters));
       g.setFarmers(JSON.parse(game.farmers));
+      g.setMonstersInCastle(JSON.parse(game.monstersInCastle));
+      g.setEndOfGameState(game.endOfGame);
       // TODO: how are we dealing with heros? JSON.parse will give you an array of hero objects.
 
       // add player to game
