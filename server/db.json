@@ -1,0 +1,69 @@
+{
+ "games": {
+  "1234": {
+   "name": "1234",
+   "castle": "{\"numDefenseShields\":0,\"numDefenseShieldsUsed\":0}",
+   "fogs": {
+    "8": "Strength",
+    "11": "Brew",
+    "12": "Wineskin",
+    "13": "WillPower2",
+    "16": "Gold",
+    "32": "EventCard",
+    "42": "EventCard",
+    "44": "EventCard",
+    "46": "Gor",
+    "47": "EventCard",
+    "48": "Gor",
+    "49": "WillPower3",
+    "56": "Gold",
+    "63": "Gold",
+    "64": "EventCard"
+   },
+   "heros": [
+    {
+     "moveCompleted": false,
+     "timeOfDay": 1,
+     "freeMoves": 0,
+     "wineskin": false,
+     "largeItem": "empty",
+     "helm": false,
+     "smallItems": [],
+     "hk": "warrior",
+     "rank": 14,
+     "region": {
+      "wellUsed": false,
+      "wineskins": 0,
+      "largeItems": {},
+      "helms": 0,
+      "smallItems": {},
+      "items": {},
+      "id": 14,
+      "hasWell": false,
+      "hasMerchant": false,
+      "nextRegionId": 2,
+      "adjRegionsIds": [
+       2,
+       3,
+       6,
+       10,
+       17,
+       18
+      ],
+      "farmers": [],
+      "gold": 0
+     },
+     "farmers": [],
+     "will": 7,
+     "strength": 1,
+     "gold": 1,
+     "dice": [
+      2,
+      3,
+      4
+     ]
+    }
+   ]
+  }
+ }
+}

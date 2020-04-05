@@ -12,7 +12,6 @@ export class Hero {
     private will!: number;
     private moveCompleted: boolean = false;
     private timeOfDay: number = 1;
-    private farmer: boolean = false;
     private farmers: Array<Farmer>;
     private rank: number;
     private dice

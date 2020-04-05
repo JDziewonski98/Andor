@@ -469,6 +469,7 @@ export class Game {
 
     public useFog(fog: Fog, tile: number) {
         if (this.fogs.get(tile) != undefined && this.fogs.get(tile) == fog) { // make sure tile has a fog and its the same
+            this.fogs.delete(tile); // delete fog from game
             if (fog == Fog.Gor) {
                 const id = `gor${this.monsters.size + 1}`;
                 this.addMonster(MonsterKind.Gor, tile, id)

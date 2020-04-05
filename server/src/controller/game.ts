@@ -2,11 +2,29 @@ import { Game, HeroKind, Region, Hero, Monster, Fog, MonsterKind } from '../mode
 import { SmallItem } from '../model/SmallItem';
 import { LargeItem } from '../model/LargeItem';
 
+import { serializeMap } from "../utils/helpers";
+
 export function game(socket, model: Game, io) {
 
   socket.on("save", function(){
     var fs = require('fs');
-    fs.writeFile("../db/db.json", JSON.stringify(model, null, 1));
+    let tempData = fs.readFileSync('db.json')
+    let data = JSON.parse(tempData);
+    
+    const gameName = model.getName();
+    const game = {};
+    game['name'] = gameName;
+    game['castle'] = JSON.stringify(model.getCastle());
+    game['fogs'] = serializeMap(model.getFogs());
+    game['heros'] = Array.from(model.getHeros().values());
+
+
+    if(!data.games){
+      data['games'] = {}
+    } 
+    data['games'][gameName] = game;
+    // console.log(data);
+    fs.writeFileSync("db.json", JSON.stringify(data, null, 1));
   })
 
   socket.on("moveRequest", function (id, callback) {
