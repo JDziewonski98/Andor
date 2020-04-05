@@ -14,8 +14,8 @@ import { LargeItem } from './LargeItem';
 import { SmallItem } from './SmallItem';
 
 export class Game {
-    private numOfDesiredPlayers: number;
-    private difficulty: GameDifficulty;
+    public numOfDesiredPlayers: number;
+    public difficulty: GameDifficulty;
     private castle: RietburgCastle;
     private players: Set<Player>;
     private name: string;
@@ -193,6 +193,10 @@ export class Game {
         return this.fogs;
     }
 
+    public getFarmers() {
+        return this.farmers;
+    }
+    
     public getRegions(): Region[] {
         return this.regions
     }
@@ -465,6 +469,10 @@ export class Game {
 
     public getEndOfGameState() {
         return this.endOfGame;
+    }
+
+    public getMonstersInCastle(){
+        return this.monstersInCastle;
     }
 
     public useFog(fog: Fog, tile: number) {

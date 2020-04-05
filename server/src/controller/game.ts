@@ -14,10 +14,15 @@ export function game(socket, model: Game, io) {
     const gameName = model.getName();
     const game = {};
     game['name'] = gameName;
+    game['difficulty'] = model.difficulty;
+    game['numOfDesiredPlayers'] = model.numOfDesiredPlayers;
     game['castle'] = JSON.stringify(model.getCastle());
     game['fogs'] = serializeMap(model.getFogs());
     game['heros'] = Array.from(model.getHeros().values());
-
+    // game['farmers'] = model.getFarmers();
+    game['monsters'] = serializeMap(model.getMonsters());
+    game['monstersInCastle'] = model.getMonstersInCastle();
+    game['endOfGame'] = model.getEndOfGameState();
 
     if(!data.games){
       data['games'] = {}

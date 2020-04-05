@@ -4,21 +4,21 @@
    "name": "1234",
    "castle": "{\"numDefenseShields\":0,\"numDefenseShieldsUsed\":0}",
    "fogs": {
-    "8": "Strength",
-    "11": "Brew",
-    "12": "Wineskin",
-    "13": "WillPower2",
+    "8": "WillPower3",
+    "11": "EventCard",
+    "12": "EventCard",
+    "13": "EventCard",
     "16": "Gold",
-    "32": "EventCard",
-    "42": "EventCard",
-    "44": "EventCard",
-    "46": "Gor",
-    "47": "EventCard",
-    "48": "Gor",
-    "49": "WillPower3",
-    "56": "Gold",
-    "63": "Gold",
-    "64": "EventCard"
+    "32": "Strength",
+    "42": "Gold",
+    "44": "Gold",
+    "46": "EventCard",
+    "47": "Gor",
+    "48": "EventCard",
+    "49": "WillPower2",
+    "56": "Gor",
+    "63": "Brew",
+    "64": "Wineskin"
    },
    "heros": [
     {
@@ -29,8 +29,8 @@
      "largeItem": "empty",
      "helm": false,
      "smallItems": [],
-     "hk": "warrior",
-     "rank": 14,
+     "hk": "mage",
+     "rank": 34,
      "region": {
       "wellUsed": false,
       "wineskins": 0,
@@ -38,17 +38,85 @@
       "helms": 0,
       "smallItems": {},
       "items": {},
-      "id": 14,
+      "id": 34,
       "hasWell": false,
       "hasMerchant": false,
-      "nextRegionId": 2,
+      "nextRegionId": 23,
       "adjRegionsIds": [
-       2,
-       3,
-       6,
-       10,
-       17,
-       18
+       72,
+       23,
+       35,
+       30,
+       29
+      ],
+      "farmers": [],
+      "gold": 0
+     },
+     "farmers": [],
+     "will": 7,
+     "strength": 1,
+     "gold": 4,
+     "dice": [
+      1,
+      1,
+      1
+     ]
+    }
+   ]
+  },
+  "xxx": {
+   "name": "xxx",
+   "difficulty": 0,
+   "numOfDesiredPlayers": 1,
+   "castle": "{\"numDefenseShields\":0,\"numDefenseShieldsUsed\":0}",
+   "fogs": {
+    "8": "EventCard",
+    "11": "Brew",
+    "12": "WillPower2",
+    "13": "EventCard",
+    "16": "EventCard",
+    "32": "Gor",
+    "42": "Wineskin",
+    "44": "Strength",
+    "46": "Gold",
+    "47": "EventCard",
+    "48": "EventCard",
+    "49": "Gold",
+    "56": "WillPower3",
+    "63": "Gor",
+    "64": "Gold"
+   },
+   "heros": [
+    {
+     "moveCompleted": false,
+     "timeOfDay": 1,
+     "freeMoves": 0,
+     "wineskin": false,
+     "largeItem": "empty",
+     "helm": false,
+     "smallItems": [
+      "wineskin",
+      "green_runestone"
+     ],
+     "hk": "archer",
+     "rank": 25,
+     "region": {
+      "wellUsed": false,
+      "wineskins": 0,
+      "largeItems": {},
+      "helms": 0,
+      "smallItems": {},
+      "items": {},
+      "id": 25,
+      "hasWell": false,
+      "hasMerchant": false,
+      "nextRegionId": 24,
+      "adjRegionsIds": [
+       23,
+       24,
+       31,
+       27,
+       26
       ],
       "farmers": [],
       "gold": 0
@@ -58,12 +126,70 @@
      "strength": 1,
      "gold": 1,
      "dice": [
-      2,
       3,
-      4
+      4,
+      5
      ]
     }
-   ]
+   ],
+   "monsters": {
+    "gor1": {
+     "strength": 2,
+     "willpower": 4,
+     "dice": "red",
+     "gold": 2,
+     "name": "gor1",
+     "type": "gor",
+     "tileID": 8
+    },
+    "gor2": {
+     "strength": 2,
+     "willpower": 4,
+     "dice": "red",
+     "gold": 2,
+     "name": "gor2",
+     "type": "gor",
+     "tileID": 20
+    },
+    "gor3": {
+     "strength": 2,
+     "willpower": 4,
+     "dice": "red",
+     "gold": 2,
+     "name": "gor3",
+     "type": "gor",
+     "tileID": 21
+    },
+    "gor4": {
+     "strength": 2,
+     "willpower": 4,
+     "dice": "red",
+     "gold": 2,
+     "name": "gor4",
+     "type": "gor",
+     "tileID": 26
+    },
+    "gor5": {
+     "strength": 2,
+     "willpower": 4,
+     "dice": "red",
+     "gold": 2,
+     "name": "gor5",
+     "type": "gor",
+     "tileID": 48
+    },
+    "skral1": {
+     "strength": 6,
+     "willpower": 6,
+     "dice": "red",
+     "gold": 4,
+     "name": "skral1",
+     "type": "skral",
+     "tileID": 19
+    }
+   },
+   "monstersInCastle": [],
+   "endOfGame": false
   }
  }
 }
