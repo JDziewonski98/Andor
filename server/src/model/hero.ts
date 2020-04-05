@@ -146,7 +146,7 @@ export class Hero {
 
     public pickupFarmer() {
         var r_farmers = this.region.getFarmers();
-        if(r_farmers.length != 0 && (this.region.getID() === r_farmers[r_farmers.length-1].tile.getID())){
+        if(r_farmers.length != 0 && (this.region.getID() === r_farmers[r_farmers.length-1].getTileID())){
             var farmer = this.region.getFarmers().pop()!;
             farmer.carriedBy = this;
             this.farmers.push(farmer);
@@ -161,9 +161,9 @@ export class Hero {
         if(r_farmers.length < 2 && this.farmers.length > 0){
             var farmer = this.farmers.pop()!;
             farmer.carriedBy = undefined;
-            farmer.tile = this.region;
+            farmer.setTileID(this.region.getID());
             this.region.getFarmers().push(farmer);
-            result.push(farmer.id)
+            result.push(farmer.getFarmerID())
             result.push(this.region.getID())
             return result;
         }
