@@ -540,6 +540,13 @@ export class Game {
                 }
             }
         }
+        else if(event.id == 14){
+            for(let [conn,hero] of this.heroList){
+                if(hero.getKind() == HeroKind.Dwarf || hero.getKind() == HeroKind.Warrior){
+                    hero.setWill(3)
+                }
+            }
+        }
         else if(event.id == 24){
             for(let [conn,hero] of this.heroList){
                 let tID = hero.getRegion().getID()
