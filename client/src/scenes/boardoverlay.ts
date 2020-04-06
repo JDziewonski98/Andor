@@ -70,7 +70,19 @@ export default class BoardOverlay extends Phaser.Scene {
                     WindowManager.destroy(this, cardID);
                 } else {
                     console.log('in board overlay:xxxxxxxxxxxxxxx', this.clientheroobject)
-                    WindowManager.create(this, cardID, HeroWindow, { controller: this.gameinstance, icon: 'weed', clienthero: this.hk, windowhero: type, ...herodata , clientherotile: this.clientheroobject.tile.id});
+                    WindowManager.create(this, cardID, HeroWindow, 
+                        { 
+                            controller: this.gameinstance, 
+                            icon: `${type}male`, 
+                            clienthero: this.hk, 
+                            windowhero: type, 
+                            ...herodata , 
+                            clientherotile: this.clientheroobject.tile.id,
+                            name: type,
+                            x: pointer.x,
+                            y: pointer.y+20
+                        }
+                    );
                     let window = WindowManager.get(this, cardID)
                     window.setName(type)
                 }

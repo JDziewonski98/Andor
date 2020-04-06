@@ -69,18 +69,18 @@ export class game {
     }
 
     /*
-    *   GOLD RELATED START
+    *   GOLD RELATED
     */
     public getTileGold(tileID, callback) {
         this.socket.emit("getTileGold", tileID, callback);
     }
 
-    public dropGold(callback) {
-        this.socket.emit("dropGold", callback)
+    public dropGold() {
+        this.socket.emit("dropGold")
     }
 
-    public pickupGold(id, callback) {
-        this.socket.emit("pickupGold", id, callback)
+    public pickupGold(id) {
+        this.socket.emit("pickupGold", id)
     }
 
     // Updates for HeroWindows
@@ -88,9 +88,11 @@ export class game {
         this.socket.on("updateDropGold", callback);       
     }
 
+
     public updatePickupGold(callback) {
         this.socket.on("updatePickupGold", callback)
     }
+
 
     public disconnectUpdateDropGold() {
         this.socket.off("updateDropGold")
