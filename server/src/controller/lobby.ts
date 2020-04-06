@@ -39,6 +39,8 @@ export function lobby(socket, model: Lobby, io) {
       g.setMonstersInCastle(JSON.parse(gameData.monstersInCastle));
       g.setEndOfGameState(gameData.endOfGame);
       // TODO: how are we dealing with heros? JSON.parse will give you an array of hero objects.
+      g.setEventDeck(JSON.parse(gameData.eventDeck));
+      g.setActiveEvents(JSON.parse(gameData.activeEvents));
 
     }
   })

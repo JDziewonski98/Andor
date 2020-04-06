@@ -14,6 +14,7 @@ import {
 import { LargeItem } from './LargeItem';
 import { SmallItem } from './SmallItem';
 import { Socket } from 'dgram';
+import { eventNames } from 'cluster';
 
 export class Game {
     public numOfDesiredPlayers: number;
@@ -70,7 +71,7 @@ export class Game {
         this.readyplayers = 0;
         this.numAccepts = 0;
         this.eventDeck = new Array<EventCard>()
-        this.setEventDeck()
+        this.setEventDeck(null)
         this.activeEvents = new Array<EventCard>()
     }
 
@@ -549,7 +550,7 @@ export class Game {
             } else if (fog == Fog.EventCard) {
                 var newEvent = this.eventDeck.shift()
                 this.applyEvent(newEvent)
-                return {success: true, event: newEvent}
+                return { success: true, event: newEvent }
             }
 
 
@@ -558,25 +559,48 @@ export class Game {
 
 
     }
-    private setEventDeck(){
-        var eventCardData = require("./EventCardMap").map;
-        eventCardData.forEach(ec => {
-            this.eventDeck.push(new EventCard(ec.id, ec.flavorText, ec.desc))
-        })
-        this.shuffleEventDeck()
-        console.log(this.eventDeck)
+
+    public setActiveEvents(events){
+        if (events != null) {
+            events.forEach((event) => {
+                this.activeEvents.push(new EventCard(event.id, event.flavorText, event.desc));
+            })
+        }
     }
-    private shuffleEventDeck(){
+
+    public setEventDeck(events) {
+        if (events != null) {
+            events.forEach((event) => {
+                this.eventDeck.push(new EventCard(event.id, event.flavorText, event.desc));
+            })
+        } else {
+            var eventCardData = require("./EventCardMap").map;
+            eventCardData.forEach(ec => {
+                this.eventDeck.push(new EventCard(ec.id, ec.flavorText, ec.desc))
+            })
+            this.shuffleEventDeck()
+            console.log(this.eventDeck)
+        }
+    }
+    private shuffleEventDeck() {
         let m = this.eventDeck.length, i
-        while(m){
+        while (m) {
             i = Math.floor(Math.random() * m)
             m--
             [this.eventDeck[m], this.eventDeck[i]] = [this.eventDeck[i], this.eventDeck[m]]
         }
     }
-    private applyEvent(event){
+    private applyEvent(event) {
         //do something
 
         //if one that returns to deck 
+    }
+
+    public getEventDeck() {
+        this.eventDeck;
+    }
+
+    public getActiveEvents() {
+        this.activeEvents;
     }
 }
