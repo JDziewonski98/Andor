@@ -47,7 +47,7 @@ export function lobby(socket, model: Lobby, io) {
     let games = model.getAvailableGames();
     let filteredGames = Array<String>()
     games.forEach((g, k) => {
-      if (g.getNumOfDesiredPlayers() > g.getPlayers().size) {
+      if (g.getNumOfDesiredPlayers() > g.getHeros().size) {
         filteredGames.push(k)
       }
     })
@@ -63,7 +63,7 @@ export function lobby(socket, model: Lobby, io) {
     let games = model.getAvailableGames()
     if (games.has(gameName)) {
       let g: Game = <Game>games.get(gameName);
-      if (g.getNumOfDesiredPlayers() > g.getPlayers().size) {
+      if (g.getNumOfDesiredPlayers() > g.getHeros().size) {
         g.addPlayer(<Player>model.getPlayers().get(socket.conn.id))
       }
     }
