@@ -44,6 +44,8 @@ export function lobby(socket, model: Lobby, io) {
       // add player to game
       if (g.getNumOfDesiredPlayers() > g.getPlayers().size) {
         g.addPlayer(<Player>model.getPlayers().get(socket.conn.id))
+
+        callback(g);
       }
 
     }

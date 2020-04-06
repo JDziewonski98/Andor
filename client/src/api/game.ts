@@ -18,6 +18,10 @@ export class game {
         return io.connect(BASE_API + `/${name}`);
     }
 
+    public fetchData(callback){
+
+    }
+ 
     public bindHeroForSelf(herotype, callback) {
         this.socket.emit("bind hero", herotype, callback)
     }

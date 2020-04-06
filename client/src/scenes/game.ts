@@ -1,4 +1,4 @@
-import { Farmer, Hero, HourTracker, Monster, HeroKind, Well, Tile, Narrator} from '../objects';
+import { Farmer, Hero, HourTracker, Monster, HeroKind, Well, Tile, Narrator } from '../objects';
 import { game } from '../api';
 import { WindowManager, CollabWindow, MerchantWindow, DeathWindow, Fight, BattleInvWindow, GameOverWindow, TradeWindow } from "./windows";
 import { RietburgCastle } from './rietburgcastle';
@@ -48,7 +48,7 @@ export default class GameScene extends Phaser.Scene {
   private overlay;
 
   private shiftKey;
-  
+
   constructor() {
     super({ key: 'Game' });
     this.heroes = Array<Hero>();
@@ -65,18 +65,7 @@ export default class GameScene extends Phaser.Scene {
     this.gameinstance = data.controller;
     let type = data.heroType;
     console.log("GameScene created, client hero type: ", type);
-
-    if (type === "dwarf") {
-      this.ownHeroType = HeroKind.Dwarf
-      //This will need to be moved when we implement loading and saving, but for now this is fine.
-      // this.gameinstance.setMyTurn(true)
-    }
-    else if (type === "warrior")
-      this.ownHeroType = HeroKind.Warrior
-    else if (type === "mage")
-      this.ownHeroType = HeroKind.Mage
-    else if (type === "archer")
-      this.ownHeroType = HeroKind.Archer
+    this.ownHeroType = type;
   }
 
   public preload() {
@@ -145,42 +134,34 @@ export default class GameScene extends Phaser.Scene {
 
     this.addNarrator();
 
-    this.gameinstance.addMonster((type, tile, id) => {
+    this.gameinstance.addMonster((type, tile, id) => { // listener to add monsters
       this.addMonster(tile, type, id);
     })
 
     // Listen for turn to be passed to yourself
     this.gameinstance.yourTurn()
 
-    this.gameinstance.receiveBattleInvite(function(monstertileid) {
-      if (self.scene.isVisible('battleinv')){
-        console.log('destroying battleinv')
+    this.gameinstance.receiveBattleInvite(function (monstertileid) {
+      if (self.scene.isVisible('battleinv')) {
         WindowManager.destroy(self, 'battleinv');
       }
-      console.log('creating battleinv')
-      console.log('attempting to create battleinv window')
-      WindowManager.create(self, 'battleinv', BattleInvWindow, 
+      WindowManager.create(self, 'battleinv', BattleInvWindow,
         {
-          controller: self.gameinstance, 
-          hero: self.hero, 
-          gamescene: self, 
+          controller: self.gameinstance,
+          hero: self.hero,
+          gamescene: self,
           monstertileid: monstertileid,
           overlayRef: self.overlay
         });
-      
+
     })
     this.gameinstance.receiveDeathNotice(function () {
       if (self.scene.isVisible('deathnotice')) {
-        console.log('destroying deathnotice')
         WindowManager.destroy(self, 'deathnotice');
       }
-      console.log('creating deathnotice')
       WindowManager.create(self, 'deathnotice', DeathWindow, { controller: self.gameinstance });
-
     })
-    
 
-    var numPlayer = 0;
     this.gameinstance.getHeros((herotypes) => {
       herotypes.forEach(type => {
         if (type === "archer") {
@@ -218,7 +199,6 @@ export default class GameScene extends Phaser.Scene {
         self.gameinstance.setMyTurn(true);
       }
     })
-    console.log(numPlayer);
 
     // Listen for end of game state
     this.gameinstance.receiveEndOfGame(function () {
@@ -237,7 +217,6 @@ export default class GameScene extends Phaser.Scene {
 
     // Listening for shields lost due to monster attack
     this.gameinstance.updateShields(function (shieldNums, add) {
-      console.log("update shields", shieldNums, ", adding:", add);
       for (let shieldNum of shieldNums) {
         if (shieldNum < 0 || shieldNum > 5) continue;
         if (add) {
@@ -248,8 +227,8 @@ export default class GameScene extends Phaser.Scene {
       }
     })
 
-    this.gameinstance.receiveTradeInvite(function(host, invitee) {
-        WindowManager.create(self, 'tradewindow', TradeWindow, {gameinstance:self.gameinstance, hosthero:host, inviteehero:invitee, parentkey:'None', clienthero:invitee})
+    this.gameinstance.receiveTradeInvite(function (host, invitee) {
+      WindowManager.create(self, 'tradewindow', TradeWindow, { gameinstance: self.gameinstance, hosthero: host, inviteehero: invitee, parentkey: 'None', clienthero: invitee })
     })
 
 
@@ -272,7 +251,6 @@ export default class GameScene extends Phaser.Scene {
       zoomOut: 'e'
     });
   }
-
 
   private setRegions() {
     // Note that regions 73-79 and 83 are unused, but created anyways to preserve direct
@@ -299,16 +277,16 @@ export default class GameScene extends Phaser.Scene {
             thescene.disconnectListeners()
             WindowManager.destroy(this, tileWindowID);
           } else {
-              WindowManager.create(this, tileWindowID, TileWindow, 
-                { 
-                  controller: this.gameinstance,
-                  x: pointer.x + 20,
-                  y: pointer.y + 20,
-                  w: 100,
-                  h: 60,
-                  tileID: tile.getID()
-                }
-              );
+            WindowManager.create(this, tileWindowID, TileWindow,
+              {
+                controller: this.gameinstance,
+                x: pointer.x + 20,
+                y: pointer.y + 20,
+                w: 100,
+                h: 60,
+                tileID: tile.getID()
+              }
+            );
           }
         } else {
           console.log("It is my turn: ", self.gameinstance.myTurn)
@@ -417,35 +395,35 @@ export default class GameScene extends Phaser.Scene {
   private addMonster(monsterTile: number, type: string, id: string) {
     const tile: Tile = this.tiles[monsterTile];
 
-      //check if tile has a monster already
-      if (tile.monster !== null) {
-          //get next region. do I have to get it from the backend? couldn't find region.next in frontend
-          // do recursive call. something like: this.addMonster(tile.nextRegion, type, id)
-          // exit condition of recursive call: if tile.id === 0 then we add the monster to the castle tile
-          // ie. decrease a shield count
+    //check if tile has a monster already
+    if (tile.monster !== null) {
+      //get next region. do I have to get it from the backend? couldn't find region.next in frontend
+      // do recursive call. something like: this.addMonster(tile.nextRegion, type, id)
+      // exit condition of recursive call: if tile.id === 0 then we add the monster to the castle tile
+      // ie. decrease a shield count
 
-      }
-      else { // tile is empty. no monster on this tile
+    }
+    else { // tile is empty. no monster on this tile
 
-          let monster: Monster = new Monster(this, tile, type, id).setInteractive().setScale(.5);
-          this.monsters.push(monster);
-          this.monsterNameMap[monster.name] = monster;
-          tile.setMonster(monster);
-          this.add.existing(monster);
-          monster.on('pointerdown', function (pointer) {
-              if (this.scene.isVisible(monster.name)) {
-                  WindowManager.destroy(this, monster.name);
-              }
-              else {
-                  WindowManager.create(this, monster.name, Fight, {
-                      controller: this.gameinstance,
-                      hero: this.hero, monster: monster, heroes: this.heroes,
-                      overlayRef: this.overlay
-                  });
-                  this.scene.pause()
-              }
-          }, this)
-      }
+      let monster: Monster = new Monster(this, tile, type, id).setInteractive().setScale(.5);
+      this.monsters.push(monster);
+      this.monsterNameMap[monster.name] = monster;
+      tile.setMonster(monster);
+      this.add.existing(monster);
+      monster.on('pointerdown', function (pointer) {
+        if (this.scene.isVisible(monster.name)) {
+          WindowManager.destroy(this, monster.name);
+        }
+        else {
+          WindowManager.create(this, monster.name, Fight, {
+            controller: this.gameinstance,
+            hero: this.hero, monster: monster, heroes: this.heroes,
+            overlayRef: this.overlay
+          });
+          this.scene.pause()
+        }
+      }, this)
+    }
   }
 
   private addFarmers() {
@@ -455,18 +433,6 @@ export default class GameScene extends Phaser.Scene {
 
     let farmer_0: Farmer = new Farmer(0, this, farmertile_0, 'farmer').setDisplaySize(40, 40);
     let farmer_1: Farmer = new Farmer(1, this, farmertile_1, 'farmer').setDisplaySize(40, 40);
-
-    // var gridX1 = farmertile_0.farmerCoords[0][0];
-    // var gridY1 = farmertile_0.farmerCoords[0][1];
-
-    // var gridX2 = farmertile_1.farmerCoords[1][0];
-    // var gridY2 = farmertile_1.farmerCoords[1][1];
-
-    // var farmerIcon1 = this.add.sprite(gridX1, gridY1, 'farmer').setDisplaySize(40, 40);
-    // var farmerIcon2 = this.add.sprite(gridX2, gridY2, 'farmer').setDisplaySize(40, 40);
-
-    // let farmer_0: Farmer = new Farmer(this, farmertile_0, farmerIcon1).setDisplaySize(40, 40);
-    // let farmer_1: Farmer = new Farmer(this, farmertile_1, farmerIcon2).setDisplaySize(40, 40);
 
     farmer_0.setInteractive();
     farmer_1.setInteractive();
@@ -590,22 +556,65 @@ export default class GameScene extends Phaser.Scene {
       y * scaleFactor + borderWidth, "well", tile, this.gameinstance).setDisplaySize(40, 45);
     this.add.existing(newWell);
     this.wells.set("" + newWell.getTileID(), newWell);
-    }
+  }
 
 
-    private addNarrator(character = enumPositionOfNarrator.A) {
-        // let A be the default. can change the .A to anything under N. checked that it works
-        var posNarrator = character
+  private addNarrator(character = enumPositionOfNarrator.A) {
+    // let A be the default. can change the .A to anything under N. checked that it works
+    var posNarrator = character
 
-        const newNarrator = new Narrator(this, posNarrator, "pawn", this.gameinstance).setDisplaySize(40, 40);
-        this.add.existing(newNarrator);
-        
-        //newNarrator.advance() // first time calling it, will go into the this.posNarrator === A branch of the switch                        
-        //newNarrator.advance()
-        //newNarrator.advance()
-        
-        
-    }
+    const newNarrator = new Narrator(this, posNarrator, "pawn", this.gameinstance).setDisplaySize(40, 40);
+    this.add.existing(newNarrator);
+
+    //newNarrator.advance() // first time calling it, will go into the this.posNarrator === A branch of the switch                        
+    //newNarrator.advance()
+    //newNarrator.advance()
+
+
+  }
+
+  // preparing this method for loading game
+  private addFogs({ id, fogName }) {
+    const tile: Tile = this.tiles[id];
+    const f = this.add.sprite(tile.x + 50, tile.y - 5, fogName).setDisplaySize(60, 60);
+    f.name = fogName;
+    f.setTint(0x101010); // darken
+    tile.setFog(f) // add to tile
+    f.setInteractive()
+    this.add.existing(f);
+    var self = this;
+    f.on("pointerdown", (pointer) => {
+      self.gameinstance.getHeroItems(self.hero.getKind(), function (itemdict) {
+        self.gameinstance.getAdjacentTiles(self.hero.tile.id, function (adjtileids) {
+          var flag = false
+          //why are we using a loop like this instead of .includes()?? good question, includes() was not working for some reason.
+          for (let i = 0; i < adjtileids.length; i++) {
+            console.log(adjtileids[i], tile.id)
+            if (adjtileids[i] == tile.id) {
+              flag = true
+            }
+          }
+          if (itemdict['smallItems'].includes('telescope') && flag) {
+            console.log('using telescope.')
+            f.clearTint();
+            setTimeout(() => {
+              f.setTint(0x101010);
+            }, 800);
+          }
+          else {
+            self.gameinstance.useFog(f.name, tile.id, (tile) => {
+              console.log(tile, typeof tile)
+              let f = self.tiles[+tile].getFog();
+              f.clearTint();
+              setTimeout(() => {
+                f.destroy()
+              }, 800);
+            })
+          }
+        })
+      })
+    }, this)
+  }
 
   private addFog() {
     this.gameinstance.getFog((fogs) => {
@@ -620,11 +629,12 @@ export default class GameScene extends Phaser.Scene {
         this.add.existing(f);
         var self = this
         f.on("pointerdown", (pointer) => {
-          self.gameinstance.getHeroItems(self.hero.getKind(), function(itemdict) {
-            self.gameinstance.getAdjacentTiles(self.hero.tile.id, function(adjtileids) {
+          self.gameinstance.getHeroItems(self.hero.getKind(), function (itemdict) {
+            self.gameinstance.getAdjacentTiles(self.hero.tile.id, function (adjtileids) {
               var flag = false
               //why are we using a loop like this instead of .includes()?? good question, includes() was not working for some reason.
-              for (let i = 0; i < adjtileids.length; i++){
+              // @Jacek Includes probably wasnt working bceause tile.id is a number but the contents of adjtileids are passed as strings by socket.
+              for (let i = 0; i < adjtileids.length; i++) {
                 console.log(adjtileids[i], tile.id)
                 if (adjtileids[i] == tile.id) {
                   flag = true
@@ -724,7 +734,7 @@ export default class GameScene extends Phaser.Scene {
         y: reducedHeight / 2 - height / 2,
         w: width,
         h: height,
-        infight:false,
+        infight: false,
         overlayRef: self.overlay
       } :
       {
@@ -734,7 +744,7 @@ export default class GameScene extends Phaser.Scene {
         y: reducedHeight / 2 - height / 2,
         w: 200,
         h: 100,
-        infight:false,
+        infight: false,
         overlayRef: self.overlay
       }
     WindowManager.create(this, 'collab', CollabWindow, collabWindowData);

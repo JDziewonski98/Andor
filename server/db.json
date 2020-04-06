@@ -1,1 +1,28 @@
-{}
+{
+ "games": {
+  "G1": {
+   "name": "G1",
+   "difficulty": 0,
+   "numOfDesiredPlayers": 1,
+   "castle": "{\"numDefenseShields\":0,\"numDefenseShieldsUsed\":0}",
+   "fogs": "[[8,\"Strength\"],[11,\"Gold\"],[12,\"Gor\"],[13,\"EventCard\"],[49,\"Wineskin\"],[16,\"EventCard\"],[32,\"Gold\"],[48,\"EventCard\"],[42,\"Gor\"],[44,\"WillPower3\"],[47,\"Brew\"],[46,\"WillPower2\"],[64,\"EventCard\"],[56,\"EventCard\"],[63,\"Gold\"]]",
+   "heros": "[{\"moveCompleted\":false,\"timeOfDay\":1,\"freeMoves\":0,\"wineskin\":false,\"largeItem\":\"bow\",\"helm\":false,\"smallItems\":[\"telescope\"],\"hk\":\"dwarf\",\"rank\":7,\"region\":{\"wellUsed\":false,\"wineskins\":0,\"largeItems\":{},\"helms\":0,\"smallItems\":{},\"items\":{},\"id\":7,\"hasWell\":false,\"hasMerchant\":false,\"nextRegionId\":0,\"adjRegionsIds\":[15,9,8,0,11],\"farmers\":[],\"gold\":0},\"farmers\":[],\"will\":7,\"strength\":1,\"gold\":2,\"dice\":[1,2,3]}]",
+   "farmers": "[{\"id\":0,\"tileID\":24},{\"id\":1,\"tileID\":36}]",
+   "monsters": "[[\"gor1\",{\"strength\":2,\"willpower\":4,\"dice\":\"red\",\"gold\":2,\"name\":\"gor1\",\"type\":\"gor\",\"tileID\":8}],[\"gor2\",{\"strength\":2,\"willpower\":4,\"dice\":\"red\",\"gold\":2,\"name\":\"gor2\",\"type\":\"gor\",\"tileID\":20}],[\"gor3\",{\"strength\":2,\"willpower\":4,\"dice\":\"red\",\"gold\":2,\"name\":\"gor3\",\"type\":\"gor\",\"tileID\":21}],[\"gor4\",{\"strength\":2,\"willpower\":4,\"dice\":\"red\",\"gold\":2,\"name\":\"gor4\",\"type\":\"gor\",\"tileID\":26}],[\"gor5\",{\"strength\":2,\"willpower\":4,\"dice\":\"red\",\"gold\":2,\"name\":\"gor5\",\"type\":\"gor\",\"tileID\":48}],[\"skral1\",{\"strength\":6,\"willpower\":6,\"dice\":\"red\",\"gold\":4,\"name\":\"skral1\",\"type\":\"skral\",\"tileID\":19}]]",
+   "monstersInCastle": "[]",
+   "endOfGame": false
+  },
+  "G2": {
+   "name": "G2",
+   "difficulty": 0,
+   "numOfDesiredPlayers": 1,
+   "castle": "{\"numDefenseShields\":0,\"numDefenseShieldsUsed\":0}",
+   "fogs": "[[8,\"Wineskin\"],[11,\"EventCard\"],[12,\"Gor\"],[13,\"EventCard\"],[49,\"Brew\"],[16,\"Gold\"],[32,\"Strength\"],[48,\"WillPower3\"],[42,\"EventCard\"],[44,\"Gor\"],[47,\"EventCard\"],[46,\"Gold\"],[64,\"WillPower2\"],[56,\"EventCard\"],[63,\"Gold\"]]",
+   "heros": "[{\"moveCompleted\":false,\"timeOfDay\":1,\"freeMoves\":0,\"wineskin\":false,\"largeItem\":\"bow\",\"helm\":false,\"smallItems\":[\"telescope\"],\"hk\":\"dwarf\",\"rank\":7,\"region\":{\"wellUsed\":false,\"wineskins\":0,\"largeItems\":{},\"helms\":0,\"smallItems\":{},\"items\":{},\"id\":7,\"hasWell\":false,\"hasMerchant\":false,\"nextRegionId\":0,\"adjRegionsIds\":[15,9,8,0,11],\"farmers\":[],\"gold\":0},\"farmers\":[],\"will\":7,\"strength\":1,\"gold\":2,\"dice\":[1,2,3]}]",
+   "farmers": "[{\"id\":0,\"tileID\":24},{\"id\":1,\"tileID\":36}]",
+   "monsters": "[[\"gor1\",{\"strength\":2,\"willpower\":4,\"dice\":\"red\",\"gold\":2,\"name\":\"gor1\",\"type\":\"gor\",\"tileID\":8}],[\"gor2\",{\"strength\":2,\"willpower\":4,\"dice\":\"red\",\"gold\":2,\"name\":\"gor2\",\"type\":\"gor\",\"tileID\":20}],[\"gor3\",{\"strength\":2,\"willpower\":4,\"dice\":\"red\",\"gold\":2,\"name\":\"gor3\",\"type\":\"gor\",\"tileID\":21}],[\"gor4\",{\"strength\":2,\"willpower\":4,\"dice\":\"red\",\"gold\":2,\"name\":\"gor4\",\"type\":\"gor\",\"tileID\":26}],[\"gor5\",{\"strength\":2,\"willpower\":4,\"dice\":\"red\",\"gold\":2,\"name\":\"gor5\",\"type\":\"gor\",\"tileID\":48}],[\"skral1\",{\"strength\":6,\"willpower\":6,\"dice\":\"red\",\"gold\":4,\"name\":\"skral1\",\"type\":\"skral\",\"tileID\":19}]]",
+   "monstersInCastle": "[]",
+   "endOfGame": false
+  }
+ }
+}

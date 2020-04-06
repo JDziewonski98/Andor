@@ -17,8 +17,8 @@ export default class LobbyScene extends Phaser.Scene {
         this.lobbyController = new lobby();
     }
 
-    public init(data){
-        
+    public init(data) {
+
     }
 
     public preload() {
@@ -37,8 +37,8 @@ export default class LobbyScene extends Phaser.Scene {
         this.load.image('archermale', './assets/archermale.png')
         this.load.image('fantasyhome', './assets/fantasyhome.jpg')
         this.load.image('optionsIcon', './assets/icons/settings_icon.png')
-        this.load.image('scrollbg','./assets/windowbg.jpg')
-        this.load.image('trademenubg','./assets/menubackground.png')
+        this.load.image('scrollbg', './assets/windowbg.jpg')
+        this.load.image('trademenubg', './assets/menubackground.png')
     }
 
     public create() {
@@ -47,7 +47,7 @@ export default class LobbyScene extends Phaser.Scene {
         // behaviour of Phaser Game autoscaling, while keeping the actual game size
         // larger.
         this.scale.setGameSize(reducedWidth, reducedHeight);
-        
+
         this.draw()
 
         this.lobbyController.addNewPlayerToLobby()
@@ -79,19 +79,19 @@ export default class LobbyScene extends Phaser.Scene {
         this.weedText = this.add.text(500, 300, "New", style2).setOrigin(0.5)
         this.weedText.setInteractive();
         this.weedText.on('pointerdown', function (pointer) {
-            this.scene.start('Create',{controller:self.lobbyController});
+            this.scene.start('Create', { controller: self.lobbyController });
         }, this);
 
         this.gameText = this.add.text(500, 400, "Join", style2).setOrigin(0.5)
         this.gameText.setInteractive();
         this.gameText.on('pointerdown', function (pointer) {
-            this.scene.start('Join',{controller:self.lobbyController});
+            this.scene.start('Join', { controller: self.lobbyController });
         }, this);
 
         this.gameText = this.add.text(500, 500, "Load", style2).setOrigin(0.5)
         this.gameText.setInteractive();
         this.gameText.on('pointerdown', function (pointer) {
-            this.scene.start('Load');
+            this.scene.start('Load', { controller: self.lobbyController });
         }, this);
 
         this.optionsIcon = this.add.image(930, 80, 'optionsIcon').setInteractive();

@@ -144,16 +144,19 @@ export class Game {
 
     public setFarmers(f) {
         if (f != null) {
-            this.farmers = f;
-            this.farmers.forEach((farmer) => {
-                this.regions[farmer.getTileID()].addFarmer(farmer);
+            this.farmers = new Array<Farmer>();
+            f.forEach((farmer) => {
+                const farmObj = new Farmer(farmer.id, farmer.tileID);
+                this.farmers.push(farmObj)
+                this.regions[farmObj.getTileID()].addFarmer(farmObj);
             })
             return;
+        } else {
+            this.farmers.push(new Farmer(0, 24));
+            this.farmers.push(new Farmer(1, 36));
+            this.regions[24].addFarmer(this.farmers[0]);
+            this.regions[36].addFarmer(this.farmers[1]);
         }
-        this.farmers.push(new Farmer(0, 24));
-        this.farmers.push(new Farmer(1, 36));
-        this.regions[24].addFarmer(this.farmers[0]);
-        this.regions[36].addFarmer(this.farmers[1]);
     }
 
     public setMonsters(m) {
