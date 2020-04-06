@@ -11,16 +11,16 @@ export var map = [
     //     "flavorText": "A sleepless night awaits the heros.", 
     //     "desc": "Every hero whose time marker is presently in the sunrise box loses 2 willpower points."
     // },
-    {
-        "id": 28,
-        "flavorText": "A beautifully clear, starry night gives the heroes confidence.", 
-        "desc": "Every hero whose time marker is presently in the sunrise box gets 2 willpower points."
-    },
     // {
-    //     "id": 2, 
-    //     "flavorText": "A biting wind blows across the coast from the sea.", 
-    //     "desc": "Each hero standing on a space with a number between 0 and 20 now loses 3 willpower points."
+    //     "id": 28,
+    //     "flavorText": "A beautifully clear, starry night gives the heroes confidence.", 
+    //     "desc": "Every hero whose time marker is presently in the sunrise box gets 2 willpower points."
     // },
+    {
+        "id": 2, 
+        "flavorText": "A biting wind blows across the coast from the sea.", 
+        "desc": "Each hero standing on a space with a number between 0 and 20 now loses 3 willpower points."
+    },
 
 
 ]

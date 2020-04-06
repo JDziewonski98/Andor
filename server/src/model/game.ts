@@ -544,6 +544,14 @@ export class Game {
                 }
             }
         }
+        else if(event.id == 2){
+            for(let [conn,hero] of this.heroList){
+                let tID = hero.getRegion().getID()
+                if(0 <= tID && tID <= 20){
+                    hero.setWill(-3)
+                }
+            }
+        }
         else if(event.id == 28){
             for(let [conn,hero] of this.heroList){
                 let time = hero.getTimeOfDay()
