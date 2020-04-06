@@ -130,6 +130,11 @@ export function game(socket, model: Game, io) {
             //these will be blockable
             if(event.id == 24 || event.id == 32){
               //trigger collab decision between players. 
+              //blocked = collabCall
+              //if !blocked
+              model.applyEvent(event)
+            }
+            else{
               model.applyEvent(event)
             }
           }
