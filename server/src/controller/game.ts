@@ -128,8 +128,8 @@ export function game(socket, model: Game, io) {
             //will have to add blockable events once shields are implemented
             io.of("/" + model.getName()).emit("newEvent", event);
             //these will be blockable
-            if(event.id == 24){
-              //trigger colab decision between players. 
+            if(event.id == 24 || event.id == 32){
+              //trigger collab decision between players. 
               model.applyEvent(event)
             }
           }

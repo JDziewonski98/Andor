@@ -544,6 +544,15 @@ export class Game {
                 }
             }
         }
+        else if(event.id == 32){
+            for(let [conn,hero] of this.heroList){
+                let time = hero.getTimeOfDay()
+                console.log(hero.getKind(), time)
+                if(time == 1){
+                    hero.setWill(-2)
+                }
+            }
+        }
            
         //if one that returns to deck ?? not sure if any return
     }
