@@ -532,7 +532,15 @@ export class Game {
     public applyEvent(event){
         console.log("Applying event: ", event.id)
         //do something
-        if(event.id == 24){
+        if(event.id == 2){
+            for(let [conn,hero] of this.heroList){
+                let tID = hero.getRegion().getID()
+                if(0 <= tID && tID <= 20){
+                    hero.setWill(-3)
+                }
+            }
+        }
+        else if(event.id == 24){
             for(let [conn,hero] of this.heroList){
                 let tID = hero.getRegion().getID()
                 if(tID == 71 || tID == 72 || tID == 0 || 47 <= tID && tID <= 63){
@@ -544,20 +552,24 @@ export class Game {
                 }
             }
         }
-        else if(event.id == 2){
-            for(let [conn,hero] of this.heroList){
-                let tID = hero.getRegion().getID()
-                if(0 <= tID && tID <= 20){
-                    hero.setWill(-3)
-                }
-            }
-        }
         else if(event.id == 28){
             for(let [conn,hero] of this.heroList){
                 let time = hero.getTimeOfDay()
                 console.log(hero.getKind(), time)
                 if(time == 1){
                     hero.setWill(2)
+                }
+            }
+        }
+        if(event.id == 31){
+            for(let [conn,hero] of this.heroList){
+                let tID = hero.getRegion().getID()
+                if(tID == 71 || tID == 72 || tID == 0 || 47 <= tID && tID <= 63){
+                    //this hero is safe
+                    continue
+                }
+                else{
+                    hero.setWill(-2)
                 }
             }
         }
