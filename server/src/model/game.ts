@@ -12,7 +12,6 @@ import {
 } from "."
 import { LargeItem } from './LargeItem';
 import { SmallItem } from './SmallItem';
-import { isUndefined } from 'util';
 
 export class Game {
     public numOfDesiredPlayers: number;
