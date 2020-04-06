@@ -16,13 +16,15 @@ export default class ReadyScreenScene extends Phaser.Scene {
     private chatText: GameObjects.Text;
     public readyplayers = -1;
     public desiredplayers;
+    public name: string;
 
     constructor() {
         super({ key: 'Ready' });
     }
 
     public init(data) {
-        this.gameController = new game(data.name);
+        this.name = data.name;
+        this.gameController = new game(this.name);
 
     }
 

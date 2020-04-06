@@ -50,10 +50,7 @@ export default class LoadGameScene extends Phaser.Scene {
                     this.removeListener('click')
 
                     this.setVisible(false)
-                    self.controller.loadGame(inputText.value, (data) => {
-                        console.log(data)
-                    });
-                    // self.scene.start('Ready', { source: 'Load'})
+                    self.scene.start('Ready', { name: inputText.value})
                 }
                 else {
                     //  Flash the prompt
