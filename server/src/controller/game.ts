@@ -150,10 +150,13 @@ export function game(socket, model: Game, io) {
     let heroId = socket.conn.id;
     let hero = model.getHero(heroId);
     if (hero != undefined && tile == hero.getRegion().getID()) {
-      let { success, id } = model.useFog(fogType, +tile);
+      let { success, id, event } = model.useFog(fogType, +tile);
       if (success) {
         if (fogType === Fog.Gor) {
           io.of("/" + model.getName()).emit("addMonster", MonsterKind.Gor, tile, id);
+        }
+        if(fogType === Fog.EventCard){
+          io.of("/" + model.getName()).emit("newEvent", event);
         }
 
         callback(tile);

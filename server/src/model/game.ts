@@ -8,10 +8,12 @@ import {
     HeroKind,
     Monster,
     MonsterKind,
-    Fog
+    Fog,
+    EventCard
 } from "."
 import { LargeItem } from './LargeItem';
 import { SmallItem } from './SmallItem';
+import { Socket } from 'dgram';
 
 export class Game {
     public numOfDesiredPlayers: number;
@@ -42,6 +44,9 @@ export class Game {
 
     private availableHeros: Array<HeroKind> = new Array(HeroKind.Archer, HeroKind.Dwarf, HeroKind.Mage, HeroKind.Warrior);
 
+    //EventCards
+    private eventDeck: Array<EventCard>
+    private activeEvents: Array<EventCard>
     constructor(name: string, numOfDesiredPlayers: number, difficulty: GameDifficulty) {
         this.name = name;
         this.numOfDesiredPlayers = numOfDesiredPlayers;
@@ -64,6 +69,9 @@ export class Game {
         this.setFogs(null);
         this.readyplayers = 0;
         this.numAccepts = 0;
+        this.eventDeck = new Array<EventCard>()
+        this.setEventDeck()
+        this.activeEvents = new Array<EventCard>()
     }
 
 
@@ -539,7 +547,9 @@ export class Game {
             } else if (fog == Fog.Wineskin) {
 
             } else if (fog == Fog.EventCard) {
-
+                var newEvent = this.eventDeck.shift()
+                this.applyEvent(newEvent)
+                return {success: true, event: newEvent}
             }
 
 
@@ -547,5 +557,26 @@ export class Game {
         return { success: false };
 
 
+    }
+    private setEventDeck(){
+        var eventCardData = require("./EventCardMap").map;
+        eventCardData.forEach(ec => {
+            this.eventDeck.push(new EventCard(ec.id, ec.flavorText, ec.desc))
+        })
+        this.shuffleEventDeck()
+        console.log(this.eventDeck)
+    }
+    private shuffleEventDeck(){
+        let m = this.eventDeck.length, i
+        while(m){
+            i = Math.floor(Math.random() * m)
+            m--
+            [this.eventDeck[m], this.eventDeck[i]] = [this.eventDeck[i], this.eventDeck[m]]
+        }
+    }
+    private applyEvent(event){
+        //do something
+
+        //if one that returns to deck 
     }
 }

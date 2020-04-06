@@ -1,4 +1,4 @@
-import { Farmer, Hero, HourTracker, Monster, HeroKind, Well, Tile, Narrator } from '../objects';
+import { Farmer, Hero, HourTracker, Monster, HeroKind, Well, Tile, Narrator, EventCard} from '../objects';
 import { game } from '../api';
 import { WindowManager, CollabWindow, MerchantWindow, DeathWindow, Fight, BattleInvWindow, GameOverWindow, TradeWindow } from "./windows";
 import { RietburgCastle } from './rietburgcastle';
@@ -13,6 +13,8 @@ import {
   wellTile1, wellTile2, wellTile3, wellTile4,
   mOffset, enumPositionOfNarrator
 } from '../constants'
+//import { TradeHostWindow } from './tradehostwindow';
+
 import { TileWindow } from './tilewindow';
 
 
@@ -34,6 +36,8 @@ export default class GameScene extends Phaser.Scene {
   private monsterNameMap: Map<string, Monster>;
   private castle: RietburgCastle;
 
+  private event: EventCard
+  private activeEvents: Array<EventCard>
   private mockText;
 
   private cameraKeys;
@@ -203,6 +207,20 @@ export default class GameScene extends Phaser.Scene {
         self.gameinstance.setMyTurn(true);
       }
     })
+
+    //Event Card adding at start of game
+    //this.gameinstance.newEvent()
+    //this.addEventCard("YOOOOOOOOOO")
+    // this.gameinstance.addMonster((type, tile, id) => {
+    //   this.addMonster(tile, type, id);
+    // })
+    this.gameinstance.newEventListener((event) => {
+      this.applyEvent(event)
+    })
+    // function applyEvent(event, this){
+    //   console.log("Wassup mf")
+    //   this.addEventCard(event)
+    // }
 
     // Listen for end of game state
     this.gameinstance.receiveEndOfGame(function () {
@@ -704,6 +722,29 @@ export default class GameScene extends Phaser.Scene {
   //     }, this)
   //   }
   // }
+
+ 
+  //for specific events which need to apply a unique ui effect, or something of that nature
+  private applyEvent(event: EventCard){
+    console.log("Applying event")
+    if(event.id == 2){
+      //wind accross screen or something like that
+    }
+    this.addEventCard(event)
+  }
+
+  private addEventCard(event: EventCard){
+    var newEvent = new EventCard(this, event.id, event.flavorText, event.desc)
+
+    //remove current event from scene
+    if(this.event != null){
+      this.event.destroy(true)
+    }
+
+    //add new event to scene
+    this.event = newEvent
+    this.add.existing(newEvent)
+  }
 
   private startingCollabDecisionSetup() {
     var self = this;
