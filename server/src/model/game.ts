@@ -13,8 +13,6 @@ import {
 } from "."
 import { LargeItem } from './LargeItem';
 import { SmallItem } from './SmallItem';
-import { Socket } from 'dgram';
-import { eventNames } from 'cluster';
 
 export class Game {
     public numOfDesiredPlayers: number;
@@ -53,6 +51,7 @@ export class Game {
         this.numOfDesiredPlayers = numOfDesiredPlayers;
         this.difficulty = difficulty;
         this.castle = new RietburgCastle()
+        this.setShields();
         this.chatlog = [];
         this.players = new Set<Player>();
         this.heroList = new Map<string, Hero>();
@@ -66,7 +65,6 @@ export class Game {
         this.setRegions();
         this.setFarmers(null);
         this.setMonsters(null);
-        this.setShields();
         this.setFogs(null);
         this.readyplayers = 0;
         this.numAccepts = 0;
@@ -244,11 +242,8 @@ export class Game {
         let heroTaken = false;
         this.heroList.forEach((hero, key) => {
             if (hero.getKind() === heroType) {
-                console.log(heroType, "ALREADY TAKEN BRO")
                 heroTaken = true;
-            } else {
-                console.log(typeof heroType, heroType, "availble!!!!")
-            }
+            } 
         })
         if (heroTaken) return false; // failed to bind hero
 
@@ -281,8 +276,6 @@ export class Game {
     public setCastle(c) {
         if (c != null)
             this.castle = new RietburgCastle(c.numDefenseShields, c.numDefenseShieldsUsed);
-        else
-            this.castle = new RietburgCastle();
     }
 
     public getCastle() {
@@ -579,7 +572,7 @@ export class Game {
                 this.eventDeck.push(new EventCard(ec.id, ec.flavorText, ec.desc))
             })
             this.shuffleEventDeck()
-            console.log(this.eventDeck)
+            console.log("CREATED EVENTS FROM START")
         }
     }
     private shuffleEventDeck() {
@@ -597,10 +590,10 @@ export class Game {
     }
 
     public getEventDeck() {
-        this.eventDeck;
+        return this.eventDeck;
     }
 
     public getActiveEvents() {
-        this.activeEvents;
+        return this.activeEvents;
     }
 }

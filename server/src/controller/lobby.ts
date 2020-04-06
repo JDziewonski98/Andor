@@ -42,6 +42,7 @@ export function lobby(socket, model: Lobby, io) {
       g.setEventDeck(JSON.parse(gameData.eventDeck));
       g.setActiveEvents(JSON.parse(gameData.activeEvents));
 
+      callback();
     }
   })
 

@@ -23,6 +23,7 @@ export function game(socket, model: Game, io) {
     game['monsters'] = mapToJson(model.getMonsters());
     game['monstersInCastle'] = JSON.stringify(model.getMonstersInCastle());
     game['endOfGame'] = model.getEndOfGameState();
+    console.log("EVENTS::::::::: \n", model.getEventDeck())
     game['eventDeck'] = JSON.stringify(model.getEventDeck());
     game['activeEvents'] = JSON.stringify(model.getActiveEvents());
 
@@ -35,7 +36,17 @@ export function game(socket, model: Game, io) {
   })
 
   socket.on("getGameData", function (callback) {
-    callback(model)
+    // im sorry for whoever will have to read this. We're too tight on time.
+    const maps = ["monsters", "players", "heroList", "fogs"]
+    let tempModel = {};
+    Object.keys(model).forEach((key) => {
+      if (maps.includes(key)) {
+        tempModel[key] = Array.from(model[key]);
+      } else
+        tempModel[key] = model[key];
+       
+    });
+    callback(tempModel)
   })
 
   socket.on("moveRequest", function (id, callback) {
@@ -217,7 +228,6 @@ export function game(socket, model: Game, io) {
   socket.on('bind hero', function (heroType, callback) {
     let id = socket.conn.id;
     const success = model.getHeros().size < model.numOfDesiredPlayers && model.bindHero(id, heroType);
-    console.log(model.getHeros().size, model.numOfDesiredPlayers)
     if (success) {
       model.readyplayers += 1;
       let remaining = model.getAvailableHeros();

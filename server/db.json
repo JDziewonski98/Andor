@@ -2,27 +2,17 @@
  "games": {
   "G1": {
    "name": "G1",
-   "difficulty": 0,
+   "difficulty": "Easy",
    "numOfDesiredPlayers": 1,
    "castle": "{\"numDefenseShields\":0,\"numDefenseShieldsUsed\":0}",
-   "fogs": "[[8,\"Strength\"],[11,\"Gold\"],[12,\"Gor\"],[13,\"EventCard\"],[49,\"Wineskin\"],[16,\"EventCard\"],[32,\"Gold\"],[48,\"EventCard\"],[42,\"Gor\"],[44,\"WillPower3\"],[47,\"Brew\"],[46,\"WillPower2\"],[64,\"EventCard\"],[56,\"EventCard\"],[63,\"Gold\"]]",
-   "heros": "[{\"moveCompleted\":false,\"timeOfDay\":1,\"freeMoves\":0,\"wineskin\":false,\"largeItem\":\"bow\",\"helm\":false,\"smallItems\":[\"telescope\"],\"hk\":\"dwarf\",\"rank\":7,\"region\":{\"wellUsed\":false,\"wineskins\":0,\"largeItems\":{},\"helms\":0,\"smallItems\":{},\"items\":{},\"id\":7,\"hasWell\":false,\"hasMerchant\":false,\"nextRegionId\":0,\"adjRegionsIds\":[15,9,8,0,11],\"farmers\":[],\"gold\":0},\"farmers\":[],\"will\":7,\"strength\":1,\"gold\":2,\"dice\":[1,2,3]}]",
+   "fogs": "[[8,\"Strength\"],[11,\"Gor\"],[12,\"Gold\"],[13,\"EventCard\"],[49,\"Wineskin\"],[16,\"WillPower2\"],[32,\"Gold\"],[48,\"EventCard\"],[42,\"EventCard\"],[44,\"EventCard\"],[47,\"Brew\"],[46,\"Gor\"],[64,\"EventCard\"],[56,\"WillPower3\"],[63,\"Gold\"]]",
+   "heros": "[{\"moveCompleted\":false,\"timeOfDay\":1,\"freeMoves\":0,\"wineskin\":false,\"largeItem\":\"empty\",\"helm\":false,\"smallItems\":[\"wineskin\",\"green_runestone\"],\"hk\":\"archer\",\"rank\":25,\"region\":{\"wellUsed\":false,\"wineskins\":0,\"largeItems\":{},\"helms\":0,\"smallItems\":{},\"items\":{},\"id\":25,\"hasWell\":false,\"hasMerchant\":false,\"nextRegionId\":24,\"adjRegionsIds\":[23,24,31,27,26],\"farmers\":[],\"gold\":0},\"farmers\":[],\"will\":7,\"strength\":1,\"gold\":1,\"dice\":[3,4,5]}]",
    "farmers": "[{\"id\":0,\"tileID\":24},{\"id\":1,\"tileID\":36}]",
    "monsters": "[[\"gor1\",{\"strength\":2,\"willpower\":4,\"dice\":\"red\",\"gold\":2,\"name\":\"gor1\",\"type\":\"gor\",\"tileID\":8}],[\"gor2\",{\"strength\":2,\"willpower\":4,\"dice\":\"red\",\"gold\":2,\"name\":\"gor2\",\"type\":\"gor\",\"tileID\":20}],[\"gor3\",{\"strength\":2,\"willpower\":4,\"dice\":\"red\",\"gold\":2,\"name\":\"gor3\",\"type\":\"gor\",\"tileID\":21}],[\"gor4\",{\"strength\":2,\"willpower\":4,\"dice\":\"red\",\"gold\":2,\"name\":\"gor4\",\"type\":\"gor\",\"tileID\":26}],[\"gor5\",{\"strength\":2,\"willpower\":4,\"dice\":\"red\",\"gold\":2,\"name\":\"gor5\",\"type\":\"gor\",\"tileID\":48}],[\"skral1\",{\"strength\":6,\"willpower\":6,\"dice\":\"red\",\"gold\":4,\"name\":\"skral1\",\"type\":\"skral\",\"tileID\":19}]]",
    "monstersInCastle": "[]",
-   "endOfGame": false
-  },
-  "G2": {
-   "name": "G2",
-   "difficulty": 0,
-   "numOfDesiredPlayers": 1,
-   "castle": "{\"numDefenseShields\":0,\"numDefenseShieldsUsed\":0}",
-   "fogs": "[[8,\"Wineskin\"],[11,\"EventCard\"],[12,\"Gor\"],[13,\"EventCard\"],[49,\"Brew\"],[16,\"Gold\"],[32,\"Strength\"],[48,\"WillPower3\"],[42,\"EventCard\"],[44,\"Gor\"],[47,\"EventCard\"],[46,\"Gold\"],[64,\"WillPower2\"],[56,\"EventCard\"],[63,\"Gold\"]]",
-   "heros": "[{\"moveCompleted\":false,\"timeOfDay\":1,\"freeMoves\":0,\"wineskin\":false,\"largeItem\":\"bow\",\"helm\":false,\"smallItems\":[\"telescope\"],\"hk\":\"dwarf\",\"rank\":7,\"region\":{\"wellUsed\":false,\"wineskins\":0,\"largeItems\":{},\"helms\":0,\"smallItems\":{},\"items\":{},\"id\":7,\"hasWell\":false,\"hasMerchant\":false,\"nextRegionId\":0,\"adjRegionsIds\":[15,9,8,0,11],\"farmers\":[],\"gold\":0},\"farmers\":[],\"will\":7,\"strength\":1,\"gold\":2,\"dice\":[1,2,3]}]",
-   "farmers": "[{\"id\":0,\"tileID\":24},{\"id\":1,\"tileID\":36}]",
-   "monsters": "[[\"gor1\",{\"strength\":2,\"willpower\":4,\"dice\":\"red\",\"gold\":2,\"name\":\"gor1\",\"type\":\"gor\",\"tileID\":8}],[\"gor2\",{\"strength\":2,\"willpower\":4,\"dice\":\"red\",\"gold\":2,\"name\":\"gor2\",\"type\":\"gor\",\"tileID\":20}],[\"gor3\",{\"strength\":2,\"willpower\":4,\"dice\":\"red\",\"gold\":2,\"name\":\"gor3\",\"type\":\"gor\",\"tileID\":21}],[\"gor4\",{\"strength\":2,\"willpower\":4,\"dice\":\"red\",\"gold\":2,\"name\":\"gor4\",\"type\":\"gor\",\"tileID\":26}],[\"gor5\",{\"strength\":2,\"willpower\":4,\"dice\":\"red\",\"gold\":2,\"name\":\"gor5\",\"type\":\"gor\",\"tileID\":48}],[\"skral1\",{\"strength\":6,\"willpower\":6,\"dice\":\"red\",\"gold\":4,\"name\":\"skral1\",\"type\":\"skral\",\"tileID\":19}]]",
-   "monstersInCastle": "[]",
-   "endOfGame": false
+   "endOfGame": false,
+   "eventDeck": "[{\"id\":24,\"flavorText\":\"A storm moves across the countryside and weighs upon the mood of the heroes.\",\"desc\":\"Any hero who is not on a forest space, in the mine (71), in the tavern (72) or in the castle(space 0)  loses 2 willpower points.\"},{\"id\":28,\"flavorText\":\"A beautifully clear, starry night gives the heroes confidence.\",\"desc\":\"Every hero whose time marker is presently in the sunrise box gets 2 willpower points.\"},{\"id\":32,\"flavorText\":\"A sleepless night awaits the heros.\",\"desc\":\"Every hero whose time marker is presently in the sunrise box loses 2 willpower points.\"},{\"id\":2,\"flavorText\":\"A biting wind blows across the coast from the sea.\",\"desc\":\"Each hero standing on a space with a number between 0 and 20 now loses 3 willpower points.\"},{\"id\":28,\"flavorText\":\"A beautifully clear, starry night gives the heroes confidence.\",\"desc\":\"Every hero whose time marker is presently in the sunrise box gets 2 willpower points.\"},{\"id\":2,\"flavorText\":\"A biting wind blows across the coast from the sea.\",\"desc\":\"Each hero standing on a space with a number between 0 and 20 now loses 3 willpower points.\"},{\"id\":32,\"flavorText\":\"A sleepless night awaits the heros.\",\"desc\":\"Every hero whose time marker is presently in the sunrise box loses 2 willpower points.\"},{\"id\":24,\"flavorText\":\"A storm moves across the countryside and weighs upon the mood of the heroes.\",\"desc\":\"Any hero who is not on a forest space, in the mine (71), in the tavern (72) or in the castle(space 0)  loses 2 willpower points.\"}]",
+   "activeEvents": "[]"
   }
  }
 }

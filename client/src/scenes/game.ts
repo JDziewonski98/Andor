@@ -120,15 +120,26 @@ export default class GameScene extends Phaser.Scene {
       .setDisplaySize(expandedWidth, expandedHeight);
 
     this.gameinstance.getGameData((data) => {
-      console.log(data)
+      console.log("GAME DATA IS:::::::::::::\n",data)
+      this.addShieldsToRietburg(data.castle.numDefenseShields);
+
+
+      data.monsters.forEach(monster => {
+        this.addMonster(monster[1].tileID, monster[1].type, monster[0]);
+      })
+
+
+
     })
+
+    this.setUpListeners();
 
     this.setRegions();
 
     this.addMerchants();
     this.addFarmers();
-    this.addMonsters();
-    this.addShieldsToRietburg();
+    
+    
 
     // x and y coordinates
     this.addWell(209, 2244, wellTile1)
@@ -142,33 +153,8 @@ export default class GameScene extends Phaser.Scene {
 
     this.addNarrator();
 
-    this.gameinstance.addMonster((type, tile, id) => { // listener to add monsters
-      this.addMonster(tile, type, id);
-    })
-
-    // Listen for turn to be passed to yourself
-    this.gameinstance.yourTurn()
-
-    this.gameinstance.receiveBattleInvite(function (monstertileid) {
-      if (self.scene.isVisible('battleinv')) {
-        WindowManager.destroy(self, 'battleinv');
-      }
-      WindowManager.create(self, 'battleinv', BattleInvWindow,
-        {
-          controller: self.gameinstance,
-          hero: self.hero,
-          gamescene: self,
-          monstertileid: monstertileid,
-          overlayRef: self.overlay
-        });
-
-    })
-    this.gameinstance.receiveDeathNotice(function () {
-      if (self.scene.isVisible('deathnotice')) {
-        WindowManager.destroy(self, 'deathnotice');
-      }
-      WindowManager.create(self, 'deathnotice', DeathWindow, { controller: self.gameinstance });
-    })
+  
+    
 
     this.gameinstance.getHeros((herotypes) => {
       herotypes.forEach(type => {
@@ -329,7 +315,7 @@ export default class GameScene extends Phaser.Scene {
 
   }
 
-  private addShieldsToRietburg() {
+  private addShieldsToRietburg(numShields) {
     let s1 = this.add.sprite(85, 190, 'weed').setDisplaySize(40, 40)
     let s2 = this.add.sprite(155, 190, 'weed').setDisplaySize(40, 40)
     let s3 = this.add.sprite(225, 190, 'weed').setDisplaySize(40, 40)
@@ -345,12 +331,9 @@ export default class GameScene extends Phaser.Scene {
     this.castle.shields.push(s6)
 
     var self = this;
-
-    this.gameinstance.getNumShields(function (numShields) {
-      for (var i = 0; i < numShields; i++) {
-        self.castle.shields[i].visible = false;
-      }
-    })
+    for (var i = 0; i < numShields; i++) {
+      self.castle.shields[i].visible = false;
+    }
   }
 
   private addMerchants() {
@@ -834,6 +817,43 @@ export default class GameScene extends Phaser.Scene {
     for (var h of this.heroes) {
       h.hourTracker = this.hourTracker;
     }
+  }
+
+  private setUpListeners(){
+    var self = this;
+
+    // listener to add monsters for narrator, fogs, and events
+    this.gameinstance.addMonster((type, tile, id) => { 
+      this.addMonster(tile, type, id);
+    })
+
+    // Listen for turn to be passed to yourself
+    this.gameinstance.yourTurn()
+
+    /**
+     * FIGHT LISTENERS
+     */
+    this.gameinstance.receiveBattleInvite(function (monstertileid) {
+      if (self.scene.isVisible('battleinv')) {
+        WindowManager.destroy(self, 'battleinv');
+      }
+      WindowManager.create(self, 'battleinv', BattleInvWindow,
+        {
+          controller: self.gameinstance,
+          hero: self.hero,
+          gamescene: self,
+          monstertileid: monstertileid,
+          overlayRef: self.overlay
+        });
+
+    })
+    this.gameinstance.receiveDeathNotice(function () {
+      if (self.scene.isVisible('deathnotice')) {
+        WindowManager.destroy(self, 'deathnotice');
+      }
+      WindowManager.create(self, 'deathnotice', DeathWindow, { controller: self.gameinstance });
+    })
+
   }
 
   public update() {

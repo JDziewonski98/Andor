@@ -81,7 +81,6 @@ export default class ReadyScreenScene extends Phaser.Scene {
         this.playbutton = this.add.sprite(950, 550, 'playbutton').setInteractive()
         this.playbutton.on('pointerdown', function (pointer) {
             self.gameController.allPlayersReady((ready) => {
-                console.log(this.ready, ready, typeof ready)
                 if (this.ready && ready) {
                     if (this.scene.isVisible('chat')) {
                         WindowManager.destroy(this, 'chat');
@@ -120,8 +119,8 @@ export default class ReadyScreenScene extends Phaser.Scene {
             })
         }
 
-        this.gameController.updateHeroList(updateTints)
-        this.gameController.getBoundHeros(updateTints);
+        this.gameController.updateHeroList(updateTints); // listener for when other clients select heros
+        this.gameController.getBoundHeros(updateTints); // initialize the list of hero tints correctly
 
         //callbacks
         function remListener(hero) {
@@ -137,7 +136,6 @@ export default class ReadyScreenScene extends Phaser.Scene {
         var self = this;
         item.on('pointerdown', function () {
             if (!self.ready) {
-                console.log(self);
                 self.gameController.bindHeroForSelf(item.name, function (heros) {
                     self.selection.x = item.x;
                     self.ready = true;
