@@ -232,11 +232,17 @@ export class Game {
     */
     public bindHero(id: string, heroType: HeroKind): boolean {
         // Herokind already been taken
+        let heroTaken = false;
         this.heroList.forEach((hero, key) => {
             if (hero.getKind() === heroType) {
-                return false;
+                console.log(heroType, "ALREADY TAKEN BRO")
+                heroTaken = true;
+            } else {
+                console.log(typeof heroType, heroType, "availble!!!!")
             }
         })
+        if (heroTaken) return false; // failed to bind hero
+
         if (heroType === HeroKind.Dwarf) {
             this.heroList.set(id, new Hero(heroType, this.regions[7]));
             //REMOVE before merging to master
@@ -263,8 +269,11 @@ export class Game {
 
     }
 
-    public setCastle(c: RietburgCastle) {
-        this.castle = c;
+    public setCastle(c) {
+        if (c != null)
+            this.castle = new RietburgCastle(c.numDefenseShields, c.numDefenseShieldsUsed);
+        else
+            this.castle = new RietburgCastle();
     }
 
     public getCastle() {

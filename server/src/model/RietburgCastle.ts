@@ -2,9 +2,9 @@ export class RietburgCastle {
     private numDefenseShields: number
     private numDefenseShieldsUsed: number
 
-    constructor() {
-        this.numDefenseShields = 0;
-        this.numDefenseShieldsUsed = 0;
+    constructor(numShields = 0, numShieldsUsed = 0) {
+        this.numDefenseShields = numShields;
+        this.numDefenseShieldsUsed = numShieldsUsed;
     }
 
     public setShields(s: number){

@@ -1,4 +1,4 @@
 export enum GameDifficulty {
-    Easy,
-    Hard
+    Easy = "Easy",
+    Hard = "Hard"
 }

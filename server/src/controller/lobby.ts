@@ -6,8 +6,7 @@ import { jsonToMap } from "../utils/helpers";
 export function lobby(socket, model: Lobby, io) {
   socket.on("createGame", function (name, numPlayers, difficulty) {
     numPlayers = +numPlayers
-    const d = difficulty === "Easy" ? GameDifficulty.Easy : GameDifficulty.Hard;
-    let g = new Game(name, numPlayers, d);
+    let g = new Game(name, numPlayers, difficulty);
     model.createGame(g);
 
     var gamensp = io.of("/" + name)
@@ -22,10 +21,10 @@ export function lobby(socket, model: Lobby, io) {
     const tempData = fs.readFileSync('db.json')
     const data = JSON.parse(tempData);
     if (data.games && name in data.games) {
-      const game = data.games[name];
+      const gameData = data.games[name];
 
       // create game
-      let g = new Game(name, game.numOfDesiredPlayers, game.difficulty);
+      let g = new Game(name, gameData.numOfDesiredPlayers, gameData.difficulty);
       model.createGame(g);
       // connect game socket
       var gamensp = io.of("/" + name)
@@ -33,20 +32,13 @@ export function lobby(socket, model: Lobby, io) {
         game(socket, g, io)
       });
 
-      g.setCastle(JSON.parse(game.castle));
-      g.setFogs(jsonToMap(game.fogs));
-      g.setMonsters(jsonToMap(game.monsters));
-      g.setFarmers(JSON.parse(game.farmers));
-      g.setMonstersInCastle(JSON.parse(game.monstersInCastle));
-      g.setEndOfGameState(game.endOfGame);
+      g.setCastle(JSON.parse(gameData.castle));
+      g.setFogs(jsonToMap(gameData.fogs));
+      g.setMonsters(jsonToMap(gameData.monsters));
+      g.setFarmers(JSON.parse(gameData.farmers));
+      g.setMonstersInCastle(JSON.parse(gameData.monstersInCastle));
+      g.setEndOfGameState(gameData.endOfGame);
       // TODO: how are we dealing with heros? JSON.parse will give you an array of hero objects.
-
-      // add player to game
-      if (g.getNumOfDesiredPlayers() > g.getPlayers().size) {
-        g.addPlayer(<Player>model.getPlayers().get(socket.conn.id))
-
-        callback(g);
-      }
 
     }
   })

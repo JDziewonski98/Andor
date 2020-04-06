@@ -115,6 +115,10 @@ export default class GameScene extends Phaser.Scene {
     this.add.image(fullWidth / 2, fullHeight / 2, 'gameboard')
       .setDisplaySize(expandedWidth, expandedHeight);
 
+    this.gameinstance.getGameData((data) => {
+      console.log(data)
+    })
+
     this.setRegions();
 
     this.addMerchants();
@@ -233,7 +237,7 @@ export default class GameScene extends Phaser.Scene {
 
 
     console.log("********* SAVING GAME");
-    this.gameinstance.save();
+    // this.gameinstance.save();
   }
 
   private cameraSetup() {

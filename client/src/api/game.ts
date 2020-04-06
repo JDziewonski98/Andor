@@ -18,8 +18,8 @@ export class game {
         return io.connect(BASE_API + `/${name}`);
     }
 
-    public fetchData(callback){
-
+    public getGameData(callback){
+        this.socket.emit("getGameData", callback);
     }
  
     public bindHeroForSelf(herotype, callback) {
@@ -196,24 +196,8 @@ export class game {
         this.socket.on('removeObjListener', callback)
     }
 
-    public playerReady() {
-        this.socket.emit('playerReady')
-    }
-
-    public getReadyPlayers() {
-        this.socket.emit('getReadyPlayers')
-    }
-
-    public recieveReadyPlayers(callback) {
-        this.socket.on('sendReadyPlayers', callback)
-    }
-
-    public getDesiredPlayerCount() {
-        this.socket.emit('getDesiredPlayerCount')
-    }  
-
-    public recieveDesiredPlayerCount(callback) {
-        this.socket.on('recieveDesiredPlayerCount', callback)
+    public allPlayersReady(callback) {
+        this.socket.emit('allPlayersReady', callback)
     }
 
     public getHeros(callback){
