@@ -47,6 +47,7 @@ export class Game {
     //EventCards
     private eventDeck: Array<EventCard>
     private activeEvents: Array<EventCard>
+
     constructor(name: string, numOfDesiredPlayers: number, difficulty: GameDifficulty) {
         this.name = name;
         this.numOfDesiredPlayers = numOfDesiredPlayers;
@@ -499,8 +500,10 @@ export class Game {
 
             } else if (fog == Fog.EventCard) {
                 var newEvent = this.eventDeck.shift()
-                this.applyEvent(newEvent)
-                return {success: true, event: newEvent}
+                if(newEvent != null){
+                    return {success: true, event: newEvent}
+                }
+                return {success: false, event: null}
             }
 
 
@@ -525,9 +528,23 @@ export class Game {
             [this.eventDeck[m], this.eventDeck[i]] = [this.eventDeck[i], this.eventDeck[m]]
         }
     }
-    private applyEvent(event){
-        //do something
 
-        //if one that returns to deck 
+    public applyEvent(event){
+        console.log("Applying event: ", event.id)
+        //do something
+        if(event.id == 24){
+            for(let [conn,hero] of this.heroList){
+                let tID = hero.getRegion().getID()
+                if(tID == 71 || tID == 72 || tID == 0 || 47 <= tID && tID <= 63){
+                    //this hero is safe
+                    continue
+                }
+                else{
+                    hero.setWill(-2)
+                }
+            }
+        }
+           
+        //if one that returns to deck ?? not sure if any return
     }
 }

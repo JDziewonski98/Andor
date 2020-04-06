@@ -124,7 +124,15 @@ export function game(socket, model: Game, io) {
           io.of("/" + model.getName()).emit("addMonster", MonsterKind.Gor, tile, id);
         }
         if(fogType === Fog.EventCard){
-          io.of("/" + model.getName()).emit("newEvent", event);
+          if(event != null){
+            //will have to add blockable events once shields are implemented
+            io.of("/" + model.getName()).emit("newEvent", event);
+            //these will be blockable
+            if(event.id == 24){
+              //trigger colab decision between players. 
+              model.applyEvent(event)
+            }
+          }
         }
 
         callback(tile);

@@ -461,8 +461,8 @@ export class game {
     */
     public newEventListener(callback){
         this.socket.on("newEvent", callback)
+        
     }
-
     //////
 
 

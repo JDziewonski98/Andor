@@ -230,7 +230,7 @@ export default class GameScene extends Phaser.Scene {
     // this.gameinstance.addMonster((type, tile, id) => {
     //   this.addMonster(tile, type, id);
     // })
-    this.gameinstance.newEventListener((event) => {
+    this.gameinstance.newEventListener((event: EventCard) => {
       this.applyEvent(event)
     })
     // function applyEvent(event, this){
