@@ -46,6 +46,7 @@ export class Game {
     //EventCards
     private eventDeck: Array<EventCard>
     private activeEvents: Array<EventCard>
+
     constructor(name: string, numOfDesiredPlayers: number, difficulty: GameDifficulty) {
         this.name = name;
         this.numOfDesiredPlayers = numOfDesiredPlayers;
@@ -542,8 +543,10 @@ export class Game {
 
             } else if (fog == Fog.EventCard) {
                 var newEvent = this.eventDeck.shift()
-                this.applyEvent(newEvent)
-                return { success: true, event: newEvent }
+                if(newEvent != null){
+                    return {success: true, event: newEvent}
+                }
+                return {success: false, event: null}
             }
 
 
@@ -583,10 +586,69 @@ export class Game {
             [this.eventDeck[m], this.eventDeck[i]] = [this.eventDeck[i], this.eventDeck[m]]
         }
     }
-    private applyEvent(event) {
-        //do something
 
-        //if one that returns to deck 
+    public applyEvent(event){
+        console.log("Applying event: ", event.id)
+        //do something
+        if(event.id == 2){
+            for(let [conn,hero] of this.heroList){
+                let tID = hero.getRegion().getID()
+                if(0 <= tID && tID <= 20){
+                    hero.setWill(-3)
+                }
+            }
+        }
+        else if(event.id == 14){
+            for(let [conn,hero] of this.heroList){
+                if(hero.getKind() == HeroKind.Dwarf || hero.getKind() == HeroKind.Warrior){
+                    hero.setWill(3)
+                }
+            }
+        }
+        else if(event.id == 24){
+            for(let [conn,hero] of this.heroList){
+                let tID = hero.getRegion().getID()
+                if(tID == 71 || tID == 72 || tID == 0 || 47 <= tID && tID <= 63){
+                    //this hero is safe
+                    continue
+                }
+                else{
+                    hero.setWill(-2)
+                }
+            }
+        }
+        else if(event.id == 28){
+            for(let [conn,hero] of this.heroList){
+                let time = hero.getTimeOfDay()
+                console.log(hero.getKind(), time)
+                if(time == 1){
+                    hero.setWill(2)
+                }
+            }
+        }
+        if(event.id == 31){
+            for(let [conn,hero] of this.heroList){
+                let tID = hero.getRegion().getID()
+                if(tID == 71 || tID == 72 || tID == 0 || 47 <= tID && tID <= 63){
+                    //this hero is safe
+                    continue
+                }
+                else{
+                    hero.setWill(-2)
+                }
+            }
+        }
+        else if(event.id == 32){
+            for(let [conn,hero] of this.heroList){
+                let time = hero.getTimeOfDay()
+                console.log(hero.getKind(), time)
+                if(time == 1){
+                    hero.setWill(-2)
+                }
+            }
+        }
+           
+        //if one that returns to deck ?? not sure if any return
     }
 
     public getEventDeck() {
