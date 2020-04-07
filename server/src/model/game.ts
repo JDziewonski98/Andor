@@ -26,17 +26,17 @@ export class Game {
 
     // playerID mapping to Hero.
     private heroList: Map<string, Hero>;
-    // connID of heroes who haven't ended their day yet
-    private activeHeros: string[];
+    // herokind of heroes who haven't ended their day yet
+    private activeHeros: HeroKind[];
     // null when the game first starts
-    private nextDayFirstHero: string | null = null;
+    private nextDayFirstHero: HeroKind | null = null;
+    private currPlayersTurn: HeroKind;
 
     private fogs: Map<number, Fog>;
     private regions: Array<Region>;
     private farmers: Array<Farmer>;
     private monsters: Map<string, Monster>;
     private monstersInCastle: string[];
-    private currPlayersTurn: string;
     private endOfGame: boolean = false;
 
     // collab decision related state
@@ -62,7 +62,7 @@ export class Game {
         this.monsters = new Map<string, Monster>();
         this.monstersInCastle = [];
         this.fogs = new Map<number, Fog>();
-        this.currPlayersTurn = ""
+        this.currPlayersTurn = HeroKind.None;
         this.setRegions();
         this.setFarmers();
         this.setMonsters();
@@ -99,9 +99,10 @@ export class Game {
     }
 
     // endDayAll: boolean. True if nextPlayer is being called by the last hero to end their day,
-    // in this case we pass the next turn to the day's earliest ending player (nextDayFirstHero).
-    // False otherwise, in this case we pass the next turn based on increasing hero rank.
-    public nextPlayer(endDayAll: boolean) {
+    //  in this case we pass the next turn to the day's earliest ending player (nextDayFirstHero).
+    //  False otherwise, in this case we pass the next turn based on increasing hero rank.
+    // Returns HeroKind of the next player
+    public nextPlayer(endDayAll: boolean) : HeroKind {
 
         // If the last person is ending their day, pass turn to earliest ending player
         if (endDayAll) {
@@ -114,26 +115,28 @@ export class Game {
             return this.currPlayersTurn;
         }
         // Otherwise, find the hero with the next highest rank
-        var minRank = this.getHero(this.currPlayersTurn).getRank();
+        let currPlayerID = this.getConnIdFromHk(this.currPlayersTurn);
+        if (currPlayerID == null) currPlayerID = "none";
+        var minRank = this.getHero(currPlayerID).getRank();
         var maxRank = Number.MAX_VALUE;
-        var socketID = "none";
-        this.heroList.forEach((hero, ID) => {
+        var hk = HeroKind.None;
+        this.heroList.forEach(hero => {
             if (hero.getRank() > minRank && hero.getRank() < maxRank) {
                 maxRank = hero.getRank();
-                socketID = ID;
+                hk = hero.hk;
             }
         })
         // Or loop back to the lowest rank hero
-        if (socketID == "none") {
+        if (hk == "none") {
             minRank = Number.MAX_VALUE
             this.heroList.forEach((hero, ID) => {
                 if (hero.getRank() < minRank) {
                     minRank = hero.getRank()
-                    socketID = ID
+                    hk = hero.hk;
                 }
             })
         }
-        return socketID;
+        return hk; // None if not found
     }
 
     private setShields() {
@@ -242,7 +245,7 @@ export class Game {
             this.heroList.set(id, new Hero(heroType, this.regions[14]));
         }
 
-        this.activeHeros.push(id);
+        this.activeHeros.push(heroType);
         this.availableHeros = this.availableHeros.filter(h => h != heroType);
         return true;
 
@@ -261,16 +264,22 @@ export class Game {
     }
 
     public removeFromActiveHeros(connID: string) {
-        const index = this.activeHeros.indexOf(connID, 0);
+        var hk = this.getHkFromConnID(connID);
+        if (hk == "none") {
+            console.log("ERROR: removeFromActiveHeros - connID not found in heroList");
+            return;
+        }
+
+        const index = this.activeHeros.indexOf(hk, 0);
         if (index == -1) {
-            console.log("Error", connID, "not in activeHeros");
-            // return;
+            console.log("ERROR:", hk, "not in activeHeros");
+            return;
         }
         this.activeHeros.splice(index, 1);
     }
 
     public resetActiveHeros() {
-        this.activeHeros = Array.from(this.heroList.keys());
+        this.activeHeros = Array.from(this.heroList.values()).map(h => h.hk);
     }
 
     public getHero(id: string): Hero {
@@ -310,8 +319,8 @@ export class Game {
         //TO BE IMPLEMENTED
     }
 
-    public setCurrPlayersTurn(s: string) {
-        this.currPlayersTurn = s;
+    public setCurrPlayersTurn(hk: HeroKind) {
+        this.currPlayersTurn = hk;
     }
 
     public getCurrPlayersTurn() {
@@ -319,8 +328,12 @@ export class Game {
     }
 
     // takes string s: the connection ID of the hero
-    public setNextDayFirstHero(s: string) {
-        this.nextDayFirstHero = s;
+    public setNextDayFirstHero(connID: string) {
+        let hk = this.getHkFromConnID(connID);
+        if (hk == HeroKind.None) {
+            console.log("ERROR: setNextDayFirstHero received HeroKind.None");
+        }
+        this.nextDayFirstHero = hk;
     }
 
     public moveHeroTo(hero, tile) {
@@ -478,21 +491,25 @@ export class Game {
 
     public useFog(fog: Fog, tile: number) {
         if (this.fogs.get(tile) != undefined && this.fogs.get(tile) == fog) { // make sure tile has a fog and its the same
+            // testing useFog
+            var currHero = this.getHeroFromHk(this.currPlayersTurn);
+            console.log("fog test, currHero:", currHero);
+
             if (fog == Fog.Gor) {
                 const id = `gor${this.monsters.size + 1}`;
                 this.addMonster(MonsterKind.Gor, tile, id)
                 return { success: true, id: id };
             } else if (fog == Fog.Gold) {
-                this.heroList.get(this.getCurrPlayersTurn())?.updateGold(1);
+                this.getHeroFromHk(this.currPlayersTurn)!.updateGold(1);
                 return { success: true };
             } else if (fog == Fog.WillPower2) {
-                this.heroList.get(this.getCurrPlayersTurn())?.setWill(2);
+                this.getHeroFromHk(this.currPlayersTurn)!.setWill(2);
                 return { success: true };
             } else if (fog == Fog.WillPower3) {
-                this.heroList.get(this.getCurrPlayersTurn())?.setWill(3);
+                this.getHeroFromHk(this.currPlayersTurn)!.setWill(3);
                 return { success: true };
             } else if (fog == Fog.Strength) {
-                this.heroList.get(this.getCurrPlayersTurn())?.setStrength(2);
+                this.getHeroFromHk(this.currPlayersTurn)!.setStrength(2);
                 return { success: true };
             } else if (fog == Fog.Brew) {
 
@@ -505,16 +522,50 @@ export class Game {
                 }
                 return {success: false, event: null}
             }
-
-
         }
         return { success: false };
-
-
     }
+
+    // Returns the Hero instance in heroList corresponding to the HeroKind requested
+    private getHeroFromHk(hk: HeroKind) : Hero | null {
+        var hero;
+        Array.from(this.heroList.values()).forEach( h => {
+            if (h.hk == hk) {
+                hero = h;
+            }
+        });
+        if (hero == null) {
+            console.log("ERROR: getHeroFromHk found no match for", hk);
+        }
+        return hero; // null if no corresponding hero is found
+    }
+
+    public getConnIdFromHk(hk: HeroKind) : string | null {
+        var connID;
+        this.heroList.forEach(function(h, id) {
+            if (h.hk == hk) {
+                connID = id;
+            }
+        });
+        if (connID == null) {
+            console.log("ERROR: getConnIdFromHk found no match for", hk);
+        }
+        return connID; // null if no corresponding hero is found
+    }
+    public getHkFromConnID(connID: string) : HeroKind {
+        var hk = this.heroList.get(connID)?.hk;
+        if (hk == null) {
+            hk = HeroKind.None; // set to None if no match found
+            console.log("ERROR: getHkFromConnID found no hk match for", connID);
+        }
+        return hk;
+    }
+    
     public drawCard(){
         return this.eventDeck.shift()
     }
+
+    
     private setEventDeck(){
         var eventCardData = require("./EventCardMap").map;
         eventCardData.forEach(ec => {
@@ -523,6 +574,7 @@ export class Game {
         this.shuffleEventDeck()
         console.log(this.eventDeck)
     }
+
     private shuffleEventDeck(){
         let m = this.eventDeck.length, i
         while(m){
