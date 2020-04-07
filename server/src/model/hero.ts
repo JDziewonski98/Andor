@@ -82,6 +82,17 @@ export class Hero {
         this.region = newTile
         this.timeOfDay++
     }
+    public exhaustingMoveTo(newTile: Region){
+        this.region = newTile
+        if (this.freeMoves == 0) {
+            this.timeOfDay++
+            this.will = this.will-3
+            
+        }
+        else {
+            this.freeMoves--
+        }
+    }
     public useItem(item) {
         //TODO
     }

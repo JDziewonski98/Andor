@@ -584,6 +584,9 @@ export class Game {
                 }
             }
         }
+        else if(event.id == 19){
+            this.activeEvents.push(event.id)
+        }
         else if(event.id == 22){
             this.regions[45].removeWell()
         }

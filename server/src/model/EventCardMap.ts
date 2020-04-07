@@ -36,6 +36,11 @@ export var map = [
     //     "flavorText": "Heavy weather moves across the land.", 
     //     "desc": "Each hero with more than 12 willpower points immediately reduces his point total to 12."
     // },
+    {
+        "id": 19, 
+        "flavorText": "An exhausting day", 
+        "desc": "On this day, the 9th and 10th hours will each cost 3 willpower points instead of 2. Place this card above the overtime area of the time track. At the end of the day, it is removed from the game."
+    },
     // {
     //     "id": 22, 
     //     "flavorText": "Rampaging creatures despoil the well at the foot of the mountains.", 

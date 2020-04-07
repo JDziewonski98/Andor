@@ -12,9 +12,12 @@ export function game(socket, model: Game, io) {
     if (hero !== undefined) {
       var currRegion: Region = hero.getRegion()
       var adjRegions: Array<number> = currRegion.getAdjRegionsIds()
+      var event19 = model.getActiveEvents().includes(19)
       var event26 = model.getActiveEvents().includes(26)
+      
       for (var regionID of adjRegions) {
-        var timeLeft = hero.getTimeOfDay() <= 7 || (hero.getTimeOfDay() <= 10 && hero.getWill() >= 2) || hero.getTimeOfDay() == 8 && event26
+        var timeLeft = hero.getTimeOfDay() <= 7 || (hero.getTimeOfDay() <= 10 && hero.getWill() >= 2 && !event19) || hero.getTimeOfDay() == 8 && event26
+        || hero.getTimeOfDay() <= 10 && hero.getWill() >=3 && event19
         if (regionID === id && timeLeft) { // successful move
           let targetRegion: Region = model.getRegions()[id];
 
@@ -22,7 +25,9 @@ export function game(socket, model: Game, io) {
           if(hero.getTimeOfDay() == 8 && event26){
             hero.freeMoveTo(targetRegion)
           }
-          
+          else if((hero.getTimeOfDay() == 9 || hero.getTimeOfDay() == 10) && event19){
+            hero.exhaustingMoveTo(targetRegion)
+          }
           else{
             hero.moveTo(targetRegion)
           }
