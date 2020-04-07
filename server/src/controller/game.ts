@@ -40,7 +40,10 @@ export function game(socket, model: Game, io) {
     }
 
     model.setCurrPlayersTurn(nextPlayer)
-    socket.broadcast.to(`/${model.getName()}#${nextPlayer}`).emit("yourTurn")
+    // get the connID corresponding to the HK
+    var nextPlayerID = model.getConnIdFromHk(nextPlayer);
+    console.log("Sending next turn to ", nextPlayer, "with ID", nextPlayerID);
+    socket.broadcast.to(`/${model.getName()}#${nextPlayerID}`).emit("yourTurn");
   })
 
   socket.on("pickupFarmer", function (callback) {
@@ -314,8 +317,9 @@ export function game(socket, model: Game, io) {
    */
   // Submitting a decision
   socket.on('collabDecisionSubmit', function (resAllocated, resNames, involvedHeroes) {
-    if (model.getCurrPlayersTurn() == "") {
-      model.setCurrPlayersTurn(socket.conn.id)
+    // Sets the first player at the beginning of the game
+    if (model.getCurrPlayersTurn() == HeroKind.None) {
+      model.setCurrPlayersTurn(model.getHkFromConnID(socket.conn.id));
     }
     // Check that numAccepts equals total num of players-1
     if (model.numAccepts != involvedHeroes.length - 1) {
@@ -336,6 +340,7 @@ export function game(socket, model: Game, io) {
             currHero?.updateGold(resAllocated[heroTypeString][i]);
           }
           else if (resNames[i] == "wineskin") {
+            // TODO: actually give the hero the wineskin (use smallItems API)
             currHero?.setWineskin(resAllocated[heroTypeString][i] > 0);
           }
           else if (resNames[i] == 'will') {
@@ -561,7 +566,7 @@ export function game(socket, model: Game, io) {
 
     // If they were the last hero to end the day, trigger all actions and pass turn to
     // the hero who ended the day first
-    var nextPlayer;
+    var nextPlayer: HeroKind;
     if (model.getActiveHeros().length == 1) {
       // Turn goes to the hero that first ended their day
       nextPlayer = model.nextPlayer(true)
@@ -589,9 +594,9 @@ export function game(socket, model: Game, io) {
     }
 
     // Inform client that gets the next turn
-    model.setCurrPlayersTurn(nextPlayer)
-    console.log("Emitting yourTurn to ", nextPlayer)
-    socket.broadcast.to(`/${model.getName()}#${nextPlayer}`).emit("yourTurn")
+    model.setCurrPlayersTurn(nextPlayer);
+    console.log("Emitting yourTurn to ", nextPlayer, "with id", model.getConnIdFromHk(nextPlayer));
+    socket.broadcast.to(`/${model.getName()}#${model.getConnIdFromHk(nextPlayer)}`).emit("yourTurn");
   })
 
   socket.on('moveMonstersEndDay', function () {
