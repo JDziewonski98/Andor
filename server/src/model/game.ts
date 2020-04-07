@@ -570,6 +570,9 @@ export class Game {
                 }
             }
         }
+        else if(event.id == 15){
+            this.regions[35].removeWell()
+        }
         else if(event.id == 17){
             for(let [conn,hero] of this.heroList){
                 let currWill = hero.getWill()

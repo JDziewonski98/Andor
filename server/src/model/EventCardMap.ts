@@ -26,6 +26,11 @@ export var map = [
     //     "flavorText": "A fragment of a very old sculpture has been found. Not all of the heroes are able to appreciate that kind of handiwork.", 
     //     "desc": "The dwarf and the warrior immediately get 3 willpower points each."
     // },
+    {
+        "id": 15, 
+        "flavorText": "Rampaging creatures despoil the well in the south of Andor.", 
+        "desc": "The well token on space 35 is removed from the game."
+    },
     // {
     //     "id": 17, 
     //     "flavorText": "Heavy weather moves across the land.", 

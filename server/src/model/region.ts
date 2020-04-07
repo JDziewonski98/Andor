@@ -96,7 +96,9 @@ export class Region {
     public getAdjRegionsIds(): number[]{
         return this.adjRegionsIds
     }
-
+    public removeWell(){
+        this.hasWell = false
+    }
     /*
     *   ITEM METHODS
     */
