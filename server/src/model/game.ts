@@ -540,10 +540,26 @@ export class Game {
                 }
             }
         }
+        else if(event.id == 13){
+            for(let [conn,hero] of this.heroList){
+                let currWill = hero.getWill()
+                if(currWill < 10){
+                    hero.setWill(10-currWill)
+                }
+            }
+        }
         else if(event.id == 14){
             for(let [conn,hero] of this.heroList){
                 if(hero.getKind() == HeroKind.Dwarf || hero.getKind() == HeroKind.Warrior){
                     hero.setWill(3)
+                }
+            }
+        }
+        else if(event.id == 17){
+            for(let [conn,hero] of this.heroList){
+                let currWill = hero.getWill()
+                if(currWill > 12){
+                    hero.setWill(12-currWill)
                 }
             }
         }
