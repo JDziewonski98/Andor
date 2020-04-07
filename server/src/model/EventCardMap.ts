@@ -11,6 +11,11 @@ export var map = [
     //     "flavorText": "Poisonous vapors from the mountain are tormenting the heroes.", 
     //     "desc": "Each hero standing on a space with a number between 37 and 70 now loses 3 willpower points."
     // },
+    {
+        "id": 11, 
+        "flavorText": "The creatures gather their strength.", 
+        "desc": "On this day, each creature has 1 extra strength point.Place this card next to the creature display. At the end of the day, it is removed from the game. "
+    },
     // {
     //     "id": 12, 
     //     "flavorText": "A farm girl sings a beautiful song that wafts across the northern woods. But it fails to stir the hearts of all the heroes.", 
@@ -36,11 +41,11 @@ export var map = [
     //     "flavorText": "Heavy weather moves across the land.", 
     //     "desc": "Each hero with more than 12 willpower points immediately reduces his point total to 12."
     // },
-    {
-        "id": 19, 
-        "flavorText": "An exhausting day", 
-        "desc": "On this day, the 9th and 10th hours will each cost 3 willpower points instead of 2. Place this card above the overtime area of the time track. At the end of the day, it is removed from the game."
-    },
+    // {
+    //     "id": 19, 
+    //     "flavorText": "An exhausting day", 
+    //     "desc": "On this day, the 9th and 10th hours will each cost 3 willpower points instead of 2. Place this card above the overtime area of the time track. At the end of the day, it is removed from the game."
+    // },
     // {
     //     "id": 22, 
     //     "flavorText": "Rampaging creatures despoil the well at the foot of the mountains.", 
@@ -51,11 +56,11 @@ export var map = [
     //     "flavorText": "A storm moves across the countryside and weighs upon the mood of the heroes.",
     //     "desc": "Any hero who is not on a forest space, in the mine (71), in the tavern (72) or in the castle (space 0) loses 2 willpower points."
     // },
-    {
-        "id": 26, 
-        "flavorText": "On this day, the 8th hour costs no willpower points.", 
-        "desc": "Place this card above the overtime area of the time track. At the end of the day, it is removed from the game."
-    },
+    // {
+    //     "id": 26, 
+    //     "flavorText": "On this day, the 8th hour costs no willpower points.", 
+    //     "desc": "Place this card above the overtime area of the time track. At the end of the day, it is removed from the game."
+    // },
     // {
     //     "id": 28,
     //     "flavorText": "A beautifully clear, starry night gives the heroes confidence.", 

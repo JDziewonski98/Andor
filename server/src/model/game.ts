@@ -531,6 +531,21 @@ export class Game {
     public getActiveEvents(){
         return this.activeEvents
     }
+    public clearActiveEvents(){
+        //revert events which affected state
+        for(var i = 0; i < this.activeEvents.length; i++){
+            //revert changes to monster strength
+            if(this.activeEvents[i] == 11){
+                for(let [name,monster] of this.monsters){
+                    let currStr = monster.getStrength()
+                    monster.setStrength(currStr - 1)
+                }
+                console.log(this.monsters)
+            }
+        }
+        //clear activeEvents
+        this.activeEvents = []
+    }
 
     public applyEvent(event){
         console.log("Applying event: ", event.id)
@@ -550,6 +565,14 @@ export class Game {
                     hero.setWill(-3)
                 }
             }
+        }
+        else if(event.id ==11){
+            for(let [name,monster] of this.monsters){
+                let currStr = monster.getStrength()
+                monster.setStrength(currStr + 1)
+            }
+            this.activeEvents.push(11)
+            console.log(this.monsters)
         }
         else if(event.id == 12){
             for(let [conn,hero] of this.heroList){

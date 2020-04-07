@@ -569,6 +569,8 @@ export function game(socket, model: Game, io) {
 
     // Hero gets first turn of next day if they were first to end the current day
     if (model.getActiveHeros().length == model.getHeros().size) {
+      //remove active Events
+      model.clearActiveEvents()
       model.setNextDayFirstHero(socket.conn.id);
     }
 
