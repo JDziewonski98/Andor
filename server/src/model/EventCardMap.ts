@@ -1,10 +1,20 @@
-//{"id": 13, "flavorText": "", "desc": ""},
+//{"id": , "flavorText": "", "desc": ""},
 
 export var map = [
     // {
     //     "id": 2, 
     //     "flavorText": "A biting wind blows across the coast from the sea.", 
     //     "desc": "Each hero standing on a space with a number between 0 and 20 now loses 3 willpower points."
+    // },
+    {
+        "id": 5, 
+        "flavorText": "Poisonous vapors from the mountain are tormenting the heroes.", 
+        "desc": "Each hero standing on a space with a number between 37 and 70 now loses 3 willpower points."
+    },
+    // {
+    //     "id": 12, 
+    //     "flavorText": "A farm girl sings a beautiful song that wafts across the northern woods. But it fails to stir the hearts of all the heroes.", 
+    //     "desc": "The wizard and the archer each immediately get 3 willpower points."
     // },
     // {
     //     "id": 13, 
@@ -41,9 +51,4 @@ export var map = [
     //     "flavorText": "A sleepless night awaits the heros.", 
     //     "desc": "Every hero whose time marker is presently in the sunrise box loses 2 willpower points."
     // },
-    
-   
-    
-
-
 ]

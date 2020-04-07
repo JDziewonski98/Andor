@@ -540,6 +540,21 @@ export class Game {
                 }
             }
         }
+        else if(event.id == 5){
+            for(let [conn,hero] of this.heroList){
+                let tID = hero.getRegion().getID()
+                if(37 <= tID && tID <= 70){
+                    hero.setWill(-3)
+                }
+            }
+        }
+        else if(event.id == 12){
+            for(let [conn,hero] of this.heroList){
+                if(hero.getKind() == HeroKind.Archer || hero.getKind() == HeroKind.Mage){
+                    hero.setWill(3)
+                }
+            }
+        }
         else if(event.id == 13){
             for(let [conn,hero] of this.heroList){
                 let currWill = hero.getWill()
