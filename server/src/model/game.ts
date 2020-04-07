@@ -581,6 +581,9 @@ export class Game {
                 }
             }
         }
+        else if(event.id == 22){
+            this.regions[45].removeWell()
+        }
         else if(event.id == 24){
             for(let [conn,hero] of this.heroList){
                 let tID = hero.getRegion().getID()

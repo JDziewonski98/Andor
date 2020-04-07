@@ -36,6 +36,10 @@ export var map = [
     //     "flavorText": "Heavy weather moves across the land.", 
     //     "desc": "Each hero with more than 12 willpower points immediately reduces his point total to 12."
     // },
+    {
+        "id": 22, 
+        "flavorText": "Rampaging creatures despoil the well at the foot of the mountains.", 
+        "desc": "The well token on space 45 is removed from the game."},
     // {
     //     "id": 24,
     //     "flavorText": "A storm moves across the countryside and weighs upon the mood of the heroes.",
