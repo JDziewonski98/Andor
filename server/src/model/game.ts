@@ -612,6 +612,26 @@ export class Game {
                 }
             }
         }
+        else if(event.id == 3){
+            var count = 0
+            var highestHero = null
+            var highestRank = Number.MIN_VALUE
+            for(var i = 0; i < this.heroList.size; i++){
+                if(this.heroList[i].region == 57){
+                    count++
+                    if(highestRank < this.heroList[i].getRank()){
+                        highestHero = this.heroList[i]
+                        highestRank = this.heroList[i].getRank()
+                    }
+                }
+            }
+            if(count >= 2){
+                //give highestHero strength point
+            }
+            else{
+                //drop strength on region 57
+            }
+        }
         else if(event.id == 5){
             for(let [conn,hero] of this.heroList){
                 let tID = hero.getRegion().getID()
@@ -693,6 +713,26 @@ export class Game {
                 }
             }
         }
+        else if(event.id == 29){
+            var count = 0
+            var lowestHero = null
+            var lowestRank = Number.MAX_VALUE
+            for(var i = 0; i < this.heroList.size; i++){
+                if(this.heroList[i].region == 57){
+                    count++
+                    if(lowestRank > this.heroList[i].getRank()){
+                        lowestHero = this.heroList[i]
+                        lowestRank = this.heroList[i].getRank()
+                    }
+                }
+            }
+            if(count >= 2){
+                //give lowestHero shield
+            }
+            else{
+                //drop shield on region 57
+            }
+        }
         else if(event.id == 30){
             var count = 0
             var lowestHero = null
@@ -700,7 +740,7 @@ export class Game {
             for(var i = 0; i < this.heroList.size; i++){
                 if(this.heroList[i].region == 72){
                     count++
-                    if(lowestRank < this.heroList[i].getRank()){
+                    if(lowestRank > this.heroList[i].getRank()){
                         lowestHero = this.heroList[i]
                         lowestRank = this.heroList[i].getRank()
                     }

@@ -6,16 +6,22 @@ export var map = [
     //     "flavorText": "A biting wind blows across the coast from the sea.", 
     //     "desc": "Each hero standing on a space with a number between 0 and 20 now loses 3 willpower points."
     // },
+    ////////3 IS ONLY PARTIALLY IMPLEMENTED
+    {
+        "id": 3, 
+        "flavorText": "Wisdom from the Tree of Songs", 
+        "desc": "A hero who enters the Tree of Songs space or is already standing there gets 1 strength point. If more than one hero is standing there, the one with the highest rank gets the strength point. Now place this card on space 57 until a hero has gotten the strength point. Then remove it from the game. "
+    },
     // {
     //     "id": 5, 
     //     "flavorText": "Poisonous vapors from the mountain are tormenting the heroes.", 
     //     "desc": "Each hero standing on a space with a number between 37 and 70 now loses 3 willpower points."
     // },
-    {
-        "id": 9, 
-        "flavorText": "Dark clouds cover the sun, filling all the good people of Andor with strange foreboding.", 
-        "desc": "On this day no hero is allowed to use a 10th hour. Place this card above the overtime area of the time track. At the end of the day, it is removed from the game."
-    },
+    // {
+    //     "id": 9, 
+    //     "flavorText": "Dark clouds cover the sun, filling all the good people of Andor with strange foreboding.", 
+    //     "desc": "On this day no hero is allowed to use a 10th hour. Place this card above the overtime area of the time track. At the end of the day, it is removed from the game."
+    // },
     // {
     //     "id": 11, 
     //     "flavorText": "The creatures gather their strength.", 
@@ -70,6 +76,12 @@ export var map = [
     //     "id": 28,
     //     "flavorText": "A beautifully clear, starry night gives the heroes confidence.", 
     //     "desc": "Every hero whose time marker is presently in the sunrise box gets 2 willpower points."
+    // },
+    ///////29 IS ONLY PARTIALLY IMPLEMENTED
+    // {
+    //     "id": 29, 
+    //     "flavorText": "The keepers of the Tree of Songs offer a gift.", 
+    //     "desc": "Now place a shield on space 57. A hero who enters space 57 or is already standing there can collect the shield and place it on the large storage space on his hero board. If more than one hero is standing there, the hero with the lowest rank gets the shield."
     // },
     ///////30 IS ONLY PARTIALLY IMPLEMENTED
     // {
