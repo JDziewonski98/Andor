@@ -499,7 +499,7 @@ export class Game {
             } else if (fog == Fog.Wineskin) {
 
             } else if (fog == Fog.EventCard) {
-                var newEvent = this.eventDeck.shift()
+                var newEvent = this.drawCard()
                 if(newEvent != null){
                     return {success: true, event: newEvent}
                 }
@@ -511,6 +511,9 @@ export class Game {
         return { success: false };
 
 
+    }
+    public drawCard(){
+        return this.eventDeck.shift()
     }
     private setEventDeck(){
         var eventCardData = require("./EventCardMap").map;
@@ -540,7 +543,6 @@ export class Game {
                     let currStr = monster.getStrength()
                     monster.setStrength(currStr - 1)
                 }
-                console.log(this.monsters)
             }
         }
         //clear activeEvents
@@ -572,7 +574,6 @@ export class Game {
                 monster.setStrength(currStr + 1)
             }
             this.activeEvents.push(11)
-            console.log(this.monsters)
         }
         else if(event.id == 12){
             for(let [conn,hero] of this.heroList){

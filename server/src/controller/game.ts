@@ -140,8 +140,8 @@ export function game(socket, model: Game, io) {
             //will have to add blockable events once shields are implemented
             io.of("/" + model.getName()).emit("newEvent", event);
             //these will be blockable
-            if(event.id ==  2 || event.id ==  5 || event.id == 15 ||event.id == 17 || 
-               event.id == 22 || event.id == 24 || event.id == 31 || event.id == 32){
+            if(event.id ==  2 || event.id ==  5 || event.id == 11 || event.id == 15 || event.id == 17 || 
+               event.id == 19 || event.id == 22 || event.id == 24 || event.id == 31 || event.id == 32){
               //trigger collab decision between players. 
               //blocked = collabCall
               //if !blocked
@@ -569,8 +569,6 @@ export function game(socket, model: Game, io) {
 
     // Hero gets first turn of next day if they were first to end the current day
     if (model.getActiveHeros().length == model.getHeros().size) {
-      //remove active Events
-      model.clearActiveEvents()
       model.setNextDayFirstHero(socket.conn.id);
     }
 
@@ -578,6 +576,26 @@ export function game(socket, model: Game, io) {
     // the hero who ended the day first
     var nextPlayer;
     if (model.getActiveHeros().length == 1) {
+      //remove active Events
+      model.clearActiveEvents()
+      model.setNextDayFirstHero(socket.conn.id);
+
+      //draw and apply new event
+      let event = model.drawCard()
+      if(event != null){
+        io.of("/" + model.getName()).emit("newEvent", event);
+            //these will be blockable
+            if(event.id ==  2 || event.id ==  5 || event.id == 11 || event.id == 15 || event.id == 17 || 
+               event.id == 19 || event.id == 22 || event.id == 24 || event.id == 31 || event.id == 32){
+              //trigger collab decision between players. 
+              //blocked = collabCall
+              //if !blocked
+              model.applyEvent(event)
+            }
+            else{
+              model.applyEvent(event)
+            }
+      }
       // Turn goes to the hero that first ended their day
       nextPlayer = model.nextPlayer(true)
 

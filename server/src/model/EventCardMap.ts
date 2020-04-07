@@ -14,7 +14,7 @@ export var map = [
     {
         "id": 11, 
         "flavorText": "The creatures gather their strength.", 
-        "desc": "On this day, each creature has 1 extra strength point.Place this card next to the creature display. At the end of the day, it is removed from the game. "
+        "desc": "On this day, each creature has 1 extra strength point. Place this card next to the creature display. At the end of the day, it is removed from the game. "
     },
     // {
     //     "id": 12, 
