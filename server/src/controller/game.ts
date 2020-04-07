@@ -149,7 +149,7 @@ export function game(socket, model: Game, io) {
             //will have to add blockable events once shields are implemented
             io.of("/" + model.getName()).emit("newEvent", event);
             //these will be blockable
-            if(event.id ==  2 || event.id ==  5 || event.id == 11 || event.id == 15 || event.id == 17 || 
+            if(event.id ==  2 || event.id ==  5 || event.id ==  9 || event.id == 11 || event.id == 15 || event.id == 17 || 
                event.id == 19 || event.id == 22 || event.id == 24 || event.id == 31 || event.id == 32){
               //trigger collab decision between players. 
               //blocked = collabCall
@@ -596,7 +596,7 @@ export function game(socket, model: Game, io) {
       if(event != null){
         io.of("/" + model.getName()).emit("newEvent", event);
             //these will be blockable
-            if(event.id ==  2 || event.id ==  5 || event.id == 11 || event.id == 15 || event.id == 17 || 
+            if(event.id ==  2 || event.id ==  5 || event.id ==  9 || event.id == 11 || event.id == 15 || event.id == 17 || 
                event.id == 19 || event.id == 22 || event.id == 24 || event.id == 31 || event.id == 32){
               //trigger collab decision between players. 
               //blocked = collabCall
