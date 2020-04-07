@@ -620,6 +620,9 @@ export class Game {
                 }
             }
         }
+        else if(event.id == 9){
+            this.activeEvents.push(9)
+        }
         else if(event.id ==11){
             for(let [name,monster] of this.monsters){
                 let currStr = monster.getStrength()

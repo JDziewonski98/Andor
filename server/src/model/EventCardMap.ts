@@ -12,10 +12,15 @@ export var map = [
     //     "desc": "Each hero standing on a space with a number between 37 and 70 now loses 3 willpower points."
     // },
     {
-        "id": 11, 
-        "flavorText": "The creatures gather their strength.", 
-        "desc": "On this day, each creature has 1 extra strength point. Place this card next to the creature display. At the end of the day, it is removed from the game. "
+        "id": 9, 
+        "flavorText": "Dark clouds cover the sun, filling all the good people of Andor with strange foreboding.", 
+        "desc": "On this day no hero is allowed to use a 10th hour. Place this card above the overtime area of the time track. At the end of the day, it is removed from the game."
     },
+    // {
+    //     "id": 11, 
+    //     "flavorText": "The creatures gather their strength.", 
+    //     "desc": "On this day, each creature has 1 extra strength point. Place this card next to the creature display. At the end of the day, it is removed from the game. "
+    // },
     // {
     //     "id": 12, 
     //     "flavorText": "A farm girl sings a beautiful song that wafts across the northern woods. But it fails to stir the hearts of all the heroes.", 
@@ -66,11 +71,12 @@ export var map = [
     //     "flavorText": "A beautifully clear, starry night gives the heroes confidence.", 
     //     "desc": "Every hero whose time marker is presently in the sunrise box gets 2 willpower points."
     // },
-    {
-        "id": 30, 
-        "flavorText": "A drink in the tavern", 
-        "desc": "Place a wineskin on the taver space (72). A hero who enters space 72 or is already standing there can collect the wineskin and place it on the small storage space on his hero board. If more than one hero is standing there, the hero with the lowest rank gets the wineskin."
-    },
+    ///////30 IS ONLY PARTIALLY IMPLEMENTED
+    // {
+    //     "id": 30, 
+    //     "flavorText": "A drink in the tavern", 
+    //     "desc": "Place a wineskin on the taver space (72). A hero who enters space 72 or is already standing there can collect the wineskin and place it on the small storage space on his hero board. If more than one hero is standing there, the hero with the lowest rank gets the wineskin."
+    // },
     // {
     //     "id": 31, 
     //     "flavorText": "Hot rain from the south lashes the land.", 

@@ -482,5 +482,8 @@ export class Hero {
     public addFreeMove(){
         this.freeMoves++
     }
+    public getFreeMoves(){
+        return this.freeMoves
+    }
     //////////////////////
 }
