@@ -30,12 +30,33 @@ export function game(socket, model: Game, io) {
           //if event 26 is active and it is your 8th hour, move freely
           if(hero.getTimeOfDay() == 8 && event26){
             hero.freeMoveTo(targetRegion)
+            if(model.dangerousRegion(targetRegion)){
+              hero.setWill(-4)
+              let index = model.getActiveEvents().indexOf(21);
+              if (index > -1) {
+                model.getActiveEvents().splice(index, 1);
+              }
+            }
           }
           else if((hero.getTimeOfDay() == 9 || (hero.getTimeOfDay() == 10 && !event9 )) && event19){
             hero.exhaustingMoveTo(targetRegion)
+            if(model.dangerousRegion(targetRegion)){
+              hero.setWill(-4)
+              let index = model.getActiveEvents().indexOf(21);
+              if (index > -1) {
+                model.getActiveEvents().splice(index, 1);
+              }
+            }
           }
           else{
             hero.moveTo(targetRegion)
+            if(model.dangerousRegion(targetRegion)){
+              hero.setWill(-4)
+              let index = model.getActiveEvents().indexOf(21);
+              if (index > -1) {
+                model.getActiveEvents().splice(index, 1);
+              }
+            }
           }
           socket.broadcast.emit("updateMoveRequest", hero.getKind(), id)
           callback(hero.getKind(), id)
@@ -150,7 +171,7 @@ export function game(socket, model: Game, io) {
             io.of("/" + model.getName()).emit("newEvent", event);
             //these will be blockable
             if(event.id ==  2 || event.id ==  5 || event.id ==  9 || event.id == 11 || event.id == 15 || event.id == 17 || 
-               event.id == 19 || event.id == 22 || event.id == 24 || event.id == 31 || event.id == 32){
+               event.id == 19 || event.id == 21 || event.id == 22 || event.id == 24 || event.id == 31 || event.id == 32){
               //trigger collab decision between players. 
               //blocked = collabCall
               //if !blocked
@@ -588,7 +609,7 @@ export function game(socket, model: Game, io) {
     var nextPlayer: HeroKind;
     if (model.getActiveHeros().length == 1) {
       //remove active Events
-      model.clearActiveEvents()
+      model.removeDailyActiveEvents()
       model.setNextDayFirstHero(socket.conn.id);
 
       //draw and apply new event
@@ -597,7 +618,7 @@ export function game(socket, model: Game, io) {
         io.of("/" + model.getName()).emit("newEvent", event);
             //these will be blockable
             if(event.id ==  2 || event.id ==  5 || event.id ==  9 || event.id == 11 || event.id == 15 || event.id == 17 || 
-               event.id == 19 || event.id == 22 || event.id == 24 || event.id == 31 || event.id == 32){
+               event.id == 19 || event.id == 21 || event.id == 22 || event.id == 24 || event.id == 31 || event.id == 32){
               //trigger collab decision between players. 
               //blocked = collabCall
               //if !blocked

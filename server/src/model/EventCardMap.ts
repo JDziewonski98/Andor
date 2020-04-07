@@ -7,11 +7,11 @@ export var map = [
     //     "desc": "Each hero standing on a space with a number between 0 and 20 now loses 3 willpower points."
     // },
     ////////3 IS ONLY PARTIALLY IMPLEMENTED
-    {
-        "id": 3, 
-        "flavorText": "Wisdom from the Tree of Songs", 
-        "desc": "A hero who enters the Tree of Songs space or is already standing there gets 1 strength point. If more than one hero is standing there, the one with the highest rank gets the strength point. Now place this card on space 57 until a hero has gotten the strength point. Then remove it from the game. "
-    },
+    // {
+    //     "id": 3, 
+    //     "flavorText": "Wisdom from the Tree of Songs", 
+    //     "desc": "A hero who enters the Tree of Songs space or is already standing there gets 1 strength point. If more than one hero is standing there, the one with the highest rank gets the strength point. Now place this card on space 57 until a hero has gotten the strength point. Then remove it from the game."
+    // },
     // {
     //     "id": 5, 
     //     "flavorText": "Poisonous vapors from the mountain are tormenting the heroes.", 
@@ -57,6 +57,11 @@ export var map = [
     //     "flavorText": "An exhausting day", 
     //     "desc": "On this day, the 9th and 10th hours will each cost 3 willpower points instead of 2. Place this card above the overtime area of the time track. At the end of the day, it is removed from the game."
     // },
+    {
+        "id": 21, 
+        "flavorText": "A mysterious terror lurks in the southern woods.", 
+        "desc": "A hero who enters space 22, 23, 24, or 25 or is already standing there will immediately lose 4 willpower points. If more than one hero is standing there, the one with the highest rank loses the points. Place this card next to space 24 until it is triggered. Then it is removed from the game. "
+    },
     // {
     //     "id": 22, 
     //     "flavorText": "Rampaging creatures despoil the well at the foot of the mountains.", 
