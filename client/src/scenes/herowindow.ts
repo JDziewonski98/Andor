@@ -16,7 +16,7 @@ export class HeroWindow extends Window {
     private willtext
     private strtext
     private farmtext
-    private name
+    // private name
     private gameinstance: game;
     private clienthero;
     private windowhero;
@@ -30,11 +30,20 @@ export class HeroWindow extends Window {
     private smallItem2;
     private smallItem3;
 
+    // drop buttons
+    private goldDrop;
+    private farmerDrop;
+    private largeItemDrop;
+    private helmDrop;
+    private smallItem1Drop;
+    private smallItem2Drop;
+    private smallItem3Drop;
+
     public constructor(key: string, data) {
         super(key, { x: data.x, y: data.y, width: 400, height: 400 });
         this.key = key
         this.icon = data.icon
-        this.name = data.name
+        // this.name = data.name
         this.gameinstance = data.controller
         this.gold = data.gold
         this.will = data.will
@@ -57,31 +66,48 @@ export class HeroWindow extends Window {
             color: '#000000',
             backgroundColor: '#D9B382'
         }
-        this.add.text(110, 20, heroCardInfo[`${this.name}Name`], { color: 'fx00', fontSize: 35 });
-        this.add.text(110, 65, heroCardInfo[`${this.name}Desc`], { color: '#4B2504', fontSize: 14 });
+
+        var dropButtonStyle = {
+            color: '#FFFFFF',
+            backgroundColor: '#D9B382',
+            fontSize: 12
+        }
+
+        this.add.text(110, 20, heroCardInfo[`${this.windowhero}Name`], { color: 'fx00', fontSize: 35 });
+        this.add.text(110, 65, heroCardInfo[`${this.windowhero}Desc`], { color: '#4B2504', fontSize: 14 });
+
         this.goldtext = this.add.text(190, 110, 'Gold: ' + this.gold, buttonStyle)
+        this.goldDrop = this.add.text(300, 110, 'DROP', dropButtonStyle)
         this.farmtext = this.add.text(190, 130, 'Farmers: ' + this.farmers, buttonStyle)
+        this.farmerDrop = this.add.text(300, 130, 'DROP', dropButtonStyle)
         this.willtext = this.add.text(20, 110, 'Willpower: ' + this.will, buttonStyle)
         this.strtext = this.add.text(20, 130, 'Strength: ' + this.str, buttonStyle)
         
+        self.add.text(20,155,'Large item:', { color: 'fx00' });
+        self.add.image(20, 175, 'item_border').setOrigin(0);
+        this.largeItemDrop = this.add.text(70, 175, 'DROP', dropButtonStyle)
+        self.add.text(190,155,'Helm:', { color: 'fx00' })
+        self.add.image(190, 175, 'item_border').setOrigin(0);
+        this.helmDrop = this.add.text(240, 175, 'DROP', dropButtonStyle)
+
+        self.add.text(20,230,'Small items:', { color: 'fx00' })
+        // 3 slots
+        self.add.image(20, 250, 'item_border').setOrigin(0);
+        this.smallItem1Drop = this.add.text(70, 250, 'DROP', dropButtonStyle)
+        self.add.image(120, 250, 'item_border').setOrigin(0);
+        this.smallItem2Drop = this.add.text(170, 250, 'DROP', dropButtonStyle)
+        self.add.image(220, 250, 'item_border').setOrigin(0);
+        this.smallItem3Drop = this.add.text(270, 250, 'DROP', dropButtonStyle)
+
         this.gameinstance.getHeroItems(self.windowhero, function(itemdict) {
-            self.add.text(20,155,'Large item:', { color: 'fx00' }); //+ itemdict['largeItem']);
-            self.add.image(20, 175, 'item_border').setOrigin(0);
             if (itemdict['largeItem'] != 'empty') {
                 // make interactive
                 self.add.image(25, 180, 'bow').setDisplaySize(35,35).setOrigin(0);
             }
-            self.add.text(190,155,'Helm:', { color: 'fx00' })
-            self.add.image(190, 175, 'item_border').setOrigin(0);
             if (itemdict['helm'] != 'false') {
                 // make interactive
                 self.add.image(195, 180, 'helm').setDisplaySize(35,35).setOrigin(0);
             }
-            self.add.text(20,230,'Small items:', { color: 'fx00' })
-            // 3 slots
-            self.add.image(20, 250, 'item_border').setOrigin(0);
-            self.add.image(80, 250, 'item_border').setOrigin(0);
-            self.add.image(140, 250, 'item_border').setOrigin(0);
             if (itemdict['smallItems'].length > 0) {
                 var smallItemList = itemdict['smallItems']
                 for (var i = 0; i < smallItemList.length; i++) {
@@ -90,7 +116,8 @@ export class HeroWindow extends Window {
             }
             //TODO_PICKUP: add other items as theyre added
         })
-        this.add.text(20, 305, heroCardInfo[`${this.name}Ability`], { color: '#4B2504', fontSize: 12 })
+
+        this.add.text(20, 305, heroCardInfo[`${this.windowhero}Ability`], { color: '#4B2504', fontSize: 12 })
 
         bg.setInteractive()
         this.input.setDraggable(bg)
@@ -110,29 +137,35 @@ export class HeroWindow extends Window {
 
         var self = this
         if (this.clienthero == this.windowhero){
-            this.farmtext.setInteractive()
+            this.goldDrop.setInteractive()
+            this.farmerDrop.setInteractive()
+            this.largeItemDrop.setInteractive()
+            this.helmDrop.setInteractive()
+            this.smallItem1Drop.setInteractive()
+            this.smallItem2Drop.setInteractive()
+            this.smallItem3Drop.setInteractive()
         }
-        this.farmtext.on('pointerdown', function (pointer) {
+        
+        // Drop farmer button
+        this.farmerDrop.on('pointerdown', function (pointer) {
             self.gameinstance.dropFarmer(function (tilenum) {
                 if(self.farmers > 0){
                     self.farmers--;
-                    self.farmtext = self.add.text(25, 160, 'Farmers: ' + self.farmers, { backgroundColor: 'fx00' })
+                    // self.farmtext = self.add.text(25, 160, 'Farmers: ' + self.farmers, { backgroundColor: 'fx00' })
+                    self.refreshText();
                 }
             })
 
         }, this);
 
-        if (this.clienthero == this.windowhero){ 
-            this.goldtext.setInteractive()
-        }
-
-        this.goldtext.on('pointerdown', function () {            
+        // Drop gold button
+        this.goldDrop.on('pointerdown', function () {            
             self.gameinstance.dropGold();
         });
 
         // While window is active, respond to updates in gold amount
         function updateGold(hk: string, goldDelta: number) {
-            if (hk != self.name) return;
+            if (hk != self.windowhero) return;
             self.gold += goldDelta;
             self.refreshText();
         }
@@ -195,14 +228,14 @@ export class HeroWindow extends Window {
                 break;
             case 1:
                 console.log("load image into slot 1", item);
-                self.smallItem2 = self.add.image(85,255,item).setDisplaySize(35,35).setOrigin(0);
+                self.smallItem2 = self.add.image(125,255,item).setDisplaySize(35,35).setOrigin(0);
                 if (self.clienthero == self.windowhero){
                     defineOnclick(self.smallItem2, item)
                 }
                 break;
             case 2:
                 console.log("load image into slot 2", item);
-                self.smallItem3 = self.add.image(145,255,item).setDisplaySize(35,35).setOrigin(0);
+                self.smallItem3 = self.add.image(225,255,item).setDisplaySize(35,35).setOrigin(0);
                 if (self.clienthero == self.windowhero){
                     defineOnclick(self.smallItem3, item)
                 }
@@ -212,28 +245,31 @@ export class HeroWindow extends Window {
 
     public setGold(amt: number) {
         this.gold = amt
-        this.refreshText()
+        this.goldtext.setText('Gold: ' + this.gold)
+        // this.refreshText()
     }
 
     public setStr(amt: number) {
         this.str = amt
-        this.refreshText()
+        this.strtext.setText('Strength: ' + this.str)
+        // this.refreshText()
     }
 
     public setWill(amt: number) {
         this.will = amt
-        this.refreshText()
+        this.willtext.setText('Willpower: ' + this.will)
+        // this.refreshText()
     }
 
-    public setName(name: string) {
-        this.name = name
-        this.refreshText()
-    }
+    // public setName(name: string) {
+    //     this.name = name
+    //     this.refreshText()
+    // }
 
     private refreshText() {
         this.goldtext.setText('Gold: ' + this.gold)
-        this.willtext.setText('Willpower: ' + this.will)
-        
+        // this.willtext.setText('Willpower: ' + this.will)
+        this.farmtext.setText('Farmers: ' + this.farmers)
     }
 
     public disconnectListeners() {
