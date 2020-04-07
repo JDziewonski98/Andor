@@ -231,6 +231,8 @@ export class Game {
             let dwarf = this.heroList.get(id)
             dwarf?.pickUpLargeItem(LargeItem.Bow)
             dwarf?.pickUpSmallItem(SmallItem.Telescope)
+            dwarf?.pickUpSmallItem(SmallItem.Wineskin)
+            dwarf?.pickUpHelm();
         }
         else if (heroType === HeroKind.Archer) {
             this.heroList.set(id, new Hero(heroType, this.regions[25]));

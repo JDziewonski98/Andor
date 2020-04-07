@@ -31,7 +31,7 @@ export class HeroWindow extends Window {
     private smallItem3;
 
     public constructor(key: string, data) {
-        super(key, { x: data.x, y: data.y, width: 400, height: 350 });
+        super(key, { x: data.x, y: data.y, width: 400, height: 400 });
         this.key = key
         this.icon = data.icon
         this.name = data.name
@@ -50,26 +50,38 @@ export class HeroWindow extends Window {
     protected initialize() { 
         var self = this
         var bg = this.add.image(0, 0, 'scrollbg').setOrigin(0.5)
-        this.add.sprite(20, 20, this.icon).setDisplaySize(70, 70).setOrigin(0);
+        this.add.sprite(20, 20, 'hero_border').setOrigin(0);
+        this.add.sprite(24, 24, this.icon).setDisplaySize(72, 72).setOrigin(0);
 
         var buttonStyle = { 
-            color: 'fx00',
-            // backgroundColor: '#cf9a6c'
+            color: '#000000',
+            backgroundColor: '#D9B382'
         }
-        this.add.text(100, 20, heroCardInfo[`${this.name}Name`], { color: 'fx00', fontSize: 30 });
-        this.add.text(100, 60, heroCardInfo[`${this.name}Desc`], { color: 'fx00', fontSize: 14 });
-        this.goldtext = this.add.text(170, 100, 'Gold: ' + this.gold, buttonStyle)
-        this.farmtext = this.add.text(170, 120, 'Farmers: ' + this.farmers, buttonStyle)
-        this.willtext = this.add.text(20, 100, 'Willpower: ' + this.will, buttonStyle)
-        this.strtext = this.add.text(20, 120, 'Strength: ' + this.str, buttonStyle)
+        this.add.text(110, 20, heroCardInfo[`${this.name}Name`], { color: 'fx00', fontSize: 35 });
+        this.add.text(110, 65, heroCardInfo[`${this.name}Desc`], { color: '#4B2504', fontSize: 14 });
+        this.goldtext = this.add.text(190, 110, 'Gold: ' + this.gold, buttonStyle)
+        this.farmtext = this.add.text(190, 130, 'Farmers: ' + this.farmers, buttonStyle)
+        this.willtext = this.add.text(20, 110, 'Willpower: ' + this.will, buttonStyle)
+        this.strtext = this.add.text(20, 130, 'Strength: ' + this.str, buttonStyle)
         
         this.gameinstance.getHeroItems(self.windowhero, function(itemdict) {
+            self.add.text(20,155,'Large item:', { color: 'fx00' }); //+ itemdict['largeItem']);
+            self.add.image(20, 175, 'item_border').setOrigin(0);
             if (itemdict['largeItem'] != 'empty') {
-                self.add.text(25,180,'Large item: ' + itemdict['largeItem'])
+                // make interactive
+                self.add.image(25, 180, 'bow').setDisplaySize(35,35).setOrigin(0);
             }
+            self.add.text(190,155,'Helm:', { color: 'fx00' })
+            self.add.image(190, 175, 'item_border').setOrigin(0);
             if (itemdict['helm'] != 'false') {
-                self.add.text(25,200,'Helm equipped.')
+                // make interactive
+                self.add.image(195, 180, 'helm').setDisplaySize(35,35).setOrigin(0);
             }
+            self.add.text(20,230,'Small items:', { color: 'fx00' })
+            // 3 slots
+            self.add.image(20, 250, 'item_border').setOrigin(0);
+            self.add.image(80, 250, 'item_border').setOrigin(0);
+            self.add.image(140, 250, 'item_border').setOrigin(0);
             if (itemdict['smallItems'].length > 0) {
                 var smallItemList = itemdict['smallItems']
                 for (var i = 0; i < smallItemList.length; i++) {
@@ -78,7 +90,7 @@ export class HeroWindow extends Window {
             }
             //TODO_PICKUP: add other items as theyre added
         })
-        this.add.text(25, 240, heroCardInfo[`${this.name}Ability`], { color: 'fx00', fontSize: 12 })
+        this.add.text(20, 305, heroCardInfo[`${this.name}Ability`], { color: '#4B2504', fontSize: 12 })
 
         bg.setInteractive()
         this.input.setDraggable(bg)
@@ -141,28 +153,30 @@ export class HeroWindow extends Window {
     private setSmallItemText(slot:number, item) {
         var self = this
 
-        function defineOnclick(itemText:Phaser.GameObjects.Text, itemtype) {
-            itemText.setInteractive()
+        function defineOnclick(itemIcon:Phaser.GameObjects.Image, itemtype) {
+            itemIcon.setInteractive()
             switch(itemtype) {
                 case 'wineskin':
-                    itemText.on('pointerdown', function(pointer) {
+                    itemIcon.on('pointerdown', function(pointer) {
                         //TODO: give free move and replace item with a half_wineskin
                         self.gameinstance.useWineskin('full', function() {
-                            itemText.setText('half wineskin')
-                            itemText.removeAllListeners('pointerdown')
-                            defineOnclick(itemText,'half_wineskin')
+                            itemIcon.setTexture('half_wineskin').setDisplaySize(35, 35);
+                            itemIcon.removeAllListeners('pointerdown')
+                            defineOnclick(itemIcon,'half_wineskin')
                         })
                     })
                     break;
                 case 'half_wineskin':
-                    itemText.on('pointerdown', function(pointer) {
+                    itemIcon.on('pointerdown', function(pointer) {
                         self.gameinstance.useWineskin('half', function() {
                             console.log('dont get drunk')
+                            itemIcon.removeAllListeners('pointerdown')
+                            itemIcon.destroy();
                         })
                     })
                     break;
                 case 'herb':
-                    itemText.on('pointerdown', function(pointer) {
+                    itemIcon.on('pointerdown', function(pointer) {
                         //TODO: nothing i think
                     })
                     break;
@@ -173,19 +187,22 @@ export class HeroWindow extends Window {
 
         switch (slot) {
             case 0:
-                self.smallItem1 = self.add.text(25,220,item)
+                console.log("load image into slot 0", item);
+                self.smallItem1 = self.add.image(25,255,item).setDisplaySize(35,35).setOrigin(0);
                 if (self.clienthero == self.windowhero){
                     defineOnclick(self.smallItem1, item)
                 }
                 break;
             case 1:
-                self.smallItem2 = self.add.text(105,220,item)
+                console.log("load image into slot 1", item);
+                self.smallItem2 = self.add.image(85,255,item).setDisplaySize(35,35).setOrigin(0);
                 if (self.clienthero == self.windowhero){
                     defineOnclick(self.smallItem2, item)
                 }
                 break;
             case 2:
-                self.smallItem3 = self.add.text(175,220,item)
+                console.log("load image into slot 2", item);
+                self.smallItem3 = self.add.image(145,255,item).setDisplaySize(35,35).setOrigin(0);
                 if (self.clienthero == self.windowhero){
                     defineOnclick(self.smallItem3, item)
                 }

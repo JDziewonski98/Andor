@@ -97,6 +97,9 @@ export default class GameScene extends Phaser.Scene {
     this.load.image("EventCard", "../assets/event.png");
     this.load.image("Gor", "../assets/gorfog.png");
 
+    this.load.image("item_border", "../assets/border.png"); // uses hex 4b2504
+    this.load.image("hero_border", "../assets/big_border.png");
+
     //items
     this.load.image("Brew", "../assets/brew.png");
     this.load.image("Wineskin", "../assets/wineskin.png");
