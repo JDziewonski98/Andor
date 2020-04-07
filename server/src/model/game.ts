@@ -690,7 +690,27 @@ export class Game {
                 }
             }
         }
-        if(event.id == 31){
+        else if(event.id == 30){
+            var count = 0
+            var lowestHero = null
+            var lowestRank = Number.MAX_VALUE
+            for(var i = 0; i < this.heroList.size; i++){
+                if(this.heroList[i].region == 72){
+                    count++
+                    if(lowestRank < this.heroList[i].getRank()){
+                        lowestHero = this.heroList[i]
+                        lowestRank = this.heroList[i].getRank()
+                    }
+                }
+            }
+            if(count >= 2){
+                //give lowestHero wineskin
+            }
+            else{
+                //drop wineskin on region 72
+            }
+        }
+        else if(event.id == 31){
             for(let [conn,hero] of this.heroList){
                 let tID = hero.getRegion().getID()
                 if(tID == 71 || tID == 72 || tID == 0 || 47 <= tID && tID <= 63){

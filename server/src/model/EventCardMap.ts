@@ -66,6 +66,11 @@ export var map = [
     //     "flavorText": "A beautifully clear, starry night gives the heroes confidence.", 
     //     "desc": "Every hero whose time marker is presently in the sunrise box gets 2 willpower points."
     // },
+    {
+        "id": 30, 
+        "flavorText": "A drink in the tavern", 
+        "desc": "Place a wineskin on the taver space (72). A hero who enters space 72 or is already standing there can collect the wineskin and place it on the small storage space on his hero board. If more than one hero is standing there, the hero with the lowest rank gets the wineskin."
+    },
     // {
     //     "id": 31, 
     //     "flavorText": "Hot rain from the south lashes the land.", 
