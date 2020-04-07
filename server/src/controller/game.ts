@@ -12,13 +12,20 @@ export function game(socket, model: Game, io) {
     if (hero !== undefined) {
       var currRegion: Region = hero.getRegion()
       var adjRegions: Array<number> = currRegion.getAdjRegionsIds()
-
+      var event26 = model.getActiveEvents().includes(26)
       for (var regionID of adjRegions) {
-        var timeLeft = hero.getTimeOfDay() <= 7 || (hero.getTimeOfDay() <= 10 && hero.getWill() >= 2)
+        var timeLeft = hero.getTimeOfDay() <= 7 || (hero.getTimeOfDay() <= 10 && hero.getWill() >= 2) || hero.getTimeOfDay() == 8 && event26
         if (regionID === id && timeLeft) { // successful move
           let targetRegion: Region = model.getRegions()[id];
-          hero.moveTo(targetRegion)
 
+          //if event 26 is active and it is your 8th hour, move freely
+          if(hero.getTimeOfDay() == 8 && event26){
+            hero.freeMoveTo(targetRegion)
+          }
+          
+          else{
+            hero.moveTo(targetRegion)
+          }
           socket.broadcast.emit("updateMoveRequest", hero.getKind(), id)
           callback(hero.getKind(), id)
         }

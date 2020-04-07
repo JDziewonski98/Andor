@@ -68,13 +68,20 @@ export class Hero {
         this.region = newTile
         if (this.freeMoves == 0) {
             this.timeOfDay++
+            //because timeOfDay starts at 1
+            if(this.timeOfDay >= 9){
+                this.will = this.will-2
+            }
         }
         else {
             this.freeMoves--
         }
         //TODO: DONT UPDATE THE HOUR TRACKER THING.
     }
-
+    public freeMoveTo(newTile:Region){
+        this.region = newTile
+        this.timeOfDay++
+    }
     public useItem(item) {
         //TODO
     }
@@ -461,5 +468,8 @@ export class Hero {
         this.helm = false
     }
 
+    public addFreeMove(){
+        this.freeMoves++
+    }
     //////////////////////
 }

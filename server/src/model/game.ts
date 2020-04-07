@@ -46,7 +46,7 @@ export class Game {
 
     //EventCards
     private eventDeck: Array<EventCard>
-    private activeEvents: Array<EventCard>
+    private activeEvents: Array<Number>
 
     constructor(name: string, numOfDesiredPlayers: number, difficulty: GameDifficulty) {
         this.name = name;
@@ -72,7 +72,7 @@ export class Game {
         this.numAccepts = 0;
         this.eventDeck = new Array<EventCard>()
         this.setEventDeck()
-        this.activeEvents = new Array<EventCard>()
+        this.activeEvents = new Array<Number>()
     }
 
     private setFirstHerosTurn() {
@@ -528,6 +528,9 @@ export class Game {
             [this.eventDeck[m], this.eventDeck[i]] = [this.eventDeck[i], this.eventDeck[m]]
         }
     }
+    public getActiveEvents(){
+        return this.activeEvents
+    }
 
     public applyEvent(event){
         console.log("Applying event: ", event.id)
@@ -595,6 +598,9 @@ export class Game {
                     hero.setWill(-2)
                 }
             }
+        }
+        else if(event.id == 26){
+            this.activeEvents.push(event.id)
         }
         else if(event.id == 28){
             for(let [conn,hero] of this.heroList){
