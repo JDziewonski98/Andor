@@ -237,7 +237,7 @@ export class Game {
         else if (heroType === HeroKind.Archer) {
             this.heroList.set(id, new Hero(heroType, this.regions[25]));
             let archer = this.heroList.get(id)
-            archer?.pickUpSmallItem(SmallItem.Wineskin)
+            // archer?.pickUpSmallItem(SmallItem.Wineskin)
             archer?.pickUpSmallItem(SmallItem.GreenRunestone)
         }
         else if (heroType === HeroKind.Mage) {

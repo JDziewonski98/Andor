@@ -350,11 +350,14 @@ export function game(socket, model: Game, io) {
         // Iterate through resNames and map index to amount specified in resAllocated
         for (let i = 0; i < resNames.length; i++) {
           if (resNames[i] == "gold") {
-            currHero?.updateGold(resAllocated[heroTypeString][i]);
+            currHero.updateGold(resAllocated[heroTypeString][i]);
           }
           else if (resNames[i] == "wineskin") {
             // TODO: actually give the hero the wineskin (use smallItems API)
             currHero?.setWineskin(resAllocated[heroTypeString][i] > 0);
+            for (let j = 0; j < resAllocated[heroTypeString][i]; j++) {
+              currHero.pickUpSmallItem(SmallItem.Wineskin);
+            }
           }
           else if (resNames[i] == 'will') {
             currHero?.setWill(resAllocated[heroTypeString][i])
