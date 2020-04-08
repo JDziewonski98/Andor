@@ -42,7 +42,7 @@ export class Game {
     private endOfGame: boolean = false;
     private prince: Prince;
 
-    private legendPosition: number = 0;
+    private narrator: Narrator;
 
     // collab decision related state
     public numAccepts: number;
@@ -80,7 +80,7 @@ export class Game {
         this.setEventDeck()
         this.activeEvents = new Array<Number>()
 
-        this.setNarrator(this.legendPosition);
+        this.narrator = new Narrator(this, 0)
     }
 
     private setNarrator(initialNarratorPosition: number) {
@@ -89,6 +89,7 @@ export class Game {
 
     }
 
+    
     private setFirstHerosTurn() {
         var minRank = Number.MAX_VALUE;
         var ID = "none";
@@ -242,6 +243,10 @@ export class Game {
 
     public getName(): string {
         return this.name;
+    }
+
+    public getNarrator(): Narrator {
+        return this.narrator;
     }
 
     /*
