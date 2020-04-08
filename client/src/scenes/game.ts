@@ -420,6 +420,9 @@ export default class GameScene extends Phaser.Scene {
           // exit condition of recursive call: if tile.id === 0 then we add the monster to the castle tile
           // ie. decrease a shield count
 
+          
+
+
       }
       else { // tile is empty. no monster on this tile
 

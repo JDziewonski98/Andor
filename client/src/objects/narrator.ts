@@ -31,8 +31,9 @@ export class Narrator extends Phaser.GameObjects.Image {
     // let 0 be A. each advance is represented as an incrementation. B=2, C=3, ..., N = 14
     private posNarrator: number;
     private triggerRunestone: string;
+    
 
-    constructor(scene: Phaser.Scene, posNarrator: number, texture: string, gameController: game) {
+    constructor(scene: Phaser.Scene, posNarrator: number, texture: string, gameController: game, whereToTriggerAddRune:string = null) {
 
         // y coordinate varies. y=6100 is the initial y-coordinate. 455 is the amount the image moves upwards
         var inputY = (6100 - (posNarrator * 455)) * scaleFactor + borderWidth
@@ -41,6 +42,7 @@ export class Narrator extends Phaser.GameObjects.Image {
         console.log(narratorXCoord, inputY)
         super(scene, narratorXCoord, inputY, texture);
         this.gameController = gameController;
+        
 
         this.setInteractive();
         var self = this;
@@ -59,8 +61,6 @@ export class Narrator extends Phaser.GameObjects.Image {
             case "G": { this.G(); break; }
             case "H": { this.H(); break; }
         }
-        
-
 
     }
 
@@ -161,7 +161,6 @@ export class Narrator extends Phaser.GameObjects.Image {
               */
 
 
-
         // decide when RuneStones come into play
         const outcome = this.randomInteger(1, 6)
         if (outcome === 1) { this.triggerRunestone = "B"; }
@@ -235,12 +234,13 @@ export class Narrator extends Phaser.GameObjects.Image {
                 
                  */
 
-                // C2 add gors on 27 and 31. add skral on 29
-                /*self.gameController.addMonster(27, "gor", "gor27");
-                self.gameController.addMonster(31, "gor", "gor31");
-                self.gameController.addMonster(29, "skral", "skral29");
-                */
-                // error. problem with importing???
+        // C2 add gors on 27 and 31. add skral on 29
+        /*self.gameController.addMonster(27, "gor", "gor27");
+        self.gameController.addMonster(31, "gor", "gor31");
+        self.gameController.addMonster(29, "skral", "skral29");
+        */
+        // this.scene.addMonster(31, "gor", "gor31");
+        // error. problem with importing???
     }
 
     private D() {
@@ -260,6 +260,7 @@ export class Narrator extends Phaser.GameObjects.Image {
             this.addRunestone()
         }
     }
+
 
     private G() {
     /*
