@@ -34,8 +34,8 @@ export class game {
         this.socket.emit("getBoundHeros", callback);
     }
 
-    public pickupFarmer(callback){
-        this.socket.emit("pickupFarmer",  callback);
+    public pickupFarmer(tileID: number, callback){
+        this.socket.emit("pickupFarmer",  tileID, callback);
     }
 
     public destroyFarmer(callback){

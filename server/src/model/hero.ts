@@ -232,15 +232,16 @@ export class Hero {
         let wpInc = -1;
         var reg = this.region;
         if (reg.getHasWell() && !reg.getWellUsed()) {
-            //increase 3 will power
-            if (this.will <= 17) {
-                this.setWill(3);
-                wpInc = 3;
+            if (this.hk == HeroKind.Warrior) {
+                // increase 5WP
+                this.will += 5;
+                wpInc = this.will > 20 ? 25-this.will : 5;
+            } else {
+                //increase 3 will power
+                this.will += 3;
+                wpInc = this.will > 20 ? 23-this.will : 3;
             }
-            else if (this.will <= 20 && this.will > 17) {
-                this.will = 20;
-                wpInc = (20 - this.will);
-            }
+            if (this.will > 20) this.will = 20;
             //set the boolean of whether a well was used
             reg.setWellUsed(true);
         }
@@ -352,9 +353,10 @@ export class Hero {
             case 'wineskin':
                 let index_w = this.smallItems.indexOf(SmallItem.Wineskin);
                 if (index_w > -1) {
+                    // Remove wineskin item and replace with half_wineskin
                     this.smallItems.splice(index_w, 1);
                     this.freeMoves++
-                    this.pickUpSmallItem(SmallItem.HalfWineskin)
+                    this.pickUpSmallItem(this.region.getID(), SmallItem.HalfWineskin)
                     console.log(this.hk, "has", this.getItemDict());
                 }
                 break;
@@ -372,7 +374,7 @@ export class Hero {
                 let index_brew = this.smallItems.indexOf(SmallItem.Brew);
                 if (index_brew > -1) {
                     this.smallItems.splice(index_brew, 1);
-                    this.pickUpSmallItem(SmallItem.HalfBrew)
+                    this.pickUpSmallItem(this.region.getID(), SmallItem.HalfBrew)
                 }
                 break;
 
@@ -393,7 +395,8 @@ export class Hero {
         return this.smallItems
     }
 
-    public pickUpSmallItem(item: SmallItem) {
+    public pickUpSmallItem(tileID: number, item: SmallItem) {
+        if (this.region.getID() != tileID) return false;
         if (this.smallItems.length < 3) {
             this.smallItems.push(item)
             this.region.removeItem(item);
@@ -406,7 +409,6 @@ export class Hero {
     }
 
     public dropSmallItem(item:SmallItem) {
-        // if (this.smallItems.includes(item)) {
         const index = this.smallItems.indexOf(item);
         if (index > -1) {
             this.region.addItem(this.smallItems[index]);
@@ -414,7 +416,6 @@ export class Hero {
             console.log(this.hk, "has", this.getItemDict());
             return true
         }
-        // }
         return false;
     }
 
@@ -422,39 +423,37 @@ export class Hero {
         return this.largeItem
     }
 
-    public pickUpLargeItem(item: LargeItem) {
+    public pickUpLargeItem(tileID: number, item: LargeItem) {
+        if (this.region.getID() != tileID) return false;
         if (this.largeItem == LargeItem.Empty) {
             this.largeItem = item;
             this.region.removeItem(item);
             console.log(this.hk, "has", this.getItemDict());
             return true
-        }
-        else {
+        } else {
             return false
         }
     }
 
     public dropLargeItem() {
-        //TODO: add this item onto the tile hero is currently on. How to graphically represent?
         if (this.largeItem != LargeItem.Empty) {
             this.region.addItem(this.largeItem);
             this.largeItem = LargeItem.Empty;
             console.log(this.hk, "has", this.getItemDict());
             return true
-        }
-        else {
+        } else {
             return false
         }
     }
 
-    public pickUpHelm() {
+    public pickUpHelm(tileID: number) {
+        if (this.region.getID() != tileID) return false;
         if (this.helm == false) {
             this.helm = true
             this.region.removeItem("helm");
             console.log(this.hk, "has", this.getItemDict());
             return true
-        }
-        else {
+        } else {
             return false
         }
     }
@@ -465,8 +464,7 @@ export class Hero {
             this.helm = false
             console.log(this.hk, "has", this.getItemDict());
             return true
-        }
-        else {
+        } else {
             return false
         }
     }

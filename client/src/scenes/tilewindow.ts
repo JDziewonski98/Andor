@@ -30,6 +30,7 @@ export class TileWindow extends Window {
     protected initialize() { 
         let itemsLength = Object.keys(this.items).length;
         let extraWidth = 40 * (itemsLength > 1 ? itemsLength-1 : 0);
+        // Size the background image based on how many distinct items need to be displayed
         let bgWidth = 110 + extraWidth;
         this.bgImage = this.add.image(0, 0, 'scrollbg').setDisplaySize(bgWidth, this.windowHeight).setOrigin(0);
         this.titleText = this.add.text(5, 5, `Region ${this.tileID} items:`, { fontSize: 10, backgroundColor: '#f00' });
@@ -39,7 +40,8 @@ export class TileWindow extends Window {
 
         var self = this;
 
-        // While window is active, respond to updates in gold amount
+        // While window is active, listen for updates to the tile's gold and
+        // update the GUI of the window accordingly.
         function updateGold(tileID: number, goldAmount: number) {
             if (tileID != self.tileID) return;
             self.goldQuantity = goldAmount;
@@ -48,6 +50,8 @@ export class TileWindow extends Window {
         this.gameController.updateDropGoldTile(updateGold);
         this.gameController.updatePickupGoldTile(updateGold);
 
+        // While the window is active, listen for updates to the tile's items list and
+        // update the GUI of the window accordingly.
         this.gameController.updateDropItemTile(function(tileID: number, itemName: string, itemType: string) {
             // either adds a new icon with quantity 1 or increments an existing quantity
             if (tileID != self.tileID) return;
@@ -83,6 +87,7 @@ export class TileWindow extends Window {
         });
     }
 
+    // Populates the TileWindow with the current amount of gold.
     public populateGold() {
         var self = this;
         // Gold interaction (replaces addGold in GameScene)
@@ -99,6 +104,8 @@ export class TileWindow extends Window {
         });
     }
 
+    // Populates the TileWindow with the list of items when it is initialized. Subsequent
+    // updates while the TileWindow remains active on the screen are handled by refreshWindow()
     public populateItems() {
         var self = this;
         // Populate with items received from server
@@ -158,6 +165,9 @@ export class TileWindow extends Window {
         }
     }
 
+    // Remove all GameObjects from the window. This is an effective but ugly way of handling
+    // refreshes of the TileWindow, which needs to dynamically update around the size of the
+    // items list and the positions of the item icons as they are added and removed.
     public clearWindow() {
         this.bgImage.destroy();
         this.titleText.destroy();

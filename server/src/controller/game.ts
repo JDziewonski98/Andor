@@ -105,12 +105,15 @@ export function game(socket, model: Game, io) {
     socket.broadcast.to(`/${model.getName()}#${nextPlayerID}`).emit("yourTurn");
   })
 
-  socket.on("pickupFarmer", function (callback) {
+  socket.on("pickupFarmer", function (tileID: number, callback) {
     var region: Region;
     let heroId = socket.conn.id;
     let hero = model.getHero(heroId);
     if (hero !== undefined) {
+      // if the hero's tile is not the same as the farmer's tile, return
+      if (hero.getRegion().getID() != tileID) return;
       region = hero.pickupFarmer();
+      console.log("pickup farmer", region)
 
       if (region !== undefined) {
         socket.broadcast.emit("destroyFarmer", region.getID());
@@ -127,7 +130,8 @@ export function game(socket, model: Game, io) {
       result = hero.dropFarmer();
 
       //result[1] = dropped region id, result[0] = farmer id
-      if (result !== undefined) {
+      // If drop unsuccessful, it will be an empty array
+      if (result.length == 2) {
         //Farmer dropped on reitburg
         if (result[1] === 0) {
           model.getCastle().incShields();
@@ -172,6 +176,7 @@ export function game(socket, model: Game, io) {
         callback(wpInc);
         // Update the other heroes
         socket.broadcast.emit("updateWell", hero.getRegion().getID(), wpInc);
+        // TODO WELL: update hero windows
       }
     }
   });
@@ -274,13 +279,13 @@ export function game(socket, model: Game, io) {
     if (hero !== undefined) {
       switch (itemType) {
         case "largeItem":
-          successStatus = hero.pickUpLargeItem(largeItemStrToEnum(itemName));
+          successStatus = hero.pickUpLargeItem(tileID, largeItemStrToEnum(itemName));
           break;
         case "helm":
-          successStatus = hero.pickUpHelm();
+          successStatus = hero.pickUpHelm(tileID);
           break;
         case "smallItem":
-          successStatus = hero.pickUpSmallItem(smallItemStrToEnum(itemName));
+          successStatus = hero.pickUpSmallItem(tileID, smallItemStrToEnum(itemName));
           break;
       }
     }
@@ -466,7 +471,7 @@ export function game(socket, model: Game, io) {
             // TODO: actually give the hero the wineskin (use smallItems API)
             currHero?.setWineskin(resAllocated[heroTypeString][i] > 0);
             for (let j = 0; j < resAllocated[heroTypeString][i]; j++) {
-              currHero.pickUpSmallItem(SmallItem.Wineskin);
+              currHero.pickUpSmallItem(currHero.getRegion().getID(), SmallItem.Wineskin);
             }
           }
           else if (resNames[i] == 'will') {
@@ -880,20 +885,27 @@ export function game(socket, model: Game, io) {
 
     //adding received items
     for (let smallitem of items_gained['smallItems']) {
-      thehero!.pickUpSmallItem(smallItemStrToEnum(smallitem))
+      thehero!.pickUpSmallItem(thehero!.getRegion().getID(), smallItemStrToEnum(smallitem))
     }
-    thehero!.pickUpLargeItem(largeItemStrToEnum(items_gained['largeItem']))
+    thehero!.pickUpLargeItem(thehero!.getRegion().getID(), largeItemStrToEnum(items_gained['largeItem']))
     if (items_gained['helm'] != 'None') {
-      thehero!.pickUpHelm()
+      thehero!.pickUpHelm(thehero!.getRegion().getID())
     }
     thehero!.updateGold(+items_gained['gold'])
 
   })
 
+<<<<<<< HEAD
   function smallItemStrToEnum(str): SmallItem {
     console.log(str, 'in converter')
     switch (str) {
       case "wineskin": return SmallItem.Wineskin
+=======
+  function smallItemStrToEnum(str) : SmallItem {
+    // console.log(str,'in converter')
+    switch(str){
+      case "wineskin" : return SmallItem.Wineskin
+>>>>>>> master
       case "half_wineskin": return SmallItem.HalfWineskin
       case "telescope": return SmallItem.Telescope
       case "brew": return SmallItem.Brew
@@ -902,18 +914,24 @@ export function game(socket, model: Game, io) {
       case "blue_runestone": return SmallItem.BlueRunestone
       case "yellow_runestone": return SmallItem.YellowRunestone
       case "green_runestone": return SmallItem.GreenRunestone
-      default: return SmallItem.Brew //should never happen!?!?
+      default: throw Error("String does not correspond to a SmallItem");
     }
   }
 
+<<<<<<< HEAD
   function largeItemStrToEnum(str): LargeItem {
     console.log(str, 'in converter')
     switch (str) {
+=======
+  function largeItemStrToEnum(str) : LargeItem {
+    // console.log(str,'in converter')
+    switch(str){
+>>>>>>> master
       case "falcon": return LargeItem.Falcon
       case "shield": return LargeItem.Shield
       case "bow": return LargeItem.Bow
       case "None": return LargeItem.Empty
-      default: return LargeItem.Empty
+      default: throw Error("String does not correspond to a LargeItem");
     }
   }
 

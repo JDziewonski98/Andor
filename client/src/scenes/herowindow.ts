@@ -47,7 +47,6 @@ export class HeroWindow extends Window {
         super(key, { x: data.x, y: data.y, width: 400, height: 400 });
         this.key = key
         this.icon = data.icon
-        // this.name = data.name
         this.gameinstance = data.controller
         this.gold = data.gold
         this.will = data.will
@@ -152,7 +151,6 @@ export class HeroWindow extends Window {
             self.gameinstance.dropFarmer(function (tilenum) {
                 if(self.farmers > 0){
                     self.farmers--;
-                    // self.farmtext = self.add.text(25, 160, 'Farmers: ' + self.farmers, { backgroundColor: 'fx00' })w
                     self.refreshText();
                 }
             })
@@ -194,7 +192,6 @@ export class HeroWindow extends Window {
                 self.helm.removeAllListeners('pointerdown')
                 self.helm.destroy();
             } else if (itemType == "smallItem") {
-                console.log("client attempt to drop", itemName)
                 if (self.smallItem1key == itemName) {
                     self.smallItem1.removeAllListeners('pointerdown')
                     self.smallItem1.destroy();
@@ -230,17 +227,20 @@ export class HeroWindow extends Window {
             }
         }
         this.gameinstance.updatePickupItemHero(pickupItem);
+
+        // Updating other hero use of wineskin when viewing their HeroWindow
+        // TODO: Will need to extend this to other consumable items
         this.gameinstance.receiveUseWineskin(function(hk: string, halforfull: string) {
             if (hk != self.windowhero) return;
             if (halforfull == 'full') {
-                console.log("update other hero full wineskin")
                 dropItem(hk, 'wineskin', 'smallItem');
-                pickupItem(hk, "wineskin", "smallItem");
+                pickupItem(hk, "half_wineskin", "smallItem");
             } else {
-                console.log("update other hero full wineskin")
                 dropItem(hk, "half_wineskin", "smallItem");
             }
         })
+
+        // TODO WELL: Listen for well use (WP inc) and farmer pickups/drops
 
         //todo account for falcon
         console.log('ids:xxxxxxxxxxx', this.windowherotile, this.clientherotile)

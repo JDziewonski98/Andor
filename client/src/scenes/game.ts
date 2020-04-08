@@ -470,7 +470,6 @@ export default class GameScene extends Phaser.Scene {
 
     let farmer_0: Farmer = new Farmer(0, this, farmertile_0, 'farmer').setDisplaySize(40, 40);
     let farmer_1: Farmer = new Farmer(1, this, farmertile_1, 'farmer').setDisplaySize(40, 40);
-
     farmer_0.setInteractive();
     farmer_1.setInteractive();
 
@@ -488,8 +487,7 @@ export default class GameScene extends Phaser.Scene {
     var self = this;
 
     farmer_0.on('pointerdown', function (pointer) {
-      //if (self.hero.tile.id == self.farmers[0].tile.id) {
-      self.gameinstance.pickupFarmer(function (tileid) {
+      self.gameinstance.pickupFarmer(farmer_0.tile.getID(), function (tileid) {
         let pickedFarmer: Farmer = self.tiles[tileid].farmer.pop();
         for (var i = 0; i < 2; i++) {
           if (self.farmers[i].id === pickedFarmer.id) {
@@ -504,20 +502,18 @@ export default class GameScene extends Phaser.Scene {
     }, this);
 
     farmer_1.on('pointerdown', function (pointer) {
-      if (self.hero.tile.id == self.farmers[1].tile.id) {
-        self.gameinstance.pickupFarmer(function (tileid) {
-          let pickedFarmer: Farmer = self.tiles[tileid].farmer.pop();
-          for (var i = 0; i < 2; i++) {
-            if (self.farmers[i].id === pickedFarmer.id) {
-              self.farmers[i].tile = undefined;
-              self.hero.farmers.push(pickedFarmer)
-              break;
-            }
+      self.gameinstance.pickupFarmer(farmer_1.tile.getID(), function (tileid) {
+        let pickedFarmer: Farmer = self.tiles[tileid].farmer.pop();
+        for (var i = 0; i < 2; i++) {
+          if (self.farmers[i].id === pickedFarmer.id) {
+            self.farmers[i].tile = undefined;
+            self.hero.farmers.push(pickedFarmer)
+            break;
           }
-          pickedFarmer.destroy()
-          console.log(self.hero.farmers)
-        });
-      }
+        }
+        pickedFarmer.destroy()
+        console.log(self.hero.farmers)
+      });
     }, this);
 
     this.gameinstance.destroyFarmer(function (tileid) {
@@ -556,8 +552,7 @@ export default class GameScene extends Phaser.Scene {
         newFarmer.setInteractive()
 
         newFarmer.on('pointerdown', function (pointer) {
-          //if (self.hero.tile.id == self.farmers[0].tile.id) {
-          self.gameinstance.pickupFarmer(function (tileid) {
+          self.gameinstance.pickupFarmer(newFarmer.tile.getID(), function (tileid) {
             let pickedFarmer: Farmer = self.tiles[tileid].farmer.pop();
             for (var i = 0; i < 2; i++) {
               if (self.farmers[i].id === pickedFarmer.id) {
