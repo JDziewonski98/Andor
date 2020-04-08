@@ -58,12 +58,15 @@ export function game(socket, model: Game, io) {
     socket.broadcast.to(`/${model.getName()}#${nextPlayerID}`).emit("yourTurn");
   })
 
-  socket.on("pickupFarmer", function (callback) {
+  socket.on("pickupFarmer", function (tileID: number, callback) {
     var region: Region;
     let heroId = socket.conn.id;
     let hero = model.getHero(heroId);
     if (hero !== undefined) {
+      // if the hero's tile is not the same as the farmer's tile, return
+      if (hero.getRegion().getID() != tileID) return;
       region = hero.pickupFarmer();
+      console.log("pickup farmer", region)
 
       if (region !== undefined) {
         socket.broadcast.emit("destroyFarmer", region.getID());
