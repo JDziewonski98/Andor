@@ -10,7 +10,8 @@ import {
     MonsterKind,
     Fog,
     EventCard,
-    Prince
+    Prince,
+    Narrator
 } from "."
 import { LargeItem } from './LargeItem';
 import { SmallItem } from './SmallItem';
@@ -41,6 +42,8 @@ export class Game {
     private endOfGame: boolean = false;
     private prince: Prince;
 
+    private legendPosition: number = 0;
+
     // collab decision related state
     public numAccepts: number;
 
@@ -50,7 +53,7 @@ export class Game {
     private eventDeck: Array<EventCard>
     private activeEvents: Array<Number>
 
-    constructor(name: string, numOfDesiredPlayers: number, difficulty: GameDifficulty) {
+    constructor(name: string, numOfDesiredPlayers: number, difficulty: GameDifficulty, legendPosition = 0) {
         this.name = name;
         this.numOfDesiredPlayers = numOfDesiredPlayers;
         this.difficulty = difficulty;
@@ -76,6 +79,14 @@ export class Game {
         this.eventDeck = new Array<EventCard>()
         this.setEventDeck()
         this.activeEvents = new Array<Number>()
+
+        this.setNarrator(this.legendPosition);
+    }
+
+    private setNarrator(initialNarratorPosition: number) {
+        var newNarrator = new Narrator(this, initialNarratorPosition)
+
+
     }
 
     private setFirstHerosTurn() {
@@ -170,10 +181,23 @@ export class Game {
         this.addMonster(MonsterKind.Skral, 19, 'skral1');
     }
 
-    private addMonster(kind: MonsterKind, tile: number, id: string) {
+    public addMonster(kind: MonsterKind, tile: number, id: string) {
+
         let monster = new Monster(kind, tile, this.numOfDesiredPlayers, id)
         this.monsters.set(monster.name, monster);
         this.regions[tile].setMonster(monster);
+
+        /* this crashes the server? this.regions['tile'] is undefined
+         * // check if tile to add monster already has a monster
+        if (this.regions[tile].getMonster() !== null) {
+            this.addMonster(kind, (this.regions[tile].getNextRegionId()), id)
+            
+        }
+        else { // if it has a monster, get next region and addMonster to that tile
+            let monster = new Monster(kind, tile, this.numOfDesiredPlayers, id)
+            this.monsters.set(monster.name, monster);
+            this.regions[tile].setMonster(monster);
+        }*/
     }
 
     private setRegions() {
