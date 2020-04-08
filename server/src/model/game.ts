@@ -716,29 +716,4 @@ export class Game {
            
         //if one that returns to deck ?? not sure if any return
     }
-
-    public getSmallItemFromString(itemString: string) {
-        switch (itemString) {
-            case "wineskin":
-                return SmallItem.Wineskin;
-            case "half_wineskin":
-                return SmallItem.HalfWineskin;
-            case "telescope":
-                return SmallItem.Telescope;
-            case "brew":
-                return SmallItem.Brew;
-            case "half_brew":
-                return SmallItem.HalfBrew;
-            case "herb":
-                return SmallItem.Herb;
-            case "blue_runestone":
-                return SmallItem.BlueRunestone;
-            case "yellow_runestone":
-                return SmallItem.YellowRunestone;
-            case "green_runestone":
-                return SmallItem.GreenRunestone;
-            default:
-                throw new Error("itemString does not correspond to a SmallItem");
-        }
-    }
 }

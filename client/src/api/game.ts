@@ -74,11 +74,9 @@ export class game {
     public getTileGold(tileID, callback) {
         this.socket.emit("getTileGold", tileID, callback);
     }
-
     public dropGold() {
         this.socket.emit("dropGold")
     }
-
     public pickupGold(id) {
         this.socket.emit("pickupGold", id)
     }
@@ -87,16 +85,12 @@ export class game {
     public updateDropGold(callback) {
         this.socket.on("updateDropGold", callback);       
     }
-
     public updatePickupGold(callback) {
         this.socket.on("updatePickupGold", callback)
     }
-
-
     public disconnectUpdateDropGold() {
         this.socket.off("updateDropGold")
     }
-
     public disconnectUpdatePickupGold() {
         this.socket.off("updatePickupGold")
     }
@@ -105,23 +99,25 @@ export class game {
     public updateDropGoldTile(callback) {
         this.socket.on("updateDropGoldTile", callback);       
     }
-
     public updatePickupGoldTile(callback) {
         this.socket.on("updatePickupGoldTile", callback)
     }
-
     public disconnectUpdateDropGoldTile() {
         this.socket.off("updateDropGoldTile")
     }
-
     public disconnectUpdatePickupGoldTile() {
         this.socket.off("updatePickupGoldTile")
     }
     /////////////////////////////
 
     /*
-    *   DROPPING ITEMS
+    *   DROP AND PICKUP ITEMS
     */
+   
+    // itemsMap is an object that maps item names to their quantities
+    public getTileItems(tileID: number, callback) {
+        this.socket.emit("getTileItems", tileID, callback);
+    }
     public dropItem(itemName: string, itemType: string) {
         this.socket.emit("dropItem", itemName, itemType);
     }
@@ -457,6 +453,14 @@ export class game {
     public useWineskin(half_or_full, callback) {
         //half_or_full must be either 'half' or 'full'
         this.socket.emit('useWineskin', half_or_full, callback)
+    }
+
+    public receiveUseWineskin(callback) {
+        this.socket.on('receiveUseWineskin', callback);
+    }
+
+    public disconnectReceiveUseWineskin() {
+        this.socket.off('receiveUseWineskin');
     }
 
     public executeTrade(hero, items_given, items_gained) {

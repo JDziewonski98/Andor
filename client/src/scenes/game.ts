@@ -316,16 +316,22 @@ export default class GameScene extends Phaser.Scene {
             thescene.disconnectListeners()
             WindowManager.destroy(this, tileWindowID);
           } else {
-              WindowManager.create(this, tileWindowID, TileWindow, 
+            // width of tile window depends on number of items on it
+            this.gameinstance.getTileItems(tile.id, function(tileItems) {
+              let items = tileItems;
+              // let itemsSize = Object.keys(items).length;
+              WindowManager.create(self, tileWindowID, TileWindow, 
                 { 
-                  controller: this.gameinstance,
+                  controller: self.gameinstance,
                   x: pointer.x + 20,
                   y: pointer.y + 20,
-                  w: 100,
+                  w: 670, // based on total number of unique items that could populate
                   h: 60,
-                  tileID: tile.getID()
+                  tileID: tile.getID(),
+                  items: items
                 }
               );
+            })
           }
         } else {
           console.log("It is my turn: ", self.gameinstance.myTurn)

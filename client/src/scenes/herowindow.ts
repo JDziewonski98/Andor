@@ -30,6 +30,9 @@ export class HeroWindow extends Window {
     private smallItem1: Phaser.GameObjects.Image;
     private smallItem2: Phaser.GameObjects.Image;
     private smallItem3: Phaser.GameObjects.Image;
+    private smallItem1key: string = "none";
+    private smallItem2key: string = "none";
+    private smallItem3key: string = "none";
 
     // drop buttons
     private goldDrop;
@@ -102,11 +105,9 @@ export class HeroWindow extends Window {
 
         this.gameinstance.getHeroItems(self.windowhero, function(itemdict) {
             if (itemdict['largeItem'] != 'empty') {
-                // make interactive
-                self.largeItem = self.add.image(25, 180, 'bow').setDisplaySize(35,35).setOrigin(0);
+                self.largeItem = self.add.image(25, 180, itemdict['largeItem']).setDisplaySize(35,35).setOrigin(0);
             }
             if (itemdict['helm'] != 'false') {
-                // make interactive
                 self.helm = self.add.image(195, 180, 'helm').setDisplaySize(35,35).setOrigin(0);
             }
             if (itemdict['smallItems'].length > 0) {
@@ -115,7 +116,6 @@ export class HeroWindow extends Window {
                     self.setSmallItemText(i, smallItemList[i])
                 }
             }
-            //TODO_PICKUP: add other items as theyre added
         })
 
         this.add.text(20, 305, heroCardInfo[`${this.windowhero}Ability`], { color: '#4B2504', fontSize: 12 })
@@ -175,40 +175,72 @@ export class HeroWindow extends Window {
 
         // Drop item button
         // itemName is only used for smallItems, defaults to "" otherwise and is unused
-        function dropItem(itemType: string, itemName: string = "") {
+        function callDropItem(itemType: string, itemName: string = "") {
             self.gameinstance.dropItem(itemName, itemType);
         }
-        this.largeItemDrop.on('pointerdown', function() { dropItem("largeItem") });
-        this.helmDrop.on('pointerdown', function() { dropItem("helm") });
-        this.smallItem1Drop.on('pointerdown', function() { dropItem("smallItem", self.smallItem1.texture.key) });
-        this.smallItem2Drop.on('pointerdown', function() { dropItem("smallItem", self.smallItem2.texture.key) });
-        this.smallItem3Drop.on('pointerdown', function() { dropItem("smallItem", self.smallItem3.texture.key) });
+        this.largeItemDrop.on('pointerdown', function() { callDropItem("largeItem") });
+        this.helmDrop.on('pointerdown', function() { callDropItem("helm") });
+        this.smallItem1Drop.on('pointerdown', function() { callDropItem("smallItem", self.smallItem1key) });
+        this.smallItem2Drop.on('pointerdown', function() { callDropItem("smallItem", self.smallItem2key) });
+        this.smallItem3Drop.on('pointerdown', function() { callDropItem("smallItem", self.smallItem3key) });
 
-        this.gameinstance.updateDropItemHero(
-            function(hk: string, itemName: string, itemType: string) {
-                if (hk != self.windowhero) return;
-                // remove the item image from the hero card depending on its type and name
-                if (itemType == "largeItem") {
-                    self.largeItemDrop.removeAllListeners('pointerdown')
-                    self.largeItem.destroy();
-                } else if (itemType == "helm") {
-                    self.helmDrop.removeAllListeners('pointerdown')
-                    self.helm.destroy();
-                } else if (itemType == "smallItem") {
-                    console.log("client attempt to drop", itemName)
-                    if (self.smallItem1.texture.key == itemName) {
-                        self.smallItem1Drop.removeAllListeners('pointerdown')
-                        self.smallItem1.destroy();
-                    } else if (self.smallItem2.texture.key == itemName) {
-                        self.smallItem2Drop.removeAllListeners('pointerdown')
-                        self.smallItem2.destroy();
-                    } else if (self.smallItem3.texture.key == itemName) {
-                        self.smallItem3Drop.removeAllListeners('pointerdown')
-                        self.smallItem3.destroy();
-                    }
+        function dropItem(hk: string, itemName: string, itemType: string) {
+            if (hk != self.windowhero) return;
+            // remove the item image from the hero card depending on its type and name
+            if (itemType == "largeItem") {
+                self.largeItem.removeAllListeners('pointerdown')
+                self.largeItem.destroy();
+            } else if (itemType == "helm") {
+                self.helm.removeAllListeners('pointerdown')
+                self.helm.destroy();
+            } else if (itemType == "smallItem") {
+                console.log("client attempt to drop", itemName)
+                if (self.smallItem1key == itemName) {
+                    self.smallItem1.removeAllListeners('pointerdown')
+                    self.smallItem1.destroy();
+                    self.smallItem1key = "none";
+                } else if (self.smallItem2key == itemName) {
+                    self.smallItem2.removeAllListeners('pointerdown')
+                    self.smallItem2.destroy();
+                    self.smallItem2key = "none";
+                } else if (self.smallItem3key == itemName) {
+                    self.smallItem3.removeAllListeners('pointerdown')
+                    self.smallItem3.destroy();
+                    self.smallItem3key = "none";
                 }
             }
-        )
+        }
+        this.gameinstance.updateDropItemHero(dropItem);
+        function pickupItem(hk: string, itemName: string, itemType: string) {
+            if (hk != self.windowhero) return;
+            // add the item image from the hero card depending on its type and name
+            if (itemType == "largeItem") {
+                self.largeItem = self.add.image(25, 180, itemName).setDisplaySize(35,35).setOrigin(0);
+            } else if (itemType == "helm") {
+                self.helm = self.add.image(195, 180, 'helm').setDisplaySize(35,35).setOrigin(0);
+            } else if (itemType == "smallItem") {
+                // find first empty slot to add image to
+                let slot = 2;
+                if (self.smallItem1key == "none") {
+                    slot = 0;
+                } else if (self.smallItem2key == "none") {
+                    slot = 1;
+                }
+                self.setSmallItemText(slot, itemName);
+            }
+        }
+        this.gameinstance.updatePickupItemHero(pickupItem);
+        this.gameinstance.receiveUseWineskin(function(hk: string, halforfull: string) {
+            if (hk != self.windowhero) return;
+            if (halforfull == 'full') {
+                console.log("update other hero full wineskin")
+                dropItem(hk, 'wineskin', 'smallItem');
+                pickupItem(hk, "wineskin", "smallItem");
+            } else {
+                console.log("update other hero full wineskin")
+                dropItem(hk, "half_wineskin", "smallItem");
+            }
+        })
 
         //todo account for falcon
         console.log('ids:xxxxxxxxxxx', this.windowherotile, this.clientherotile)
@@ -224,7 +256,7 @@ export class HeroWindow extends Window {
     private setSmallItemText(slot:number, item) {
         var self = this
 
-        function defineOnclick(itemIcon:Phaser.GameObjects.Image, itemtype) {
+        function defineOnclick(itemIcon:Phaser.GameObjects.Image, itemtype, slot) {
             itemIcon.setInteractive()
             switch(itemtype) {
                 case 'wineskin':
@@ -233,7 +265,12 @@ export class HeroWindow extends Window {
                         self.gameinstance.useWineskin('full', function() {
                             itemIcon.setTexture('half_wineskin').setDisplaySize(35, 35);
                             itemIcon.removeAllListeners('pointerdown')
-                            defineOnclick(itemIcon,'half_wineskin')
+                            defineOnclick(itemIcon,'half_wineskin', slot)
+                            switch (slot) {
+                                case 0: self.smallItem1key = "half_wineskin"; break;
+                                case 1: self.smallItem2key = "half_wineskin"; break;
+                                case 2: self.smallItem3key = "half_wineskin"; break;
+                            }
                         })
                     })
                     break;
@@ -243,6 +280,11 @@ export class HeroWindow extends Window {
                             console.log('dont get drunk')
                             itemIcon.removeAllListeners('pointerdown')
                             itemIcon.destroy();
+                            switch (slot) {
+                                case 0: self.smallItem1key = "none"; break;
+                                case 1: self.smallItem2key = "none"; break;
+                                case 2: self.smallItem3key = "none"; break;
+                            }
                         })
                     })
                     break;
@@ -260,22 +302,25 @@ export class HeroWindow extends Window {
             case 0:
                 console.log("load image into slot 0", item);
                 self.smallItem1 = self.add.image(25,255,item).setDisplaySize(35,35).setOrigin(0);
+                self.smallItem1key = item;
                 if (self.clienthero == self.windowhero){
-                    defineOnclick(self.smallItem1, item)
+                    defineOnclick(self.smallItem1, item, slot)
                 }
                 break;
             case 1:
                 console.log("load image into slot 1", item);
                 self.smallItem2 = self.add.image(125,255,item).setDisplaySize(35,35).setOrigin(0);
+                self.smallItem2key = item;
                 if (self.clienthero == self.windowhero){
-                    defineOnclick(self.smallItem2, item)
+                    defineOnclick(self.smallItem2, item, slot)
                 }
                 break;
             case 2:
                 console.log("load image into slot 2", item);
                 self.smallItem3 = self.add.image(225,255,item).setDisplaySize(35,35).setOrigin(0);
+                self.smallItem3key = item;
                 if (self.clienthero == self.windowhero){
-                    defineOnclick(self.smallItem3, item)
+                    defineOnclick(self.smallItem3, item, slot)
                 }
                 break;
         }
@@ -315,5 +360,8 @@ export class HeroWindow extends Window {
         //turn off any socket.on(...) that u add here!
         this.gameinstance.disconnectUpdateDropGold();
         this.gameinstance.disconnectUpdatePickupGold();
+        this.gameinstance.disconnectUpdateDropItemHero();
+        this.gameinstance.disconnectUpdatePickupItemHero();
+        this.gameinstance.disconnectReceiveUseWineskin();
     }
 }
