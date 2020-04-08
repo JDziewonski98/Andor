@@ -895,17 +895,10 @@ export function game(socket, model: Game, io) {
 
   })
 
-<<<<<<< HEAD
-  function smallItemStrToEnum(str): SmallItem {
-    console.log(str, 'in converter')
-    switch (str) {
-      case "wineskin": return SmallItem.Wineskin
-=======
   function smallItemStrToEnum(str) : SmallItem {
     // console.log(str,'in converter')
     switch(str){
       case "wineskin" : return SmallItem.Wineskin
->>>>>>> master
       case "half_wineskin": return SmallItem.HalfWineskin
       case "telescope": return SmallItem.Telescope
       case "brew": return SmallItem.Brew
@@ -918,15 +911,9 @@ export function game(socket, model: Game, io) {
     }
   }
 
-<<<<<<< HEAD
-  function largeItemStrToEnum(str): LargeItem {
-    console.log(str, 'in converter')
-    switch (str) {
-=======
   function largeItemStrToEnum(str) : LargeItem {
     // console.log(str,'in converter')
     switch(str){
->>>>>>> master
       case "falcon": return LargeItem.Falcon
       case "shield": return LargeItem.Shield
       case "bow": return LargeItem.Bow
