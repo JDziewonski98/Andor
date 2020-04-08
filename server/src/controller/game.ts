@@ -80,7 +80,8 @@ export function game(socket, model: Game, io) {
       result = hero.dropFarmer();
 
       //result[1] = dropped region id, result[0] = farmer id
-      if (result !== undefined) {
+      // If drop unsuccessful, it will be an empty array
+      if (result.length == 2) {
         //Farmer dropped on reitburg
         if (result[1] === 0) {
           model.getCastle().incShields();
