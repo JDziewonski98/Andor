@@ -240,6 +240,8 @@ export class HeroWindow extends Window {
             }
         })
 
+        // TODO WELL: Listen for well use (WP inc) and farmer pickups/drops
+
         //todo account for falcon
         console.log('ids:xxxxxxxxxxx', this.windowherotile, this.clientherotile)
         if (this.clienthero != this.windowhero && (this.windowherotile == this.clientherotile )) {

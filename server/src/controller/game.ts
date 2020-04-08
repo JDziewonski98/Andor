@@ -125,6 +125,7 @@ export function game(socket, model: Game, io) {
         callback(wpInc);
         // Update the other heroes
         socket.broadcast.emit("updateWell", hero.getRegion().getID(), wpInc);
+        // TODO WELL: update hero windows
       }
     }
   });

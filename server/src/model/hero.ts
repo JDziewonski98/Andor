@@ -233,15 +233,16 @@ export class Hero {
         let wpInc = -1;
         var reg = this.region;
         if (reg.getHasWell() && !reg.getWellUsed()) {
-            //increase 3 will power
-            if (this.will <= 17) {
-                this.setWill(3);
-                wpInc = 3;
+            if (this.hk == HeroKind.Warrior) {
+                // increase 5WP
+                this.will += 5;
+                wpInc = this.will > 20 ? 25-this.will : 5;
+            } else {
+                //increase 3 will power
+                this.will += 3;
+                wpInc = this.will > 20 ? 23-this.will : 3;
             }
-            else if (this.will <= 20 && this.will > 17) {
-                this.will = 20;
-                wpInc = (20 - this.will);
-            }
+            if (this.will > 20) this.will = 20;
             //set the boolean of whether a well was used
             reg.setWellUsed(true);
         }
