@@ -209,6 +209,81 @@ export function game(socket, model: Game, io) {
     }
   });
 
+  /*
+  *   DROP AND PICKUP ITEMS
+  */
+
+  // Send items and quantities of tileID back to client
+  socket.on("getTileItems", function (tileID, callback) {
+    var tileItems = model.getRegions()[tileID].getItems();
+    callback(tileItems);
+  });
+
+  socket.on("pickupItem", function (tileID, itemName: string, itemType: string) {
+    let successStatus = false;
+    let heroId = socket.conn.id;
+    let hero = model.getHero(heroId);
+
+    if (hero !== undefined) {
+      switch (itemType) {
+        case "largeItem":
+          successStatus = hero.pickUpLargeItem(largeItemStrToEnum(itemName));
+          break;
+        case "helm":
+          successStatus = hero.pickUpHelm();
+          break;
+        case "smallItem":
+          successStatus = hero.pickUpSmallItem(smallItemStrToEnum(itemName));
+          break;
+      }
+    }
+    if (successStatus) {
+      // Tell any active TileWindows of all clients to update
+      socket.broadcast.emit("updatePickupItemTile", hero.getRegion().getID(), itemName, itemType);
+      socket.emit("updatePickupItemTile", hero.getRegion().getID(), itemName, itemType);
+      // Tell any active HeroWindows of all clients to update
+      socket.broadcast.emit("updatePickupItemHero", hero.getKind(), itemName, itemType);
+      socket.emit("updatePickupItemHero", hero.getKind(), itemName, itemType);
+    }
+  })
+
+  socket.on("dropItem", function(itemName: string, itemType: string) {
+    let successStatus = false;
+    let heroId = socket.conn.id;
+    let hero = model.getHero(heroId);
+    let name = itemName;
+
+    if (hero !== undefined) {
+      switch (itemType) {
+        case "largeItem":
+          name = hero.getLargeItem();
+          successStatus = hero.dropLargeItem();
+          break;
+        case "helm":
+          name = "helm";
+          successStatus = hero.dropHelm();
+          break;
+        case "smallItem":
+          // There doesn't seem to be a good way of converting string to corresponding enum
+          const smallItem: SmallItem = smallItemStrToEnum(itemName);
+          // console.log("server attempt to drop", smallItem)
+          successStatus = hero.dropSmallItem(smallItem);
+          break;
+      }
+    }
+    // console.log("successStatus:", successStatus)
+    if (successStatus) {
+      // Tell any active TileWindows of all clients to update
+      socket.broadcast.emit("updateDropItemTile", hero.getRegion().getID(), name, itemType);
+      socket.emit("updateDropItemTile", hero.getRegion().getID(), name, itemType);
+      // Tell any active HeroWindows of all clients to update
+      socket.broadcast.emit("updateDropItemHero", hero.getKind(), name, itemType);
+      socket.emit("updateDropItemHero", hero.getKind(), name, itemType);
+    }
+  })
+
+  /////////////////////////////
+
   socket.on('bind hero', function (heroType, callback) {
     let id = socket.conn.id;
     const success = model.bindHero(id, heroType);
@@ -350,11 +425,14 @@ export function game(socket, model: Game, io) {
         // Iterate through resNames and map index to amount specified in resAllocated
         for (let i = 0; i < resNames.length; i++) {
           if (resNames[i] == "gold") {
-            currHero?.updateGold(resAllocated[heroTypeString][i]);
+            currHero.updateGold(resAllocated[heroTypeString][i]);
           }
           else if (resNames[i] == "wineskin") {
             // TODO: actually give the hero the wineskin (use smallItems API)
             currHero?.setWineskin(resAllocated[heroTypeString][i] > 0);
+            for (let j = 0; j < resAllocated[heroTypeString][i]; j++) {
+              currHero.pickUpSmallItem(SmallItem.Wineskin);
+            }
           }
           else if (resNames[i] == 'will') {
             currHero?.setWill(resAllocated[heroTypeString][i])
@@ -707,6 +785,8 @@ export function game(socket, model: Game, io) {
       hero.consumeItem('half_wineskin')
     }
     callback()
+    // update other client hero windows
+    socket.broadcast.emit('receiveUseWineskin', hero.getKind(), halforfull);
   })
 
   ///////////////////////
