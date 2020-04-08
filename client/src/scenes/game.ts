@@ -597,13 +597,10 @@ export default class GameScene extends Phaser.Scene {
         var posNarrator = character
 
         const newNarrator = new Narrator(this, posNarrator, "pawn", this.gameinstance).setDisplaySize(40, 40);
-        this.add.existing(newNarrator);
-        
-        //newNarrator.advance() // first time calling it, will go into the this.posNarrator === A branch of the switch                        
-        //newNarrator.advance()
-        //newNarrator.advance()
-        
-        
+        this.add.existing(newNarrator);        
+
+        newNarrator.advance()             
+        newNarrator.advance()
     }
 
   private addFog() {

@@ -38,110 +38,120 @@ export class Narrator extends Phaser.GameObjects.Image {
         // y coordinate varies. y=6100 is the initial y-coordinate. 455 is the amount the image moves upwards
         var inputY = (6100 - (posNarrator * 455)) * scaleFactor + borderWidth
 
-        // x coordinate of narrator image is always 9450
-        console.log(narratorXCoord, inputY)
+        // x coordinate of narrator image is a constant: (9450 * scaleFactor + borderWidth)
         super(scene, narratorXCoord, inputY, texture);
         this.gameController = gameController;
-
-
-        this.setInteractive();
-        var self = this;
-
-        this.posNarrator = posNarrator
-
-
-        /* // construct
-         switch (enumPositionOfNarrator[(this.posNarrator)]) {
-             case "A": { this.A(); break; }
-             case "B": { this.B(); break; }
-             case "C": { this.C(); break; }
-             case "D": { this.D(); break; }
-             case "E": { this.E(); break; }
-             case "F": { this.F(); break; }
-             case "G": { this.G(); break; }
-             case "H": { this.H(); break; }
-         }*/
+        // this.setInteractive();        
+        this.posNarrator = posNarrator;
 
     }
 
 
+    public advance() {
+        var self = this;
 
-
-
-    /*
-        public advance() {
-            console.log(enumPositionOfNarrator[(this.posNarrator)])
-            var self = this;
-    
-            if (enumPositionOfNarrator[(this.posNarrator)] === "N") {
-                // cannot advance any more. end game. 
-    
-                *//*
+        this.gameController.advanceNarrator(function (newLegendPos: number) {
+            if (enumPositionOfNarrator[(this.posNarrator)] !== "N") {
+                /*// cannot advance any more. end game. 
+                self.posNarrator += 1
+                var inputY = ((6100 - (self.posNarrator * 455)) * scaleFactor) + borderWidth
+                // this updates the position of narrator image    */
+                self.posNarrator = newLegendPos
+                self.y = ((6100 - (self.posNarrator * 455)) * scaleFactor) + borderWidth
             }
 
-            else {
 
-                switch (enumPositionOfNarrator[(this.posNarrator)]) {              
+        }
+        );
 
-                    case "B": {
-                        this.B();
-                        break;
-                    } 
 
-                    case "C": {
-                        this.C();
-                        break;
-                    }
+        this.gameController.updateNarrator(function (newLegendPos: number) {
+            /*if (enumPositionOfNarrator[(this.posNarrator)] !== "N") {
+                *//*// cannot advance any more. end game. 
+            self.posNarrator += 1
+            var inputY = ((6100 - (self.posNarrator * 455)) * scaleFactor) + borderWidth
+            // this updates the position of narrator image    *//*
+            self.posNarrator = newLegendPos
+            self.y = ((6100 - (self.posNarrator * 455)) * scaleFactor) + borderWidth
+        }*/
 
-                    case "D": {
-                        this.D();
-                        break;
-                    }
 
-                    case "E": {
-                        this.E();
-                        break;
-                    }
+        });
 
-                    case "F": {
-                        this.F();
-                        break;
-                    }
 
-                    case "G": {
-                        this.G();
-                        break;
-                    }
-                    case "H": {
-                        this.H();
-                        break;
-                    } 
-                    case "I": { break;} // no narrator-related events will occur onward until N
-                    case "J": { break;}
-                    case "K": { break;}
-                    case "L": { break;}
-                    case "M": { break;}
-        
+    }
+
+}
+
+    /*public advance() {
+        console.log(enumPositionOfNarrator[(this.posNarrator)])
+        var self = this;
+
+        if (enumPositionOfNarrator[(this.posNarrator)] === "N") {
+                // cannot advance any more. end game. 
+    
+            }
+
+        else {
+
+            switch (enumPositionOfNarrator[(this.posNarrator)]) {
+
+                case "B": {
+                    this.B();
+                    break;
+                }
+
+                case "C": {
+                    this.C();
+                    break;
+                }
+
+                case "D": {
+                    this.D();
+                    break;
+                }
+
+                case "E": {
+                    this.E();
+                    break;
+                }
+
+                case "F": {
+                    this.F();
+                    break;
+                }
+
+                case "G": {
+                    this.G();
+                    break;
+                }
+                case "H": {
+                    this.H();
+                    break;
+                }
+                case "I": { break; } // no narrator-related events will occur onward until N
+                case "J": { break; }
+                case "K": { break; }
+                case "L": { break; }
+                case "M": { break; }
+
             }
 
             this.posNarrator += 1
-   
-    // to move the narrator image to the next place, subtract y by 455
-    // for example, at B (second place), y = 6100 - (1*455)
-    var inputY = ((6100 - (this.posNarrator * 455)) * scaleFactor) + borderWidth
-   // console.log("new x, y coordinate: ", narratorXCoord ,inputY)
-    
-    // console.log(this) // Narrator object
-    // this updates the position of narrator image            
-    this.y = inputY
-}
-}
+
+            // to move the narrator image to the next place, subtract y by 455
+            // for example, at B (second place), y = 6100 - (1*455)
+            var inputY = ((6100 - (this.posNarrator * 455)) * scaleFactor) + borderWidth
+            // console.log("new x, y coordinate: ", narratorXCoord ,inputY)
+
+            // console.log(this) // Narrator object
+            // this updates the position of narrator image            
+            this.y = inputY
+
+        }
+    }*/
+
 
      
-}
 
 
-
-
-*/
-}

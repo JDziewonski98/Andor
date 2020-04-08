@@ -20,16 +20,18 @@ export enum enumPositionOfNarrator {
 };
 
 export class Narrator {
-    private legendPostiion: number;
+    private legendPosition: number;
     private triggerRunestone: string | null = null;
     private gameController: Game;
 
-    constructor(gameController: Game, legendPosition: number) {
-        this.legendPostiion = legendPosition;
+    constructor(gameController: Game, legendPosition: number = 0) {
+        this.legendPosition = legendPosition;
         this.gameController = gameController;
     }
 
-
+    public getLegendPosition() {
+        return this.legendPosition;
+    }
 
     private randomInteger(min, max) { // min and max are inclusive
         return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -273,6 +275,34 @@ export class Narrator {
         }
     }
     /////////////end of A to H/////////////
+
+    public advance() {
+        
+        this.legendPosition += 1
+               
+        switch (enumPositionOfNarrator[(this.legendPosition)]) {
+            case "A": { this.A(); break; }
+            case "B": { this.B(); break; }
+            case "C": { this.C(); break; }
+            case "D": { this.D(); break; }
+            case "E": { this.E(); break; }
+            case "F": { this.F(); break; }
+            case "G": { this.G(); break; }
+            case "H": { this.H(); break; }
+            case "I": { break; } // no narrator-related events will occur onward until N
+            case "J": { break; }
+            case "K": { break; }
+            case "L": { break; }
+            case "M": { break; }
+        }
+        
+    }
+
+    //TODO
+    public checkEndGame(): boolean {
+        return true;
+    }
+
 }
 
 

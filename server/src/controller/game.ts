@@ -76,6 +76,24 @@ export function game(socket, model: Game, io) {
     }
   });
 
+
+    socket.on("advanceNarrator", function (callback) {
+        var nar = model.getNarrator();
+        // check if position of narrator is already at N
+        if (nar.getLegendPosition() === 13) {
+            nar.checkEndGame()
+        }
+        else {
+            nar.advance();
+        }
+        
+        // doesn't work when more than 1 player. advances twice than desired
+        callback(nar.getLegendPosition());
+        socket.broadcast.emit("updateNarrator", nar.getLegendPosition())
+        }
+    );
+
+
   socket.on("merchant", function (callback) {
     let success = false;
     var heroId = socket.conn.id;
