@@ -353,9 +353,10 @@ export class Hero {
             case 'wineskin':
                 let index_w = this.smallItems.indexOf(SmallItem.Wineskin);
                 if (index_w > -1) {
+                    // Remove wineskin item and replace with half_wineskin
                     this.smallItems.splice(index_w, 1);
                     this.freeMoves++
-                    this.pickUpSmallItem(SmallItem.HalfWineskin)
+                    this.pickUpSmallItem(this.region.getID(), SmallItem.HalfWineskin)
                     console.log(this.hk, "has", this.getItemDict());
                 }
                 break;
@@ -373,7 +374,7 @@ export class Hero {
                 let index_brew = this.smallItems.indexOf(SmallItem.Brew);
                 if (index_brew > -1) {
                     this.smallItems.splice(index_brew, 1);
-                    this.pickUpSmallItem(SmallItem.HalfBrew)
+                    this.pickUpSmallItem(this.region.getID(), SmallItem.HalfBrew)
                 }
                 break;
 
@@ -394,7 +395,8 @@ export class Hero {
         return this.smallItems
     }
 
-    public pickUpSmallItem(item: SmallItem) {
+    public pickUpSmallItem(tileID: number, item: SmallItem) {
+        if (this.region.getID() != tileID) return false;
         if (this.smallItems.length < 3) {
             this.smallItems.push(item)
             this.region.removeItem(item);
@@ -407,7 +409,6 @@ export class Hero {
     }
 
     public dropSmallItem(item:SmallItem) {
-        // if (this.smallItems.includes(item)) {
         const index = this.smallItems.indexOf(item);
         if (index > -1) {
             this.region.addItem(this.smallItems[index]);
@@ -415,7 +416,6 @@ export class Hero {
             console.log(this.hk, "has", this.getItemDict());
             return true
         }
-        // }
         return false;
     }
 
@@ -423,39 +423,37 @@ export class Hero {
         return this.largeItem
     }
 
-    public pickUpLargeItem(item: LargeItem) {
+    public pickUpLargeItem(tileID: number, item: LargeItem) {
+        if (this.region.getID() != tileID) return false;
         if (this.largeItem == LargeItem.Empty) {
             this.largeItem = item;
             this.region.removeItem(item);
             console.log(this.hk, "has", this.getItemDict());
             return true
-        }
-        else {
+        } else {
             return false
         }
     }
 
     public dropLargeItem() {
-        //TODO: add this item onto the tile hero is currently on. How to graphically represent?
         if (this.largeItem != LargeItem.Empty) {
             this.region.addItem(this.largeItem);
             this.largeItem = LargeItem.Empty;
             console.log(this.hk, "has", this.getItemDict());
             return true
-        }
-        else {
+        } else {
             return false
         }
     }
 
-    public pickUpHelm() {
+    public pickUpHelm(tileID: number) {
+        if (this.region.getID() != tileID) return false;
         if (this.helm == false) {
             this.helm = true
             this.region.removeItem("helm");
             console.log(this.hk, "has", this.getItemDict());
             return true
-        }
-        else {
+        } else {
             return false
         }
     }
@@ -466,8 +464,7 @@ export class Hero {
             this.helm = false
             console.log(this.hk, "has", this.getItemDict());
             return true
-        }
-        else {
+        } else {
             return false
         }
     }
