@@ -11,7 +11,6 @@ Tiles don't need to be sprites? Because they themselves aren't represented
 by a
 */
 export class Tile extends Phaser.GameObjects.Sprite {
-    public adjacent: Tile[] = [];
     public adjRegionsIds: number[] = [];
     public id: number;
     public heroexist: boolean = false;
@@ -30,7 +29,7 @@ export class Tile extends Phaser.GameObjects.Sprite {
 
     private fog: Phaser.GameObjects.Sprite;
 
-    constructor(id, scene, x, y, texture) {
+    constructor(id, scene, x: number, y: number, texture: string, adj: Array<number>) {
         super(scene, x, y, 'tiles', texture);
         this.id = id;
         this.x = x;
@@ -40,6 +39,7 @@ export class Tile extends Phaser.GameObjects.Sprite {
         this.gold = 0;
         this.fog = null;
         this.monster = null;
+        this.adjRegionsIds = adj;
 
         //depricated
         // Set coordinates for hero representations as 2d array
@@ -65,40 +65,6 @@ export class Tile extends Phaser.GameObjects.Sprite {
         else {
             console.log("Tile id: " + this.id + " does not have a hero.");
         }
-    }
-
-    public printstuff() {
-        console.log("Tile's id: " + this.id);
-        console.log("Adjacent tiles:");
-        this.adjacent.forEach(element => {
-            try {
-                console.log(element.id)
-            }
-            catch (e) { }
-        });
-        console.log(this.id + ' tile has hero? ' + this.heroexist)
-    }
-
-    public moveRequest() {
-        /*
-        console.log("New request for hero to move to tile", this.id);
-        this.adjacent.forEach(element => {
-            try {
-                // This algorithm is deprecated and should exist in server side business logic anyways
-                if (element.heroexist == true) {
-                    // console.log("Hero", element.hero., "exists on tile", element.id);
-                    this.hero = element.hero.move(this);
-                    if (this.hero.tile === this) {
-                        this.heroexist = true;
-                        element.hero = null;
-                        element.heroexist = false;
-                    }
-
-                }
-            }
-            catch (e) { console.log(e) }
-        });
-        */
     }
 
     public setFog(fog: Phaser.GameObjects.Sprite) {

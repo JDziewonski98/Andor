@@ -41,6 +41,9 @@ export function lobby(socket, model: Lobby, io) {
       // TODO: how are we dealing with heros? JSON.parse will give you an array of hero objects.
       g.setEventDeck(JSON.parse(gameData.eventDeck));
       g.setActiveEvents(JSON.parse(gameData.activeEvents));
+      g.nextDayFirstHero = gameData.nextDayFirstHero;
+      g.currPlayersTurn = gameData.currPlayersTurn;
+      g.setActiveHeros(JSON.parse(gameData.activeHeros))
 
       callback();
     }

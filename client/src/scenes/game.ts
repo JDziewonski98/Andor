@@ -1,4 +1,4 @@
-import { Farmer, Hero, HourTracker, Monster, HeroKind, Well, Tile, Narrator, EventCard} from '../objects';
+import { Farmer, Hero, HourTracker, Monster, HeroKind, Well, Tile, Narrator, EventCard } from '../objects';
 import { game } from '../api';
 import { WindowManager, CollabWindow, MerchantWindow, DeathWindow, Fight, BattleInvWindow, GameOverWindow, TradeWindow } from "./windows";
 import { RietburgCastle } from './rietburgcastle';
@@ -123,9 +123,11 @@ export default class GameScene extends Phaser.Scene {
       .setDisplaySize(expandedWidth, expandedHeight);
 
     this.gameinstance.getGameData((data) => {
-      console.log("GAME DATA IS:::::::::::::\n",data)
-      this.setRegions();
-      
+      console.log("GAME DATA IS:::::::::::::\n", data)
+
+      this.setRegions(data.regions);
+      this.addFog(data.fogs);
+
       this.addShieldsToRietburg(data.castle.numDefenseShields - data.castle.numDefenseShieldsUsed);
 
 
@@ -133,71 +135,91 @@ export default class GameScene extends Phaser.Scene {
         this.addMonster(monster[1].tileID, monster[1].type, monster[0]);
       })
 
-
-
-    })
-
-    this.setUpListeners();
-
-    
-
-    this.addMerchants();
-    this.addFarmers();
-    
-    
-
-    // x and y coordinates
-    this.addWell(209, 2244, wellTile1)
-    this.addWell(1353, 4873, wellTile2)
-    this.addWell(7073, 3333, wellTile3)
-    this.addWell(5962, 770, wellTile4)
-
-    // this.addGold()
-
-    this.addFog();
-
-    this.addNarrator();
-
-  
-    
-
-    this.gameinstance.getHeros((herotypes) => {
-      herotypes.forEach(type => {
-        if (type === "archer") {
-          self.addHero(HeroKind.Archer, archerTile, "archermale");
-        } else if (type === "mage") {
-          self.addHero(HeroKind.Mage, mageTile, "magemale");
-        } else if (type === "warrior") {
-          self.addHero(HeroKind.Warrior, warriorTile, "warriormale");
-        } else if (type === "dwarf") {
-          self.addHero(HeroKind.Dwarf, dwarfTile, "dwarfmale");
-        }
-      });
-
+      data.heroList.forEach(hero => {
+        this.addHero(hero[1].hk, hero[1].region.id, hero[1].hk);
+      })
       this.hourTrackerSetup();
 
       // Add overlay to game
       const overlayData = {
-        gameinstance: self.gameinstance,
-        tiles: self.tiles,
-        monsterMap: self.monsterNameMap,
+        gameinstance: this.gameinstance,
+        tiles: this.tiles,
+        monsterMap: this.monsterNameMap,
         // gameTweens: self.tweens, not sure if this needs to be passed
-        hourTracker: self.hourTracker,
-        wells: self.wells,
-        hk: self.ownHeroType,
+        hourTracker: this.hourTracker,
+        wells: this.wells,
+        hk: this.ownHeroType,
         clientheroobject: this.hero
       };
       this.overlay = new BoardOverlay(overlayData);
       this.scene.add('BoardOverlay', this.overlay, true);
 
       // Need to wait for heroes to be created before creating collab decision
-      self.startingCollabDecisionSetup();
+      this.startingCollabDecisionSetup();
       // Note that starting hero rank gets determined in collab setup
-      if (self.hero.tile.id == self.startingHeroRank) {
-        console.log("first turn goes to hero rank", self.startingHeroRank);
-        self.gameinstance.setMyTurn(true);
+      if (this.hero.tile.id == this.startingHeroRank) {
+        console.log("first turn goes to hero rank", this.startingHeroRank);
+        this.gameinstance.setMyTurn(true);
       }
+
     })
+
+    this.setUpListeners();
+
+
+
+    // this.addMerchants();
+    // this.addFarmers();
+
+
+
+    // x and y coordinates
+    // this.addWell(209, 2244, wellTile1)
+    // this.addWell(1353, 4873, wellTile2)
+    // this.addWell(7073, 3333, wellTile3)
+    // this.addWell(5962, 770, wellTile4)
+
+    // this.addGold()
+
+    this.addNarrator();
+
+    // this.gameinstance.getHeros((herotypes) => {
+    //   herotypes.forEach(type => {
+    //     if (type === "archer") {
+    //       self.addHero(HeroKind.Archer, archerTile, "archermale");
+    //     } else if (type === "mage") {
+    //       self.addHero(HeroKind.Mage, mageTile, "magemale");
+    //     } else if (type === "warrior") {
+    //       self.addHero(HeroKind.Warrior, warriorTile, "warriormale");
+    //     } else if (type === "dwarf") {
+    //       self.addHero(HeroKind.Dwarf, dwarfTile, "dwarfmale");
+    //     }
+    //   });
+
+    //   this.hourTrackerSetup();
+
+    //   // Add overlay to game
+    //   const overlayData = {
+    //     gameinstance: self.gameinstance,
+    //     tiles: self.tiles,
+    //     monsterMap: self.monsterNameMap,
+    //     // gameTweens: self.tweens, not sure if this needs to be passed
+    //     hourTracker: self.hourTracker,
+    //     wells: self.wells,
+    //     hk: self.ownHeroType,
+    //     clientheroobject: this.hero
+    //   };
+    //   this.overlay = new BoardOverlay(overlayData);
+    //   this.scene.add('BoardOverlay', this.overlay, true);
+
+    //   // Need to wait for heroes to be created before creating collab decision
+    //   self.startingCollabDecisionSetup();
+    //   // Note that starting hero rank gets determined in collab setup
+    //   if (self.hero.tile.id == self.startingHeroRank) {
+    //     console.log("first turn goes to hero rank", self.startingHeroRank);
+    //     self.gameinstance.setMyTurn(true);
+    //   }
+    // })
 
     //Event Card adding at start of game
     //this.gameinstance.newEvent()
@@ -245,8 +267,12 @@ export default class GameScene extends Phaser.Scene {
     })
 
 
-    console.log("********* SAVING GAME");
-    // this.gameinstance.save();
+    
+    setInterval(() => {
+      console.log("********* SAVING GAME");
+      this.gameinstance.save();
+    }, 30000);
+    
   }
 
   private cameraSetup() {
@@ -265,16 +291,20 @@ export default class GameScene extends Phaser.Scene {
     });
   }
 
-  private setRegions() {
+  private setRegions(tilesData) {
     // Note that regions 73-79 and 83 are unused, but created anyways to preserve direct
     // indexing between regions array and region IDs
     var tilesData = require("../utils/xycoords").map;
     var treeTile = this.textures.get('tiles').getFrameNames()[12];
     for (var element in tilesData) {
-      var tile = new Tile(element, this, tilesData[element].xcoord * scaleFactor + borderWidth, tilesData[element].ycoord * scaleFactor + borderWidth, treeTile);
+      var tile = new Tile(element, this, tilesData[element].xcoord * scaleFactor + borderWidth, tilesData[element].ycoord * scaleFactor + borderWidth, treeTile, tilesData[element].adjRegionsIds);
       this.tiles[element] = tile;
       tile.setInteractive();
       this.add.existing(tile);
+
+      if (tilesData[element].hasWell) {
+        this.addWell(tilesData[element].xcoord, tilesData[element].ycoord, +element);
+      }
     }
 
     // click: for movement callback, ties pointerdown to move request
@@ -291,11 +321,11 @@ export default class GameScene extends Phaser.Scene {
             WindowManager.destroy(this, tileWindowID);
           } else {
             // width of tile window depends on number of items on it
-            this.gameinstance.getTileItems(tile.id, function(tileItems) {
+            this.gameinstance.getTileItems(tile.id, function (tileItems) {
               let items = tileItems;
               // let itemsSize = Object.keys(items).length;
-              WindowManager.create(self, tileWindowID, TileWindow, 
-                { 
+              WindowManager.create(self, tileWindowID, TileWindow,
+                {
                   controller: self.gameinstance,
                   x: pointer.x + 20,
                   y: pointer.y + 20,
@@ -397,15 +427,6 @@ export default class GameScene extends Phaser.Scene {
 
     }, this);
 
-  }
-
-  private addMonsters() {
-    this.addMonster(8, 'gor', 'gor1');
-    this.addMonster(20, 'gor', 'gor2');
-    this.addMonster(21, 'gor', 'gor3');
-    this.addMonster(26, 'gor', 'gor4');
-    this.addMonster(48, 'gor', 'gor5');
-    this.addMonster(19, 'skral', 'skral1');
   }
 
   private addMonster(monsterTile: number, type: string, id: string) {
@@ -589,95 +610,49 @@ export default class GameScene extends Phaser.Scene {
 
   }
 
-  // preparing this method for loading game
-  private addFogs({ id, fogName }) {
-    const tile: Tile = this.tiles[id];
-    const f = this.add.sprite(tile.x + 50, tile.y - 5, fogName).setDisplaySize(60, 60);
-    f.name = fogName;
-    f.setTint(0x101010); // darken
-    tile.setFog(f) // add to tile
-    f.setInteractive()
-    this.add.existing(f);
-    var self = this;
-    f.on("pointerdown", (pointer) => {
-      self.gameinstance.getHeroItems(self.hero.getKind(), function (itemdict) {
-        self.gameinstance.getAdjacentTiles(self.hero.tile.id, function (adjtileids) {
-          var flag = false
-          //why are we using a loop like this instead of .includes()?? good question, includes() was not working for some reason.
-          for (let i = 0; i < adjtileids.length; i++) {
-            console.log(adjtileids[i], tile.id)
-            if (adjtileids[i] == tile.id) {
-              flag = true
+  private addFog(fogs) {
+    fogs.forEach((fog) => {
+      const tile: Tile = this.tiles[fog[0]];
+      const f = this.add.sprite(tile.x + 50, tile.y - 5, fog[1]).setDisplaySize(60, 60);
+      f.name = fog[1];
+      f.setTint(0x101010); // darken
+      tile.setFog(f) // add to tile
+      f.setInteractive()
+      this.add.existing(f);
+      var self = this
+      f.on("pointerdown", (pointer) => {
+        self.gameinstance.getHeroItems(self.hero.getKind(), function (itemdict) {
+          self.gameinstance.getAdjacentTiles(self.hero.tile.id, function (adjtileids) {
+            var flag = false
+            //why are we using a loop like this instead of .includes()?? good question, includes() was not working for some reason.
+            // @Jacek Includes probably wasnt working bceause tile.id is a number but the contents of adjtileids are passed as strings by socket.
+            for (let i = 0; i < adjtileids.length; i++) {
+              console.log(adjtileids[i], tile.id)
+              if (adjtileids[i] == tile.id) {
+                flag = true
+              }
             }
-          }
-          if (itemdict['smallItems'].includes('telescope') && flag) {
-            console.log('using telescope.')
-            f.clearTint();
-            setTimeout(() => {
-              f.setTint(0x101010);
-            }, 800);
-          }
-          else {
-            self.gameinstance.useFog(f.name, tile.id, (tile) => {
-              console.log(tile, typeof tile)
-              let f = self.tiles[+tile].getFog();
+            if (itemdict['smallItems'].includes('telescope') && flag) {
+              console.log('using telescope.')
               f.clearTint();
               setTimeout(() => {
-                f.destroy()
+                f.setTint(0x101010);
               }, 800);
-            })
-          }
-        })
-      })
-    }, this)
-  }
-
-  private addFog() {
-    this.gameinstance.getFog((fogs) => {
-      console.log(fogs)
-      fogs.forEach((fog) => {
-        const tile: Tile = this.tiles[fog[0]];
-        const f = this.add.sprite(tile.x + 50, tile.y - 5, fog[1]).setDisplaySize(60, 60);
-        f.name = fog[1];
-        f.setTint(0x101010); // darken
-        tile.setFog(f) // add to tile
-        f.setInteractive()
-        this.add.existing(f);
-        var self = this
-        f.on("pointerdown", (pointer) => {
-          self.gameinstance.getHeroItems(self.hero.getKind(), function (itemdict) {
-            self.gameinstance.getAdjacentTiles(self.hero.tile.id, function (adjtileids) {
-              var flag = false
-              //why are we using a loop like this instead of .includes()?? good question, includes() was not working for some reason.
-              // @Jacek Includes probably wasnt working bceause tile.id is a number but the contents of adjtileids are passed as strings by socket.
-              for (let i = 0; i < adjtileids.length; i++) {
-                console.log(adjtileids[i], tile.id)
-                if (adjtileids[i] == tile.id) {
-                  flag = true
-                }
-              }
-              if (itemdict['smallItems'].includes('telescope') && flag) {
-                console.log('using telescope.')
+            }
+            else {
+              self.gameinstance.useFog(f.name, tile.id, (tile) => {
+                console.log(tile, typeof tile)
+                let f = self.tiles[+tile].getFog();
                 f.clearTint();
                 setTimeout(() => {
-                  f.setTint(0x101010);
+                  f.destroy()
                 }, 800);
-              }
-              else {
-                self.gameinstance.useFog(f.name, tile.id, (tile) => {
-                  console.log(tile, typeof tile)
-                  let f = self.tiles[+tile].getFog();
-                  f.clearTint();
-                  setTimeout(() => {
-                    f.destroy()
-                  }, 800);
-                })
-              }
-            })
+              })
+            }
           })
-        }, this)
-      })
-    });
+        })
+      }, this)
+    })
 
 
     this.gameinstance.destroyFog((tile) => {
@@ -717,21 +692,21 @@ export default class GameScene extends Phaser.Scene {
   //   }
   // }
 
- 
+
   //for specific events which need to apply a unique ui effect, or something of that nature
-  private applyEvent(event: EventCard){
+  private applyEvent(event: EventCard) {
     console.log("Applying event")
-    if(event.id == 2){
+    if (event.id == 2) {
       //wind accross screen or something like that
     }
     this.addEventCard(event)
   }
 
-  private addEventCard(event: EventCard){
+  private addEventCard(event: EventCard) {
     var newEvent = new EventCard(this, event.id, event.flavorText, event.desc)
 
     //remove current event from scene
-    if(this.event != null){
+    if (this.event != null) {
       this.event.destroy(true)
     }
 
@@ -830,11 +805,11 @@ export default class GameScene extends Phaser.Scene {
     }
   }
 
-  private setUpListeners(){
+  private setUpListeners() {
     var self = this;
 
     // listener to add monsters for narrator, fogs, and events
-    this.gameinstance.addMonster((type, tile, id) => { 
+    this.gameinstance.addMonster((type, tile, id) => {
       this.addMonster(tile, type, id);
     })
 

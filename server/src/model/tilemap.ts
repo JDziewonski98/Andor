@@ -1,5 +1,3 @@
-import { Farmer } from '.';
-
 export var map = [
     {
         "id": 0,

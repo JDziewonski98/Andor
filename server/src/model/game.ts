@@ -28,8 +28,8 @@ export class Game {
     // herokind of heroes who haven't ended their day yet
     private activeHeros: HeroKind[];
     // null when the game first starts
-    private nextDayFirstHero: HeroKind | null = null;
-    private currPlayersTurn: HeroKind;
+    public nextDayFirstHero: HeroKind | null = null;
+    public currPlayersTurn: HeroKind;
 
     private fogs: Map<number, Fog>;
     private regions: Array<Region>;
@@ -294,6 +294,10 @@ export class Game {
 
     public getActiveHeros() {
         return this.activeHeros;
+    }
+
+    public setActiveHeros(kinds){
+        this.activeHeros = kinds;
     }
 
     public removeFromActiveHeros(connID: string) {

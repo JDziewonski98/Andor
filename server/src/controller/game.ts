@@ -23,9 +23,11 @@ export function game(socket, model: Game, io) {
     game['monsters'] = mapToJson(model.getMonsters());
     game['monstersInCastle'] = JSON.stringify(model.getMonstersInCastle());
     game['endOfGame'] = model.getEndOfGameState();
-    console.log("EVENTS::::::::: \n", model.getEventDeck())
     game['eventDeck'] = JSON.stringify(model.getEventDeck());
     game['activeEvents'] = JSON.stringify(model.getActiveEvents());
+    game['nextDayFirstHero'] = model.nextDayFirstHero;
+    game['currPlayersTurn'] = model.currPlayersTurn;
+    game['activeHeros'] = JSON.stringify(model.getActiveHeros());
 
     if (!data.games) {
       data['games'] = {}
@@ -40,7 +42,7 @@ export function game(socket, model: Game, io) {
     const maps = ["monsters", "players", "heroList", "fogs"]
     let tempModel = {};
     Object.keys(model).forEach((key) => {
-      if (maps.includes(key)) {
+      if (maps.includes(key)) { // convert maps to arrays so that socket can pass them.
         tempModel[key] = Array.from(model[key]);
       } else
         tempModel[key] = model[key];
