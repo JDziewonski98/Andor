@@ -25,17 +25,17 @@ export class Game {
 
     // playerID mapping to Hero.
     private heroList: Map<string, Hero>;
-    // connID of heroes who haven't ended their day yet
-    private activeHeros: string[];
+    // herokind of heroes who haven't ended their day yet
+    private activeHeros: HeroKind[];
     // null when the game first starts
-    private nextDayFirstHero: string | null = null;
+    private nextDayFirstHero: HeroKind | null = null;
+    private currPlayersTurn: HeroKind;
 
     private fogs: Map<number, Fog>;
     private regions: Array<Region>;
     private farmers: Array<Farmer>;
     private monsters: Map<string, Monster>;
     private monstersInCastle: string[];
-    private currPlayersTurn: string;
     private endOfGame: boolean = false;
 
     // collab decision related state
@@ -45,7 +45,7 @@ export class Game {
 
     //EventCards
     private eventDeck: Array<EventCard>
-    private activeEvents: Array<EventCard>
+    private activeEvents: Array<Number>
 
     constructor(name: string, numOfDesiredPlayers: number, difficulty: GameDifficulty) {
         this.name = name;
@@ -62,7 +62,7 @@ export class Game {
         this.monsters = new Map<string, Monster>();
         this.monstersInCastle = [];
         this.fogs = new Map<number, Fog>();
-        this.currPlayersTurn = ""
+        this.currPlayersTurn = HeroKind.None;
         this.setRegions();
         this.setFarmers(null);
         this.setMonsters(null);
@@ -71,7 +71,7 @@ export class Game {
         this.numAccepts = 0;
         this.eventDeck = new Array<EventCard>()
         this.setEventDeck(null)
-        this.activeEvents = new Array<EventCard>()
+        this.activeEvents = new Array<number>()
     }
 
 
@@ -100,9 +100,10 @@ export class Game {
     }
 
     // endDayAll: boolean. True if nextPlayer is being called by the last hero to end their day,
-    // in this case we pass the next turn to the day's earliest ending player (nextDayFirstHero).
-    // False otherwise, in this case we pass the next turn based on increasing hero rank.
-    public nextPlayer(endDayAll: boolean) {
+    //  in this case we pass the next turn to the day's earliest ending player (nextDayFirstHero).
+    //  False otherwise, in this case we pass the next turn based on increasing hero rank.
+    // Returns HeroKind of the next player
+    public nextPlayer(endDayAll: boolean): HeroKind {
 
         // If the last person is ending their day, pass turn to earliest ending player
         if (endDayAll) {
@@ -115,26 +116,28 @@ export class Game {
             return this.currPlayersTurn;
         }
         // Otherwise, find the hero with the next highest rank
-        var minRank = this.getHero(this.currPlayersTurn).getRank();
+        let currPlayerID = this.getConnIdFromHk(this.currPlayersTurn);
+        if (currPlayerID == null) currPlayerID = "none";
+        var minRank = this.getHero(currPlayerID).getRank();
         var maxRank = Number.MAX_VALUE;
-        var socketID = "none";
-        this.heroList.forEach((hero, ID) => {
+        var hk = HeroKind.None;
+        this.heroList.forEach(hero => {
             if (hero.getRank() > minRank && hero.getRank() < maxRank) {
                 maxRank = hero.getRank();
-                socketID = ID;
+                hk = hero.hk;
             }
         })
         // Or loop back to the lowest rank hero
-        if (socketID == "none") {
+        if (hk == "none") {
             minRank = Number.MAX_VALUE
             this.heroList.forEach((hero, ID) => {
                 if (hero.getRank() < minRank) {
                     minRank = hero.getRank()
-                    socketID = ID
+                    hk = hero.hk;
                 }
             })
         }
-        return socketID;
+        return hk; // None if not found
     }
 
     public setShields() {
@@ -244,7 +247,7 @@ export class Game {
         this.heroList.forEach((hero, key) => {
             if (hero.getKind() === heroType) {
                 heroTaken = true;
-            } 
+            }
         })
         if (heroTaken) return false; // failed to bind hero
 
@@ -254,11 +257,13 @@ export class Game {
             let dwarf = this.heroList.get(id)
             dwarf?.pickUpLargeItem(LargeItem.Bow)
             dwarf?.pickUpSmallItem(SmallItem.Telescope)
+            dwarf?.pickUpSmallItem(SmallItem.Wineskin)
+            dwarf?.pickUpHelm();
         }
         else if (heroType === HeroKind.Archer) {
             this.heroList.set(id, new Hero(heroType, this.regions[25]));
             let archer = this.heroList.get(id)
-            archer?.pickUpSmallItem(SmallItem.Wineskin)
+            // archer?.pickUpSmallItem(SmallItem.Wineskin)
             archer?.pickUpSmallItem(SmallItem.GreenRunestone)
         }
         else if (heroType === HeroKind.Mage) {
@@ -268,7 +273,7 @@ export class Game {
             this.heroList.set(id, new Hero(heroType, this.regions[14]));
         }
 
-        this.activeHeros.push(id);
+        this.activeHeros.push(heroType);
         this.availableHeros = this.availableHeros.filter(h => h != heroType);
         return true;
 
@@ -292,16 +297,22 @@ export class Game {
     }
 
     public removeFromActiveHeros(connID: string) {
-        const index = this.activeHeros.indexOf(connID, 0);
+        var hk = this.getHkFromConnID(connID);
+        if (hk == "none") {
+            console.log("ERROR: removeFromActiveHeros - connID not found in heroList");
+            return;
+        }
+
+        const index = this.activeHeros.indexOf(hk, 0);
         if (index == -1) {
-            console.log("Error", connID, "not in activeHeros");
-            // return;
+            console.log("ERROR:", hk, "not in activeHeros");
+            return;
         }
         this.activeHeros.splice(index, 1);
     }
 
     public resetActiveHeros() {
-        this.activeHeros = Array.from(this.heroList.keys());
+        this.activeHeros = Array.from(this.heroList.values()).map(h => h.hk);
     }
 
     public getHero(id: string): Hero {
@@ -341,8 +352,8 @@ export class Game {
         //TO BE IMPLEMENTED
     }
 
-    public setCurrPlayersTurn(s: string) {
-        this.currPlayersTurn = s;
+    public setCurrPlayersTurn(hk: HeroKind) {
+        this.currPlayersTurn = hk;
     }
 
     public getCurrPlayersTurn() {
@@ -350,8 +361,12 @@ export class Game {
     }
 
     // takes string s: the connection ID of the hero
-    public setNextDayFirstHero(s: string) {
-        this.nextDayFirstHero = s;
+    public setNextDayFirstHero(connID: string) {
+        let hk = this.getHkFromConnID(connID);
+        if (hk == HeroKind.None) {
+            console.log("ERROR: setNextDayFirstHero received HeroKind.None");
+        }
+        this.nextDayFirstHero = hk;
     }
 
     public moveHeroTo(hero, tile) {
@@ -521,45 +536,83 @@ export class Game {
     public useFog(fog: Fog, tile: number) {
         if (this.fogs.get(tile) != undefined && this.fogs.get(tile) == fog) { // make sure tile has a fog and its the same
             this.fogs.delete(tile); // delete fog from game
+            // testing useFog
+            var currHero = this.getHeroFromHk(this.currPlayersTurn);
+            console.log("fog test, currHero:", currHero);
+
             if (fog == Fog.Gor) {
                 const id = `gor${this.monsters.size + 1}`;
                 this.addMonster(MonsterKind.Gor, tile, id)
                 return { success: true, id: id };
             } else if (fog == Fog.Gold) {
-                this.heroList.get(this.getCurrPlayersTurn())?.updateGold(1);
+                this.getHeroFromHk(this.currPlayersTurn)!.updateGold(1);
                 return { success: true };
             } else if (fog == Fog.WillPower2) {
-                this.heroList.get(this.getCurrPlayersTurn())?.setWill(2);
+                this.getHeroFromHk(this.currPlayersTurn)!.setWill(2);
                 return { success: true };
             } else if (fog == Fog.WillPower3) {
-                this.heroList.get(this.getCurrPlayersTurn())?.setWill(3);
+                this.getHeroFromHk(this.currPlayersTurn)!.setWill(3);
                 return { success: true };
             } else if (fog == Fog.Strength) {
-                this.heroList.get(this.getCurrPlayersTurn())?.setStrength(2);
+                this.getHeroFromHk(this.currPlayersTurn)!.setStrength(2);
                 return { success: true };
             } else if (fog == Fog.Brew) {
 
             } else if (fog == Fog.Wineskin) {
 
             } else if (fog == Fog.EventCard) {
-                var newEvent = this.eventDeck.shift()
-                if(newEvent != null){
-                    return {success: true, event: newEvent}
+                var newEvent = this.drawCard()
+                if (newEvent != null) {
+                    return { success: true, event: newEvent }
                 }
-                return {success: false, event: null}
+                return { success: false, event: null }
             }
-
-
         }
         return { success: false };
-
-
     }
 
-    public setActiveEvents(events){
+    // Returns the Hero instance in heroList corresponding to the HeroKind requested
+    private getHeroFromHk(hk: HeroKind): Hero | null {
+        var hero;
+        Array.from(this.heroList.values()).forEach(h => {
+            if (h.hk == hk) {
+                hero = h;
+            }
+        });
+        if (hero == null) {
+            console.log("ERROR: getHeroFromHk found no match for", hk);
+        }
+        return hero; // null if no corresponding hero is found
+    }
+
+    public getConnIdFromHk(hk: HeroKind): string | null {
+        var connID;
+        this.heroList.forEach(function (h, id) {
+            if (h.hk == hk) {
+                connID = id;
+            }
+        });
+        if (connID == null) {
+            console.log("ERROR: getConnIdFromHk found no match for", hk);
+        }
+        return connID; // null if no corresponding hero is found
+    }
+    public getHkFromConnID(connID: string): HeroKind {
+        var hk = this.heroList.get(connID)?.hk;
+        if (hk == null) {
+            hk = HeroKind.None; // set to None if no match found
+            console.log("ERROR: getHkFromConnID found no hk match for", connID);
+        }
+        return hk;
+    }
+
+    public drawCard() {
+        return this.eventDeck.shift()
+    }
+    public setActiveEvents(events) {
         if (events != null) {
             events.forEach((event) => {
-                this.activeEvents.push(new EventCard(event.id, event.flavorText, event.desc));
+                this.activeEvents.push(event.id);
             })
         }
     }
@@ -575,9 +628,10 @@ export class Game {
                 this.eventDeck.push(new EventCard(ec.id, ec.flavorText, ec.desc))
             })
             this.shuffleEventDeck()
-            console.log("CREATED EVENTS FROM START")
         }
     }
+
+
     private shuffleEventDeck() {
         let m = this.eventDeck.length, i
         while (m) {
@@ -586,68 +640,133 @@ export class Game {
             [this.eventDeck[m], this.eventDeck[i]] = [this.eventDeck[i], this.eventDeck[m]]
         }
     }
+    
+    public clearActiveEvents() {
+        //revert events which affected state
+        for (var i = 0; i < this.activeEvents.length; i++) {
+            //revert changes to monster strength
+            if (this.activeEvents[i] == 11) {
+                for (let [name, monster] of this.monsters) {
+                    let currStr = monster.getStrength()
+                    monster.setStrength(currStr - 1)
+                }
+            }
+        }
+        //clear activeEvents
+        this.activeEvents = []
+    }
 
-    public applyEvent(event){
+    public applyEvent(event) {
         console.log("Applying event: ", event.id)
         //do something
-        if(event.id == 2){
-            for(let [conn,hero] of this.heroList){
+        if (event.id == 2) {
+            for (let [conn, hero] of this.heroList) {
                 let tID = hero.getRegion().getID()
-                if(0 <= tID && tID <= 20){
+                if (0 <= tID && tID <= 20) {
                     hero.setWill(-3)
                 }
             }
         }
-        else if(event.id == 14){
-            for(let [conn,hero] of this.heroList){
-                if(hero.getKind() == HeroKind.Dwarf || hero.getKind() == HeroKind.Warrior){
+        else if (event.id == 5) {
+            for (let [conn, hero] of this.heroList) {
+                let tID = hero.getRegion().getID()
+                if (37 <= tID && tID <= 70) {
+                    hero.setWill(-3)
+                }
+            }
+        }
+        else if (event.id == 11) {
+            for (let [name, monster] of this.monsters) {
+                let currStr = monster.getStrength()
+                monster.setStrength(currStr + 1)
+            }
+            this.activeEvents.push(11)
+        }
+        else if (event.id == 12) {
+            for (let [conn, hero] of this.heroList) {
+                if (hero.getKind() == HeroKind.Archer || hero.getKind() == HeroKind.Mage) {
                     hero.setWill(3)
                 }
             }
         }
-        else if(event.id == 24){
-            for(let [conn,hero] of this.heroList){
+        else if (event.id == 13) {
+            for (let [conn, hero] of this.heroList) {
+                let currWill = hero.getWill()
+                if (currWill < 10) {
+                    hero.setWill(10 - currWill)
+                }
+            }
+        }
+        else if (event.id == 14) {
+            for (let [conn, hero] of this.heroList) {
+                if (hero.getKind() == HeroKind.Dwarf || hero.getKind() == HeroKind.Warrior) {
+                    hero.setWill(3)
+                }
+            }
+        }
+        else if (event.id == 15) {
+            this.regions[35].removeWell()
+        }
+        else if (event.id == 17) {
+            for (let [conn, hero] of this.heroList) {
+                let currWill = hero.getWill()
+                if (currWill > 12) {
+                    hero.setWill(12 - currWill)
+                }
+            }
+        }
+        else if (event.id == 19) {
+            this.activeEvents.push(event.id)
+        }
+        else if (event.id == 22) {
+            this.regions[45].removeWell()
+        }
+        else if (event.id == 24) {
+            for (let [conn, hero] of this.heroList) {
                 let tID = hero.getRegion().getID()
-                if(tID == 71 || tID == 72 || tID == 0 || 47 <= tID && tID <= 63){
+                if (tID == 71 || tID == 72 || tID == 0 || 47 <= tID && tID <= 63) {
                     //this hero is safe
                     continue
                 }
-                else{
+                else {
                     hero.setWill(-2)
                 }
             }
         }
-        else if(event.id == 28){
-            for(let [conn,hero] of this.heroList){
+        else if (event.id == 26) {
+            this.activeEvents.push(event.id)
+        }
+        else if (event.id == 28) {
+            for (let [conn, hero] of this.heroList) {
                 let time = hero.getTimeOfDay()
                 console.log(hero.getKind(), time)
-                if(time == 1){
+                if (time == 1) {
                     hero.setWill(2)
                 }
             }
         }
-        if(event.id == 31){
-            for(let [conn,hero] of this.heroList){
+        if (event.id == 31) {
+            for (let [conn, hero] of this.heroList) {
                 let tID = hero.getRegion().getID()
-                if(tID == 71 || tID == 72 || tID == 0 || 47 <= tID && tID <= 63){
+                if (tID == 71 || tID == 72 || tID == 0 || 47 <= tID && tID <= 63) {
                     //this hero is safe
                     continue
                 }
-                else{
+                else {
                     hero.setWill(-2)
                 }
             }
         }
-        else if(event.id == 32){
-            for(let [conn,hero] of this.heroList){
+        else if (event.id == 32) {
+            for (let [conn, hero] of this.heroList) {
                 let time = hero.getTimeOfDay()
                 console.log(hero.getKind(), time)
-                if(time == 1){
+                if (time == 1) {
                     hero.setWill(-2)
                 }
             }
         }
-           
+
         //if one that returns to deck ?? not sure if any return
     }
 

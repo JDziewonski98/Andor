@@ -15,10 +15,10 @@ export class Region {
 
     // Items, or maybe it's easier with a single list of itemIDs, since we don't actually
     // care how they're used/how they're different functionally
-    private wineskins: number = 0;
-    private largeItems: Map<LargeItem, number> = new Map();
-    private helms: number = 0;
-    private smallItems: Map<SmallItem, number> = new Map();
+    // private wineskins: number = 0;
+    // private largeItems: Map<LargeItem, number> = new Map();
+    // private helms: number = 0;
+    // private smallItems: Map<SmallItem, number> = new Map();
 
     private items: Map<string, number> = new Map();
     
@@ -96,9 +96,40 @@ export class Region {
     public getAdjRegionsIds(): number[]{
         return this.adjRegionsIds
     }
+    public removeWell(){
+        this.hasWell = false
+    }
 
     /*
     *   ITEM METHODS
     */
+    public addItem(itemName: string) {
+        if (this.items.has(itemName)) {
+            let newQuantity = this.items.get(itemName);
+            if (newQuantity != null) {
+                this.items.set(itemName, newQuantity+1);
+            }
+        } else {
+            this.items.set(itemName, 1);
+        }
+        console.log(this.id, "has", this.getItems());
+    }
 
+    public removeItem(itemName: string) {
+        let quantity = this.items.get(itemName)
+        if (quantity != undefined && quantity > 1) {
+            this.items.set(itemName, quantity - 1);
+        } else {
+            this.items.delete(itemName);
+        }
+        console.log(this.id, "has", this.getItems());
+    }
+
+    public getItems() {
+        let itemsObject = {};
+        this.items.forEach((val: number, key: string) => {
+            itemsObject[key] = val;
+        });
+        return itemsObject;
+    }
 }

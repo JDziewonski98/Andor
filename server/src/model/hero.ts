@@ -67,13 +67,31 @@ export class Hero {
         this.region = newTile
         if (this.freeMoves == 0) {
             this.timeOfDay++
+            //because timeOfDay starts at 1
+            if(this.timeOfDay >= 9){
+                this.will = this.will-2
+            }
         }
         else {
             this.freeMoves--
         }
         //TODO: DONT UPDATE THE HOUR TRACKER THING.
     }
-
+    public freeMoveTo(newTile:Region){
+        this.region = newTile
+        this.timeOfDay++
+    }
+    public exhaustingMoveTo(newTile: Region){
+        this.region = newTile
+        if (this.freeMoves == 0) {
+            this.timeOfDay++
+            this.will = this.will-3
+            
+        }
+        else {
+            this.freeMoves--
+        }
+    }
     public useItem(item) {
         //TODO
     }
@@ -337,6 +355,7 @@ export class Hero {
                     this.smallItems.splice(index_w, 1);
                     this.freeMoves++
                     this.pickUpSmallItem(SmallItem.HalfWineskin)
+                    console.log(this.hk, "has", this.getItemDict());
                 }
                 break;
 
@@ -345,6 +364,7 @@ export class Hero {
                 if (index_hw > -1) {
                     this.smallItems.splice(index_hw, 1);
                     this.freeMoves++
+                    console.log(this.hk, "has", this.getItemDict());
                 }
                 break;
 
@@ -374,8 +394,10 @@ export class Hero {
     }
 
     public pickUpSmallItem(item: SmallItem) {
-        if (this.smallItems.length < 4) {
+        if (this.smallItems.length < 3) {
             this.smallItems.push(item)
+            this.region.removeItem(item);
+            console.log(this.hk, "has", this.getItemDict());
             return true
         }
         else {
@@ -384,17 +406,16 @@ export class Hero {
     }
 
     public dropSmallItem(item:SmallItem) {
-        if (this.smallItems.includes(item)) {
-            const index = this.smallItems.indexOf(item);
-            if (index > -1) {
+        // if (this.smallItems.includes(item)) {
+        const index = this.smallItems.indexOf(item);
+        if (index > -1) {
+            this.region.addItem(this.smallItems[index]);
             this.smallItems.splice(index, 1);
-            //TODO: logic for actually putting it on the tile
+            console.log(this.hk, "has", this.getItemDict());
             return true
-            }
         }
-        else {
-            return false
-        }
+        // }
+        return false;
     }
 
     public getLargeItem() {
@@ -404,6 +425,8 @@ export class Hero {
     public pickUpLargeItem(item: LargeItem) {
         if (this.largeItem == LargeItem.Empty) {
             this.largeItem = item;
+            this.region.removeItem(item);
+            console.log(this.hk, "has", this.getItemDict());
             return true
         }
         else {
@@ -414,8 +437,9 @@ export class Hero {
     public dropLargeItem() {
         //TODO: add this item onto the tile hero is currently on. How to graphically represent?
         if (this.largeItem != LargeItem.Empty) {
-            //do shit here
+            this.region.addItem(this.largeItem);
             this.largeItem = LargeItem.Empty;
+            console.log(this.hk, "has", this.getItemDict());
             return true
         }
         else {
@@ -426,6 +450,8 @@ export class Hero {
     public pickUpHelm() {
         if (this.helm == false) {
             this.helm = true
+            this.region.removeItem("helm");
+            console.log(this.hk, "has", this.getItemDict());
             return true
         }
         else {
@@ -435,8 +461,9 @@ export class Hero {
 
     public dropHelm() {
         if (this.helm == true) {
-            //TODO display it on the region
+            this.region.addItem("helm");
             this.helm = false
+            console.log(this.hk, "has", this.getItemDict());
             return true
         }
         else {
@@ -460,5 +487,8 @@ export class Hero {
         this.helm = false
     }
 
+    public addFreeMove(){
+        this.freeMoves++
+    }
     //////////////////////
 }

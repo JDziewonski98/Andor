@@ -57,13 +57,25 @@ export function game(socket, model: Game, io) {
     if (hero !== undefined) {
       var currRegion: Region = hero.getRegion()
       var adjRegions: Array<number> = currRegion.getAdjRegionsIds()
-
+      var event19 = model.getActiveEvents().includes(19)
+      var event26 = model.getActiveEvents().includes(26)
+      
       for (var regionID of adjRegions) {
-        var timeLeft = hero.getTimeOfDay() <= 7 || (hero.getTimeOfDay() <= 10 && hero.getWill() >= 2)
+        var timeLeft = hero.getTimeOfDay() <= 7 || (hero.getTimeOfDay() <= 10 && hero.getWill() >= 2 && !event19) || hero.getTimeOfDay() == 8 && event26
+        || hero.getTimeOfDay() <= 10 && hero.getWill() >=3 && event19
         if (regionID === id && timeLeft) { // successful move
           let targetRegion: Region = model.getRegions()[id];
-          hero.moveTo(targetRegion)
 
+          //if event 26 is active and it is your 8th hour, move freely
+          if(hero.getTimeOfDay() == 8 && event26){
+            hero.freeMoveTo(targetRegion)
+          }
+          else if((hero.getTimeOfDay() == 9 || hero.getTimeOfDay() == 10) && event19){
+            hero.exhaustingMoveTo(targetRegion)
+          }
+          else{
+            hero.moveTo(targetRegion)
+          }
           socket.broadcast.emit("updateMoveRequest", hero.getKind(), id)
           callback(hero.getKind(), id)
         }
@@ -85,7 +97,10 @@ export function game(socket, model: Game, io) {
     }
 
     model.setCurrPlayersTurn(nextPlayer)
-    socket.broadcast.to(`/${model.getName()}#${nextPlayer}`).emit("yourTurn")
+    // get the connID corresponding to the HK
+    var nextPlayerID = model.getConnIdFromHk(nextPlayer);
+    console.log("Sending next turn to ", nextPlayer, "with ID", nextPlayerID);
+    socket.broadcast.to(`/${model.getName()}#${nextPlayerID}`).emit("yourTurn");
   })
 
   socket.on("pickupFarmer", function (callback) {
@@ -173,7 +188,8 @@ export function game(socket, model: Game, io) {
             //will have to add blockable events once shields are implemented
             io.of("/" + model.getName()).emit("newEvent", event);
             //these will be blockable
-            if(event.id == 24 || event.id == 31 || event.id == 32){
+            if(event.id ==  2 || event.id ==  5 || event.id == 11 || event.id == 15 || event.id == 17 || 
+               event.id == 19 || event.id == 22 || event.id == 24 || event.id == 31 || event.id == 32){
               //trigger collab decision between players. 
               //blocked = collabCall
               //if !blocked
@@ -237,6 +253,81 @@ export function game(socket, model: Game, io) {
       socket.emit("updatePickupGold", hero.getKind(), 1);
     }
   });
+
+  /*
+  *   DROP AND PICKUP ITEMS
+  */
+
+  // Send items and quantities of tileID back to client
+  socket.on("getTileItems", function (tileID, callback) {
+    var tileItems = model.getRegions()[tileID].getItems();
+    callback(tileItems);
+  });
+
+  socket.on("pickupItem", function (tileID, itemName: string, itemType: string) {
+    let successStatus = false;
+    let heroId = socket.conn.id;
+    let hero = model.getHero(heroId);
+
+    if (hero !== undefined) {
+      switch (itemType) {
+        case "largeItem":
+          successStatus = hero.pickUpLargeItem(largeItemStrToEnum(itemName));
+          break;
+        case "helm":
+          successStatus = hero.pickUpHelm();
+          break;
+        case "smallItem":
+          successStatus = hero.pickUpSmallItem(smallItemStrToEnum(itemName));
+          break;
+      }
+    }
+    if (successStatus) {
+      // Tell any active TileWindows of all clients to update
+      socket.broadcast.emit("updatePickupItemTile", hero.getRegion().getID(), itemName, itemType);
+      socket.emit("updatePickupItemTile", hero.getRegion().getID(), itemName, itemType);
+      // Tell any active HeroWindows of all clients to update
+      socket.broadcast.emit("updatePickupItemHero", hero.getKind(), itemName, itemType);
+      socket.emit("updatePickupItemHero", hero.getKind(), itemName, itemType);
+    }
+  })
+
+  socket.on("dropItem", function(itemName: string, itemType: string) {
+    let successStatus = false;
+    let heroId = socket.conn.id;
+    let hero = model.getHero(heroId);
+    let name = itemName;
+
+    if (hero !== undefined) {
+      switch (itemType) {
+        case "largeItem":
+          name = hero.getLargeItem();
+          successStatus = hero.dropLargeItem();
+          break;
+        case "helm":
+          name = "helm";
+          successStatus = hero.dropHelm();
+          break;
+        case "smallItem":
+          // There doesn't seem to be a good way of converting string to corresponding enum
+          const smallItem: SmallItem = smallItemStrToEnum(itemName);
+          // console.log("server attempt to drop", smallItem)
+          successStatus = hero.dropSmallItem(smallItem);
+          break;
+      }
+    }
+    // console.log("successStatus:", successStatus)
+    if (successStatus) {
+      // Tell any active TileWindows of all clients to update
+      socket.broadcast.emit("updateDropItemTile", hero.getRegion().getID(), name, itemType);
+      socket.emit("updateDropItemTile", hero.getRegion().getID(), name, itemType);
+      // Tell any active HeroWindows of all clients to update
+      socket.broadcast.emit("updateDropItemHero", hero.getKind(), name, itemType);
+      socket.emit("updateDropItemHero", hero.getKind(), name, itemType);
+    }
+  })
+
+  /////////////////////////////
 
   socket.on('bind hero', function (heroType, callback) {
     let id = socket.conn.id;
@@ -347,8 +438,9 @@ export function game(socket, model: Game, io) {
    */
   // Submitting a decision
   socket.on('collabDecisionSubmit', function (resAllocated, resNames, involvedHeroes) {
-    if (model.getCurrPlayersTurn() == "") {
-      model.setCurrPlayersTurn(socket.conn.id)
+    // Sets the first player at the beginning of the game
+    if (model.getCurrPlayersTurn() == HeroKind.None) {
+      model.setCurrPlayersTurn(model.getHkFromConnID(socket.conn.id));
     }
     // Check that numAccepts equals total num of players-1
     if (model.numAccepts != involvedHeroes.length - 1) {
@@ -366,10 +458,14 @@ export function game(socket, model: Game, io) {
         // Iterate through resNames and map index to amount specified in resAllocated
         for (let i = 0; i < resNames.length; i++) {
           if (resNames[i] == "gold") {
-            currHero?.updateGold(resAllocated[heroTypeString][i]);
+            currHero.updateGold(resAllocated[heroTypeString][i]);
           }
           else if (resNames[i] == "wineskin") {
+            // TODO: actually give the hero the wineskin (use smallItems API)
             currHero?.setWineskin(resAllocated[heroTypeString][i] > 0);
+            for (let j = 0; j < resAllocated[heroTypeString][i]; j++) {
+              currHero.pickUpSmallItem(SmallItem.Wineskin);
+            }
           }
           else if (resNames[i] == 'will') {
             currHero?.setWill(resAllocated[heroTypeString][i])
@@ -594,8 +690,28 @@ export function game(socket, model: Game, io) {
 
     // If they were the last hero to end the day, trigger all actions and pass turn to
     // the hero who ended the day first
-    var nextPlayer;
+    var nextPlayer: HeroKind;
     if (model.getActiveHeros().length == 1) {
+      //remove active Events
+      model.clearActiveEvents()
+      model.setNextDayFirstHero(socket.conn.id);
+
+      //draw and apply new event
+      let event = model.drawCard()
+      if(event != null){
+        io.of("/" + model.getName()).emit("newEvent", event);
+            //these will be blockable
+            if(event.id ==  2 || event.id ==  5 || event.id == 11 || event.id == 15 || event.id == 17 || 
+               event.id == 19 || event.id == 22 || event.id == 24 || event.id == 31 || event.id == 32){
+              //trigger collab decision between players. 
+              //blocked = collabCall
+              //if !blocked
+              model.applyEvent(event)
+            }
+            else{
+              model.applyEvent(event)
+            }
+      }
       // Turn goes to the hero that first ended their day
       nextPlayer = model.nextPlayer(true)
 
@@ -622,9 +738,9 @@ export function game(socket, model: Game, io) {
     }
 
     // Inform client that gets the next turn
-    model.setCurrPlayersTurn(nextPlayer)
-    console.log("Emitting yourTurn to ", nextPlayer)
-    socket.broadcast.to(`/${model.getName()}#${nextPlayer}`).emit("yourTurn")
+    model.setCurrPlayersTurn(nextPlayer);
+    console.log("Emitting yourTurn to ", nextPlayer, "with id", model.getConnIdFromHk(nextPlayer));
+    socket.broadcast.to(`/${model.getName()}#${model.getConnIdFromHk(nextPlayer)}`).emit("yourTurn");
   })
 
   socket.on('moveMonstersEndDay', function () {
@@ -702,6 +818,8 @@ export function game(socket, model: Game, io) {
       hero.consumeItem('half_wineskin')
     }
     callback()
+    // update other client hero windows
+    socket.broadcast.emit('receiveUseWineskin', hero.getKind(), halforfull);
   })
 
   ///////////////////////

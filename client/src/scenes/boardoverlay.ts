@@ -78,13 +78,13 @@ export default class BoardOverlay extends Phaser.Scene {
                             windowhero: type, 
                             ...herodata , 
                             clientherotile: this.clientheroobject.tile.id,
-                            name: type,
+                            // name: type,
                             x: pointer.x,
                             y: pointer.y+20
                         }
                     );
-                    let window = WindowManager.get(this, cardID)
-                    window.setName(type)
+                    // let window = WindowManager.get(this, cardID)
+                    // window.setName(type)
                 }
             })
 
