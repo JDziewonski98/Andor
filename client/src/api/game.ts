@@ -88,7 +88,6 @@ export class game {
         this.socket.on("updateDropGold", callback);       
     }
 
-
     public updatePickupGold(callback) {
         this.socket.on("updatePickupGold", callback)
     }
@@ -117,6 +116,45 @@ export class game {
 
     public disconnectUpdatePickupGoldTile() {
         this.socket.off("updatePickupGoldTile")
+    }
+    /////////////////////////////
+
+    /*
+    *   DROPPING ITEMS
+    */
+    public dropItem(itemName: string, itemType: string) {
+        this.socket.emit("dropItem", itemName, itemType);
+    }
+    public pickupItem(tileID: number, itemName: string, itemType: string) {
+        this.socket.emit("pickupItem", tileID, itemName, itemType)
+    }
+
+    // Updates for HeroWindows
+    public updateDropItemHero(callback) {
+        this.socket.on("updateDropItemHero", callback);       
+    }
+    public updatePickupItemHero(callback) {
+        this.socket.on("updatePickupItemHero", callback)
+    }
+    public disconnectUpdateDropItemHero() {
+        this.socket.off("updateDropItemHero")
+    }
+    public disconnectUpdatePickupItemHero() {
+        this.socket.off("updatePickupItemHero")
+    }
+
+    // Updates for TileWindows
+    public updateDropItemTile(callback) {
+        this.socket.on("updateDropItemTile", callback);       
+    }
+    public updatePickupItemTile(callback) {
+        this.socket.on("updatePickupItemTile", callback)
+    }
+    public disconnectUpdateDropItemTile() {
+        this.socket.off("updateDropItemTile")
+    }
+    public disconnectUpdatePickupItemTile() {
+        this.socket.off("updatePickupItemTile")
     }
     /////////////////////////////
 

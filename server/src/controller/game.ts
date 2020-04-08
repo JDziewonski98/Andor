@@ -209,6 +209,44 @@ export function game(socket, model: Game, io) {
     }
   });
 
+  /*
+  *   DROPPING ITEMS
+  */
+
+  socket.on("dropItem", function(itemName: string, itemType: string) {
+    let successStatus = false;
+    let heroId = socket.conn.id;
+    let hero = model.getHero(heroId);
+
+    if (hero !== undefined) {
+      switch (itemType) {
+        case "largeItem":
+          successStatus = hero.dropLargeItem();
+          break;
+        case "helm":
+          successStatus = hero.dropHelm();
+          break;
+        case "smallItem":
+          // There doesn't seem to be a good way of converting string to corresponding enum
+          const smallItem: SmallItem = model.getSmallItemFromString(itemName);
+          // console.log("server attempt to drop", smallItem)
+          successStatus = hero.dropSmallItem(smallItem);
+          break;
+      }
+    }
+    // console.log("successStatus:", successStatus)
+    if (successStatus) {
+      // Tell any active TileWindows of all clients to update
+      socket.broadcast.emit("updateDropItemTile", hero.getRegion().getID(), itemName, itemType);
+      socket.emit("updateDropItemTile", hero.getRegion().getID(), itemName, itemType);
+      // Tell any active HeroWindows of all clients to update
+      socket.broadcast.emit("updateDropItemHero", hero.getKind(), itemName, itemType);
+      socket.emit("updateDropItemHero", hero.getKind(), itemName, itemType);
+    }
+  })
+
+  /////////////////////////////
+
   socket.on('bind hero', function (heroType, callback) {
     let id = socket.conn.id;
     const success = model.bindHero(id, heroType);

@@ -25,10 +25,11 @@ export class HeroWindow extends Window {
     private clientherotile
 
     //items
-    private largeItem;
-    private smallItem1;
-    private smallItem2;
-    private smallItem3;
+    private largeItem: Phaser.GameObjects.Image;
+    private helm: Phaser.GameObjects.Image;
+    private smallItem1: Phaser.GameObjects.Image;
+    private smallItem2: Phaser.GameObjects.Image;
+    private smallItem3: Phaser.GameObjects.Image;
 
     // drop buttons
     private goldDrop;
@@ -102,11 +103,11 @@ export class HeroWindow extends Window {
         this.gameinstance.getHeroItems(self.windowhero, function(itemdict) {
             if (itemdict['largeItem'] != 'empty') {
                 // make interactive
-                self.add.image(25, 180, 'bow').setDisplaySize(35,35).setOrigin(0);
+                self.largeItem = self.add.image(25, 180, 'bow').setDisplaySize(35,35).setOrigin(0);
             }
             if (itemdict['helm'] != 'false') {
                 // make interactive
-                self.add.image(195, 180, 'helm').setDisplaySize(35,35).setOrigin(0);
+                self.helm = self.add.image(195, 180, 'helm').setDisplaySize(35,35).setOrigin(0);
             }
             if (itemdict['smallItems'].length > 0) {
                 var smallItemList = itemdict['smallItems']
@@ -151,7 +152,7 @@ export class HeroWindow extends Window {
             self.gameinstance.dropFarmer(function (tilenum) {
                 if(self.farmers > 0){
                     self.farmers--;
-                    // self.farmtext = self.add.text(25, 160, 'Farmers: ' + self.farmers, { backgroundColor: 'fx00' })
+                    // self.farmtext = self.add.text(25, 160, 'Farmers: ' + self.farmers, { backgroundColor: 'fx00' })w
                     self.refreshText();
                 }
             })
@@ -171,6 +172,43 @@ export class HeroWindow extends Window {
         }
         this.gameinstance.updateDropGold(updateGold);
         this.gameinstance.updatePickupGold(updateGold);
+
+        // Drop item button
+        // itemName is only used for smallItems, defaults to "" otherwise and is unused
+        function dropItem(itemType: string, itemName: string = "") {
+            self.gameinstance.dropItem(itemName, itemType);
+        }
+        this.largeItemDrop.on('pointerdown', function() { dropItem("largeItem") });
+        this.helmDrop.on('pointerdown', function() { dropItem("helm") });
+        this.smallItem1Drop.on('pointerdown', function() { dropItem("smallItem", self.smallItem1.texture.key) });
+        this.smallItem2Drop.on('pointerdown', function() { dropItem("smallItem", self.smallItem2.texture.key) });
+        this.smallItem3Drop.on('pointerdown', function() { dropItem("smallItem", self.smallItem3.texture.key) });
+
+        this.gameinstance.updateDropItemHero(
+            function(hk: string, itemName: string, itemType: string) {
+                if (hk != self.windowhero) return;
+                // remove the item image from the hero card depending on its type and name
+                if (itemType == "largeItem") {
+                    self.largeItemDrop.removeAllListeners('pointerdown')
+                    self.largeItem.destroy();
+                } else if (itemType == "helm") {
+                    self.helmDrop.removeAllListeners('pointerdown')
+                    self.helm.destroy();
+                } else if (itemType == "smallItem") {
+                    console.log("client attempt to drop", itemName)
+                    if (self.smallItem1.texture.key == itemName) {
+                        self.smallItem1Drop.removeAllListeners('pointerdown')
+                        self.smallItem1.destroy();
+                    } else if (self.smallItem2.texture.key == itemName) {
+                        self.smallItem2Drop.removeAllListeners('pointerdown')
+                        self.smallItem2.destroy();
+                    } else if (self.smallItem3.texture.key == itemName) {
+                        self.smallItem3Drop.removeAllListeners('pointerdown')
+                        self.smallItem3.destroy();
+                    }
+                }
+            }
+        )
 
         //todo account for falcon
         console.log('ids:xxxxxxxxxxx', this.windowherotile, this.clientherotile)

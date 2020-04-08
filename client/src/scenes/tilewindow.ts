@@ -32,7 +32,7 @@ export class TileWindow extends Window {
         // Get the tile's gold amount from server
         this.gameController.getTileGold(this.tileID, function(goldAmount: number) {
             self.goldQuantity = goldAmount;
-            self.goldButton = self.add.text(this.startX+28, 23, ""+self.goldQuantity, { fontSize: 10, backgroundColor: '#f00' });
+            self.goldButton = self.add.text(33, 23, ""+self.goldQuantity, { fontSize: 10, backgroundColor: '#f00' });
             self.goldButton.setInteractive();
             self.goldButton.on("pointerdown", function(pointer) {
                 self.gameController.pickupGold(self.tileID)

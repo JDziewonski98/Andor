@@ -403,17 +403,15 @@ export class Hero {
     }
 
     public dropSmallItem(item:SmallItem) {
-        if (this.smallItems.includes(item)) {
+        // if (this.smallItems.includes(item)) {
             const index = this.smallItems.indexOf(item);
             if (index > -1) {
-            this.smallItems.splice(index, 1);
-            //TODO: logic for actually putting it on the tile
-            return true
+                this.smallItems.splice(index, 1);
+                //TODO: logic for actually putting it on the tile
+                return true
             }
-        }
-        else {
-            return false
-        }
+        // }
+        return false;
     }
 
     public getLargeItem() {
