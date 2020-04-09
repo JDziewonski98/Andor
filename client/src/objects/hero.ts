@@ -11,7 +11,7 @@ export class Hero extends Phaser.GameObjects.Sprite {
     private hour: number;
     private willPower: number;
     private strength: number;
-    private gold: number;
+    // private gold: number;
     private heroKind: HeroKind
 
     constructor(scene, tile: Tile, texture: string, kind: HeroKind) {
@@ -41,7 +41,7 @@ export class Hero extends Phaser.GameObjects.Sprite {
     private initializeResources() {
         this.willPower = 7;
         this.strength = 1;
-        this.gold = 5;
+        // this.gold = 5;
 
         /**
         if (this.hk === HeroKind.Archer) {
@@ -133,13 +133,13 @@ export class Hero extends Phaser.GameObjects.Sprite {
         this.willPower = 3;
     }
 
-    public getGold() {
-        return this.gold;
-    }
+    // public getGold() {
+    //     return this.gold;
+    // }
 
-    public setGold(amount) {
-        this.gold = amount;
-    }
+    // public setGold(amount) {
+    //     this.gold = amount;
+    // }
 
     public getStrength() {
         return this.strength
