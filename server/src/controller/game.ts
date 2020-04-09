@@ -177,6 +177,21 @@ export function game(socket, model: Game, io) {
               //if !blocked
               model.applyEvent(event)
             }
+            else if(event.id == 33){
+              //if someone has > 1 str point
+              var herosWithStr = Array<Hero>()
+              for(let [conn,hero] of model.getHeros()){
+                if(hero.getStrength() > 1){
+                  herosWithStr.push(hero)
+                }
+              }
+              if(herosWithStr != null){
+                //trigger collab with herosWithStr
+                //blocked = collabCall
+                //if !blocked
+                model.applyEvent(event)
+              }
+            }
             else{
               model.applyEvent(event)
             }

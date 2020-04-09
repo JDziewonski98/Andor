@@ -802,7 +802,9 @@ export class Game {
                 }
             }
         }
-           
+        else if(event.id == 33){
+            //to do
+        } 
         //if one that returns to deck ?? not sure if any return
     }
 }

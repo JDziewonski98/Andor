@@ -222,6 +222,9 @@ export class Hero {
     public setStrength(strengthChange: number) {
         this.strength += strengthChange
     }
+    public getStrength(){
+        return this.strength
+    }
 
     public resetWill() {
         this.will = 3

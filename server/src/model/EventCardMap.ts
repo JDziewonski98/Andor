@@ -57,11 +57,11 @@ export var map = [
     //     "flavorText": "An exhausting day", 
     //     "desc": "On this day, the 9th and 10th hours will each cost 3 willpower points instead of 2. Place this card above the overtime area of the time track. At the end of the day, it is removed from the game."
     // },
-    {
-        "id": 21, 
-        "flavorText": "A mysterious terror lurks in the southern woods.", 
-        "desc": "A hero who enters space 22, 23, 24, or 25 or is already standing there will immediately lose 4 willpower points. If more than one hero is standing there, the one with the highest rank loses the points. Place this card next to space 24 until it is triggered. Then it is removed from the game. "
-    },
+    // {
+    //     "id": 21, 
+    //     "flavorText": "A mysterious terror lurks in the southern woods.", 
+    //     "desc": "A hero who enters space 22, 23, 24, or 25 or is already standing there will immediately lose 4 willpower points. If more than one hero is standing there, the one with the highest rank loses the points. Place this card next to space 24 until it is triggered. Then it is removed from the game. "
+    // },
     // {
     //     "id": 22, 
     //     "flavorText": "Rampaging creatures despoil the well at the foot of the mountains.", 
@@ -104,4 +104,9 @@ export var map = [
     //     "flavorText": "A sleepless night awaits the heros.", 
     //     "desc": "Every hero whose time marker is presently in the sunrise box loses 2 willpower points."
     // },
+    {
+        "id": 33, 
+        "flavorText": "Their adventure is wearing down the heroes.", 
+        "desc": "One of the heroes immediately loses 1 strength point. You can decide as a group which hero that will be. If no hero has more than 1 strength point, nothing happens."
+    },
 ]
