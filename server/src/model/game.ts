@@ -95,6 +95,7 @@ export class Game {
         this.currPlayersTurn = currPlayersTurn;
         this.nextDayFirstHero = nextDayFirstHero;
         this.setRegions(regions);
+        // this.setHeros(heros);
         this.setFarmers(farmers);
         this.setMonsters(monsters);
         this.setFogs(fogs);
@@ -104,6 +105,10 @@ export class Game {
         this.castle = new RietburgCastle(castle.numDefenseShields, castle.numDefenseShieldsUsed);
         this.monstersInCastle = monstersInCastle;
         this.endOfGame = endOfGameState;
+    }
+
+    private setHeros(heros){
+
     }
 
     private setFirstHerosTurn() {
@@ -168,18 +173,6 @@ export class Game {
             })
         }
         return hk; // None if not found
-    }
-
-    public setShields() {
-        var numPlayers = this.numOfDesiredPlayers;
-
-        if (numPlayers === 2) {
-            this.castle.setShields(3);
-        } else if (numPlayers === 3) {
-            this.castle.setShields(2);
-        } else if (numPlayers === 4) {
-            this.castle.setShields(1);
-        }
     }
 
     public setFarmers(f) {

@@ -36,6 +36,7 @@ export function lobby(socket, model: Lobby, io) {
       g.initialize({
         currPlayersTurn: gameData.currPlayersTurn,
         regions: JSON.parse(gameData.regions),
+        heros: JSON.parse(gameData.heros),
         farmers: JSON.parse(gameData.farmers),
         monsters: JSON.parse(gameData.monsters),
         fogs: jsonToMap(gameData.fogs),
