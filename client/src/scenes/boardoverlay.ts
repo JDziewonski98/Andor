@@ -8,6 +8,7 @@ import { HourTracker } from '../objects/hourTracker';
 import { Well } from '../objects/well';
 import { reducedWidth, reducedHeight, mOffset } from '../constants';
 import { HeroKind } from '../objects/HeroKind';
+import { Prince } from '../objects/Prince';
 
 export default class BoardOverlay extends Phaser.Scene {
     private parent: Phaser.GameObjects.Zone
@@ -31,6 +32,8 @@ export default class BoardOverlay extends Phaser.Scene {
     private y = 0;
     private width = reducedWidth;
     private height = reducedHeight;
+
+    private movePrinceButton: Phaser.GameObjects.Text;
 
     constructor(data) {
         super({
@@ -78,13 +81,10 @@ export default class BoardOverlay extends Phaser.Scene {
                             windowhero: type, 
                             ...herodata , 
                             clientherotile: this.clientheroobject.tile.id,
-                            name: type,
                             x: pointer.x,
                             y: pointer.y+20
                         }
                     );
-                    let window = WindowManager.get(this, cardID)
-                    window.setName(type)
                 }
             })
 

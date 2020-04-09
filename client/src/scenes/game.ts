@@ -16,6 +16,7 @@ import {
 //import { TradeHostWindow } from './tradehostwindow';
 
 import { TileWindow } from './tilewindow';
+import { Prince } from '../objects/Prince';
 
 
 export default class GameScene extends Phaser.Scene {
@@ -35,6 +36,7 @@ export default class GameScene extends Phaser.Scene {
   private monsters: Monster[];
   private monsterNameMap: Map<string, Monster>;
   private castle: RietburgCastle;
+  private prince: Prince;
 
   private event: EventCard
   private activeEvents: Array<EventCard>
@@ -52,6 +54,7 @@ export default class GameScene extends Phaser.Scene {
   private overlay;
 
   private shiftKey;
+  private ctrlKey;
   
   constructor() {
     super({ key: 'Game' });
@@ -97,6 +100,9 @@ export default class GameScene extends Phaser.Scene {
     this.load.image("EventCard", "../assets/event.png");
     this.load.image("Gor", "../assets/gorfog.png");
 
+    this.load.image("item_border", "../assets/border.png"); // uses hex 4b2504
+    this.load.image("hero_border", "../assets/big_border.png");
+
     //items
     this.load.image("Brew", "../assets/brew.png");
     this.load.image("Wineskin", "../assets/wineskin.png");
@@ -125,6 +131,7 @@ export default class GameScene extends Phaser.Scene {
 
     this.cameraSetup();
     this.shiftKey = this.input.keyboard.addKey('shift');
+    this.ctrlKey = this.input.keyboard.addKey('CTRL');
     this.sceneplugin = this.scene
     // Centered gameboard with border
     this.add.image(fullWidth / 2, fullHeight / 2, 'gameboard')
@@ -136,6 +143,8 @@ export default class GameScene extends Phaser.Scene {
     this.addFarmers();
     this.addMonsters();
     this.addShieldsToRietburg();
+    this.prince = new Prince(this, this.tiles[72], 'shield');
+    this.add.existing(this.prince);
 
     // x and y coordinates
     this.addWell(209, 2244, wellTile1)
@@ -302,6 +311,7 @@ export default class GameScene extends Phaser.Scene {
 
     // click: for movement callback, ties pointerdown to move request
     // shift+click: tile items pickup interface
+    // ctrl+click: move the prince
     var self = this
     this.tiles.map(function (tile) {
       tile.on('pointerdown', function (pointer) {
@@ -313,18 +323,28 @@ export default class GameScene extends Phaser.Scene {
             thescene.disconnectListeners()
             WindowManager.destroy(this, tileWindowID);
           } else {
-              WindowManager.create(this, tileWindowID, TileWindow, 
+            // width of tile window depends on number of items on it
+            this.gameinstance.getTileItems(tile.id, function(tileItems) {
+              let items = tileItems;
+              // let itemsSize = Object.keys(items).length;
+              WindowManager.create(self, tileWindowID, TileWindow, 
                 { 
-                  controller: this.gameinstance,
+                  controller: self.gameinstance,
                   x: pointer.x + 20,
                   y: pointer.y + 20,
-                  w: 100,
+                  w: 670, // based on total number of unique items that could populate
                   h: 60,
-                  tileID: tile.getID()
+                  tileID: tile.getID(),
+                  items: items
                 }
               );
+            })
           }
-        } else {
+        }else if(this.ctrlKey.isDown){  //to move prince, hold ctrl key
+          console.log("It is my turn: ", self.gameinstance.myTurn)
+          self.gameinstance.movePrinceRequest(tile.id, updateMovePrinceRequest)
+
+        }else {
           console.log("It is my turn: ", self.gameinstance.myTurn)
           self.gameinstance.moveRequest(tile.id, updateMoveRequest)
         }
@@ -332,6 +352,7 @@ export default class GameScene extends Phaser.Scene {
     }, this)
 
     this.gameinstance.updateMoveRequest(updateMoveRequest)
+    this.gameinstance.updateMovePrinceRequest(updateMovePrinceRequest)
 
     function updateMoveRequest(heroKind, tileID) {
       self.heroes.forEach((hero: Hero) => {
@@ -340,6 +361,19 @@ export default class GameScene extends Phaser.Scene {
         }
       })
     }
+
+    function updateMovePrinceRequest(heroKind, tileID, numPrinceMoves) {
+      numPrinceMoves = +numPrinceMoves;
+      self.heroes.forEach((hero: Hero) => {
+        if (hero.getKind().toString() === heroKind) {
+          self.prince.moveTo(self.tiles[tileID])
+          if(numPrinceMoves % 4 === 1){
+            hero.incrementHour();
+          }
+        }
+      })
+    }
+
 
   }
 
@@ -438,6 +472,9 @@ export default class GameScene extends Phaser.Scene {
           // exit condition of recursive call: if tile.id === 0 then we add the monster to the castle tile
           // ie. decrease a shield count
 
+          
+
+
       }
       else { // tile is empty. no monster on this tile
 
@@ -469,19 +506,6 @@ export default class GameScene extends Phaser.Scene {
 
     let farmer_0: Farmer = new Farmer(0, this, farmertile_0, 'farmer').setDisplaySize(40, 40);
     let farmer_1: Farmer = new Farmer(1, this, farmertile_1, 'farmer').setDisplaySize(40, 40);
-
-    // var gridX1 = farmertile_0.farmerCoords[0][0];
-    // var gridY1 = farmertile_0.farmerCoords[0][1];
-
-    // var gridX2 = farmertile_1.farmerCoords[1][0];
-    // var gridY2 = farmertile_1.farmerCoords[1][1];
-
-    // var farmerIcon1 = this.add.sprite(gridX1, gridY1, 'farmer').setDisplaySize(40, 40);
-    // var farmerIcon2 = this.add.sprite(gridX2, gridY2, 'farmer').setDisplaySize(40, 40);
-
-    // let farmer_0: Farmer = new Farmer(this, farmertile_0, farmerIcon1).setDisplaySize(40, 40);
-    // let farmer_1: Farmer = new Farmer(this, farmertile_1, farmerIcon2).setDisplaySize(40, 40);
-
     farmer_0.setInteractive();
     farmer_1.setInteractive();
 
@@ -499,8 +523,7 @@ export default class GameScene extends Phaser.Scene {
     var self = this;
 
     farmer_0.on('pointerdown', function (pointer) {
-      //if (self.hero.tile.id == self.farmers[0].tile.id) {
-      self.gameinstance.pickupFarmer(function (tileid) {
+      self.gameinstance.pickupFarmer(farmer_0.tile.getID(), function (tileid) {
         let pickedFarmer: Farmer = self.tiles[tileid].farmer.pop();
         for (var i = 0; i < 2; i++) {
           if (self.farmers[i].id === pickedFarmer.id) {
@@ -515,20 +538,18 @@ export default class GameScene extends Phaser.Scene {
     }, this);
 
     farmer_1.on('pointerdown', function (pointer) {
-      if (self.hero.tile.id == self.farmers[1].tile.id) {
-        self.gameinstance.pickupFarmer(function (tileid) {
-          let pickedFarmer: Farmer = self.tiles[tileid].farmer.pop();
-          for (var i = 0; i < 2; i++) {
-            if (self.farmers[i].id === pickedFarmer.id) {
-              self.farmers[i].tile = undefined;
-              self.hero.farmers.push(pickedFarmer)
-              break;
-            }
+      self.gameinstance.pickupFarmer(farmer_1.tile.getID(), function (tileid) {
+        let pickedFarmer: Farmer = self.tiles[tileid].farmer.pop();
+        for (var i = 0; i < 2; i++) {
+          if (self.farmers[i].id === pickedFarmer.id) {
+            self.farmers[i].tile = undefined;
+            self.hero.farmers.push(pickedFarmer)
+            break;
           }
-          pickedFarmer.destroy()
-          console.log(self.hero.farmers)
-        });
-      }
+        }
+        pickedFarmer.destroy()
+        console.log(self.hero.farmers)
+      });
     }, this);
 
     this.gameinstance.destroyFarmer(function (tileid) {
@@ -567,8 +588,7 @@ export default class GameScene extends Phaser.Scene {
         newFarmer.setInteractive()
 
         newFarmer.on('pointerdown', function (pointer) {
-          //if (self.hero.tile.id == self.farmers[0].tile.id) {
-          self.gameinstance.pickupFarmer(function (tileid) {
+          self.gameinstance.pickupFarmer(newFarmer.tile.getID(), function (tileid) {
             let pickedFarmer: Farmer = self.tiles[tileid].farmer.pop();
             for (var i = 0; i < 2; i++) {
               if (self.farmers[i].id === pickedFarmer.id) {
@@ -612,13 +632,10 @@ export default class GameScene extends Phaser.Scene {
         var posNarrator = character
 
         const newNarrator = new Narrator(this, posNarrator, "pawn", this.gameinstance).setDisplaySize(40, 40);
-        this.add.existing(newNarrator);
-        
-        //newNarrator.advance() // first time calling it, will go into the this.posNarrator === A branch of the switch                        
-        //newNarrator.advance()
-        //newNarrator.advance()
-        
-        
+        this.add.existing(newNarrator);        
+
+        newNarrator.advance()             
+        newNarrator.advance()
     }
 
   private addFog() {

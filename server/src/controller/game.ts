@@ -65,12 +65,43 @@ export function game(socket, model: Game, io) {
     }
   });
 
+  socket.on("movePrinceRequest", function (id, callback) {
+    id = +id // turning Id from string to number
+    var heroID = socket.conn.id
+    let hero = model.getHero(heroID);
+
+    console.log(hero.getNumPrinceMoves());
+
+    if (hero !== undefined) {
+      var currPrinceRegion: Region = model.getPrince().getRegion();
+      var adjPrinceRegions: Array<number> = currPrinceRegion.getAdjRegionsIds()
+      
+      for (var regionID of adjPrinceRegions) {
+        var timeLeft = hero.getTimeOfDay() <= 7 || (hero.getTimeOfDay() <= 10 && hero.getWill() >= 2)
+        if (regionID === id && timeLeft) { // successful move
+          let targetRegion: Region = model.getRegions()[id];
+
+          model.getPrince().moveTo(targetRegion);
+          hero.movePrince();
+
+          socket.broadcast.emit("updateMovePrinceRequest", hero.getKind(), id, hero.getNumPrinceMoves())
+          callback(hero.getKind(), id, hero.getNumPrinceMoves())
+        }
+      }
+    }
+  });
+
   socket.on("moveHeroTo", function (heroType, tile, callback) {
     callback(heroType, tile);
   })
 
   socket.on("endTurn", function () {
     var nextPlayer = model.nextPlayer(false)
+
+    var heroID = socket.conn.id
+    let hero = model.getHero(heroID);
+
+    hero.resetPrinceMoves();
 
     // Emitting with broadcast.to to the caller doesn't seem to work. Below is a workaround
     if (model.getCurrPlayersTurn() == nextPlayer) {
@@ -85,12 +116,15 @@ export function game(socket, model: Game, io) {
     socket.broadcast.to(`/${model.getName()}#${nextPlayerID}`).emit("yourTurn");
   })
 
-  socket.on("pickupFarmer", function (callback) {
+  socket.on("pickupFarmer", function (tileID: number, callback) {
     var region: Region;
     let heroId = socket.conn.id;
     let hero = model.getHero(heroId);
     if (hero !== undefined) {
+      // if the hero's tile is not the same as the farmer's tile, return
+      if (hero.getRegion().getID() != tileID) return;
       region = hero.pickupFarmer();
+      console.log("pickup farmer", region)
 
       if (region !== undefined) {
         socket.broadcast.emit("destroyFarmer", region.getID());
@@ -107,7 +141,8 @@ export function game(socket, model: Game, io) {
       result = hero.dropFarmer();
 
       //result[1] = dropped region id, result[0] = farmer id
-      if (result !== undefined) {
+      // If drop unsuccessful, it will be an empty array
+      if (result.length == 2) {
         //Farmer dropped on reitburg
         if (result[1] === 0) {
           model.getCastle().incShields();
@@ -117,6 +152,24 @@ export function game(socket, model: Game, io) {
       }
     }
   });
+
+
+    socket.on("advanceNarrator", function (callback) {
+        var nar = model.getNarrator();
+        // check if position of narrator is already at N
+        if (nar.getLegendPosition() === 13) {
+            nar.checkEndGame()
+        }
+        else {
+            nar.advance();
+        }
+        
+        // doesn't work when more than 1 player. advances twice than desired
+        callback(nar.getLegendPosition());
+        socket.broadcast.emit("updateNarrator", nar.getLegendPosition())
+        }
+    );
+
 
   socket.on("merchant", function (callback) {
     let success = false;
@@ -152,6 +205,7 @@ export function game(socket, model: Game, io) {
         callback(wpInc);
         // Update the other heroes
         socket.broadcast.emit("updateWell", hero.getRegion().getID(), wpInc);
+        // TODO WELL: update hero windows
       }
     }
   });
@@ -250,6 +304,81 @@ export function game(socket, model: Game, io) {
       socket.emit("updatePickupGold", hero.getKind(), 1);
     }
   });
+
+  /*
+  *   DROP AND PICKUP ITEMS
+  */
+
+  // Send items and quantities of tileID back to client
+  socket.on("getTileItems", function (tileID, callback) {
+    var tileItems = model.getRegions()[tileID].getItems();
+    callback(tileItems);
+  });
+
+  socket.on("pickupItem", function (tileID, itemName: string, itemType: string) {
+    let successStatus = false;
+    let heroId = socket.conn.id;
+    let hero = model.getHero(heroId);
+
+    if (hero !== undefined) {
+      switch (itemType) {
+        case "largeItem":
+          successStatus = hero.pickUpLargeItem(tileID, largeItemStrToEnum(itemName));
+          break;
+        case "helm":
+          successStatus = hero.pickUpHelm(tileID);
+          break;
+        case "smallItem":
+          successStatus = hero.pickUpSmallItem(tileID, smallItemStrToEnum(itemName));
+          break;
+      }
+    }
+    if (successStatus) {
+      // Tell any active TileWindows of all clients to update
+      socket.broadcast.emit("updatePickupItemTile", hero.getRegion().getID(), itemName, itemType);
+      socket.emit("updatePickupItemTile", hero.getRegion().getID(), itemName, itemType);
+      // Tell any active HeroWindows of all clients to update
+      socket.broadcast.emit("updatePickupItemHero", hero.getKind(), itemName, itemType);
+      socket.emit("updatePickupItemHero", hero.getKind(), itemName, itemType);
+    }
+  })
+
+  socket.on("dropItem", function(itemName: string, itemType: string) {
+    let successStatus = false;
+    let heroId = socket.conn.id;
+    let hero = model.getHero(heroId);
+    let name = itemName;
+
+    if (hero !== undefined) {
+      switch (itemType) {
+        case "largeItem":
+          name = hero.getLargeItem();
+          successStatus = hero.dropLargeItem();
+          break;
+        case "helm":
+          name = "helm";
+          successStatus = hero.dropHelm();
+          break;
+        case "smallItem":
+          // There doesn't seem to be a good way of converting string to corresponding enum
+          const smallItem: SmallItem = smallItemStrToEnum(itemName);
+          // console.log("server attempt to drop", smallItem)
+          successStatus = hero.dropSmallItem(smallItem);
+          break;
+      }
+    }
+    // console.log("successStatus:", successStatus)
+    if (successStatus) {
+      // Tell any active TileWindows of all clients to update
+      socket.broadcast.emit("updateDropItemTile", hero.getRegion().getID(), name, itemType);
+      socket.emit("updateDropItemTile", hero.getRegion().getID(), name, itemType);
+      // Tell any active HeroWindows of all clients to update
+      socket.broadcast.emit("updateDropItemHero", hero.getKind(), name, itemType);
+      socket.emit("updateDropItemHero", hero.getKind(), name, itemType);
+    }
+  })
+
+  /////////////////////////////
 
   socket.on('bind hero', function (heroType, callback) {
     let id = socket.conn.id;
@@ -392,11 +521,14 @@ export function game(socket, model: Game, io) {
         // Iterate through resNames and map index to amount specified in resAllocated
         for (let i = 0; i < resNames.length; i++) {
           if (resNames[i] == "gold") {
-            currHero?.updateGold(resAllocated[heroTypeString][i]);
+            currHero.updateGold(resAllocated[heroTypeString][i]);
           }
           else if (resNames[i] == "wineskin") {
             // TODO: actually give the hero the wineskin (use smallItems API)
             currHero?.setWineskin(resAllocated[heroTypeString][i] > 0);
+            for (let j = 0; j < resAllocated[heroTypeString][i]; j++) {
+              currHero.pickUpSmallItem(currHero.getRegion().getID(), SmallItem.Wineskin);
+            }
           }
           else if (resNames[i] == 'will') {
             currHero?.setWill(resAllocated[heroTypeString][i])
@@ -749,6 +881,8 @@ export function game(socket, model: Game, io) {
       hero.consumeItem('half_wineskin')
     }
     callback()
+    // update other client hero windows
+    socket.broadcast.emit('receiveUseWineskin', hero.getKind(), halforfull);
   })
 
   ///////////////////////
@@ -807,18 +941,18 @@ export function game(socket, model: Game, io) {
 
     //adding received items
     for (let smallitem of items_gained['smallItems']) {
-      thehero!.pickUpSmallItem(smallItemStrToEnum(smallitem))
+      thehero!.pickUpSmallItem(thehero!.getRegion().getID(), smallItemStrToEnum(smallitem))
     }
-    thehero!.pickUpLargeItem(largeItemStrToEnum(items_gained['largeItem']))
+    thehero!.pickUpLargeItem(thehero!.getRegion().getID(), largeItemStrToEnum(items_gained['largeItem']))
     if (items_gained['helm'] != 'None') {
-      thehero!.pickUpHelm()
+      thehero!.pickUpHelm(thehero!.getRegion().getID())
     }
     thehero!.updateGold(+items_gained['gold'])
 
   })
 
   function smallItemStrToEnum(str) : SmallItem {
-    console.log(str,'in converter')
+    // console.log(str,'in converter')
     switch(str){
       case "wineskin" : return SmallItem.Wineskin
       case "half_wineskin": return SmallItem.HalfWineskin
@@ -829,18 +963,18 @@ export function game(socket, model: Game, io) {
       case "blue_runestone": return SmallItem.BlueRunestone
       case "yellow_runestone": return SmallItem.YellowRunestone
       case "green_runestone": return SmallItem.GreenRunestone
-      default: return SmallItem.Brew //should never happen!?!?
+      default: throw Error("String does not correspond to a SmallItem");
     }
   }
 
   function largeItemStrToEnum(str) : LargeItem {
-    console.log(str,'in converter')
+    // console.log(str,'in converter')
     switch(str){
       case "falcon": return LargeItem.Falcon
       case "shield": return LargeItem.Shield
       case "bow": return LargeItem.Bow
       case "None": return LargeItem.Empty
-      default: return LargeItem.Empty
+      default: throw Error("String does not correspond to a LargeItem");
     }
   }
 
