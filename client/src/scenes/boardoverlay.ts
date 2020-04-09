@@ -8,6 +8,7 @@ import { HourTracker } from '../objects/hourTracker';
 import { Well } from '../objects/well';
 import { reducedWidth, reducedHeight, mOffset } from '../constants';
 import { HeroKind } from '../objects/HeroKind';
+import { Prince } from '../objects/Prince';
 
 export default class BoardOverlay extends Phaser.Scene {
     private parent: Phaser.GameObjects.Zone
@@ -31,6 +32,8 @@ export default class BoardOverlay extends Phaser.Scene {
     private y = 0;
     private width = reducedWidth;
     private height = reducedHeight;
+
+    private movePrinceButton: Phaser.GameObjects.Text;
 
     constructor(data) {
         super({
