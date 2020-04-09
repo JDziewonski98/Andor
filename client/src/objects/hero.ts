@@ -83,6 +83,10 @@ export class Hero extends Phaser.GameObjects.Sprite {
         this.hourTracker.incHour(this.heroKind)
     }
 
+    public getHour(){
+        return this.hour;
+    }
+
     public resetHours() {
         // this.hourTracker.reset(this.id);
     }

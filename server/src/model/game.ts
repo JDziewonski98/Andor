@@ -9,7 +9,9 @@ import {
     Monster,
     MonsterKind,
     Fog,
-    EventCard
+    EventCard,
+    Prince,
+    Narrator
 } from "."
 import { LargeItem } from './LargeItem';
 import { SmallItem } from './SmallItem';
@@ -47,6 +49,9 @@ export class Game {
     private monsters: Map<string, Monster>;
     private monstersInCastle: string[];
     private endOfGame: boolean = false;
+    private prince: Prince;
+
+    private narrator: Narrator;
 
     // collab decision related state
     public numAccepts: number;
@@ -57,7 +62,7 @@ export class Game {
     private eventDeck: Array<EventCard>
     private activeEvents: Array<Number>
 
-    constructor(name: string, numOfDesiredPlayers: number, difficulty: GameDifficulty) {
+    constructor(name: string, numOfDesiredPlayers: number, difficulty: GameDifficulty, legendPosition = 0) {
         this.name = name;
         this.numOfDesiredPlayers = numOfDesiredPlayers;
         this.difficulty = difficulty;
@@ -75,6 +80,10 @@ export class Game {
         this.numAccepts = 0;
         this.currPlayersTurn = HeroKind.Dwarf;
         this.activeEvents = new Array<number>()
+
+        this.prince = new Prince(this.regions[72]);
+
+        this.narrator = new Narrator(this, 0)
     }
 
     public initialize({
@@ -107,9 +116,16 @@ export class Game {
         this.endOfGame = endOfGameState;
     }
 
-    private setHeros(heros){
+    private setHeros(heros) {
 
     }
+
+    private setNarrator(initialNarratorPosition: number) {
+        var newNarrator = new Narrator(this, initialNarratorPosition)
+
+
+    }
+
 
     private setFirstHerosTurn() {
         var minRank = Number.MAX_VALUE;
@@ -189,10 +205,23 @@ export class Game {
         })
     }
 
-    private addMonster(kind: MonsterKind, tile: number, id: string) {
+    public addMonster(kind: MonsterKind, tile: number, id: string) {
+
         let monster = new Monster(kind, tile, this.numOfDesiredPlayers, id)
         this.monsters.set(monster.name, monster);
         this.regions[tile].setMonster(monster);
+
+        /* this crashes the server? this.regions['tile'] is undefined
+         * // check if tile to add monster already has a monster
+        if (this.regions[tile].getMonster() !== null) {
+            this.addMonster(kind, (this.regions[tile].getNextRegionId()), id)
+            
+        }
+        else { // if it has a monster, get next region and addMonster to that tile
+            let monster = new Monster(kind, tile, this.numOfDesiredPlayers, id)
+            this.monsters.set(monster.name, monster);
+            this.regions[tile].setMonster(monster);
+        }*/
     }
 
     public setRegions(regions) {
@@ -212,8 +241,12 @@ export class Game {
         return this.fogs;
     }
 
-    public getFarmers() {
+    public getFarmers(): Array<Farmer> {
         return this.farmers;
+    }
+
+    public getPrince(): Prince {
+        return this.prince;
     }
 
     public getRegions(): Region[] {
@@ -222,6 +255,10 @@ export class Game {
 
     public getName(): string {
         return this.name;
+    }
+
+    public getNarrator(): Narrator {
+        return this.narrator;
     }
 
     /*

@@ -68,8 +68,14 @@ export class game {
         this.socket.on("updateWell", callback);
     }
 
+
+    //narrator stuff
     public advanceNarrator(callback) {
-        //  nothins?
+        this.socket.emit("advanceNarrator", callback);
+    }
+
+    public updateNarrator(callback) {
+        this.socket.on("updateNarrator", callback);
     }
 
     /*
@@ -184,6 +190,16 @@ export class game {
 
     public updateMoveRequest(callback){
         this.socket.on("updateMoveRequest", callback);
+    }
+
+    public movePrinceRequest(tileID, callback){
+        if(this.myTurn){
+            this.socket.emit('movePrinceRequest', tileID, callback)
+        }
+    }
+
+    public updateMovePrinceRequest(callback){
+        this.socket.on("updateMovePrinceRequest", callback);
     }
 
     public getAdjacentTiles(centraltileid, callback) {

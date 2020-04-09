@@ -3,7 +3,6 @@ import { reducedWidth, reducedHeight } from '../constants'
 
 export default class LobbyScene extends Phaser.Scene {
     private welcomeText;
-    private weedText;
     private gameText;
     private optionsIcon;
     private scaleRatio = window.devicePixelRatio / 3;
@@ -23,7 +22,6 @@ export default class LobbyScene extends Phaser.Scene {
 
     public preload() {
         // Load all game assets in first scene
-        this.load.image('beach', './assets/swamp.jpg');
         this.load.image('weed', './assets/8bit_herb.jpeg')
         this.load.image('desert', './assets/fantasydesert.jpg')
         this.load.image('mountains', './assets/mountains_bg.jpg')
@@ -39,6 +37,8 @@ export default class LobbyScene extends Phaser.Scene {
         this.load.image('optionsIcon', './assets/icons/settings_icon.png')
         this.load.image('scrollbg', './assets/windowbg.jpg')
         this.load.image('trademenubg', './assets/menubackground.png')
+        this.load.image('logo', './assets/main-screen-logo.png')
+        this.load.image('main', './assets/mainscreen.png')
     }
 
     public create() {
@@ -54,41 +54,41 @@ export default class LobbyScene extends Phaser.Scene {
     }
 
     private draw() {
-        var bg = this.add.image(500, 300, 'beach').setDisplaySize(1000, 600)
-        var style1 = {
-            fontFamily: '"Roboto Condensed"',
-            fontSize: "70px",
-            shadow: {
-                offsetX: 5,
-                offsetY: 5,
-                color: '#000',
-                blur: 10,
-                stroke: true,
-                fill: true
-            },
-            color: "#4944A4"
-        }
-        this.welcomeText = this.add.text(500, 200, "Welcome to Andor", style1).setOrigin(0.5)
+        // load background
+        var bg = this.add.image(500, 300, 'main').setDisplaySize(1000, 600)
 
-        var style2 = {
-            fontFamily: '"Roboto Condensed"',
+        // menuText for menu text
+        var menuText = {
+            fontFamily: "Roboto Condensed",
             fontSize: "40px",
-            backgroundColor: "#f00"
+            fontStyle: "italic"
         }
+
         var self = this;
+<<<<<<< HEAD
         this.weedText = this.add.text(500, 300, "New", style2).setOrigin(0.5)
         this.weedText.setInteractive();
         this.weedText.on('pointerdown', function (pointer) {
+=======
+        this.gameText = this.add.text(500, 300, "New", menuText).setOrigin(0.5)
+        this.gameText.setShadow(0, 0, 'black', 10);
+        this.gameText.setInteractive();
+        this.gameText.on('pointerdown', function (pointer) {
+>>>>>>> master
             this.scene.start('Create', { controller: self.lobbyController });
         }, this);
 
-        this.gameText = this.add.text(500, 400, "Join", style2).setOrigin(0.5)
+        this.gameText = this.add.text(500, 400, "Join", menuText).setOrigin(0.5)
+        this.gameText.setShadow(0, 0, 'black', 10);
+
         this.gameText.setInteractive();
         this.gameText.on('pointerdown', function (pointer) {
             this.scene.start('Join', { controller: self.lobbyController });
         }, this);
 
-        this.gameText = this.add.text(500, 500, "Load", style2).setOrigin(0.5)
+        this.gameText = this.add.text(500, 500, "Load", menuText).setOrigin(0.5)
+        this.gameText.setShadow(0, 0, 'black', 10);
+
         this.gameText.setInteractive();
         this.gameText.on('pointerdown', function (pointer) {
             this.scene.start('Load', { controller: self.lobbyController });
