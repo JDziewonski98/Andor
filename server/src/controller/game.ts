@@ -58,12 +58,15 @@ export function game(socket, model: Game, io) {
     socket.broadcast.to(`/${model.getName()}#${nextPlayerID}`).emit("yourTurn");
   })
 
-  socket.on("pickupFarmer", function (callback) {
+  socket.on("pickupFarmer", function (tileID: number, callback) {
     var region: Region;
     let heroId = socket.conn.id;
     let hero = model.getHero(heroId);
     if (hero !== undefined) {
+      // if the hero's tile is not the same as the farmer's tile, return
+      if (hero.getRegion().getID() != tileID) return;
       region = hero.pickupFarmer();
+      console.log("pickup farmer", region)
 
       if (region !== undefined) {
         socket.broadcast.emit("destroyFarmer", region.getID());
@@ -80,7 +83,8 @@ export function game(socket, model: Game, io) {
       result = hero.dropFarmer();
 
       //result[1] = dropped region id, result[0] = farmer id
-      if (result !== undefined) {
+      // If drop unsuccessful, it will be an empty array
+      if (result.length == 2) {
         //Farmer dropped on reitburg
         if (result[1] === 0) {
           model.getCastle().incShields();
