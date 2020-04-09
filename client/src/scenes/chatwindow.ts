@@ -43,7 +43,7 @@ export class Chat extends Window {
         this.element.addListener('click');
         this.element.on('click', function (event) {
             console.log("clicking")
-            if (event.target.name === 'playButton') {
+            if (event.target.name === 'entergame') {
                 var inputText = this.getChildByName('nameField');
                 //  Have they entered anything?
                 if (inputText.value !== '') {

@@ -14,7 +14,7 @@ export default class Options extends Phaser.Scene {
     }
 
     public preload() {
-        this.load.image('beach2', './assets/swamp.jpg');
+        this.load.image('settings', './assets/settings-screen.png')
         this.load.image('soundon','./assets/SongOn.png')
         this.load.image('soundoff','./assets/SongOff.png')
 
@@ -27,7 +27,7 @@ export default class Options extends Phaser.Scene {
 
         let music = this.game.sound.add('music')
 
-        var bg = this.add.image(500, 300, 'beach2').setDisplaySize(1000,600)
+        var bg = this.add.image(500, 300, 'settings').setDisplaySize(1000,600)
         var style1 = {
             fontFamily: '"Roboto Condensed"',
             fontSize: "70px",
