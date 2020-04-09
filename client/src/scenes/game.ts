@@ -103,7 +103,7 @@ export default class GameScene extends Phaser.Scene {
     this.load.image("blue_runestone", "../assets/runestone_b.PNG");
     this.load.image("green_runestone", "../assets/runestone_g.PNG");
     this.load.image("yellow_runestone", "../assets/runestone_y.PNG");
-    this.load.image("shield", "../assets/shield.PNG");
+    this.load.image("prince", "../assets/prince.png");
     this.load.image("telescope", "../assets/telescope.PNG");
     this.load.image("half_wineskin", "../assets/half_wineskin.jpg")
     this.load.image("half_brew", "../assets/half_brew.jpg")
@@ -111,7 +111,7 @@ export default class GameScene extends Phaser.Scene {
 
     this.load.image("Strength", "../assets/strength.png");
     this.load.image("pawn", "../assets/pawn.png");
-
+    this.load.image('dshield', './assets/disabled_cracked_shield.png')
   }
 
   public create() {
@@ -137,7 +137,7 @@ export default class GameScene extends Phaser.Scene {
       this.setRegions(data.regions);
       this.addFog(data.fogs);
       this.addShieldsToRietburg(data.castle.numDefenseShields - data.castle.numDefenseShieldsUsed);
-      
+
       data.monsters.forEach(monster => {
         this.addMonster(monster[1].tileID, monster[1].type, monster[0]);
       })
@@ -149,6 +149,9 @@ export default class GameScene extends Phaser.Scene {
       data.heroList.forEach(hero => {
         this.addHero(hero[1].hk, hero[1].region.id, hero[1].hk);
       })
+
+      this.prince = new Prince(this, this.tiles[data.prince.tile.id], 'prince').setScale(.15);
+      this.add.existing(this.prince);
 
       this.hourTrackerSetup();
 
@@ -211,9 +214,9 @@ export default class GameScene extends Phaser.Scene {
       self.scene.pause();
     });
 
-    
 
-    
+
+
 
 
 
@@ -324,8 +327,6 @@ export default class GameScene extends Phaser.Scene {
 
 
   }
-
-
 
   private addShieldsToRietburg(numShields) {
     let s1 = this.add.sprite(85, 190, 'weed').setDisplaySize(40, 40)
@@ -477,17 +478,16 @@ export default class GameScene extends Phaser.Scene {
     this.wells.set("" + newWell.getTileID(), newWell);
   }
 
-
   private addNarrator(character = enumPositionOfNarrator.A) {
     // let A be the default. can change the .A to anything under N. checked that it works
     var posNarrator = character
-
-    const newNarrator = new Narrator(this, posNarrator, "pawn", this.gameinstance).setDisplaySize(40, 40);
+    const newNarrator = new Narrator(this, posNarrator, "pawn", this.gameinstance).setDisplaySize(33, 79.5);
     this.add.existing(newNarrator);
 
     newNarrator.advance()
     newNarrator.advance()
   }
+
   private addFog(fogs) {
     fogs.forEach((fog) => {
       const tile: Tile = this.tiles[fog[0]];
