@@ -16,6 +16,7 @@ import {
 //import { TradeHostWindow } from './tradehostwindow';
 
 import { TileWindow } from './tilewindow';
+import { Prince } from '../objects/Prince';
 
 
 export default class GameScene extends Phaser.Scene {
@@ -35,6 +36,7 @@ export default class GameScene extends Phaser.Scene {
   private monsters: Monster[];
   private monsterNameMap: Map<string, Monster>;
   private castle: RietburgCastle;
+  private prince: Prince;
 
   private event: EventCard
   private activeEvents: Array<EventCard>
@@ -52,6 +54,7 @@ export default class GameScene extends Phaser.Scene {
   private overlay;
 
   private shiftKey;
+  private ctrlKey;
   
   constructor() {
     super({ key: 'Game' });
@@ -128,6 +131,7 @@ export default class GameScene extends Phaser.Scene {
 
     this.cameraSetup();
     this.shiftKey = this.input.keyboard.addKey('shift');
+    this.ctrlKey = this.input.keyboard.addKey('CTRL');
     this.sceneplugin = this.scene
     // Centered gameboard with border
     this.add.image(fullWidth / 2, fullHeight / 2, 'gameboard')
@@ -139,6 +143,8 @@ export default class GameScene extends Phaser.Scene {
     this.addFarmers();
     this.addMonsters();
     this.addShieldsToRietburg();
+    this.prince = new Prince(this, this.tiles[72], 'shield');
+    this.add.existing(this.prince);
 
     // x and y coordinates
     this.addWell(209, 2244, wellTile1)
@@ -305,6 +311,7 @@ export default class GameScene extends Phaser.Scene {
 
     // click: for movement callback, ties pointerdown to move request
     // shift+click: tile items pickup interface
+    // ctrl+click: move the prince
     var self = this
     this.tiles.map(function (tile) {
       tile.on('pointerdown', function (pointer) {
@@ -333,7 +340,11 @@ export default class GameScene extends Phaser.Scene {
               );
             })
           }
-        } else {
+        }else if(this.ctrlKey.isDown){  //to move prince, hold ctrl key
+          console.log("It is my turn: ", self.gameinstance.myTurn)
+          self.gameinstance.movePrinceRequest(tile.id, updateMovePrinceRequest)
+
+        }else {
           console.log("It is my turn: ", self.gameinstance.myTurn)
           self.gameinstance.moveRequest(tile.id, updateMoveRequest)
         }
@@ -341,6 +352,7 @@ export default class GameScene extends Phaser.Scene {
     }, this)
 
     this.gameinstance.updateMoveRequest(updateMoveRequest)
+    this.gameinstance.updateMovePrinceRequest(updateMovePrinceRequest)
 
     function updateMoveRequest(heroKind, tileID) {
       self.heroes.forEach((hero: Hero) => {
@@ -349,6 +361,19 @@ export default class GameScene extends Phaser.Scene {
         }
       })
     }
+
+    function updateMovePrinceRequest(heroKind, tileID, numPrinceMoves) {
+      numPrinceMoves = +numPrinceMoves;
+      self.heroes.forEach((hero: Hero) => {
+        if (hero.getKind().toString() === heroKind) {
+          self.prince.moveTo(self.tiles[tileID])
+          if(numPrinceMoves % 4 === 1){
+            hero.incrementHour();
+          }
+        }
+      })
+    }
+
 
   }
 

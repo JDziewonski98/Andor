@@ -182,6 +182,16 @@ export class game {
         this.socket.on("updateMoveRequest", callback);
     }
 
+    public movePrinceRequest(tileID, callback){
+        if(this.myTurn){
+            this.socket.emit('movePrinceRequest', tileID, callback)
+        }
+    }
+
+    public updateMovePrinceRequest(callback){
+        this.socket.on("updateMovePrinceRequest", callback);
+    }
+
     public getAdjacentTiles(centraltileid, callback) {
         this.socket.emit('getAdjacentTiles',centraltileid, callback)
     }
