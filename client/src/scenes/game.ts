@@ -26,7 +26,6 @@ export default class GameScene extends Phaser.Scene {
   private ownHeroType: HeroKind;
 
   private tiles: Tile[];
-  private welltiles: Tile[];
   // Note acui: was having trouble using wells map with number typed keys, so converting to strings
   private wells: Map<string, Well>;
 
@@ -126,10 +125,10 @@ export default class GameScene extends Phaser.Scene {
     this.add.image(fullWidth / 2, fullHeight / 2, 'gameboard')
       .setDisplaySize(expandedWidth, expandedHeight);
 
-    // setInterval(() => {
+    setInterval(() => {
       console.log("********* SAVING GAME");
       this.gameinstance.save();
-    // }, 30000);
+    }, 30000);
 
 
     this.gameinstance.getGameData((data) => {
@@ -138,8 +137,18 @@ export default class GameScene extends Phaser.Scene {
       this.setRegions(data.regions);
       this.addFog(data.fogs);
       this.addShieldsToRietburg(data.castle.numDefenseShields - data.castle.numDefenseShieldsUsed);
-      this.addMonsters(data.monsters);
-      this.addHeros(data.heroList);
+      
+      data.monsters.forEach(monster => {
+        this.addMonster(monster[1].tileID, monster[1].type, monster[0]);
+      })
+
+      data.farmers.forEach(farmer => {
+        this.addFarmer(farmer.id, farmer.tileID);
+      })
+
+      data.heroList.forEach(hero => {
+        this.addHero(hero[1].hk, hero[1].region.id, hero[1].hk);
+      })
 
       this.hourTrackerSetup();
 
@@ -169,62 +178,9 @@ export default class GameScene extends Phaser.Scene {
 
     })
 
-
-
-
-
     // this.addMerchants();
-    // this.addFarmers();
-
-
-
-    // x and y coordinates
-    // this.addWell(209, 2244, wellTile1)
-    // this.addWell(1353, 4873, wellTile2)
-    // this.addWell(7073, 3333, wellTile3)
-    // this.addWell(5962, 770, wellTile4)
-
-    // this.addGold()
 
     this.addNarrator();
-
-    // this.gameinstance.getHeros((herotypes) => {
-    //   herotypes.forEach(type => {
-    //     if (type === "archer") {
-    //       self.addHero(HeroKind.Archer, archerTile, "archermale");
-    //     } else if (type === "mage") {
-    //       self.addHero(HeroKind.Mage, mageTile, "magemale");
-    //     } else if (type === "warrior") {
-    //       self.addHero(HeroKind.Warrior, warriorTile, "warriormale");
-    //     } else if (type === "dwarf") {
-    //       self.addHero(HeroKind.Dwarf, dwarfTile, "dwarfmale");
-    //     }
-    //   });
-
-    //   this.hourTrackerSetup();
-
-    //   // Add overlay to game
-    //   const overlayData = {
-    //     gameinstance: self.gameinstance,
-    //     tiles: self.tiles,
-    //     monsterMap: self.monsterNameMap,
-    //     // gameTweens: self.tweens, not sure if this needs to be passed
-    //     hourTracker: self.hourTracker,
-    //     wells: self.wells,
-    //     hk: self.ownHeroType,
-    //     clientheroobject: this.hero
-    //   };
-    //   this.overlay = new BoardOverlay(overlayData);
-    //   this.scene.add('BoardOverlay', this.overlay, true);
-
-    //   // Need to wait for heroes to be created before creating collab decision
-    //   self.startingCollabDecisionSetup();
-    //   // Note that starting hero rank gets determined in collab setup
-    //   if (self.hero.tile.id == self.startingHeroRank) {
-    //     console.log("first turn goes to hero rank", self.startingHeroRank);
-    //     self.gameinstance.setMyTurn(true);
-    //   }
-    // })
 
     //Event Card adding at start of game
     //this.gameinstance.newEvent()
@@ -255,21 +211,9 @@ export default class GameScene extends Phaser.Scene {
       self.scene.pause();
     });
 
-    // Listening for shields lost due to monster attack
-    this.gameinstance.updateShields(function (shieldNums, add) {
-      for (let shieldNum of shieldNums) {
-        if (shieldNum < 0 || shieldNum > 5) continue;
-        if (add) {
-          self.castle.shields[shieldNum].visible = false;
-        } else {
-          self.castle.shields[shieldNum].visible = true;
-        }
-      }
-    })
+    
 
-    this.gameinstance.receiveTradeInvite(function (host, invitee) {
-      WindowManager.create(self, 'tradewindow', TradeWindow, { gameinstance: self.gameinstance, hosthero: host, inviteehero: invitee, parentkey: 'None', clienthero: invitee })
-    })
+    
 
 
 
@@ -302,7 +246,7 @@ export default class GameScene extends Phaser.Scene {
     // var tilesData = require("../utils/xycoords").map;
     var treeTile = this.textures.get('tiles').getFrameNames()[12];
     for (let t of tilesData) {
-      console.log(t)
+      // console.log(t)
       var tile = new Tile(t.id, this, t.x * scaleFactor + borderWidth, t.y * scaleFactor + borderWidth, treeTile, t.adjRegionsIds);
       this.tiles[t.id] = tile;
       tile.setInteractive();
@@ -381,11 +325,7 @@ export default class GameScene extends Phaser.Scene {
 
   }
 
-  private addHeros(heros) {
-    heros.forEach(hero => {
-      this.addHero(hero[1].hk, hero[1].region.id, hero[1].hk);
-    })
-  }
+
 
   private addShieldsToRietburg(numShields) {
     let s1 = this.add.sprite(85, 190, 'weed').setDisplaySize(40, 40)
@@ -460,12 +400,6 @@ export default class GameScene extends Phaser.Scene {
 
   }
 
-  private addMonsters(monsters) {
-    monsters.forEach(monster => {
-      this.addMonster(monster[1].tileID, monster[1].type, monster[0]);
-    })
-  }
-
   private addMonster(monsterTile: number, type: string, id: string) {
     const tile: Tile = this.tiles[monsterTile];
 
@@ -500,113 +434,29 @@ export default class GameScene extends Phaser.Scene {
     }
   }
 
-  private addFarmers(farmers) {
+  private addFarmer(id: number, tileID: number) {
+    const tile: Tile = this.tiles[tileID];
+    const farmerObj = new Farmer(id, this, tile, 'farmer').setDisplaySize(40, 40).setInteractive();
+    this.farmers.push(farmerObj);
+    tile.farmer.push(farmerObj);
+    tile.farmerexist = true;
+    this.add.existing(farmerObj);
 
-    const farmertile_0: Tile = this.tiles[24];
-    const farmertile_1: Tile = this.tiles[36];
-
-    let farmer_0: Farmer = new Farmer(0, this, farmertile_0, 'farmer').setDisplaySize(40, 40);
-    let farmer_1: Farmer = new Farmer(1, this, farmertile_1, 'farmer').setDisplaySize(40, 40);
-    farmer_0.setInteractive();
-    farmer_1.setInteractive();
-
-    this.farmers.push(farmer_0);
-    this.farmers.push(farmer_1);
-
-    farmertile_0.farmer.push(farmer_0);
-    farmertile_0.farmerexist = true;
-    farmertile_1.farmer.push(farmer_1);
-    farmertile_1.farmerexist = true;
-
-    this.add.existing(farmer_0);
-    this.add.existing(farmer_1);
-
-    var self = this;
-
-    farmer_0.on('pointerdown', function (pointer) {
-      self.gameinstance.pickupFarmer(farmer_0.tile.getID(), function (tileid) {
-        let pickedFarmer: Farmer = self.tiles[tileid].farmer.pop();
+    farmerObj.on('pointerdown', (pointer) => {
+      this.gameinstance.pickupFarmer(farmerObj.tile.getID(), function (tileid) {
+        let pickedFarmer: Farmer = this.tiles[tileid].farmer.pop();
         for (var i = 0; i < 2; i++) {
-          if (self.farmers[i].id === pickedFarmer.id) {
-            self.farmers[i].tile = undefined;
-            self.hero.farmers.push(pickedFarmer)
+          if (this.farmers[i].id === pickedFarmer.id) {
+            this.farmers[i].tile = undefined;
+            this.hero.farmers.push(pickedFarmer)
             break;
           }
         }
         pickedFarmer.destroy()
-        console.log(self.hero.farmers)
       });
     }, this);
-
-    farmer_1.on('pointerdown', function (pointer) {
-      self.gameinstance.pickupFarmer(farmer_1.tile.getID(), function (tileid) {
-        let pickedFarmer: Farmer = self.tiles[tileid].farmer.pop();
-        for (var i = 0; i < 2; i++) {
-          if (self.farmers[i].id === pickedFarmer.id) {
-            self.farmers[i].tile = undefined;
-            self.hero.farmers.push(pickedFarmer)
-            break;
-          }
-        }
-        pickedFarmer.destroy()
-        console.log(self.hero.farmers)
-      });
-    }, this);
-
-    this.gameinstance.destroyFarmer(function (tileid) {
-      let pickedFarmer: Farmer = self.tiles[tileid].farmer.pop();
-      for (var i = 0; i < 2; i++) {
-        if (self.farmers[i] === pickedFarmer) {
-          self.farmers[i].tile = undefined;
-          console.log(self.farmers[i].tile)
-          break;
-        }
-      }
-      pickedFarmer.destroy()
-
-    });
-
-    this.gameinstance.addFarmer(function (tileid, farmerid) {
-      if (tileid === 0) {
-        let newFarmer = self.hero.farmers.pop()
-        for (var i = 0; i < 6; i++) {
-          if (self.castle.shields[i].visible == true) {
-            self.castle.shields[i].visible = false;
-            break;
-          }
-        }
-      } else {
-        let newFarmer = self.hero.farmers.pop()
-
-        if (farmerid === 0) {
-          newFarmer = new Farmer(0, self, self.tiles[tileid], 'farmer').setDisplaySize(40, 40)
-        } else if (farmerid === 1) {
-          newFarmer = new Farmer(1, self, self.tiles[tileid], 'farmer').setDisplaySize(40, 40)
-        }
-
-        self.tiles[tileid].farmer.push(newFarmer)
-
-        newFarmer.setInteractive()
-
-        newFarmer.on('pointerdown', function (pointer) {
-          self.gameinstance.pickupFarmer(newFarmer.tile.getID(), function (tileid) {
-            let pickedFarmer: Farmer = self.tiles[tileid].farmer.pop();
-            for (var i = 0; i < 2; i++) {
-              if (self.farmers[i].id === pickedFarmer.id) {
-                self.farmers[i].tile = undefined;
-                self.hero.farmers.push(pickedFarmer)
-                break;
-              }
-            }
-            pickedFarmer.destroy()
-            console.log(self.hero.farmers)
-          });
-        }, this);
-        self.add.existing(newFarmer)
-      }
-    });
-
   }
+
 
   private addHero(type: HeroKind, tileNumber: number, texture: string) {
     const tile: Tile = this.tiles[tileNumber]
@@ -866,6 +716,77 @@ export default class GameScene extends Phaser.Scene {
         WindowManager.destroy(self, 'deathnotice');
       }
       WindowManager.create(self, 'deathnotice', DeathWindow, { controller: self.gameinstance });
+    })
+    // Listening for shields lost due to monster attack
+    this.gameinstance.updateShields(function (shieldNums, add) {
+      for (let shieldNum of shieldNums) {
+        if (shieldNum < 0 || shieldNum > 5) continue;
+        if (add) {
+          self.castle.shields[shieldNum].visible = false;
+        } else {
+          self.castle.shields[shieldNum].visible = true;
+        }
+      }
+    })
+
+    // FARMERS
+    this.gameinstance.destroyFarmer(function (tileid) {
+      let pickedFarmer: Farmer = this.tiles[tileid].farmer.pop();
+      for (var i = 0; i < 2; i++) {
+        if (this.farmers[i] === pickedFarmer) {
+          this.farmers[i].tile = undefined;
+          // console.log(self.farmers[i].tile)
+          break;
+        }
+      }
+      pickedFarmer.destroy()
+
+    });
+
+    this.gameinstance.addFarmer(function (tileid, farmerid) {
+      if (tileid === 0) {
+        let newFarmer = self.hero.farmers.pop()
+        for (var i = 0; i < 6; i++) {
+          if (self.castle.shields[i].visible == true) {
+            self.castle.shields[i].visible = false;
+            break;
+          }
+        }
+      } else {
+        let newFarmer = self.hero.farmers.pop()
+
+        if (farmerid === 0) {
+          newFarmer = new Farmer(0, self, self.tiles[tileid], 'farmer').setDisplaySize(40, 40)
+        } else if (farmerid === 1) {
+          newFarmer = new Farmer(1, self, self.tiles[tileid], 'farmer').setDisplaySize(40, 40)
+        }
+
+        self.tiles[tileid].farmer.push(newFarmer)
+
+        newFarmer.setInteractive()
+
+        newFarmer.on('pointerdown', function (pointer) {
+          self.gameinstance.pickupFarmer(newFarmer.tile.getID(), function (tileid) {
+            let pickedFarmer: Farmer = self.tiles[tileid].farmer.pop();
+            for (var i = 0; i < 2; i++) {
+              if (self.farmers[i].id === pickedFarmer.id) {
+                self.farmers[i].tile = undefined;
+                self.hero.farmers.push(pickedFarmer)
+                break;
+              }
+            }
+            pickedFarmer.destroy()
+            console.log(self.hero.farmers)
+          });
+        }, this);
+        self.add.existing(newFarmer)
+      }
+    });
+
+
+    // TRADE
+    this.gameinstance.receiveTradeInvite(function (host, invitee) {
+      WindowManager.create(self, 'tradewindow', TradeWindow, { gameinstance: self.gameinstance, hosthero: host, inviteehero: invitee, parentkey: 'None', clienthero: invitee })
     })
 
   }
