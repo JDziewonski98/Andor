@@ -37,25 +37,22 @@ export const dMonsters = [{
     tileID: 19
 }]
 
-export const dEventDeck = require("./EventCardMap").map;
+export function dEventDeck() { 
+    let map = require("./EventCardMap").map; 
+    _shuffle(map);
+    return map;
+}
 
 export function dFogs(): Map<number, Fog> {
     const fogIds = [8, 11, 12, 13, 49, 16, 32, 48, 42, 44, 47, 46, 64, 56, 63];
     const fogTypes = [Fog.EventCard, Fog.EventCard, Fog.EventCard, Fog.EventCard, Fog.EventCard, Fog.Strength, Fog.WillPower2, Fog.WillPower3, Fog.Gold, Fog.Gold, Fog.Gold, Fog.Gor, Fog.Gor, Fog.Wineskin, Fog.Brew];
-    shuffle(fogTypes);
+    _shuffle(fogTypes);
 
     let newObj = new Map();
     for (var i = 0; i < fogIds.length; i++)
         newObj.set(fogIds[i], fogTypes[i])
     return newObj
 
-    function shuffle(a) {
-        for (let i = a.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [a[i], a[j]] = [a[j], a[i]];
-        }
-        return a;
-    }
 }
 
 export function dCastle(numPlayers) {
@@ -82,4 +79,13 @@ export const dPrince = {
 
 export const dNarrator = {
     legendPosition: 0
+}
+
+
+function _shuffle(a) {
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
 }

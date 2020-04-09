@@ -108,7 +108,7 @@ export class Game {
         monsters = monsters || dMonsters;
         fogs = fogs || dFogs();
         heros = heros || [];
-        eventDeck = eventDeck || dEventDeck;
+        eventDeck = eventDeck || dEventDeck();
         activeEvents = activeEvents || [];
         nextDayFirstHero = nextDayFirstHero || HeroKind.None;
         activeHeros = activeHeros || [];
@@ -411,26 +411,6 @@ export class Game {
         hero.moveTo(tile)
     }
 
-    private endGame() {
-        //TO BE IMPLEMENTED
-    }
-
-    private checkMonsterInRietburg() {
-        //TO BE IMPLEMENTED
-    }
-
-    private checkForFarmer(tile: Region) {
-        //TO BE IMPLEMENTED
-    }
-
-    private checkHeroOnWellTile() {
-        //TO BE IMPLEMENTED
-    }
-
-    private incrementNarratorPosition() {
-        //TO BE IMPLEMENTED      
-    }
-
     public pushToLog(item) {
         this.chatlog.push(item)
     }
@@ -657,18 +637,6 @@ export class Game {
         events.forEach(ec => {
             this.eventDeck.push(new EventCard(ec.id, ec.flavorText, ec.desc))
         })
-        this.shuffleEventDeck()
-
-    }
-
-
-    private shuffleEventDeck() {
-        let m = this.eventDeck.length, i
-        while (m) {
-            i = Math.floor(Math.random() * m)
-            m--
-            [this.eventDeck[m], this.eventDeck[i]] = [this.eventDeck[i], this.eventDeck[m]]
-        }
     }
 
     public clearActiveEvents() {

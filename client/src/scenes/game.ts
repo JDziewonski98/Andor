@@ -125,11 +125,10 @@ export default class GameScene extends Phaser.Scene {
     this.add.image(fullWidth / 2, fullHeight / 2, 'gameboard')
       .setDisplaySize(expandedWidth, expandedHeight);
 
-    setInterval(() => {
-      console.log("********* SAVING GAME");
-      this.gameinstance.save();
-    }, 30000);
-
+    // setInterval(() => {
+    //   console.log("********* SAVING GAME");
+    //   this.gameinstance.save();
+    // }, 600000);
 
     this.gameinstance.getGameData((data) => {
       console.log("GAME DATA IS:::::::::::::\n", data)
@@ -199,31 +198,6 @@ export default class GameScene extends Phaser.Scene {
     //   this.addEventCard(event)
     // }
 
-    // Listen for end of game state
-    this.gameinstance.receiveEndOfGame(function () {
-      let windowData = {
-        controller: self.gameinstance,
-        x: reducedWidth / 2 - 200,
-        y: reducedHeight / 2 - 100,
-        w: 400,
-        h: 200,
-      }
-      // Display end of game window
-      WindowManager.create(self, 'gameover', GameOverWindow, windowData);
-      // Freeze main game while collab window is active
-      self.scene.pause();
-    });
-
-
-
-
-
-
-
-    setInterval(() => {
-      console.log("********* SAVING GAME");
-      this.gameinstance.save();
-    }, 30000);
 
   }
 
@@ -324,8 +298,6 @@ export default class GameScene extends Phaser.Scene {
         }
       })
     }
-
-
   }
 
   private addShieldsToRietburg(numShields) {
@@ -349,7 +321,7 @@ export default class GameScene extends Phaser.Scene {
     }
   }
 
-  private addMerchants() {
+  private addMerchant(tileID: number) {
     const merchtile_18: Tile = this.tiles[18];
     const merchtile_57: Tile = this.tiles[57];
     const merchtile_71: Tile = this.tiles[71];
@@ -542,35 +514,6 @@ export default class GameScene extends Phaser.Scene {
     });
   }
 
-  // private addGold() {
-  //   var self = this
-  //   for (let id in self.tiles) { // of dattara tile object ga iterate sareru
-  //     //create a text Sprite indicating the number of gold. 
-  //     var goldText = self.add.text(50, 50, "G", { color: "#fff52e" }).setX(self.tiles[id].x - 30).setY(self.tiles[id].y - 30)
-  //     //set to interactive
-  //     goldText.setInteractive()
-  //     self.add.existing(goldText);
-  //     goldText.on("pointerdown", function (pointer) {
-  //       self.gameinstance.pickupGold(id, function () {
-  //         if (self.tiles[id].getGold() > 0) {
-  //           console.log("amount on client-tile: ", self.tiles[id].getGold())
-  //           self.tiles[id].setGold(self.tiles[id].getGold() - 1)
-  //           console.log("amount on client-tile: ", self.tiles[id].getGold())   //amount of gold on tile is updated
-  //         }
-  //       })
-  //     }, this)
-
-  //     self.gameinstance.updatePickupGold(function (pointer) {
-  //       if (self.tiles[id].getGold() > 0) {
-  //         console.log(self.tiles[id].getGold())
-  //         self.tiles[id].setGold(self.tiles[id].getGold() - 1)
-  //         console.log(self.tiles[id].getGold())
-  //       }
-  //     }, this)
-  //   }
-  // }
-
-
   //for specific events which need to apply a unique ui effect, or something of that nature
   private applyEvent(event: EventCard) {
     console.log("Applying event")
@@ -595,12 +538,6 @@ export default class GameScene extends Phaser.Scene {
 
   private startingCollabDecisionSetup() {
     var self = this;
-
-    var style2 = {
-      fontFamily: '"Roboto Condensed"',
-      fontSize: "20px",
-      backgroundColor: '#f00'
-    }
 
     var res = new Map([
       ["gold", 5],
@@ -735,7 +672,6 @@ export default class GameScene extends Phaser.Scene {
       for (var i = 0; i < 2; i++) {
         if (this.farmers[i] === pickedFarmer) {
           this.farmers[i].tile = undefined;
-          // console.log(self.farmers[i].tile)
           break;
         }
       }
@@ -754,40 +690,29 @@ export default class GameScene extends Phaser.Scene {
         }
       } else {
         let newFarmer = self.hero.farmers.pop()
-
-        if (farmerid === 0) {
-          newFarmer = new Farmer(0, self, self.tiles[tileid], 'farmer').setDisplaySize(40, 40)
-        } else if (farmerid === 1) {
-          newFarmer = new Farmer(1, self, self.tiles[tileid], 'farmer').setDisplaySize(40, 40)
-        }
-
-        self.tiles[tileid].farmer.push(newFarmer)
-
-        newFarmer.setInteractive()
-
-        newFarmer.on('pointerdown', function (pointer) {
-          self.gameinstance.pickupFarmer(newFarmer.tile.getID(), function (tileid) {
-            let pickedFarmer: Farmer = self.tiles[tileid].farmer.pop();
-            for (var i = 0; i < 2; i++) {
-              if (self.farmers[i].id === pickedFarmer.id) {
-                self.farmers[i].tile = undefined;
-                self.hero.farmers.push(pickedFarmer)
-                break;
-              }
-            }
-            pickedFarmer.destroy()
-            console.log(self.hero.farmers)
-          });
-        }, this);
-        self.add.existing(newFarmer)
+        self.addFarmer(+farmerid, tileid)
       }
     });
-
 
     // TRADE
     this.gameinstance.receiveTradeInvite(function (host, invitee) {
       WindowManager.create(self, 'tradewindow', TradeWindow, { gameinstance: self.gameinstance, hosthero: host, inviteehero: invitee, parentkey: 'None', clienthero: invitee })
     })
+
+    // Listen for end of game state
+    this.gameinstance.receiveEndOfGame(function () {
+      let windowData = {
+        controller: self.gameinstance,
+        x: reducedWidth / 2 - 200,
+        y: reducedHeight / 2 - 100,
+        w: 400,
+        h: 200,
+      }
+      // Display end of game window
+      WindowManager.create(self, 'gameover', GameOverWindow, windowData);
+      // Freeze main game while collab window is active
+      self.scene.pause();
+    });
 
   }
 
