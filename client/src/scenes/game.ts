@@ -115,7 +115,7 @@ export default class GameScene extends Phaser.Scene {
     this.load.image("blue_runestone", "../assets/runestone_b.PNG");
     this.load.image("green_runestone", "../assets/runestone_g.PNG");
     this.load.image("yellow_runestone", "../assets/runestone_y.PNG");
-    this.load.image("shield", "../assets/shield.PNG");
+    this.load.image("prince", "../assets/prince.png");
     this.load.image("telescope", "../assets/telescope.PNG");
     this.load.image("half_wineskin", "../assets/half_wineskin.jpg")
     this.load.image("half_brew", "../assets/half_brew.jpg")
@@ -123,7 +123,7 @@ export default class GameScene extends Phaser.Scene {
 
     this.load.image("Strength", "../assets/strength.png");
     this.load.image("pawn", "../assets/pawn.png");
-
+    this.load.image('dshield', './assets/disabled_cracked_shield.png')
   }
 
   public create() {
@@ -143,7 +143,7 @@ export default class GameScene extends Phaser.Scene {
     this.addFarmers();
     this.addMonsters();
     this.addShieldsToRietburg();
-    this.prince = new Prince(this, this.tiles[72], 'shield');
+    this.prince = new Prince(this, this.tiles[72], 'prince').setScale(.15);
     this.add.existing(this.prince);
 
     // x and y coordinates
@@ -378,12 +378,12 @@ export default class GameScene extends Phaser.Scene {
   }
 
   private addShieldsToRietburg() {
-    let s1 = this.add.sprite(85, 190, 'weed').setDisplaySize(40, 40)
-    let s2 = this.add.sprite(155, 190, 'weed').setDisplaySize(40, 40)
-    let s3 = this.add.sprite(225, 190, 'weed').setDisplaySize(40, 40)
-    let s4 = this.add.sprite(85, 310, 'weed').setDisplaySize(40, 40)
-    let s5 = this.add.sprite(155, 310, 'weed').setDisplaySize(40, 40)
-    let s6 = this.add.sprite(85, 430, 'weed').setDisplaySize(40, 40)
+    let s1 = this.add.sprite(85, 188, 'dshield').setDisplaySize(65, 81)
+    let s2 = this.add.sprite(153, 188, 'dshield').setDisplaySize(65, 81)
+    let s3 = this.add.sprite(218, 188, 'dshield').setDisplaySize(65, 81)
+    let s4 = this.add.sprite(85, 310, 'dshield').setDisplaySize(65, 81)
+    let s5 = this.add.sprite(153, 310, 'dshield').setDisplaySize(65, 81)
+    let s6 = this.add.sprite(85, 430, 'dshield').setDisplaySize(65, 81)
 
     this.castle.shields.push(s1)
     this.castle.shields.push(s2)
@@ -631,7 +631,7 @@ export default class GameScene extends Phaser.Scene {
         // let A be the default. can change the .A to anything under N. checked that it works
         var posNarrator = character
 
-        const newNarrator = new Narrator(this, posNarrator, "pawn", this.gameinstance).setDisplaySize(40, 40);
+        const newNarrator = new Narrator(this, posNarrator, "pawn", this.gameinstance).setDisplaySize(33, 79.5);
         this.add.existing(newNarrator);        
 
         newNarrator.advance()             
