@@ -2,7 +2,57 @@ import { Game, HeroKind, Region, Hero, Monster, Fog, MonsterKind } from '../mode
 import { SmallItem } from '../model/SmallItem';
 import { LargeItem } from '../model/LargeItem';
 
+import { mapToJson } from "../utils/helpers";
+
 export function game(socket, model: Game, io) {
+
+  socket.on("save", function () {
+    var fs = require('fs');
+    let tempData = fs.readFileSync('db.json')
+    let data = JSON.parse(tempData);
+
+    const gameName = model.getName();
+    const game = {};
+    game['name'] = gameName;
+    game['difficulty'] = model.difficulty;
+    game['numOfDesiredPlayers'] = model.numOfDesiredPlayers;
+    game['castle'] = JSON.stringify(model.getCastle());
+    game['fogs'] = mapToJson(model.getFogs());
+    game['heros'] = JSON.stringify(Array.from(model.getHeros().values()));
+    game['farmers'] = JSON.stringify(model.getFarmers());
+    game['monsters'] = JSON.stringify(Array.from(model.getMonsters().values()));
+    game['monstersInCastle'] = JSON.stringify(model.getMonstersInCastle());
+    game['endOfGame'] = model.getEndOfGameState();
+    game['eventDeck'] = JSON.stringify(model.getEventDeck());
+    game['activeEvents'] = JSON.stringify(model.getActiveEvents());
+    game['nextDayFirstHero'] = model.nextDayFirstHero;
+    game['currPlayersTurn'] = model.currPlayersTurn;
+    game['activeHeros'] = JSON.stringify(model.getActiveHeros());
+    game['regions'] = JSON.stringify(model.getRegions());
+    game['prince'] = JSON.stringify(model.getPrince());
+    game['narrator'] = JSON.stringify(model.getNarrator(),["legendPosition"])
+
+    if (!data.games) {
+      data['games'] = {}
+    }
+    data['games'][gameName] = game;
+    // console.log(data);
+    fs.writeFileSync("db.json", JSON.stringify(data, null, 1));
+  })
+
+  socket.on("getGameData", function (callback) {
+    // im sorry for whoever will have to read this. We're too tight on time.
+    const maps = ["monsters", "players", "heroList", "fogs"]
+    let tempModel = {};
+    Object.keys(model).forEach((key) => {
+      if (maps.includes(key)) { // convert maps to arrays so that socket can pass them.
+        tempModel[key] = Array.from(model[key]);
+      } else
+        tempModel[key] = model[key];
+       
+    });
+    callback(tempModel)
+  })
 
   socket.on("moveRequest", function (id, callback) {
     id = +id // turning Id from string to number
@@ -340,9 +390,9 @@ export function game(socket, model: Game, io) {
 
   socket.on('bind hero', function (heroType, callback) {
     let id = socket.conn.id;
-    const success = model.bindHero(id, heroType);
-
+    const success = model.getHeros().size < model.numOfDesiredPlayers && model.bindHero(id, heroType);
     if (success) {
+      model.readyplayers += 1;
       let remaining = model.getAvailableHeros();
       let heros = {
         taken: ["archer", "warrior", "mage", "dwarf"].filter(f => !remaining.toString().includes(f)),
@@ -362,7 +412,7 @@ export function game(socket, model: Game, io) {
     callback(heros);
   });
 
-  socket.on('getAdjacentTiles', function(centraltileid, callback) {
+  socket.on('getAdjacentTiles', function (centraltileid, callback) {
     var region = model.getRegions()[centraltileid]
     var adjacentregions = region.getAdjRegionsIds()
     callback(adjacentregions)
@@ -393,19 +443,8 @@ export function game(socket, model: Game, io) {
     socket.broadcast.emit('removeObjListener', object)
   })
 
-  socket.on('playerReady', function () {
-    model.readyplayers += 1;
-    socket.broadcast.emit('recieveDesiredPlayerCount', model.getNumOfDesiredPlayers())
-  })
-
-  socket.on('getReadyPlayers', function () {
-    socket.broadcast.emit('sendReadyPlayers', model.readyplayers)
-    socket.emit('sendReadyPlayers', model.readyplayers)
-  })
-
-  socket.on('getDesiredPlayerCount', function () {
-    socket.broadcast.emit('recieveDesiredPlayerCount', model.getNumOfDesiredPlayers())
-    socket.emit('recieveDesiredPlayerCount', model.getNumOfDesiredPlayers())
+  socket.on('allPlayersReady', function (callback) {
+    callback(model.readyplayers === model.getNumOfDesiredPlayers());
   })
 
   socket.on("getHeros", function (callback) {
@@ -417,7 +456,6 @@ export function game(socket, model: Game, io) {
 
   socket.on("getHeroAttributes", function (type, callback) {
     let data = {};
-    let hero: Hero;
 
     model.getHeros().forEach((hero, key) => {
       if (type === "mage" && hero.hk === HeroKind.Mage) {
@@ -532,7 +570,7 @@ export function game(socket, model: Game, io) {
     //socket.emit('sendKilledMonsters', monstername);
   })
 
-  socket.on('heroRoll', function(bow, callback) {
+  socket.on('heroRoll', function (bow, callback) {
     let heroId = socket.conn.id
     var hero = model.getHero(heroId)
     var roll = hero.roll(bow)
@@ -544,7 +582,7 @@ export function game(socket, model: Game, io) {
     socket.broadcast.emit('receiveAlliedRoll', herokind, roll, str)
   })
 
-  socket.on('monsterRoll', function(m, callback) {
+  socket.on('monsterRoll', function (m, callback) {
     //the boolean parameter in the callback is to determine if the bow special ability will be used for the hero roll.
     var heroId = socket.conn.id;
     let hero = model.getHero(heroId);
@@ -563,7 +601,7 @@ export function game(socket, model: Game, io) {
       callback(monsterroll, true)
     }
     //if hero is archer
-    else if (hero.getKind() == HeroKind.Archer ){
+    else if (hero.getKind() == HeroKind.Archer) {
       if (hero.getRegion().getAdjRegionsIds().includes(monsterregion) || heroregion == monsterregion) {
         let monsterroll = monster!.rollDice()
         callback(monsterroll, false)
@@ -606,12 +644,12 @@ export function game(socket, model: Game, io) {
     var centraltile = model.getRegions()[id]
     var centraltileid = centraltile.getID()
     var adjregionids = centraltile.getAdjRegionsIds()
-    let dwarftile: number = -1 
+    let dwarftile: number = -1
     var dwarfbow = false
-    let archertile: number = -1 
-    let magetile: number = -1  
+    let archertile: number = -1
+    let magetile: number = -1
     var magebow = false
-    let warriortile: number = -1 
+    let warriortile: number = -1
     var warriorbow = false
 
     model.getHeros().forEach((hero, key) => {
@@ -653,7 +691,7 @@ export function game(socket, model: Game, io) {
       }
     });
 
-    var heroeswithinrange : string[] = []
+    var heroeswithinrange: string[] = []
     if (centraltileid == dwarftile || (adjregionids.includes(dwarftile) && dwarfbow)) {
       heroeswithinrange.push('dwarf')
     }
@@ -810,12 +848,12 @@ export function game(socket, model: Game, io) {
   /////////////////////////
   // ITEM STUFF
   ////////////////////////
-  
-  socket.on('getHeroItems', function(herokind, callback) {
+
+  socket.on('getHeroItems', function (herokind, callback) {
     var thehero: Hero
     model.getHeros().forEach((hero, key) => {
       console.log(hero.getKind())
-      if (hero.getKind() == herokind){
+      if (hero.getKind() == herokind) {
         thehero = hero
       }
     })
@@ -823,16 +861,16 @@ export function game(socket, model: Game, io) {
     callback(heroItemDict)
   })
 
-  socket.on('consumeItem', function(item) {
+  socket.on('consumeItem', function (item) {
     var heroID = socket.conn.id
     let hero = model.getHero(heroID);
     hero.consumeItem(item)
   })
 
-  socket.on('useWineskin', function(halforfull, callback) {
+  socket.on('useWineskin', function (halforfull, callback) {
     var heroID = socket.conn.id
     let hero = model.getHero(heroID);
-    if (halforfull == 'full'){
+    if (halforfull == 'full') {
       hero.consumeItem('wineskin')
     }
     else {
@@ -849,36 +887,36 @@ export function game(socket, model: Game, io) {
   // TRADE STUFF
   /////////////////////
 
-  socket.on('sendTradeInvite', function(host, invitee) {
+  socket.on('sendTradeInvite', function (host, invitee) {
     var invitee_id = model.getIDsByHeroname([invitee])
     for (let playerid of invitee_id) {
       socket.broadcast.to(`/${model.getName()}#${playerid}`).emit("receiveTradeInvite", host, invitee)
     }
   })
 
-  socket.on('sendTradeOfferChanged', function(otherplayer, itemindex) {
+  socket.on('sendTradeOfferChanged', function (otherplayer, itemindex) {
     var otherplayer_id = model.getIDsByHeroname([otherplayer])
     for (let playerid of otherplayer_id) {
       socket.broadcast.to(`/${model.getName()}#${playerid}`).emit("receiveTradeOfferChanged", itemindex)
     }
   })
 
-  
-  socket.on('submitOffer', function(youroffer) {
+
+  socket.on('submitOffer', function (youroffer) {
     console.log(youroffer)
     socket.broadcast.emit('receiveOffer', youroffer)
   })
 
-  socket.on('executeTrade', function(herokind, items_given, items_gained) {
+  socket.on('executeTrade', function (herokind, items_given, items_gained) {
     var thehero: Hero
 
     //deleting given items
     console.log('xxxxxxxxxxxxx')
     console.log(Object.values(SmallItem))
-    console.log(herokind,items_given, items_gained)
+    console.log(herokind, items_given, items_gained)
     console.log('xxxxxxxxxxxxx')
     model.getHeros().forEach((hero, key) => {
-      if (hero.getKind() == herokind){
+      if (hero.getKind() == herokind) {
         thehero = hero
       }
     })
@@ -914,8 +952,8 @@ export function game(socket, model: Game, io) {
     switch(str){
       case "wineskin" : return SmallItem.Wineskin
       case "half_wineskin": return SmallItem.HalfWineskin
-      case "telescope":return SmallItem.Telescope
-      case "brew":return SmallItem.Brew
+      case "telescope": return SmallItem.Telescope
+      case "brew": return SmallItem.Brew
       case "half_brew": return SmallItem.HalfBrew
       case "herb": return SmallItem.Herb
       case "blue_runestone": return SmallItem.BlueRunestone
@@ -936,15 +974,15 @@ export function game(socket, model: Game, io) {
     }
   }
 
-  socket.on('tradeDone', function() {
+  socket.on('tradeDone', function () {
     socket.broadcast.emit('endTrade')
   })
 
-  socket.on('validateTrade', function(hero1, hero2, hero1receives, hero2receives, callback) {
+  socket.on('validateTrade', function (hero1, hero2, hero1receives, hero2receives, callback) {
     var hero1ref: Hero
     var hero2ref: Hero
     model.getHeros().forEach((hero, key) => {
-      if (hero.getKind() == hero1){
+      if (hero.getKind() == hero1) {
         hero1ref = hero
       }
       if (hero.getKind() == hero2) {
@@ -952,30 +990,30 @@ export function game(socket, model: Game, io) {
       }
     })
 
-    if (hero1receives['helm']!='None' && hero2receives['helm'] == 'None' && hero1ref!.getItemDict['helm'] != 'false') {
+    if (hero1receives['helm'] != 'None' && hero2receives['helm'] == 'None' && hero1ref!.getItemDict['helm'] != 'false') {
       console.log('xxxxxxxxxxxxxxxxxxxxxx1')
       callback('fail')
     }
-    if (hero2receives['helm']!='None' && hero1receives['helm'] == 'None' && hero2ref!.getItemDict['helm'] != 'false') {
+    if (hero2receives['helm'] != 'None' && hero1receives['helm'] == 'None' && hero2ref!.getItemDict['helm'] != 'false') {
       console.log('xxxxxxxxxxxxxxxxxxxxxx2')
       callback('fail')
     }
 
-    if (hero1receives['largeItem']!='None' && hero2receives['largeItem'] == 'None' && hero1ref!.getItemDict['largeItem'] != 'empty') {
+    if (hero1receives['largeItem'] != 'None' && hero2receives['largeItem'] == 'None' && hero1ref!.getItemDict['largeItem'] != 'empty') {
       console.log('xxxxxxxxxxxxxxxxxxxxxx3')
       callback('fail')
     }
-    if (hero2receives['helm']!='None' && hero1receives['helm'] == 'None' && hero2ref!.getItemDict['helm'] != 'empty') {
+    if (hero2receives['helm'] != 'None' && hero1receives['helm'] == 'None' && hero2ref!.getItemDict['helm'] != 'empty') {
       console.log('xxxxxxxxxxxxxxxxxxxxxx4')
       callback('fail')
     }
 
-    if (hero1receives['smallItems'].length + hero1ref!.getItemDict()['smallItems'].length - hero2receives['smallItems'].length > 3){
+    if (hero1receives['smallItems'].length + hero1ref!.getItemDict()['smallItems'].length - hero2receives['smallItems'].length > 3) {
       console.log('xxxxxxxxxxxxxxxxxxxxxx5')
       callback('fail')
     }
 
-    if (hero2receives['smallItems'].length + hero2ref!.getItemDict()['smallItems'].length - hero1receives['smallItems'].length > 3){
+    if (hero2receives['smallItems'].length + hero2ref!.getItemDict()['smallItems'].length - hero1receives['smallItems'].length > 3) {
       console.log('xxxxxxxxxxxxxxxxxxxxxx6')
       callback('fail')
     }

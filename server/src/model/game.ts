@@ -15,12 +15,22 @@ import {
 } from "."
 import { LargeItem } from './LargeItem';
 import { SmallItem } from './SmallItem';
-import { Socket } from 'dgram';
+
+import {
+    dFarmers,
+    dRegions,
+    dMonsters,
+    dFogs,
+    dEventDeck,
+    dCastle,
+    dPrince,
+    dNarrator
+} from "./defaults";
 
 export class Game {
-    private numOfDesiredPlayers: number;
-    private difficulty: GameDifficulty;
-    private castle: RietburgCastle;
+    public numOfDesiredPlayers: number;
+    public difficulty: GameDifficulty;
+    private castle!: RietburgCastle;
     private players: Set<Player>;
     private name: string;
     private chatlog;
@@ -31,8 +41,8 @@ export class Game {
     // herokind of heroes who haven't ended their day yet
     private activeHeros: HeroKind[];
     // null when the game first starts
-    private nextDayFirstHero: HeroKind | null = null;
-    private currPlayersTurn: HeroKind;
+    public nextDayFirstHero: HeroKind | null = null;
+    public currPlayersTurn: HeroKind;
 
     private fogs: Map<number, Fog>;
     private regions: Array<Region>;
@@ -40,9 +50,9 @@ export class Game {
     private monsters: Map<string, Monster>;
     private monstersInCastle: string[];
     private endOfGame: boolean = false;
-    private prince: Prince;
+    private prince!: Prince;
 
-    private narrator: Narrator;
+    private narrator!: Narrator;
 
     // collab decision related state
     public numAccepts: number;
@@ -57,7 +67,6 @@ export class Game {
         this.name = name;
         this.numOfDesiredPlayers = numOfDesiredPlayers;
         this.difficulty = difficulty;
-        this.castle = new RietburgCastle()
         this.chatlog = [];
         this.players = new Set<Player>();
         this.heroList = new Map<string, Hero>();
@@ -67,29 +76,67 @@ export class Game {
         this.monsters = new Map<string, Monster>();
         this.monstersInCastle = [];
         this.fogs = new Map<number, Fog>();
-        this.currPlayersTurn = HeroKind.None;
-        this.setRegions();
-        this.setFarmers();
-        this.setMonsters();
-        this.setShields();
-        this.setFogs();
-        this.prince = new Prince(this.regions[72]);
+        this.eventDeck = new Array<EventCard>()
         this.readyplayers = 0;
         this.numAccepts = 0;
-        this.eventDeck = new Array<EventCard>()
-        this.setEventDeck()
-        this.activeEvents = new Array<Number>()
+        this.currPlayersTurn = HeroKind.Dwarf;
+        this.activeEvents = new Array<number>()
 
-        this.narrator = new Narrator(this, 0)
+        // this.narrator = new Narrator(this, 0)
     }
 
-    private setNarrator(initialNarratorPosition: number) {
-        var newNarrator = new Narrator(this, initialNarratorPosition)
+    public initialize(
+        currPlayersTurn?,
+        regions?,
+        farmers?,
+        monsters?,
+        fogs?,
+        heros?,        
+        eventDeck?,
+        activeEvents?,        
+        nextDayFirstHero?,
+        activeHeros?,
+        castle?,
+        monstersInCastle?,
+        endOfGameState?,
+        prince?,
+        narrator?
+    ) {
+        currPlayersTurn = currPlayersTurn || HeroKind.None;
+        regions = regions || dRegions;
+        farmers = farmers || dFarmers;
+        monsters = monsters || dMonsters;
+        fogs = fogs || dFogs();
+        heros = heros || [];
+        eventDeck = eventDeck || dEventDeck();
+        activeEvents = activeEvents || [];
+        nextDayFirstHero = nextDayFirstHero || HeroKind.None;
+        activeHeros = activeHeros || [];
+        castle = castle || dCastle(this.numOfDesiredPlayers);
+        monstersInCastle = monstersInCastle || [];
+        endOfGameState = endOfGameState || false;
+        prince = prince || dPrince;
+        narrator = narrator || dNarrator;
 
+
+        this.currPlayersTurn = currPlayersTurn;
+        this.nextDayFirstHero = nextDayFirstHero;
+        this.setRegions(regions);
+        // this.setHeros(heros);
+        this.setFarmers(farmers);
+        this.setMonsters(monsters);
+        this.setFogs(fogs);
+        this.setEventDeck(eventDeck);
+        this.setActiveEvents(activeEvents);
+        this.setActiveHeros(activeHeros);
+        this.castle = new RietburgCastle(castle.numDefenseShields, castle.numDefenseShieldsUsed);
+        this.monstersInCastle = monstersInCastle;
+        this.endOfGame = endOfGameState;
+        this.prince = new Prince(this.regions[prince.tile.id]);
+        this.narrator = new Narrator(narrator.legendPosition);
 
     }
 
-    
     private setFirstHerosTurn() {
         var minRank = Number.MAX_VALUE;
         var ID = "none";
@@ -117,7 +164,7 @@ export class Game {
     //  in this case we pass the next turn to the day's earliest ending player (nextDayFirstHero).
     //  False otherwise, in this case we pass the next turn based on increasing hero rank.
     // Returns HeroKind of the next player
-    public nextPlayer(endDayAll: boolean) : HeroKind {
+    public nextPlayer(endDayAll: boolean): HeroKind {
 
         // If the last person is ending their day, pass turn to earliest ending player
         if (endDayAll) {
@@ -154,32 +201,18 @@ export class Game {
         return hk; // None if not found
     }
 
-    private setShields() {
-        var numPlayers = this.numOfDesiredPlayers;
-
-        if (numPlayers === 2) {
-            this.castle.setShields(3);
-        } else if (numPlayers === 3) {
-            this.castle.setShields(2);
-        } else if (numPlayers === 4) {
-            this.castle.setShields(1);
-        }
+    public setFarmers(f) {
+        f.forEach((farmer) => {
+            const farmObj = new Farmer(farmer.id, farmer.tileID);
+            this.farmers.push(farmObj)
+            this.regions[farmObj.getTileID()].addFarmer(farmObj);
+        })
     }
 
-    private setFarmers() {
-        this.farmers.push(new Farmer(0, 24));
-        this.farmers.push(new Farmer(1, 36));
-        this.regions[24].addFarmer(this.farmers[0]);
-        this.regions[36].addFarmer(this.farmers[1]);
-    }
-
-    private setMonsters() {
-        this.addMonster(MonsterKind.Gor, 8, 'gor1');
-        this.addMonster(MonsterKind.Gor, 20, 'gor2');
-        this.addMonster(MonsterKind.Gor, 21, 'gor3');
-        this.addMonster(MonsterKind.Gor, 26, 'gor4');
-        this.addMonster(MonsterKind.Gor, 48, 'gor5');
-        this.addMonster(MonsterKind.Skral, 19, 'skral1');
+    public setMonsters(monsters) {
+        monsters.forEach(monster => {
+            this.addMonster(monster.type, monster.tileID, monster.name);
+        })
     }
 
     public addMonster(kind: MonsterKind, tile: number, id: string) {
@@ -201,39 +234,28 @@ export class Game {
         }*/
     }
 
-    private setRegions() {
+    public setRegions(regions) {
         // Note that regions 73-79 and 83 are unused, but created anyways to preserve direct
         // indexing between regions array and region IDs
-        var tilesData = require("./tilemap").map;
-        tilesData.forEach(t => {
+        regions.forEach(t => {
             // on top of setting t.something, also set amount of gold on each tile to 0
-            this.regions.push(new Region(0, t.id, t.nextRegionId, t.adjRegionsIds, t.hasWell, t.hasMerchant))
+            this.regions.push(new Region(t.id, t.xcoord, t.ycoord, 0, t.nextRegionId, t.adjRegionsIds, t.hasWell, t.hasMerchant))
         })
     }
 
-    private setFogs() {
-        const fogIds = [8, 11, 12, 13, 49, 16, 32, 48, 42, 44, 47, 46, 64, 56, 63];
-        let fogTypes = [Fog.EventCard, Fog.EventCard, Fog.EventCard, Fog.EventCard, Fog.EventCard, Fog.Strength, Fog.WillPower2, Fog.WillPower3, Fog.Gold, Fog.Gold, Fog.Gold, Fog.Gor, Fog.Gor, Fog.Wineskin, Fog.Brew];
-        shuffle(fogTypes);
-
-        fogIds.forEach((id, i) => {
-            this.fogs.set(id, fogTypes[i]);
-        })
-
-        function shuffle(a) {
-            for (let i = a.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [a[i], a[j]] = [a[j], a[i]];
-            }
-            return a;
-        }
+    public setFogs(fogs: Map<number, Fog>) {
+        this.fogs = fogs;
     }
 
     public getFogs(): Map<number, Fog> {
         return this.fogs;
     }
 
-    public getPrince(): Prince{
+    public getFarmers(): Array<Farmer> {
+        return this.farmers;
+    }
+
+    public getPrince(): Prince {
         return this.prince;
     }
 
@@ -256,19 +278,22 @@ export class Game {
     */
     public bindHero(id: string, heroType: HeroKind): boolean {
         // Herokind already been taken
+        let heroTaken = false;
         this.heroList.forEach((hero, key) => {
             if (hero.getKind() === heroType) {
-                return false;
+                heroTaken = true;
             }
         })
+        if (heroTaken) return false; // failed to bind hero
+
         if (heroType === HeroKind.Dwarf) {
             this.heroList.set(id, new Hero(heroType, this.regions[7]));
             //REMOVE before merging to master
-            let dwarf = this.heroList.get(id)
-            dwarf?.pickUpLargeItem(dwarf.getRegion().getID(), LargeItem.Bow)
-            dwarf?.pickUpSmallItem(dwarf.getRegion().getID(), SmallItem.Telescope)
-            dwarf?.pickUpSmallItem(dwarf.getRegion().getID(), SmallItem.Wineskin)
-            dwarf?.pickUpHelm(dwarf.getRegion().getID());
+            // let dwarf = this.heroList.get(id)
+            // dwarf?.pickUpLargeItem(dwarf.getRegion().getID(), LargeItem.Bow)
+            // dwarf?.pickUpSmallItem(dwarf.getRegion().getID(), SmallItem.Telescope)
+            // dwarf?.pickUpSmallItem(dwarf.getRegion().getID(), SmallItem.Wineskin)
+            // dwarf?.pickUpHelm(dwarf.getRegion().getID());
         }
         else if (heroType === HeroKind.Archer) {
             this.heroList.set(id, new Hero(heroType, this.regions[25]));
@@ -288,6 +313,11 @@ export class Game {
 
     }
 
+    public setCastle(c) {
+        if (c != null)
+            this.castle = new RietburgCastle(c.numDefenseShields, c.numDefenseShieldsUsed);
+    }
+
     public getCastle() {
         return this.castle;
     }
@@ -298,6 +328,10 @@ export class Game {
 
     public getActiveHeros() {
         return this.activeHeros;
+    }
+
+    public setActiveHeros(kinds) {
+        this.activeHeros = kinds;
     }
 
     public removeFromActiveHeros(connID: string) {
@@ -375,26 +409,6 @@ export class Game {
 
     public moveHeroTo(hero, tile) {
         hero.moveTo(tile)
-    }
-
-    private endGame() {
-        //TO BE IMPLEMENTED
-    }
-
-    private checkMonsterInRietburg() {
-        //TO BE IMPLEMENTED
-    }
-
-    private checkForFarmer(tile: Region) {
-        //TO BE IMPLEMENTED
-    }
-
-    private checkHeroOnWellTile() {
-        //TO BE IMPLEMENTED
-    }
-
-    private incrementNarratorPosition() {
-        //TO BE IMPLEMENTED      
     }
 
     public pushToLog(item) {
@@ -522,12 +536,24 @@ export class Game {
         }
     }
 
+    public setEndOfGameState(b: boolean) {
+        this.endOfGame = b;
+    }
     public getEndOfGameState() {
         return this.endOfGame;
     }
 
+    public setMonstersInCastle(arr) {
+        this.monstersInCastle = arr;
+    }
+
+    public getMonstersInCastle() {
+        return this.monstersInCastle;
+    }
+
     public useFog(fog: Fog, tile: number) {
         if (this.fogs.get(tile) != undefined && this.fogs.get(tile) == fog) { // make sure tile has a fog and its the same
+            this.fogs.delete(tile); // delete fog from game
             // testing useFog
             var currHero = this.getHeroFromHk(this.currPlayersTurn);
             console.log("fog test, currHero:", currHero);
@@ -554,19 +580,19 @@ export class Game {
 
             } else if (fog == Fog.EventCard) {
                 var newEvent = this.drawCard()
-                if(newEvent != null){
-                    return {success: true, event: newEvent}
+                if (newEvent != null) {
+                    return { success: true, event: newEvent }
                 }
-                return {success: false, event: null}
+                return { success: false, event: null }
             }
         }
         return { success: false };
     }
 
     // Returns the Hero instance in heroList corresponding to the HeroKind requested
-    private getHeroFromHk(hk: HeroKind) : Hero | null {
+    private getHeroFromHk(hk: HeroKind): Hero | null {
         var hero;
-        Array.from(this.heroList.values()).forEach( h => {
+        Array.from(this.heroList.values()).forEach(h => {
             if (h.hk == hk) {
                 hero = h;
             }
@@ -577,9 +603,9 @@ export class Game {
         return hero; // null if no corresponding hero is found
     }
 
-    public getConnIdFromHk(hk: HeroKind) : string | null {
+    public getConnIdFromHk(hk: HeroKind): string | null {
         var connID;
-        this.heroList.forEach(function(h, id) {
+        this.heroList.forEach(function (h, id) {
             if (h.hk == hk) {
                 connID = id;
             }
@@ -589,7 +615,7 @@ export class Game {
         }
         return connID; // null if no corresponding hero is found
     }
-    public getHkFromConnID(connID: string) : HeroKind {
+    public getHkFromConnID(connID: string): HeroKind {
         var hk = this.heroList.get(connID)?.hk;
         if (hk == null) {
             hk = HeroKind.None; // set to None if no match found
@@ -597,38 +623,28 @@ export class Game {
         }
         return hk;
     }
-    
-    public drawCard(){
+
+    public drawCard() {
         return this.eventDeck.shift()
     }
+    public setActiveEvents(events) {
+        events.forEach((id) => {
+            this.activeEvents.push(id);
+        })
+    }
 
-    
-    private setEventDeck(){
-        var eventCardData = require("./EventCardMap").map;
-        eventCardData.forEach(ec => {
+    public setEventDeck(events) {
+        events.forEach(ec => {
             this.eventDeck.push(new EventCard(ec.id, ec.flavorText, ec.desc))
         })
-        this.shuffleEventDeck()
-        console.log(this.eventDeck)
     }
 
-    private shuffleEventDeck(){
-        let m = this.eventDeck.length, i
-        while(m){
-            i = Math.floor(Math.random() * m)
-            m--
-            [this.eventDeck[m], this.eventDeck[i]] = [this.eventDeck[i], this.eventDeck[m]]
-        }
-    }
-    public getActiveEvents(){
-        return this.activeEvents
-    }
-    public clearActiveEvents(){
+    public clearActiveEvents() {
         //revert events which affected state
-        for(var i = 0; i < this.activeEvents.length; i++){
+        for (var i = 0; i < this.activeEvents.length; i++) {
             //revert changes to monster strength
-            if(this.activeEvents[i] == 11){
-                for(let [name,monster] of this.monsters){
+            if (this.activeEvents[i] == 11) {
+                for (let [name, monster] of this.monsters) {
                     let currStr = monster.getStrength()
                     monster.setStrength(currStr - 1)
                 }
@@ -638,117 +654,133 @@ export class Game {
         this.activeEvents = []
     }
 
-    public applyEvent(event){
+    public applyEvent(event) {
         console.log("Applying event: ", event.id)
         //do something
-        if(event.id == 2){
-            for(let [conn,hero] of this.heroList){
+        if (event.id == 2) {
+            for (let [conn, hero] of this.heroList) {
                 let tID = hero.getRegion().getID()
-                if(0 <= tID && tID <= 20){
+                if (0 <= tID && tID <= 20) {
                     hero.setWill(-3)
                 }
             }
         }
-        else if(event.id == 5){
-            for(let [conn,hero] of this.heroList){
+        else if (event.id == 5) {
+            for (let [conn, hero] of this.heroList) {
                 let tID = hero.getRegion().getID()
-                if(37 <= tID && tID <= 70){
+                if (37 <= tID && tID <= 70) {
                     hero.setWill(-3)
                 }
             }
         }
-        else if(event.id ==11){
-            for(let [name,monster] of this.monsters){
+        else if (event.id == 11) {
+            for (let [name, monster] of this.monsters) {
                 let currStr = monster.getStrength()
                 monster.setStrength(currStr + 1)
             }
             this.activeEvents.push(11)
         }
-        else if(event.id == 12){
-            for(let [conn,hero] of this.heroList){
-                if(hero.getKind() == HeroKind.Archer || hero.getKind() == HeroKind.Mage){
+        else if (event.id == 12) {
+            for (let [conn, hero] of this.heroList) {
+                if (hero.getKind() == HeroKind.Archer || hero.getKind() == HeroKind.Mage) {
                     hero.setWill(3)
                 }
             }
         }
-        else if(event.id == 13){
-            for(let [conn,hero] of this.heroList){
+        else if (event.id == 13) {
+            for (let [conn, hero] of this.heroList) {
                 let currWill = hero.getWill()
-                if(currWill < 10){
-                    hero.setWill(10-currWill)
+                if (currWill < 10) {
+                    hero.setWill(10 - currWill)
                 }
             }
         }
-        else if(event.id == 14){
-            for(let [conn,hero] of this.heroList){
-                if(hero.getKind() == HeroKind.Dwarf || hero.getKind() == HeroKind.Warrior){
+        else if (event.id == 14) {
+            for (let [conn, hero] of this.heroList) {
+                if (hero.getKind() == HeroKind.Dwarf || hero.getKind() == HeroKind.Warrior) {
                     hero.setWill(3)
                 }
             }
         }
-        else if(event.id == 15){
+        else if (event.id == 15) {
             this.regions[35].removeWell()
         }
-        else if(event.id == 17){
-            for(let [conn,hero] of this.heroList){
+        else if (event.id == 17) {
+            for (let [conn, hero] of this.heroList) {
                 let currWill = hero.getWill()
-                if(currWill > 12){
-                    hero.setWill(12-currWill)
+                if (currWill > 12) {
+                    hero.setWill(12 - currWill)
                 }
             }
         }
-        else if(event.id == 19){
+        else if (event.id == 19) {
             this.activeEvents.push(event.id)
         }
-        else if(event.id == 22){
+        else if (event.id == 22) {
             this.regions[45].removeWell()
         }
-        else if(event.id == 24){
-            for(let [conn,hero] of this.heroList){
+        else if (event.id == 24) {
+            for (let [conn, hero] of this.heroList) {
                 let tID = hero.getRegion().getID()
-                if(tID == 71 || tID == 72 || tID == 0 || 47 <= tID && tID <= 63){
+                if (tID == 71 || tID == 72 || tID == 0 || 47 <= tID && tID <= 63) {
                     //this hero is safe
                     continue
                 }
-                else{
+                else {
                     hero.setWill(-2)
                 }
             }
         }
-        else if(event.id == 26){
+        else if (event.id == 26) {
             this.activeEvents.push(event.id)
         }
-        else if(event.id == 28){
-            for(let [conn,hero] of this.heroList){
+        else if (event.id == 28) {
+            for (let [conn, hero] of this.heroList) {
                 let time = hero.getTimeOfDay()
                 console.log(hero.getKind(), time)
-                if(time == 1){
+                if (time == 1) {
                     hero.setWill(2)
                 }
             }
         }
-        if(event.id == 31){
-            for(let [conn,hero] of this.heroList){
+        if (event.id == 31) {
+            for (let [conn, hero] of this.heroList) {
                 let tID = hero.getRegion().getID()
-                if(tID == 71 || tID == 72 || tID == 0 || 47 <= tID && tID <= 63){
+                if (tID == 71 || tID == 72 || tID == 0 || 47 <= tID && tID <= 63) {
                     //this hero is safe
                     continue
                 }
-                else{
+                else {
                     hero.setWill(-2)
                 }
             }
         }
-        else if(event.id == 32){
-            for(let [conn,hero] of this.heroList){
+        else if (event.id == 32) {
+            for (let [conn, hero] of this.heroList) {
                 let time = hero.getTimeOfDay()
                 console.log(hero.getKind(), time)
-                if(time == 1){
+                if (time == 1) {
                     hero.setWill(-2)
                 }
             }
         }
-           
+
         //if one that returns to deck ?? not sure if any return
+    }
+
+    public getEventDeck() {
+        return this.eventDeck;
+    }
+
+    public getActiveEvents() {
+        return this.activeEvents;
+    }
+
+    private shuffle(a) {
+        for (let i = a.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
     }
 }

@@ -84,7 +84,7 @@ export default class LobbyScene extends Phaser.Scene {
 
         this.gameText.setInteractive();
         this.gameText.on('pointerdown', function (pointer) {
-            this.scene.start('Load');
+            this.scene.start('Load', { controller: self.lobbyController });
         }, this);
 
         this.optionsIcon = this.add.image(930, 80, 'optionsIcon').setInteractive();

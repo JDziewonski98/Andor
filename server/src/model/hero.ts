@@ -12,7 +12,6 @@ export class Hero {
     private will!: number;
     private moveCompleted: boolean = false;
     private timeOfDay: number = 1;
-    private farmer: boolean = false;
     private farmers: Array<Farmer>;
     private rank: number;
     private dice
@@ -182,7 +181,7 @@ export class Hero {
         var r_farmers = this.region.getFarmers();
         if(r_farmers.length != 0 && (this.region.getID() === r_farmers[r_farmers.length-1].getTileID())){
             var farmer = this.region.getFarmers().pop()!;
-            farmer.carriedBy = this;
+            // farmer.carriedBy = this;
             this.farmers.push(farmer);
             return this.region;
         }
@@ -194,7 +193,7 @@ export class Hero {
         var result = new Array()
         if(r_farmers.length < 2 && this.farmers.length > 0){
             var farmer = this.farmers.pop()!;
-            farmer.carriedBy = undefined;
+            // farmer.carriedBy = undefined;
             farmer.setTileID(this.region.getID());
             this.region.getFarmers().push(farmer);
             result.push(farmer.getFarmerID())

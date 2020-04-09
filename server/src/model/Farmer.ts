@@ -9,7 +9,7 @@ import { Region, Hero } from '.';
 export class Farmer{
     private id:number
     private tileID: number;
-    public carriedBy!: Hero | undefined;
+    // public carriedBy!: Hero | undefined;
 
     constructor(id, tileID) {
         this.id = id;
