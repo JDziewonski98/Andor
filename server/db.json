@@ -13,6 +13,40 @@
    "endOfGame": false,
    "eventDeck": "[{\"id\":11,\"flavorText\":\"The creatures gather their strength.\",\"desc\":\"On this day, each creature has 1 extra strength point. Place this card next to the creature display. At the end of the day, it is removed from the game. \"},{\"id\":11,\"flavorText\":\"The creatures gather their strength.\",\"desc\":\"On this day, each creature has 1 extra strength point. Place this card next to the creature display. At the end of the day, it is removed from the game. \"},{\"id\":11,\"flavorText\":\"The creatures gather their strength.\",\"desc\":\"On this day, each creature has 1 extra strength point. Place this card next to the creature display. At the end of the day, it is removed from the game. \"}]",
    "activeEvents": "[]"
+  },
+  "G2": {
+   "name": "G2",
+   "difficulty": "Easy",
+   "numOfDesiredPlayers": 1,
+   "castle": "{\"numDefenseShields\":0,\"numDefenseShieldsUsed\":0}",
+   "fogs": "[[8,\"WillPower2\"],[11,\"Wineskin\"],[12,\"EventCard\"],[13,\"EventCard\"],[49,\"Gold\"],[16,\"Gor\"],[32,\"Strength\"],[48,\"Brew\"],[42,\"EventCard\"],[44,\"Gor\"],[47,\"WillPower3\"],[46,\"Gold\"],[64,\"EventCard\"],[56,\"EventCard\"],[63,\"Gold\"]]",
+   "heros": "[{\"moveCompleted\":false,\"timeOfDay\":1,\"freeMoves\":0,\"wineskin\":false,\"largeItem\":\"bow\",\"helm\":true,\"smallItems\":[\"telescope\",\"wineskin\"],\"hk\":\"dwarf\",\"rank\":7,\"region\":{\"wellUsed\":false,\"items\":{},\"id\":7,\"hasWell\":false,\"hasMerchant\":false,\"nextRegionId\":0,\"adjRegionsIds\":[15,9,8,0,11],\"farmers\":[],\"gold\":0},\"farmers\":[],\"will\":7,\"strength\":1,\"gold\":2,\"dice\":[1,2,3]}]",
+   "farmers": "[{\"id\":0,\"tileID\":24},{\"id\":1,\"tileID\":36}]",
+   "monsters": "[[\"gor1\",{\"strength\":2,\"willpower\":4,\"dice\":\"red\",\"gold\":2,\"name\":\"gor1\",\"type\":\"gor\",\"tileID\":8}],[\"gor2\",{\"strength\":2,\"willpower\":4,\"dice\":\"red\",\"gold\":2,\"name\":\"gor2\",\"type\":\"gor\",\"tileID\":20}],[\"gor3\",{\"strength\":2,\"willpower\":4,\"dice\":\"red\",\"gold\":2,\"name\":\"gor3\",\"type\":\"gor\",\"tileID\":21}],[\"gor4\",{\"strength\":2,\"willpower\":4,\"dice\":\"red\",\"gold\":2,\"name\":\"gor4\",\"type\":\"gor\",\"tileID\":26}],[\"gor5\",{\"strength\":2,\"willpower\":4,\"dice\":\"red\",\"gold\":2,\"name\":\"gor5\",\"type\":\"gor\",\"tileID\":48}],[\"skral1\",{\"strength\":6,\"willpower\":6,\"dice\":\"red\",\"gold\":4,\"name\":\"skral1\",\"type\":\"skral\",\"tileID\":19}]]",
+   "monstersInCastle": "[]",
+   "endOfGame": false,
+   "eventDeck": "[{\"id\":11,\"flavorText\":\"The creatures gather their strength.\",\"desc\":\"On this day, each creature has 1 extra strength point. Place this card next to the creature display. At the end of the day, it is removed from the game. \"},{\"id\":11,\"flavorText\":\"The creatures gather their strength.\",\"desc\":\"On this day, each creature has 1 extra strength point. Place this card next to the creature display. At the end of the day, it is removed from the game. \"}]",
+   "activeEvents": "[]",
+   "nextDayFirstHero": null,
+   "currPlayersTurn": "dwarf",
+   "activeHeros": "[\"dwarf\",\"dwarf\"]"
+  },
+  "G3": {
+   "name": "G3",
+   "difficulty": "Easy",
+   "numOfDesiredPlayers": 1,
+   "castle": "{\"numDefenseShields\":0,\"numDefenseShieldsUsed\":0}",
+   "fogs": "[[8,\"Brew\"],[11,\"Wineskin\"],[12,\"Strength\"],[13,\"Gor\"],[49,\"EventCard\"],[16,\"Gold\"],[32,\"EventCard\"],[48,\"EventCard\"],[42,\"EventCard\"],[44,\"WillPower3\"],[47,\"Gold\"],[46,\"WillPower2\"],[64,\"Gor\"],[56,\"EventCard\"],[63,\"Gold\"]]",
+   "heros": "[{\"moveCompleted\":false,\"timeOfDay\":6,\"freeMoves\":0,\"wineskin\":true,\"largeItem\":\"empty\",\"helm\":false,\"smallItems\":[\"wineskin\"],\"hk\":\"mage\",\"rank\":34,\"region\":{\"wellUsed\":false,\"items\":{},\"x\":957,\"y\":2981,\"id\":20,\"hasWell\":false,\"hasMerchant\":false,\"nextRegionId\":3,\"adjRegionsIds\":[3,4,21,22,19],\"farmers\":[],\"gold\":0,\"curMonster\":{\"strength\":2,\"willpower\":4,\"dice\":\"red\",\"gold\":2,\"name\":\"gor2\",\"type\":\"gor\",\"tileID\":20}},\"farmers\":[],\"will\":7,\"strength\":1,\"gold\":9,\"dice\":[1,1,1]}]",
+   "farmers": "[{\"id\":0,\"tileID\":24},{\"id\":1,\"tileID\":36}]",
+   "monsters": "[[\"gor1\",{\"strength\":2,\"willpower\":4,\"dice\":\"red\",\"gold\":2,\"name\":\"gor1\",\"type\":\"gor\",\"tileID\":8}],[\"gor2\",{\"strength\":2,\"willpower\":4,\"dice\":\"red\",\"gold\":2,\"name\":\"gor2\",\"type\":\"gor\",\"tileID\":20}],[\"gor3\",{\"strength\":2,\"willpower\":4,\"dice\":\"red\",\"gold\":2,\"name\":\"gor3\",\"type\":\"gor\",\"tileID\":21}],[\"gor4\",{\"strength\":2,\"willpower\":4,\"dice\":\"red\",\"gold\":2,\"name\":\"gor4\",\"type\":\"gor\",\"tileID\":26}],[\"gor5\",{\"strength\":2,\"willpower\":4,\"dice\":\"red\",\"gold\":2,\"name\":\"gor5\",\"type\":\"gor\",\"tileID\":48}],[\"skral1\",{\"strength\":6,\"willpower\":6,\"dice\":\"red\",\"gold\":4,\"name\":\"skral1\",\"type\":\"skral\",\"tileID\":19}]]",
+   "monstersInCastle": "[]",
+   "endOfGame": false,
+   "eventDeck": "[{\"id\":11,\"flavorText\":\"The creatures gather their strength.\",\"desc\":\"On this day, each creature has 1 extra strength point. Place this card next to the creature display. At the end of the day, it is removed from the game. \"}]",
+   "activeEvents": "[]",
+   "nextDayFirstHero": null,
+   "currPlayersTurn": "mage",
+   "activeHeros": "[\"mage\"]"
   }
  }
 }

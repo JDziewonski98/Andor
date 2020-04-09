@@ -127,18 +127,13 @@ export default class GameScene extends Phaser.Scene {
 
       this.setRegions(data.regions);
       this.addFog(data.fogs);
-
       this.addShieldsToRietburg(data.castle.numDefenseShields - data.castle.numDefenseShieldsUsed);
+      this.addMonsters(data.monsters);
+      this.addHeros(data.heroList);
 
-
-      data.monsters.forEach(monster => {
-        this.addMonster(monster[1].tileID, monster[1].type, monster[0]);
-      })
-
-      data.heroList.forEach(hero => {
-        this.addHero(hero[1].hk, hero[1].region.id, hero[1].hk);
-      })
       this.hourTrackerSetup();
+
+      this.setUpListeners();
 
       // Add overlay to game
       const overlayData = {
@@ -164,7 +159,7 @@ export default class GameScene extends Phaser.Scene {
 
     })
 
-    this.setUpListeners();
+    
 
 
 
@@ -267,12 +262,12 @@ export default class GameScene extends Phaser.Scene {
     })
 
 
-    
+
     setInterval(() => {
       console.log("********* SAVING GAME");
       this.gameinstance.save();
     }, 30000);
-    
+
   }
 
   private cameraSetup() {
@@ -294,16 +289,17 @@ export default class GameScene extends Phaser.Scene {
   private setRegions(tilesData) {
     // Note that regions 73-79 and 83 are unused, but created anyways to preserve direct
     // indexing between regions array and region IDs
-    var tilesData = require("../utils/xycoords").map;
+    // var tilesData = require("../utils/xycoords").map;
     var treeTile = this.textures.get('tiles').getFrameNames()[12];
-    for (var element in tilesData) {
-      var tile = new Tile(element, this, tilesData[element].xcoord * scaleFactor + borderWidth, tilesData[element].ycoord * scaleFactor + borderWidth, treeTile, tilesData[element].adjRegionsIds);
-      this.tiles[element] = tile;
+    for (let t of tilesData) {
+      console.log(t)
+      var tile = new Tile(t.id, this, t.x * scaleFactor + borderWidth, t.y * scaleFactor + borderWidth, treeTile, t.adjRegionsIds);
+      this.tiles[t.id] = tile;
       tile.setInteractive();
       this.add.existing(tile);
 
-      if (tilesData[element].hasWell) {
-        this.addWell(tilesData[element].xcoord, tilesData[element].ycoord, +element);
+      if (t.hasWell) {
+        this.addWell(t.x, t.y, t.id as number);
       }
     }
 
@@ -315,7 +311,7 @@ export default class GameScene extends Phaser.Scene {
         if (this.shiftKey.isDown) {
           const tileWindowID = `tileWindow${tile.getID()}`;
           if (this.scene.isVisible(tileWindowID)) {
-            console.log(this)
+            // console.log(this)
             var thescene = WindowManager.get(this, tileWindowID)
             thescene.disconnectListeners()
             WindowManager.destroy(this, tileWindowID);
@@ -354,6 +350,12 @@ export default class GameScene extends Phaser.Scene {
       })
     }
 
+  }
+
+  private addHeros(heros) {
+    heros.forEach(hero => {
+      this.addHero(hero[1].hk, hero[1].region.id, hero[1].hk);
+    })
   }
 
   private addShieldsToRietburg(numShields) {
@@ -429,6 +431,12 @@ export default class GameScene extends Phaser.Scene {
 
   }
 
+  private addMonsters(monsters) {
+    monsters.forEach(monster => {
+      this.addMonster(monster[1].tileID, monster[1].type, monster[0]);
+    })
+  }
+
   private addMonster(monsterTile: number, type: string, id: string) {
     const tile: Tile = this.tiles[monsterTile];
 
@@ -463,7 +471,7 @@ export default class GameScene extends Phaser.Scene {
     }
   }
 
-  private addFarmers() {
+  private addFarmers(farmers) {
 
     const farmertile_0: Tile = this.tiles[24];
     const farmertile_1: Tile = this.tiles[36];

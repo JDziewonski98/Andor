@@ -1,4 +1,4 @@
-import { Lobby, Game, GameDifficulty, Player } from '../model';
+import { Lobby, Game, Player, Fog } from '../model';
 import { game } from '.';
 import { jsonToMap } from "../utils/helpers";
 
@@ -7,6 +7,7 @@ export function lobby(socket, model: Lobby, io) {
   socket.on("createGame", function (name, numPlayers, difficulty) {
     numPlayers = +numPlayers
     let g = new Game(name, numPlayers, difficulty);
+    g.initialize();
     model.createGame(g);
 
     var gamensp = io.of("/" + name)
@@ -32,19 +33,21 @@ export function lobby(socket, model: Lobby, io) {
         game(socket, g, io)
       });
 
-      g.setCastle(JSON.parse(gameData.castle));
-      g.setFogs(jsonToMap(gameData.fogs));
-      g.setMonsters(jsonToMap(gameData.monsters));
-      g.setFarmers(JSON.parse(gameData.farmers));
-      g.setMonstersInCastle(JSON.parse(gameData.monstersInCastle));
-      g.setEndOfGameState(gameData.endOfGame);
-      // TODO: how are we dealing with heros? JSON.parse will give you an array of hero objects.
-      g.setEventDeck(JSON.parse(gameData.eventDeck));
-      g.setActiveEvents(JSON.parse(gameData.activeEvents));
-      g.nextDayFirstHero = gameData.nextDayFirstHero;
-      g.currPlayersTurn = gameData.currPlayersTurn;
-      g.setActiveHeros(JSON.parse(gameData.activeHeros))
+      g.initialize({
+        currPlayersTurn: gameData.currPlayersTurn,
+        regions: JSON.parse(gameData.regions),
+        farmers: JSON.parse(gameData.farmers),
+        monsters: JSON.parse(gameData.monsters),
+        fogs: jsonToMap(gameData.fogs),
+        eventDeck: JSON.parse(gameData.eventDeck),
+        activeEvents: JSON.parse(gameData.activeEvents),
+        nextDayFirstHero: gameData.nextDayFirstHero,
+        activeHeros: JSON.parse(gameData.activeHeros),
+        castle: JSON.parse(gameData.castle),
+        monstersInCastle: JSON.parse(gameData.monstersInCastle),
+        endOfGameState: gameData.endOfGameState
 
+      })
       callback();
     }
   })

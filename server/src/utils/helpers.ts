@@ -7,6 +7,6 @@ export function mapToJson(map){
     return JSON.stringify([...map]);
 }
 
-export function jsonToMap(obj){
-    return new Map(JSON.parse(obj));
+export function jsonToMap<k, v>(obj){
+    return new Map<k, v>(JSON.parse(obj));
 }

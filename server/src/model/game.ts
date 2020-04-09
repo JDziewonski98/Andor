@@ -14,10 +14,20 @@ import {
 import { LargeItem } from './LargeItem';
 import { SmallItem } from './SmallItem';
 
+import {
+    dFarmers,
+    dRegions,
+    dMonsters,
+    dFogs,
+    dEventDeck,
+    dCastle
+} from "./defaults";
+import { threadId } from 'worker_threads';
+
 export class Game {
     public numOfDesiredPlayers: number;
     public difficulty: GameDifficulty;
-    private castle: RietburgCastle;
+    private castle!: RietburgCastle;
     private players: Set<Player>;
     private name: string;
     private chatlog;
@@ -51,8 +61,6 @@ export class Game {
         this.name = name;
         this.numOfDesiredPlayers = numOfDesiredPlayers;
         this.difficulty = difficulty;
-        this.castle = new RietburgCastle()
-        this.setShields();
         this.chatlog = [];
         this.players = new Set<Player>();
         this.heroList = new Map<string, Hero>();
@@ -62,19 +70,41 @@ export class Game {
         this.monsters = new Map<string, Monster>();
         this.monstersInCastle = [];
         this.fogs = new Map<number, Fog>();
-        this.currPlayersTurn = HeroKind.None;
-        this.setRegions();
-        this.setFarmers(null);
-        this.setMonsters(null);
-        this.setFogs(null);
+        this.eventDeck = new Array<EventCard>()
         this.readyplayers = 0;
         this.numAccepts = 0;
-        this.eventDeck = new Array<EventCard>()
-        this.setEventDeck(null)
+        this.currPlayersTurn = HeroKind.Dwarf;
         this.activeEvents = new Array<number>()
     }
 
-
+    public initialize({
+        currPlayersTurn = HeroKind.None,
+        regions = dRegions,
+        farmers = dFarmers,
+        monsters = dMonsters,
+        fogs = dFogs(),
+        heros = [],
+        eventDeck = dEventDeck,
+        activeEvents = [],
+        nextDayFirstHero = HeroKind.None,
+        activeHeros = [],
+        castle = dCastle(this.numOfDesiredPlayers),
+        monstersInCastle = [],
+        endOfGameState = false
+    } = {}) {
+        this.currPlayersTurn = currPlayersTurn;
+        this.nextDayFirstHero = nextDayFirstHero;
+        this.setRegions(regions);
+        this.setFarmers(farmers);
+        this.setMonsters(monsters);
+        this.setFogs(fogs);
+        this.setEventDeck(eventDeck);
+        this.setActiveEvents(activeEvents);
+        this.setActiveHeros(activeHeros);
+        this.castle = new RietburgCastle(castle.numDefenseShields, castle.numDefenseShieldsUsed);
+        this.monstersInCastle = monstersInCastle;
+        this.endOfGame = endOfGameState;
+    }
 
     private setFirstHerosTurn() {
         var minRank = Number.MAX_VALUE;
@@ -153,33 +183,17 @@ export class Game {
     }
 
     public setFarmers(f) {
-        if (f != null) {
-            this.farmers = new Array<Farmer>();
-            f.forEach((farmer) => {
-                const farmObj = new Farmer(farmer.id, farmer.tileID);
-                this.farmers.push(farmObj)
-                this.regions[farmObj.getTileID()].addFarmer(farmObj);
-            })
-            return;
-        } else {
-            this.farmers.push(new Farmer(0, 24));
-            this.farmers.push(new Farmer(1, 36));
-            this.regions[24].addFarmer(this.farmers[0]);
-            this.regions[36].addFarmer(this.farmers[1]);
-        }
+        f.forEach((farmer) => {
+            const farmObj = new Farmer(farmer.id, farmer.tileID);
+            this.farmers.push(farmObj)
+            this.regions[farmObj.getTileID()].addFarmer(farmObj);
+        })
     }
 
-    public setMonsters(m) {
-        if (m != null) {
-            this.monsters = m;
-            return;
-        }
-        this.addMonster(MonsterKind.Gor, 8, 'gor1');
-        this.addMonster(MonsterKind.Gor, 20, 'gor2');
-        this.addMonster(MonsterKind.Gor, 21, 'gor3');
-        this.addMonster(MonsterKind.Gor, 26, 'gor4');
-        this.addMonster(MonsterKind.Gor, 48, 'gor5');
-        this.addMonster(MonsterKind.Skral, 19, 'skral1');
+    public setMonsters(monsters) {
+        monsters.forEach(monster => {
+            this.addMonster(monster.type, monster.tileID, monster.name);
+        })
     }
 
     private addMonster(kind: MonsterKind, tile: number, id: string) {
@@ -188,36 +202,17 @@ export class Game {
         this.regions[tile].setMonster(monster);
     }
 
-    private setRegions() {
+    public setRegions(regions) {
         // Note that regions 73-79 and 83 are unused, but created anyways to preserve direct
         // indexing between regions array and region IDs
-        var tilesData = require("./tilemap").map;
-        tilesData.forEach(t => {
+        regions.forEach(t => {
             // on top of setting t.something, also set amount of gold on each tile to 0
-            this.regions.push(new Region(0, t.id, t.nextRegionId, t.adjRegionsIds, t.hasWell, t.hasMerchant))
+            this.regions.push(new Region(t.id, t.xcoord, t.ycoord, 0, t.nextRegionId, t.adjRegionsIds, t.hasWell, t.hasMerchant))
         })
     }
 
-    public setFogs(f) {
-        if (f != null) { // if loading game
-            this.fogs = f!;
-            return;
-        }
-        const fogIds = [8, 11, 12, 13, 49, 16, 32, 48, 42, 44, 47, 46, 64, 56, 63];
-        let fogTypes = [Fog.EventCard, Fog.EventCard, Fog.EventCard, Fog.EventCard, Fog.EventCard, Fog.Strength, Fog.WillPower2, Fog.WillPower3, Fog.Gold, Fog.Gold, Fog.Gold, Fog.Gor, Fog.Gor, Fog.Wineskin, Fog.Brew];
-        shuffle(fogTypes);
-
-        fogIds.forEach((id, i) => {
-            this.fogs.set(id, fogTypes[i]);
-        })
-
-        function shuffle(a) {
-            for (let i = a.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [a[i], a[j]] = [a[j], a[i]];
-            }
-            return a;
-        }
+    public setFogs(fogs: Map<number, Fog>) {
+        this.fogs = fogs;
     }
 
     public getFogs(): Map<number, Fog> {
@@ -295,7 +290,7 @@ export class Game {
         return this.activeHeros;
     }
 
-    public setActiveHeros(kinds){
+    public setActiveHeros(kinds) {
         this.activeHeros = kinds;
     }
 
@@ -613,25 +608,17 @@ export class Game {
         return this.eventDeck.shift()
     }
     public setActiveEvents(events) {
-        if (events != null) {
-            events.forEach((event) => {
-                this.activeEvents.push(event.id);
-            })
-        }
+        events.forEach((id) => {
+            this.activeEvents.push(id);
+        })
     }
 
     public setEventDeck(events) {
-        if (events != null) {
-            events.forEach((event) => {
-                this.eventDeck.push(new EventCard(event.id, event.flavorText, event.desc));
-            })
-        } else {
-            var eventCardData = require("./EventCardMap").map;
-            eventCardData.forEach(ec => {
-                this.eventDeck.push(new EventCard(ec.id, ec.flavorText, ec.desc))
-            })
-            this.shuffleEventDeck()
-        }
+        events.forEach(ec => {
+            this.eventDeck.push(new EventCard(ec.id, ec.flavorText, ec.desc))
+        })
+        this.shuffleEventDeck()
+
     }
 
 
@@ -643,7 +630,7 @@ export class Game {
             [this.eventDeck[m], this.eventDeck[i]] = [this.eventDeck[i], this.eventDeck[m]]
         }
     }
-    
+
     public clearActiveEvents() {
         //revert events which affected state
         for (var i = 0; i < this.activeEvents.length; i++) {
@@ -779,5 +766,13 @@ export class Game {
 
     public getActiveEvents() {
         return this.activeEvents;
+    }
+
+    private shuffle(a) {
+        for (let i = a.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
     }
 }

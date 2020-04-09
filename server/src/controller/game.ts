@@ -20,7 +20,7 @@ export function game(socket, model: Game, io) {
     game['fogs'] = mapToJson(model.getFogs());
     game['heros'] = JSON.stringify(Array.from(model.getHeros().values()));
     game['farmers'] = JSON.stringify(model.getFarmers());
-    game['monsters'] = mapToJson(model.getMonsters());
+    game['monsters'] = JSON.stringify(Array.from(model.getMonsters().values()));
     game['monstersInCastle'] = JSON.stringify(model.getMonstersInCastle());
     game['endOfGame'] = model.getEndOfGameState();
     game['eventDeck'] = JSON.stringify(model.getEventDeck());
@@ -28,6 +28,7 @@ export function game(socket, model: Game, io) {
     game['nextDayFirstHero'] = model.nextDayFirstHero;
     game['currPlayersTurn'] = model.currPlayersTurn;
     game['activeHeros'] = JSON.stringify(model.getActiveHeros());
+    game['regions'] = JSON.stringify(model.getRegions());
 
     if (!data.games) {
       data['games'] = {}
