@@ -22,11 +22,9 @@ export enum enumPositionOfNarrator {
 export class Narrator {
     private legendPosition: number;
     private triggerRunestone: string | null = null;
-    private gameController: Game;
 
-    constructor(gameController: Game, legendPosition: number = 0) {
+    constructor(legendPosition: number = 0) {
         this.legendPosition = legendPosition;
-        this.gameController = gameController;
     }
 
     public getLegendPosition() {
@@ -62,9 +60,6 @@ export class Narrator {
             this.placeRunestoneOnBoard(self.gameController, (self.randomInteger(1, 6) * 10) + self.randomInteger(1, 6))
         }*/
 
-        // Place a gor on space 43. a skral on 39        
-        this.gameController.addMonster(MonsterKind.Gor, 43, "gor43")
-        this.gameController.addMonster(MonsterKind.Skral, 39, "skral39")
     }
 
 
@@ -130,13 +125,6 @@ export class Narrator {
 
               */
 
-        // A3 place monsters
-        this.gameController.addMonster(MonsterKind.Gor, 8, 'gor1');
-        this.gameController.addMonster(MonsterKind.Gor, 20, 'gor2');
-        this.gameController.addMonster(MonsterKind.Gor, 21, 'gor3');
-        this.gameController.addMonster(MonsterKind.Gor, 26, 'gor4');
-        this.gameController.addMonster(MonsterKind.Gor, 48, 'gor5');
-        this.gameController.addMonster(MonsterKind.Skral, 19, 'skral1');
 
         // A3 place farmers
         
@@ -214,13 +202,6 @@ export class Narrator {
                      */
 
 
-        // C1 add fortress_skral
-        this.gameController.addMonster(MonsterKind.Fortress, (50 + this.randomInteger(1,6)), "fortressSkral")
-
-        // C2 add gors on 27 and 31. add skral on 29       
-        this.gameController.addMonster(MonsterKind.Gor, 27, "gor27")
-        this.gameController.addMonster(MonsterKind.Gor, 31, "gor31")
-        this.gameController.addMonster(MonsterKind.Skral, 29, "skral29")
 
         // C2 place a farmer on 28
         

@@ -29,6 +29,8 @@ export function game(socket, model: Game, io) {
     game['currPlayersTurn'] = model.currPlayersTurn;
     game['activeHeros'] = JSON.stringify(model.getActiveHeros());
     game['regions'] = JSON.stringify(model.getRegions());
+    game['prince'] = JSON.stringify(model.getPrince());
+    game['narrator'] = JSON.stringify(model.getNarrator(),["legendPosition"])
 
     if (!data.games) {
       data['games'] = {}

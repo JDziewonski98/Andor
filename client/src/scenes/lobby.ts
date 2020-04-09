@@ -65,16 +65,10 @@ export default class LobbyScene extends Phaser.Scene {
         }
 
         var self = this;
-<<<<<<< HEAD
-        this.weedText = this.add.text(500, 300, "New", style2).setOrigin(0.5)
-        this.weedText.setInteractive();
-        this.weedText.on('pointerdown', function (pointer) {
-=======
         this.gameText = this.add.text(500, 300, "New", menuText).setOrigin(0.5)
         this.gameText.setShadow(0, 0, 'black', 10);
         this.gameText.setInteractive();
         this.gameText.on('pointerdown', function (pointer) {
->>>>>>> master
             this.scene.start('Create', { controller: self.lobbyController });
         }, this);
 

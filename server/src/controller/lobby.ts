@@ -46,8 +46,8 @@ export function lobby(socket, model: Lobby, io) {
         activeHeros: JSON.parse(gameData.activeHeros),
         castle: JSON.parse(gameData.castle),
         monstersInCastle: JSON.parse(gameData.monstersInCastle),
-        endOfGameState: gameData.endOfGameState
-
+        endOfGameState: gameData.endOfGameState,
+        prince: JSON.parse(gameData.prince)
       })
       callback();
     }

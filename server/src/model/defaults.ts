@@ -1,4 +1,4 @@
-import { Fog, MonsterKind } from '.';
+import { Fog } from '.';
 
 export const dFarmers = [{
     id: 0,
@@ -10,6 +10,7 @@ export const dFarmers = [{
 
 export const dRegions = require("./tilemap").map;
 
+const { MonsterKind } = require("./MonsterKind");
 export const dMonsters = [{
     name: "gor1",
     type: MonsterKind.Gor,
@@ -71,4 +72,14 @@ export function dCastle(numPlayers) {
         numDefenseShields: shields,
         numDefenseShieldsUsed: 0
     }
+}
+
+export const dPrince = {
+    tile: {
+        id: 72
+    }
+}
+
+export const dNarrator = {
+    legendPosition: 0
 }

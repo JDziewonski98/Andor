@@ -22,9 +22,10 @@ import {
     dMonsters,
     dFogs,
     dEventDeck,
-    dCastle
+    dCastle,
+    dPrince,
+    dNarrator
 } from "./defaults";
-import { threadId } from 'worker_threads';
 
 export class Game {
     public numOfDesiredPlayers: number;
@@ -49,9 +50,9 @@ export class Game {
     private monsters: Map<string, Monster>;
     private monstersInCastle: string[];
     private endOfGame: boolean = false;
-    private prince: Prince;
+    private prince!: Prince;
 
-    private narrator: Narrator;
+    private narrator!: Narrator;
 
     // collab decision related state
     public numAccepts: number;
@@ -81,26 +82,43 @@ export class Game {
         this.currPlayersTurn = HeroKind.Dwarf;
         this.activeEvents = new Array<number>()
 
-        this.prince = new Prince(this.regions[72]);
-
-        this.narrator = new Narrator(this, 0)
+        // this.narrator = new Narrator(this, 0)
     }
 
-    public initialize({
-        currPlayersTurn = HeroKind.None,
-        regions = dRegions,
-        farmers = dFarmers,
-        monsters = dMonsters,
-        fogs = dFogs(),
-        heros = [],
-        eventDeck = dEventDeck,
-        activeEvents = [],
-        nextDayFirstHero = HeroKind.None,
-        activeHeros = [],
-        castle = dCastle(this.numOfDesiredPlayers),
-        monstersInCastle = [],
-        endOfGameState = false
-    } = {}) {
+    public initialize(
+        currPlayersTurn?,
+        regions?,
+        farmers?,
+        monsters?,
+        fogs?,
+        heros?,        
+        eventDeck?,
+        activeEvents?,        
+        nextDayFirstHero?,
+        activeHeros?,
+        castle?,
+        monstersInCastle?,
+        endOfGameState?,
+        prince?,
+        narrator?
+    ) {
+        currPlayersTurn = currPlayersTurn || HeroKind.None;
+        regions = regions || dRegions;
+        farmers = farmers || dFarmers;
+        monsters = monsters || dMonsters;
+        fogs = fogs || dFogs();
+        heros = heros || [];
+        eventDeck = eventDeck || dEventDeck;
+        activeEvents = activeEvents || [];
+        nextDayFirstHero = nextDayFirstHero || HeroKind.None;
+        activeHeros = activeHeros || [];
+        castle = castle || dCastle(this.numOfDesiredPlayers);
+        monstersInCastle = monstersInCastle || [];
+        endOfGameState = endOfGameState || false;
+        prince = prince || dPrince;
+        narrator = narrator || dNarrator;
+
+
         this.currPlayersTurn = currPlayersTurn;
         this.nextDayFirstHero = nextDayFirstHero;
         this.setRegions(regions);
@@ -114,18 +132,10 @@ export class Game {
         this.castle = new RietburgCastle(castle.numDefenseShields, castle.numDefenseShieldsUsed);
         this.monstersInCastle = monstersInCastle;
         this.endOfGame = endOfGameState;
-    }
-
-    private setHeros(heros) {
-
-    }
-
-    private setNarrator(initialNarratorPosition: number) {
-        var newNarrator = new Narrator(this, initialNarratorPosition)
-
+        this.prince = new Prince(this.regions[prince.tile.id]);
+        this.narrator = new Narrator(narrator.legendPosition);
 
     }
-
 
     private setFirstHerosTurn() {
         var minRank = Number.MAX_VALUE;
@@ -279,11 +289,11 @@ export class Game {
         if (heroType === HeroKind.Dwarf) {
             this.heroList.set(id, new Hero(heroType, this.regions[7]));
             //REMOVE before merging to master
-            let dwarf = this.heroList.get(id)
-            dwarf?.pickUpLargeItem(dwarf.getRegion().getID(), LargeItem.Bow)
-            dwarf?.pickUpSmallItem(dwarf.getRegion().getID(), SmallItem.Telescope)
-            dwarf?.pickUpSmallItem(dwarf.getRegion().getID(), SmallItem.Wineskin)
-            dwarf?.pickUpHelm(dwarf.getRegion().getID());
+            // let dwarf = this.heroList.get(id)
+            // dwarf?.pickUpLargeItem(dwarf.getRegion().getID(), LargeItem.Bow)
+            // dwarf?.pickUpSmallItem(dwarf.getRegion().getID(), SmallItem.Telescope)
+            // dwarf?.pickUpSmallItem(dwarf.getRegion().getID(), SmallItem.Wineskin)
+            // dwarf?.pickUpHelm(dwarf.getRegion().getID());
         }
         else if (heroType === HeroKind.Archer) {
             this.heroList.set(id, new Hero(heroType, this.regions[25]));
