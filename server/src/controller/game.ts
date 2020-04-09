@@ -38,6 +38,29 @@ export function game(socket, model: Game, io) {
     }
   });
 
+  socket.on("moveRequest", function (id, callback) {
+    id = +id // turning Id from string to number
+    var heroID = socket.conn.id
+    let hero = model.getHero(heroID);
+
+    if (hero !== undefined) {
+      var currPrinceRegion: Region = model.getPrince().getRegion();
+      var adjPrinceRegions: Array<number> = currPrinceRegion.getAdjRegionsIds()
+      
+      for (var regionID of adjPrinceRegions) {
+        var timeLeft = hero.getTimeOfDay() <= 7 || (hero.getTimeOfDay() <= 10 && hero.getWill() >= 2)
+        if (regionID === id && timeLeft) { // successful move
+          let targetRegion: Region = model.getRegions()[id];
+
+          model.getPrince().moveTo(targetRegion);
+          
+          socket.broadcast.emit("updateMoveRequest", hero.getKind(), id)
+          callback(hero.getKind(), id)
+        }
+      }
+    }
+  });
+
   socket.on("moveHeroTo", function (heroType, tile, callback) {
     callback(heroType, tile);
   })

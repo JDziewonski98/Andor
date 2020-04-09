@@ -9,7 +9,8 @@ import {
     Monster,
     MonsterKind,
     Fog,
-    EventCard
+    EventCard,
+    Prince
 } from "."
 import { LargeItem } from './LargeItem';
 import { SmallItem } from './SmallItem';
@@ -38,6 +39,7 @@ export class Game {
     private monsters: Map<string, Monster>;
     private monstersInCastle: string[];
     private endOfGame: boolean = false;
+    private prince: Prince;
 
     // collab decision related state
     public numAccepts: number;
@@ -68,6 +70,7 @@ export class Game {
         this.setMonsters();
         this.setShields();
         this.setFogs();
+        this.prince = new Prince(this.regions[72]);
         this.readyplayers = 0;
         this.numAccepts = 0;
         this.eventDeck = new Array<EventCard>()
@@ -203,6 +206,10 @@ export class Game {
 
     public getFogs(): Map<number, Fog> {
         return this.fogs;
+    }
+
+    public getPrince(): Prince{
+        return this.prince;
     }
 
     public getRegions(): Region[] {
