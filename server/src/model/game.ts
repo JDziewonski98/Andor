@@ -8,7 +8,8 @@ import {
     HeroKind,
     Monster,
     MonsterKind,
-    Fog
+    Fog,
+    Narrator
 } from "."
 import { LargeItem } from './LargeItem';
 import { SmallItem } from './SmallItem';
@@ -37,12 +38,14 @@ export class Game {
     private currPlayersTurn: string;
     private endOfGame: boolean = false;
 
+    private narrator: Narrator;
+
     // collab decision related state
     public numAccepts: number;
 
     private availableHeros: Array<HeroKind> = new Array(HeroKind.Archer, HeroKind.Dwarf, HeroKind.Mage, HeroKind.Warrior);
 
-    constructor(name: string, numOfDesiredPlayers: number, difficulty: GameDifficulty) {
+    constructor(name: string, numOfDesiredPlayers: number, difficulty: GameDifficulty, legendPosition = 0) {
         this.name = name;
         this.numOfDesiredPlayers = numOfDesiredPlayers;
         this.difficulty = difficulty;
@@ -64,8 +67,11 @@ export class Game {
         this.setFogs();
         this.readyplayers = 0;
         this.numAccepts = 0;
+        
+        this.narrator = new Narrator(this, 0)
     }
 
+    
     private setFirstHerosTurn() {
         var minRank = Number.MAX_VALUE;
         var ID = "none";
@@ -155,10 +161,23 @@ export class Game {
         this.addMonster(MonsterKind.Skral, 19, 'skral1');
     }
 
-    private addMonster(kind: MonsterKind, tile: number, id: string) {
+    public addMonster(kind: MonsterKind, tile: number, id: string) {
+
         let monster = new Monster(kind, tile, this.numOfDesiredPlayers, id)
         this.monsters.set(monster.name, monster);
         this.regions[tile].setMonster(monster);
+
+        /* this crashes the server? this.regions['tile'] is undefined
+         * // check if tile to add monster already has a monster
+        if (this.regions[tile].getMonster() !== null) {
+            this.addMonster(kind, (this.regions[tile].getNextRegionId()), id)
+            
+        }
+        else { // if it has a monster, get next region and addMonster to that tile
+            let monster = new Monster(kind, tile, this.numOfDesiredPlayers, id)
+            this.monsters.set(monster.name, monster);
+            this.regions[tile].setMonster(monster);
+        }*/
     }
 
     private setRegions() {
@@ -201,6 +220,10 @@ export class Game {
         return this.name;
     }
 
+    public getNarrator(): Narrator {
+        return this.narrator;
+    }
+
     /*
     * Attach player ID to hero if nobody else selected the same HeroType
     * @param id is player socket ID
@@ -216,12 +239,15 @@ export class Game {
         if (heroType === HeroKind.Dwarf) {
             this.heroList.set(id, new Hero(heroType, this.regions[7]));
             //REMOVE before merging to master
-            // let dwarf = this.heroList.get(id)
-            // dwarf?.pickUpLargeItem(LargeItem.Bow)
-            // dwarf?.pickUpSmallItem(SmallItem.Telescope)
+            let dwarf = this.heroList.get(id)
+            dwarf?.pickUpLargeItem(LargeItem.Bow)
+            dwarf?.pickUpSmallItem(SmallItem.Telescope)
         }
         else if (heroType === HeroKind.Archer) {
             this.heroList.set(id, new Hero(heroType, this.regions[25]));
+            let archer = this.heroList.get(id)
+            archer?.pickUpSmallItem(SmallItem.Wineskin)
+            archer?.pickUpSmallItem(SmallItem.GreenRunestone)
         }
         else if (heroType === HeroKind.Mage) {
             this.heroList.set(id, new Hero(heroType, this.regions[34]));
