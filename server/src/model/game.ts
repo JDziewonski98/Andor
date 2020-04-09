@@ -9,8 +9,11 @@ import {
     Monster,
     MonsterKind,
     Fog,
+<<<<<<< HEAD
     EventCard,
     Prince,
+=======
+>>>>>>> Phil initial narrator work
     Narrator
 } from "."
 import { LargeItem } from './LargeItem';
@@ -44,15 +47,20 @@ export class Game {
 
     private narrator: Narrator;
 
+    private narrator: Narrator;
+
     // collab decision related state
     public numAccepts: number;
 
     private availableHeros: Array<HeroKind> = new Array(HeroKind.Archer, HeroKind.Dwarf, HeroKind.Mage, HeroKind.Warrior);
 
+<<<<<<< HEAD
     //EventCards
     private eventDeck: Array<EventCard>
     private activeEvents: Array<Number>
 
+=======
+>>>>>>> Phil initial narrator work
     constructor(name: string, numOfDesiredPlayers: number, difficulty: GameDifficulty, legendPosition = 0) {
         this.name = name;
         this.numOfDesiredPlayers = numOfDesiredPlayers;
@@ -76,6 +84,7 @@ export class Game {
         this.prince = new Prince(this.regions[72]);
         this.readyplayers = 0;
         this.numAccepts = 0;
+<<<<<<< HEAD
         this.eventDeck = new Array<EventCard>()
         this.setEventDeck()
         this.activeEvents = new Array<Number>()
@@ -87,6 +96,10 @@ export class Game {
         var newNarrator = new Narrator(this, initialNarratorPosition)
 
 
+=======
+        
+        this.narrator = new Narrator(this, 0)
+>>>>>>> Phil initial narrator work
     }
 
     
@@ -265,15 +278,25 @@ export class Game {
             this.heroList.set(id, new Hero(heroType, this.regions[7]));
             //REMOVE before merging to master
             let dwarf = this.heroList.get(id)
+<<<<<<< HEAD
             dwarf?.pickUpLargeItem(dwarf.getRegion().getID(), LargeItem.Bow)
             dwarf?.pickUpSmallItem(dwarf.getRegion().getID(), SmallItem.Telescope)
             dwarf?.pickUpSmallItem(dwarf.getRegion().getID(), SmallItem.Wineskin)
             dwarf?.pickUpHelm(dwarf.getRegion().getID());
+=======
+            dwarf?.pickUpLargeItem(LargeItem.Bow)
+            dwarf?.pickUpSmallItem(SmallItem.Telescope)
+>>>>>>> Phil initial narrator work
         }
         else if (heroType === HeroKind.Archer) {
             this.heroList.set(id, new Hero(heroType, this.regions[25]));
             let archer = this.heroList.get(id)
+<<<<<<< HEAD
             archer?.pickUpSmallItem(archer.getRegion().getID(), SmallItem.GreenRunestone)
+=======
+            archer?.pickUpSmallItem(SmallItem.Wineskin)
+            archer?.pickUpSmallItem(SmallItem.GreenRunestone)
+>>>>>>> Phil initial narrator work
         }
         else if (heroType === HeroKind.Mage) {
             this.heroList.set(id, new Hero(heroType, this.regions[34]));

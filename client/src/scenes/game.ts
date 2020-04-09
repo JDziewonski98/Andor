@@ -13,10 +13,14 @@ import {
   wellTile1, wellTile2, wellTile3, wellTile4,
   mOffset, enumPositionOfNarrator
 } from '../constants'
+<<<<<<< HEAD
 //import { TradeHostWindow } from './tradehostwindow';
 
 import { TileWindow } from './tilewindow';
 import { Prince } from '../objects/Prince';
+=======
+import { TileWindow } from './tilewindow';
+>>>>>>> Phil initial narrator work
 
 
 export default class GameScene extends Phaser.Scene {
@@ -54,7 +58,10 @@ export default class GameScene extends Phaser.Scene {
   private overlay;
 
   private shiftKey;
+<<<<<<< HEAD
   private ctrlKey;
+=======
+>>>>>>> Phil initial narrator work
   
   constructor() {
     super({ key: 'Game' });
@@ -100,9 +107,12 @@ export default class GameScene extends Phaser.Scene {
     this.load.image("EventCard", "../assets/event.png");
     this.load.image("Gor", "../assets/gorfog.png");
 
+<<<<<<< HEAD
     this.load.image("item_border", "../assets/border.png"); // uses hex 4b2504
     this.load.image("hero_border", "../assets/big_border.png");
 
+=======
+>>>>>>> Phil initial narrator work
     //items
     this.load.image("Brew", "../assets/brew.png");
     this.load.image("Wineskin", "../assets/wineskin.png");
@@ -131,7 +141,10 @@ export default class GameScene extends Phaser.Scene {
 
     this.cameraSetup();
     this.shiftKey = this.input.keyboard.addKey('shift');
+<<<<<<< HEAD
     this.ctrlKey = this.input.keyboard.addKey('CTRL');
+=======
+>>>>>>> Phil initial narrator work
     this.sceneplugin = this.scene
     // Centered gameboard with border
     this.add.image(fullWidth / 2, fullHeight / 2, 'gameboard')
@@ -311,7 +324,10 @@ export default class GameScene extends Phaser.Scene {
 
     // click: for movement callback, ties pointerdown to move request
     // shift+click: tile items pickup interface
+<<<<<<< HEAD
     // ctrl+click: move the prince
+=======
+>>>>>>> Phil initial narrator work
     var self = this
     this.tiles.map(function (tile) {
       tile.on('pointerdown', function (pointer) {
@@ -323,6 +339,7 @@ export default class GameScene extends Phaser.Scene {
             thescene.disconnectListeners()
             WindowManager.destroy(this, tileWindowID);
           } else {
+<<<<<<< HEAD
             // width of tile window depends on number of items on it
             this.gameinstance.getTileItems(tile.id, function(tileItems) {
               let items = tileItems;
@@ -345,6 +362,20 @@ export default class GameScene extends Phaser.Scene {
           self.gameinstance.movePrinceRequest(tile.id, updateMovePrinceRequest)
 
         }else {
+=======
+              WindowManager.create(this, tileWindowID, TileWindow, 
+                { 
+                  controller: this.gameinstance,
+                  x: pointer.x + 20,
+                  y: pointer.y + 20,
+                  w: 100,
+                  h: 60,
+                  tileID: tile.getID()
+                }
+              );
+          }
+        } else {
+>>>>>>> Phil initial narrator work
           console.log("It is my turn: ", self.gameinstance.myTurn)
           self.gameinstance.moveRequest(tile.id, updateMoveRequest)
         }
@@ -721,6 +752,7 @@ export default class GameScene extends Phaser.Scene {
   //     }, this)
   //   }
   // }
+<<<<<<< HEAD
 
  
   //for specific events which need to apply a unique ui effect, or something of that nature
@@ -744,6 +776,8 @@ export default class GameScene extends Phaser.Scene {
     this.event = newEvent
     this.add.existing(newEvent)
   }
+=======
+>>>>>>> Phil initial narrator work
 
   private startingCollabDecisionSetup() {
     var self = this;

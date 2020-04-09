@@ -72,6 +72,29 @@ export class game {
 
     public updateNarrator(callback) {
         this.socket.on("updateNarrator", callback);
+<<<<<<< HEAD
+=======
+    }
+
+    /*
+    *   GOLD RELATED
+    */
+    public getTileGold(tileID, callback) {
+        this.socket.emit("getTileGold", tileID, callback);
+    }
+
+    public dropGold() {
+        this.socket.emit("dropGold")
+    }
+
+    public pickupGold(id) {
+        this.socket.emit("pickupGold", id)
+    }
+
+    // Updates for HeroWindows
+    public updateDropGold(callback) {
+        this.socket.on("updateDropGold", callback);       
+>>>>>>> Phil initial narrator work
     }
 
     /*
@@ -87,6 +110,7 @@ export class game {
         this.socket.emit("pickupGold", id)
     }
 
+<<<<<<< HEAD
     // Updates for HeroWindows
     public updateDropGold(callback) {
         this.socket.on("updateDropGold", callback);       
@@ -94,6 +118,13 @@ export class game {
     public updatePickupGold(callback) {
         this.socket.on("updatePickupGold", callback)
     }
+=======
+    public updatePickupGold(callback) {
+        this.socket.on("updatePickupGold", callback)
+    }
+
+
+>>>>>>> Phil initial narrator work
     public disconnectUpdateDropGold() {
         this.socket.off("updateDropGold")
     }
@@ -101,12 +132,17 @@ export class game {
         this.socket.off("updatePickupGold")
     }
 
+<<<<<<< HEAD
     // Updates for TileWindows
     public updateDropGoldTile(callback) {
         this.socket.on("updateDropGoldTile", callback);       
     }
     public updatePickupGoldTile(callback) {
         this.socket.on("updatePickupGoldTile", callback)
+=======
+    public disconnectUpdatePickupGold() {
+        this.socket.off("updatePickupGold")
+>>>>>>> Phil initial narrator work
     }
     public disconnectUpdateDropGoldTile() {
         this.socket.off("updateDropGoldTile")
@@ -116,6 +152,7 @@ export class game {
     }
     /////////////////////////////
 
+<<<<<<< HEAD
     /*
     *   DROP AND PICKUP ITEMS
     */
@@ -157,6 +194,23 @@ export class game {
     }
     public disconnectUpdatePickupItemTile() {
         this.socket.off("updatePickupItemTile")
+=======
+    // Updates for TileWindows
+    public updateDropGoldTile(callback) {
+        this.socket.on("updateDropGoldTile", callback);       
+    }
+
+    public updatePickupGoldTile(callback) {
+        this.socket.on("updatePickupGoldTile", callback)
+    }
+
+    public disconnectUpdateDropGoldTile() {
+        this.socket.off("updateDropGoldTile")
+    }
+
+    public disconnectUpdatePickupGoldTile() {
+        this.socket.off("updatePickupGoldTile")
+>>>>>>> Phil initial narrator work
     }
     /////////////////////////////
 
@@ -188,6 +242,7 @@ export class game {
         this.socket.on("updateMoveRequest", callback);
     }
 
+<<<<<<< HEAD
     public movePrinceRequest(tileID, callback){
         if(this.myTurn){
             this.socket.emit('movePrinceRequest', tileID, callback)
@@ -198,6 +253,8 @@ export class game {
         this.socket.on("updateMovePrinceRequest", callback);
     }
 
+=======
+>>>>>>> Phil initial narrator work
     public getAdjacentTiles(centraltileid, callback) {
         this.socket.emit('getAdjacentTiles',centraltileid, callback)
     }
@@ -471,6 +528,7 @@ export class game {
         this.socket.emit('useWineskin', half_or_full, callback)
     }
 
+<<<<<<< HEAD
     public receiveUseWineskin(callback) {
         this.socket.on('receiveUseWineskin', callback);
     }
@@ -479,6 +537,8 @@ export class game {
         this.socket.off('receiveUseWineskin');
     }
 
+=======
+>>>>>>> Phil initial narrator work
     public executeTrade(hero, items_given, items_gained) {
         this.socket.emit('executeTrade', hero, items_given, items_gained)
     }
