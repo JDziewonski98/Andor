@@ -43,6 +43,8 @@ export function game(socket, model: Game, io) {
     var heroID = socket.conn.id
     let hero = model.getHero(heroID);
 
+    console.log(hero.getNumPrinceMoves());
+
     if (hero !== undefined) {
       var currPrinceRegion: Region = model.getPrince().getRegion();
       var adjPrinceRegions: Array<number> = currPrinceRegion.getAdjRegionsIds()
@@ -55,8 +57,8 @@ export function game(socket, model: Game, io) {
           model.getPrince().moveTo(targetRegion);
           hero.movePrince();
 
-          socket.broadcast.emit("updateMovePrinceRequest", hero.getKind(), id, hero.getTimeOfDay())
-          callback(hero.getKind(), id, hero.getTimeOfDay())
+          socket.broadcast.emit("updateMovePrinceRequest", hero.getKind(), id, hero.getNumPrinceMoves())
+          callback(hero.getKind(), id, hero.getNumPrinceMoves())
         }
       }
     }
@@ -68,6 +70,11 @@ export function game(socket, model: Game, io) {
 
   socket.on("endTurn", function () {
     var nextPlayer = model.nextPlayer(false)
+
+    var heroID = socket.conn.id
+    let hero = model.getHero(heroID);
+
+    hero.resetPrinceMoves();
 
     // Emitting with broadcast.to to the caller doesn't seem to work. Below is a workaround
     if (model.getCurrPlayersTurn() == nextPlayer) {

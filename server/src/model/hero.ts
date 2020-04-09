@@ -17,6 +17,7 @@ export class Hero {
     private rank: number;
     private dice
     private freeMoves:number = 0;
+    private movePrinceCtr = 0;
 
     //items
     private wineskin: boolean = false;
@@ -85,7 +86,16 @@ export class Hero {
 
     //Prince has oen moveTo, this just increments timeOfDay
     public movePrince(){
+        this.movePrinceCtr++;
         this.timeOfDay++;
+    }
+
+    public resetPrinceMoves(){
+        this.movePrinceCtr = 0;
+    }
+
+    public getNumPrinceMoves(){
+        return this.movePrinceCtr;
     }
 
     public exhaustingMoveTo(newTile: Region){

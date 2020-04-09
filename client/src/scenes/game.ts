@@ -362,11 +362,14 @@ export default class GameScene extends Phaser.Scene {
       })
     }
 
-    function updateMovePrinceRequest(heroKind, tileID, timeOfDay) {
+    function updateMovePrinceRequest(heroKind, tileID, numPrinceMoves) {
+      numPrinceMoves = +numPrinceMoves;
       self.heroes.forEach((hero: Hero) => {
         if (hero.getKind().toString() === heroKind) {
           self.prince.moveTo(self.tiles[tileID])
-          hero.incrementHour();
+          if(numPrinceMoves % 4 === 1){
+            hero.incrementHour();
+          }
         }
       })
     }
