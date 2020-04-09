@@ -81,19 +81,10 @@ export default class BoardOverlay extends Phaser.Scene {
                             windowhero: type, 
                             ...herodata , 
                             clientherotile: this.clientheroobject.tile.id,
-<<<<<<< HEAD
-=======
-                            name: type,
->>>>>>> Phil initial narrator work
                             x: pointer.x,
                             y: pointer.y+20
                         }
                     );
-<<<<<<< HEAD
-=======
-                    let window = WindowManager.get(this, cardID)
-                    window.setName(type)
->>>>>>> Phil initial narrator work
                 }
             })
 

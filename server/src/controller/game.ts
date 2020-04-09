@@ -899,30 +899,18 @@ export function game(socket, model: Game, io) {
 
     //adding received items
     for (let smallitem of items_gained['smallItems']) {
-<<<<<<< HEAD
       thehero!.pickUpSmallItem(thehero!.getRegion().getID(), smallItemStrToEnum(smallitem))
     }
     thehero!.pickUpLargeItem(thehero!.getRegion().getID(), largeItemStrToEnum(items_gained['largeItem']))
     if (items_gained['helm'] != 'None') {
       thehero!.pickUpHelm(thehero!.getRegion().getID())
-=======
-      thehero!.pickUpSmallItem(smallItemStrToEnum(smallitem))
-    }
-    thehero!.pickUpLargeItem(largeItemStrToEnum(items_gained['largeItem']))
-    if (items_gained['helm'] != 'None') {
-      thehero!.pickUpHelm()
->>>>>>> Phil initial narrator work
     }
     thehero!.updateGold(+items_gained['gold'])
 
   })
 
   function smallItemStrToEnum(str) : SmallItem {
-<<<<<<< HEAD
     // console.log(str,'in converter')
-=======
-    console.log(str,'in converter')
->>>>>>> Phil initial narrator work
     switch(str){
       case "wineskin" : return SmallItem.Wineskin
       case "half_wineskin": return SmallItem.HalfWineskin
@@ -933,30 +921,18 @@ export function game(socket, model: Game, io) {
       case "blue_runestone": return SmallItem.BlueRunestone
       case "yellow_runestone": return SmallItem.YellowRunestone
       case "green_runestone": return SmallItem.GreenRunestone
-<<<<<<< HEAD
       default: throw Error("String does not correspond to a SmallItem");
-=======
-      default: return SmallItem.Brew //should never happen!?!?
->>>>>>> Phil initial narrator work
     }
   }
 
   function largeItemStrToEnum(str) : LargeItem {
-<<<<<<< HEAD
     // console.log(str,'in converter')
-=======
-    console.log(str,'in converter')
->>>>>>> Phil initial narrator work
     switch(str){
       case "falcon": return LargeItem.Falcon
       case "shield": return LargeItem.Shield
       case "bow": return LargeItem.Bow
       case "None": return LargeItem.Empty
-<<<<<<< HEAD
       default: throw Error("String does not correspond to a LargeItem");
-=======
-      default: return LargeItem.Empty
->>>>>>> Phil initial narrator work
     }
   }
 

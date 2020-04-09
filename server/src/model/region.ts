@@ -15,17 +15,10 @@ export class Region {
 
     // Items, or maybe it's easier with a single list of itemIDs, since we don't actually
     // care how they're used/how they're different functionally
-<<<<<<< HEAD
     // private wineskins: number = 0;
     // private largeItems: Map<LargeItem, number> = new Map();
     // private helms: number = 0;
     // private smallItems: Map<SmallItem, number> = new Map();
-=======
-    private wineskins: number = 0;
-    private largeItems: Map<LargeItem, number> = new Map();
-    private helms: number = 0;
-    private smallItems: Map<SmallItem, number> = new Map();
->>>>>>> Phil initial narrator work
 
     private items: Map<string, number> = new Map();
     
@@ -103,17 +96,13 @@ export class Region {
     public getAdjRegionsIds(): number[]{
         return this.adjRegionsIds
     }
-<<<<<<< HEAD
     public removeWell(){
         this.hasWell = false
     }
-=======
->>>>>>> Phil initial narrator work
 
     /*
     *   ITEM METHODS
     */
-<<<<<<< HEAD
     public addItem(itemName: string) {
         if (this.items.has(itemName)) {
             let newQuantity = this.items.get(itemName);
@@ -143,7 +132,4 @@ export class Region {
         });
         return itemsObject;
     }
-=======
-
->>>>>>> Phil initial narrator work
 }

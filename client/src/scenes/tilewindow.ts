@@ -2,19 +2,13 @@ import { game } from '../api/game';
 import { Window } from "./window";
 
 export class TileWindow extends Window {
-<<<<<<< HEAD
     private goldIcon: Phaser.GameObjects.Image;
     private goldButton: Phaser.GameObjects.Text;
     private currX = 30;
-=======
-    private goldButton: Phaser.GameObjects.Text;
-    private startX = 5;
->>>>>>> Phil initial narrator work
     private xInc = 35;
 
     private gameController: game;
     private tileID: number;
-<<<<<<< HEAD
     private items;
     private itemButtons: Map<string, Phaser.GameObjects.Text> = new Map();
     private itemIcons: Phaser.GameObjects.Image[] = [];
@@ -24,17 +18,11 @@ export class TileWindow extends Window {
     private goldQuantity: number;
 
     private windowHeight;
-=======
-
-    private goldQuantity: number;
-    private itemQuantities = {};
->>>>>>> Phil initial narrator work
 
     public constructor(key: string, data) {
         super(key, { x: data.x, y: data.y, width: data.w, height: data.h });
         this.gameController = data.controller;
         this.tileID = data.tileID;
-<<<<<<< HEAD
         this.items = data.items;
         this.windowHeight= data.h;
     }
@@ -109,31 +97,11 @@ export class TileWindow extends Window {
         this.gameController.getTileGold(this.tileID, function(goldAmount: number) {
             self.goldQuantity = goldAmount;
             self.goldButton = self.add.text(58, 23, ""+self.goldQuantity, { fontSize: 10, backgroundColor: '#f00' });
-=======
-    }
-
-    protected initialize() { 
-        this.add.image(0, 0, 'scrollbg').setOrigin(0.5);
-        this.add.text(5, 5, `Region ${this.tileID} items:`, { fontSize: 10, backgroundColor: '#f00' });
-
-        this.populateGold();
-    }
-
-    public populateGold() {
-        var self = this;
-        // Gold interaction (replaces addGold in GameScene)
-        this.add.image(this.startX, 25, 'gold').setDisplaySize(30, 30).setOrigin(0);
-        // Get the tile's gold amount from server
-        this.gameController.getTileGold(this.tileID, function(goldAmount: number) {
-            self.goldQuantity = goldAmount;
-            self.goldButton = self.add.text(this.startX+28, 23, ""+self.goldQuantity, { fontSize: 10, backgroundColor: '#f00' });
->>>>>>> Phil initial narrator work
             self.goldButton.setInteractive();
             self.goldButton.on("pointerdown", function(pointer) {
                 self.gameController.pickupGold(self.tileID)
             }, this)
         });
-<<<<<<< HEAD
     }
 
     // Populates the TileWindow with the list of items when it is initialized. Subsequent
@@ -217,20 +185,6 @@ export class TileWindow extends Window {
         this.itemIcons = [];
 
         this.currX = 30;
-=======
-        // While window is active, respond to updates in gold amount
-        function updateGold(tileID: number, goldAmount: number) {
-            if (tileID != self.tileID) return;
-            self.goldQuantity = goldAmount;
-            self.refreshGold();
-        }
-        this.gameController.updateDropGoldTile(updateGold);
-        this.gameController.updatePickupGoldTile(updateGold);
-    }
-
-    public populateItems() {
-
->>>>>>> Phil initial narrator work
     }
 
     public refreshGold() {
@@ -242,11 +196,8 @@ export class TileWindow extends Window {
         //turn off any socket.on(...) that u add here!
         this.gameController.disconnectUpdateDropGoldTile()
         this.gameController.disconnectUpdatePickupGoldTile()
-<<<<<<< HEAD
         this.gameController.disconnectUpdateDropItemTile();
         this.gameController.disconnectUpdatePickupItemTile();
-=======
->>>>>>> Phil initial narrator work
 
         // event listeners
         this.goldButton.removeAllListeners('pointerdown');

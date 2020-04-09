@@ -35,15 +35,10 @@ export default class LobbyScene extends Phaser.Scene {
         this.load.image('archermale', './assets/archermale.png')
         this.load.image('fantasyhome', './assets/fantasyhome.jpg')
         this.load.image('optionsIcon', './assets/icons/settings_icon.png')
-<<<<<<< HEAD
         this.load.image('scrollbg', './assets/windowbg.jpg')
         this.load.image('trademenubg', './assets/menubackground.png')
         this.load.image('logo', './assets/main-screen-logo.png')
         this.load.image('main', './assets/mainscreen.png')
-=======
-        this.load.image('scrollbg','./assets/windowbg.jpg')
-        this.load.image('trademenubg','./assets/menubackground.png')
->>>>>>> Phil initial narrator work
     }
 
     public create() {

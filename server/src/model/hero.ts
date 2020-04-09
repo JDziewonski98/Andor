@@ -502,11 +502,8 @@ export class Hero {
         this.helm = false
     }
 
-<<<<<<< HEAD
     public addFreeMove(){
         this.freeMoves++
     }
-=======
->>>>>>> Phil initial narrator work
     //////////////////////
 }

@@ -34,7 +34,6 @@ export class HeroWindow extends Window {
     private smallItem2key: string = "none";
     private smallItem3key: string = "none";
 
-<<<<<<< HEAD
     // drop buttons
     private goldDrop;
     private farmerDrop;
@@ -46,10 +45,6 @@ export class HeroWindow extends Window {
 
     public constructor(key: string, data) {
         super(key, { x: data.x, y: data.y, width: 400, height: 400 });
-=======
-    public constructor(key: string, data) {
-        super(key, { x: data.x, y: data.y, width: 400, height: 350 });
->>>>>>> Phil initial narrator work
         this.key = key
         this.icon = data.icon
         this.gameinstance = data.controller
@@ -67,7 +62,6 @@ export class HeroWindow extends Window {
     protected initialize() { 
         var self = this
         var bg = this.add.image(0, 0, 'scrollbg').setOrigin(0.5)
-<<<<<<< HEAD
         this.add.sprite(20, 20, 'hero_border').setOrigin(0);
         this.add.sprite(24, 24, this.icon).setDisplaySize(72, 72).setOrigin(0);
 
@@ -108,21 +102,6 @@ export class HeroWindow extends Window {
         self.add.image(220, 250, 'item_border').setOrigin(0);
         this.smallItem3Drop = this.add.text(270, 250, 'DROP', dropButtonStyle)
 
-=======
-        this.add.sprite(20, 20, this.icon).setDisplaySize(70, 70).setOrigin(0);
-
-        var buttonStyle = { 
-            color: 'fx00',
-            // backgroundColor: '#cf9a6c'
-        }
-        this.add.text(100, 20, heroCardInfo[`${this.name}Name`], { color: 'fx00', fontSize: 30 });
-        this.add.text(100, 60, heroCardInfo[`${this.name}Desc`], { color: 'fx00', fontSize: 14 });
-        this.goldtext = this.add.text(170, 100, 'Gold: ' + this.gold, buttonStyle)
-        this.farmtext = this.add.text(170, 120, 'Farmers: ' + this.farmers, buttonStyle)
-        this.willtext = this.add.text(20, 100, 'Willpower: ' + this.will, buttonStyle)
-        this.strtext = this.add.text(20, 120, 'Strength: ' + this.str, buttonStyle)
-        
->>>>>>> Phil initial narrator work
         this.gameinstance.getHeroItems(self.windowhero, function(itemdict) {
             if (itemdict['largeItem'] != 'empty') {
                 self.largeItem = self.add.image(25, 180, itemdict['largeItem']).setDisplaySize(35,35).setOrigin(0);
@@ -136,15 +115,9 @@ export class HeroWindow extends Window {
                     self.setSmallItemText(i, smallItemList[i])
                 }
             }
-<<<<<<< HEAD
         })
 
         this.add.text(20, 305, heroCardInfo[`${this.windowhero}Ability`], { color: '#4B2504', fontSize: 12 })
-=======
-            //TODO_PICKUP: add other items as theyre added
-        })
-        this.add.text(25, 240, heroCardInfo[`${this.name}Ability`], { color: 'fx00', fontSize: 12 })
->>>>>>> Phil initial narrator work
 
         bg.setInteractive()
         this.input.setDraggable(bg)
@@ -184,33 +157,20 @@ export class HeroWindow extends Window {
 
         }, this);
 
-<<<<<<< HEAD
         // Drop gold button
         this.goldDrop.on('pointerdown', function () {            
-=======
-        if (this.clienthero == this.windowhero){ 
-            this.goldtext.setInteractive()
-        }
-
-        this.goldtext.on('pointerdown', function () {            
->>>>>>> Phil initial narrator work
             self.gameinstance.dropGold();
         });
 
         // While window is active, respond to updates in gold amount
         function updateGold(hk: string, goldDelta: number) {
-<<<<<<< HEAD
             if (hk != self.windowhero) return;
-=======
-            if (hk != self.name) return;
->>>>>>> Phil initial narrator work
             self.gold += goldDelta;
             self.refreshText();
         }
         this.gameinstance.updateDropGold(updateGold);
         this.gameinstance.updatePickupGold(updateGold);
 
-<<<<<<< HEAD
         // Drop item button
         // itemName is only used for smallItems, defaults to "" otherwise and is unused
         function callDropItem(itemType: string, itemName: string = "") {
@@ -282,8 +242,6 @@ export class HeroWindow extends Window {
 
         // TODO WELL: Listen for well use (WP inc) and farmer pickups/drops
 
-=======
->>>>>>> Phil initial narrator work
         //todo account for falcon
         console.log('ids:xxxxxxxxxxx', this.windowherotile, this.clientherotile)
         if (this.clienthero != this.windowhero && (this.windowherotile == this.clientherotile )) {
@@ -350,25 +308,17 @@ export class HeroWindow extends Window {
                 }
                 break;
             case 1:
-<<<<<<< HEAD
                 console.log("load image into slot 1", item);
                 self.smallItem2 = self.add.image(125,255,item).setDisplaySize(35,35).setOrigin(0);
                 self.smallItem2key = item;
-=======
-                self.smallItem2 = self.add.text(105,220,item)
->>>>>>> Phil initial narrator work
                 if (self.clienthero == self.windowhero){
                     defineOnclick(self.smallItem2, item, slot)
                 }
                 break;
             case 2:
-<<<<<<< HEAD
                 console.log("load image into slot 2", item);
                 self.smallItem3 = self.add.image(225,255,item).setDisplaySize(35,35).setOrigin(0);
                 self.smallItem3key = item;
-=======
-                self.smallItem3 = self.add.text(175,220,item)
->>>>>>> Phil initial narrator work
                 if (self.clienthero == self.windowhero){
                     defineOnclick(self.smallItem3, item, slot)
                 }
@@ -410,11 +360,8 @@ export class HeroWindow extends Window {
         //turn off any socket.on(...) that u add here!
         this.gameinstance.disconnectUpdateDropGold();
         this.gameinstance.disconnectUpdatePickupGold();
-<<<<<<< HEAD
         this.gameinstance.disconnectUpdateDropItemHero();
         this.gameinstance.disconnectUpdatePickupItemHero();
         this.gameinstance.disconnectReceiveUseWineskin();
-=======
->>>>>>> Phil initial narrator work
     }
 }
