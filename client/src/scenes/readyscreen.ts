@@ -68,8 +68,7 @@ export default class ReadyScreenScene extends Phaser.Scene {
         this.readytext = this.add.text(200, 450, 'Ready?', { fontFamily: '"Roboto Condensed"', fontSize: "40px", color: "#E42168" })
 
         // back button
-        var backbutton = this.add.sprite(50, 550, 'backbutton').setInteractive()
-        backbutton.flipX = true
+        var backbutton = this.add.sprite(80, 475, 'goback').setInteractive().setScale(0.5)
         backbutton.on('pointerdown', function (pointer) {
             this.scene.start('Lobby');
 
@@ -78,7 +77,7 @@ export default class ReadyScreenScene extends Phaser.Scene {
         var self = this;
 
         //advance to game button.
-        this.playbutton = this.add.sprite(950, 550, 'playbutton').setInteractive()
+        this.playbutton = this.add.sprite(900, 485, 'entergame').setInteractive().setScale(0.5)
         this.playbutton.on('pointerdown', function (pointer) {
             self.gameController.getReadyPlayers()
             self.gameController.getDesiredPlayerCount()

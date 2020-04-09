@@ -38,6 +38,9 @@ export default class LobbyScene extends Phaser.Scene {
         this.load.image('trademenubg', './assets/menubackground.png')
         this.load.image('logo', './assets/main-screen-logo.png')
         this.load.image('main', './assets/mainscreen.png')
+
+        this.load.image('goback', './assets/wizard-goes-back.png')
+        this.load.image('entergame', './assets/enter.png')
     }
 
     public create() {

@@ -68,8 +68,7 @@ export default class LoadGameScene extends Phaser.Scene {
 
         });
 
-        var backbutton = this.add.sprite(50,550,'backbutton').setInteractive()
-        backbutton.flipX = true
+        var backbutton = this.add.sprite(80, 475, 'goback').setInteractive().setScale(0.5)
         backbutton.on('pointerdown', function (pointer) {
             this.scene.start('Lobby');
         }, this);
