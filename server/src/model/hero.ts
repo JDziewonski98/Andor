@@ -82,6 +82,12 @@ export class Hero {
         this.region = newTile
         this.timeOfDay++
     }
+
+    //Prince has oen moveTo, this just increments timeOfDay
+    public movePrince(){
+        this.timeOfDay++;
+    }
+
     public exhaustingMoveTo(newTile: Region){
         this.region = newTile
         if (this.freeMoves == 0) {

@@ -53,9 +53,10 @@ export function game(socket, model: Game, io) {
           let targetRegion: Region = model.getRegions()[id];
 
           model.getPrince().moveTo(targetRegion);
+          hero.movePrince();
 
-          socket.broadcast.emit("updateMovePrinceRequest", hero.getKind(), id)
-          callback(hero.getKind(), id)
+          socket.broadcast.emit("updateMovePrinceRequest", hero.getKind(), id, hero.getTimeOfDay())
+          callback(hero.getKind(), id, hero.getTimeOfDay())
         }
       }
     }
