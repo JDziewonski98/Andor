@@ -521,6 +521,9 @@ export class game {
         this.socket.on("newEvent", callback)
         
     }
+    public newCollabListener(callback){
+        this.socket.on("newCollab", callback)
+    }
     //////
 
 

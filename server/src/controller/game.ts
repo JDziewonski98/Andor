@@ -243,7 +243,8 @@ export function game(socket, model: Game, io) {
                 //trigger collab with herosWithStr
                 //blocked = collabCall
                 //if !blocked
-                model.applyEvent(event)
+                //console.log(res)
+                io.of("/" + model.getName()).emit("newCollab", event.id, model.getHero(heroId).getRegion().getID());
               }
             }
             else{
@@ -532,6 +533,9 @@ export function game(socket, model: Game, io) {
           }
           else if (resNames[i] == 'will') {
             currHero?.setWill(resAllocated[heroTypeString][i])
+          }
+          else if(resNames[i] == '-Strength'){
+            currHero?.setStrength(-1*resAllocated[heroTypeString][i])
           }
         }
         // console.log("Updated", heroTypeString, "gold:", currHero?.getGold(), "wineskin:", currHero?.getWineskin())

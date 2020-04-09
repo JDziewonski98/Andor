@@ -242,6 +242,65 @@ export default class GameScene extends Phaser.Scene {
     this.gameinstance.newEventListener((event: EventCard) => {
       this.applyEvent(event)
     })
+    this.gameinstance.newCollabListener((eventID, startingHeroRank) => {
+      console.log(eventID, startingHeroRank)
+      this.newCollabDecisionSetup(eventID,startingHeroRank)
+    })
+    // this.gameinstance.newCollabListener(function(eventID,startingHeroRank) {
+    //   var self = this;
+    //   eventID = +eventID
+    //   var style2 = {
+    //     fontFamily: '"Roboto Condensed"',
+    //     fontSize: "20px",
+    //     backgroundColor: '#f00'
+    //   }
+    //   console.log(eventID.type)
+    //   if(eventID == 33){
+    //     console.log("Yay")
+    //     var resMap = require("../utils/event33Collab").map
+    //     var res = new Map<String,Number>()
+    //     for(var element in resMap){
+    //       console.log(element,"oi")
+    //       res.set(resMap[element].name, resMap[element].number)
+    //     }
+    //   }
+    //   // Determine width of the window based on how many resources are being distributed
+    //   console.log(res)
+    //   var width = (res.size + 1) * collabColWidth; // Not sure if there's a better way of getting size of ts obj
+    //   console.log(res.size)
+    //   // Determine height of the window based on number of players involved
+    //   var height = (self.heroes.length + 2) * collabRowHeight;
+    //   // Set data depending on whether the client is the owner of the decision
+    //   var collabWindowData = (self.hero.tile.id == startingHeroRank) ?
+    //     {
+    //       controller: self.gameinstance,
+    //       isOwner: true,
+    //       heroes: self.heroes,
+    //       resources: res,
+    //       textOptions: null,
+    //       x: reducedWidth / 2 - width / 2,
+    //       y: reducedHeight / 2 - height / 2,
+    //       w: width,
+    //       h: height,
+    //       infight:false,
+    //       overlayRef: self.overlay
+    //     } :
+    //     {
+    //       controller: self.gameinstance,
+    //       isOwner: false,
+    //       x: reducedWidth / 2 - width / 2,
+    //       y: reducedHeight / 2 - height / 2,
+    //       w: 200,
+    //       h: 100,
+    //       infight:false,
+    //       overlayRef: self.overlay
+    //     }
+    //   console.log(collabWindowData)
+    //   WindowManager.create(this, 'collab', CollabWindow, collabWindowData);
+    //   // Freeze main game while collab window is active
+    //   this.scene.pause();
+    // })
+
     // function applyEvent(event, this){
     //   console.log("Wassup mf")
     //   this.addEventCard(event)
@@ -795,7 +854,61 @@ export default class GameScene extends Phaser.Scene {
     // Freeze main game while collab window is active
     this.scene.pause();
   }
-
+  private newCollabDecisionSetup(eventID,startingHeroRank) {
+      var self = this;
+      eventID = +eventID
+      var style2 = {
+        fontFamily: '"Roboto Condensed"',
+        fontSize: "20px",
+        backgroundColor: '#f00'
+      }
+      console.log(eventID.type)
+      if(eventID == 33){
+        console.log("Yay")
+        var resMap = require("../utils/event33Collab").map
+        var res = new Map<String,Number>()
+        for(var element in resMap){
+          console.log(element,"oi")
+          res.set(resMap[element].name, resMap[element].number)
+        }
+      }
+      // Determine width of the window based on how many resources are being distributed
+      console.log(res)
+      var width = (res.size + 1) * collabColWidth; // Not sure if there's a better way of getting size of ts obj
+      console.log(res.size)
+      // Determine height of the window based on number of players involved
+      var height = (self.heroes.length + 2) * collabRowHeight;
+      // Set data depending on whether the client is the owner of the decision
+      var collabWindowData = (self.hero.tile.id == startingHeroRank) ?
+        {
+          controller: self.gameinstance,
+          isOwner: true,
+          heroes: self.heroes,
+          resources: res,
+          textOptions: null,
+          x: reducedWidth / 2 - width / 2,
+          y: reducedHeight / 2 - height / 2,
+          w: width,
+          h: height,
+          infight:false,
+          overlayRef: self.overlay
+        } :
+        {
+          controller: self.gameinstance,
+          isOwner: false,
+          x: reducedWidth / 2 - width / 2,
+          y: reducedHeight / 2 - height / 2,
+          w: 200,
+          h: 100,
+          infight:false,
+          overlayRef: self.overlay
+        }
+      console.log(collabWindowData)
+      WindowManager.create(this, 'collab', CollabWindow, collabWindowData);
+      // Freeze main game while collab window is active
+      this.scene.pause();
+    
+  }
   // Creating the hour tracker
   private hourTrackerSetup() {
     //x, y coordinates
