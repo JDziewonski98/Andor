@@ -7,4 +7,7 @@ client/src/config/env.js
 .vs/slnx.sqlite
 .vs/361March_31/v16/.suo
 .vs/VSWorkspaceState.json
+<<<<<<< HEAD
 .vscode/launch.json
+=======
+>>>>>>> 06edab1c139f17f15b6d6c9e3064aa43a703a123
