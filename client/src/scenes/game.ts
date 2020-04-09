@@ -54,6 +54,7 @@ export default class GameScene extends Phaser.Scene {
   private overlay;
 
   private shiftKey;
+  private ctrlKey;
   
   constructor() {
     super({ key: 'Game' });
@@ -130,6 +131,7 @@ export default class GameScene extends Phaser.Scene {
 
     this.cameraSetup();
     this.shiftKey = this.input.keyboard.addKey('shift');
+    this.ctrlKey = this.input.keyboard.addKey('CTRL');
     this.sceneplugin = this.scene
     // Centered gameboard with border
     this.add.image(fullWidth / 2, fullHeight / 2, 'gameboard')
@@ -338,9 +340,9 @@ export default class GameScene extends Phaser.Scene {
               );
             })
           }
-        }else if(this.ctrlkey.isDown){  //to move prince, hold ctrl key
+        }else if(this.ctrlKey.isDown){  //to move prince, hold ctrl key
           console.log("It is my turn: ", self.gameinstance.myTurn)
-          self.gameinstance.movePrinceRequest(tile.id, updateMoveRequest)
+          self.gameinstance.movePrinceRequest(tile.id, updateMovePrinceRequest)
 
         }else {
           console.log("It is my turn: ", self.gameinstance.myTurn)

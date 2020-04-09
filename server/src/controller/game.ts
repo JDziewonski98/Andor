@@ -38,7 +38,7 @@ export function game(socket, model: Game, io) {
     }
   });
 
-  socket.on("moveRequest", function (id, callback) {
+  socket.on("movePrinceRequest", function (id, callback) {
     id = +id // turning Id from string to number
     var heroID = socket.conn.id
     let hero = model.getHero(heroID);
@@ -53,8 +53,8 @@ export function game(socket, model: Game, io) {
           let targetRegion: Region = model.getRegions()[id];
 
           model.getPrince().moveTo(targetRegion);
-          
-          socket.broadcast.emit("updateMoveRequest", hero.getKind(), id)
+
+          socket.broadcast.emit("updateMovePrinceRequest", hero.getKind(), id)
           callback(hero.getKind(), id)
         }
       }
