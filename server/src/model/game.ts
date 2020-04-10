@@ -297,11 +297,12 @@ export class Game {
         if (heroTaken) return false; // failed to bind hero
 
         let hero = this.availableHeros.filter((hero) => hero.hk === heroType)
-        if (hero.length !== 0) {
+        if (hero.length === 1) {
             this.heroList.set(id, hero[0]);
             this.activeHeros.push(heroType);
             // make hero no longer available.
-            this.availableHeros = this.availableHeros.filter(h => h.hk != heroType);
+            this.availableHeros = this.availableHeros.filter(h => h.hk !== heroType);
+            console.log(this.availableHeros.map((h)=> h.hk))
             return true;
         }
         return false;

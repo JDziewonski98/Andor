@@ -400,7 +400,7 @@ export function game(socket, model: Game, io) {
 
   socket.on("getBoundHeros", (callback) => {
     const heros = model.getAvailableHeros().map(h => h.hk)
-    console.log(heros)
+    console.log("getBoundHeros: ", heros)
     callback(heros);
   });
 
