@@ -780,7 +780,9 @@ export default class GameScene extends Phaser.Scene {
         w: width,
         h: height,
         infight:false,
-        overlayRef: self.overlay
+        overlayRef: self.overlay,
+        type: "initial"
+        
       } :
       {
         controller: self.gameinstance,
@@ -790,7 +792,8 @@ export default class GameScene extends Phaser.Scene {
         w: 200,
         h: 100,
         infight:false,
-        overlayRef: self.overlay
+        overlayRef: self.overlay,
+        type: "initial"
       }
     WindowManager.create(this, 'collab', CollabWindow, collabWindowData);
     // Freeze main game while collab window is active
