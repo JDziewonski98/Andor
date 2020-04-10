@@ -383,6 +383,7 @@ export class Fight extends Window {
             self.overlayRef.toggleInteractive(true);
             self.scene.resume("Game")
             self.scene.remove(self.windowname)
+            self.gameinstance.endTurn()
         })
     }
 
@@ -534,6 +535,8 @@ export class Fight extends Window {
             }
 
             WindowManager.create(this, self.monstername + 'collab', CollabWindow, collabwindowdata)
+            //TODO should move narrator
+            self.gameinstance.endTurn()
             self.scene.remove(self.monstername)
         }, this)
 
@@ -562,6 +565,8 @@ export class Fight extends Window {
             }
 
             WindowManager.create(this, self.monstername + 'collab', CollabWindow, collabwindowdata)
+            //TODO should move narrator
+            self.gameinstance.endTurn()
             self.scene.remove(self.monstername)
         }, this)
 
