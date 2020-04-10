@@ -230,7 +230,24 @@ export default class GameScene extends Phaser.Scene {
       this.add.existing(tile);
 
       if (t.hasWell) {
-        this.addWell(t.x, t.y, t.id as number);
+        // coordinates taken from previous version, adding wells to allocated wells positions
+        switch (t.id){
+          case 5:
+            this.addWell(209, 2244, t.id as number);
+            break;
+          case 35:
+            this.addWell(1353, 4873, t.id as number);
+            break;
+          case 45:
+            this.addWell(7073, 3333, t.id as number);
+            break;
+          case 55:
+            this.addWell(5962, 770, t.id as number);
+            break;
+        }
+
+        // this approach adds well on top of the trees
+        // this.addWell(t.x, t.y, t.id as number);
       }
     }
 
