@@ -221,9 +221,15 @@ export function game(socket, model: Game, io) {
 
     // Pass back the runestone locations for the runestone narrator event, don't otherwise
     if (narratorPos == runestoneLegendPos) {
-      let runestoneLocs = model.getNarrator().getRunestoneLocations();
-      socket.emit("updateNarrator", narratorPos, -1, runestoneLocs)
-      socket.broadcast.emit("updateNarrator", narratorPos, -1, runestoneLocs)
+      let runestoneLocs = model.getNarrator().getRunestoneLocations()
+      let tileIDs = Array.from(runestoneLocs.keys());
+      socket.emit("updateNarrator", narratorPos, -1, tileIDs)
+      socket.broadcast.emit("updateNarrator", narratorPos, -1, tileIDs)
+      // Place the runestones on clients
+      runestoneLocs.forEach((runestone, tileID) => {
+        socket.emit("updateDropItemTile", tileID, runestone, "smallItem")
+        socket.broadcast.emit("updateDropItemTile", tileID, runestone, "smallItem")
+      })
     } else {
       socket.emit("updateNarrator", narratorPos)
       socket.broadcast.emit("updateNarrator", narratorPos)  

@@ -35,7 +35,7 @@ export class StoryWindow extends Window {
         var bg = this.add.image(0, 0, 'scrollbg').setOrigin(0.5);
         this.add.text(10, 10, storyCardTexts[this.id], storyCardStyleText);
 
-        this.nextButton = this.add.image(this.width-30, this.height-30, 'backbutton');
+        this.nextButton = this.add.image(this.width-30, this.height-30, 'okay');
         this.nextButton.setInteractive().setDisplaySize(30, 30).setOrigin(0);
 
         if (this.id == 0) {
