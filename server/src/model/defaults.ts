@@ -99,7 +99,7 @@ export const dHeros = [{
     hk: HeroKind.Dwarf,
     rank: 7,
     region: {
-        id: 65,
+        id: 7,
     },
     farmers: [
     ],
