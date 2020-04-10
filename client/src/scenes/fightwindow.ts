@@ -31,6 +31,7 @@ export class Fight extends Window {
     private monstertypetxt
     private exitbutton
     private invitetext;
+    private princeText;
     //for helm
     private otherdicetext;
     private helmtext;
@@ -55,6 +56,8 @@ export class Fight extends Window {
     private heroobjectsforcollab
     private firstfight = true
     private inviteresponses = 0
+    private princePos;
+    private princebonus: number = 0;
     // To toggle interactivity of overlay
     private overlayRef: BoardOverlay;
 
@@ -66,6 +69,7 @@ export class Fight extends Window {
         this.monstername = data.monster.name
         this.hero = data.hero
         this.monster = data.monster
+        this.princePos = data.princePos
         this.overlayRef = data.overlayRef;
         this.yourwill = this.hero.getWillPower()
         this.heroobjectsforcollab = data.heroes
@@ -114,6 +118,12 @@ export class Fight extends Window {
         this.yourroll = this.add.text(90, 110, 'Your atk: ', { backgroundColor: 'fx00' })
         this.alliedrollstxt = this.add.text(90, 160, 'Allied atks: ', { backgroundColor: 'fx00' })
         this.yourwilltxt = this.add.text(90, 200, 'Your will: ' + this.yourwill, { backgroundColor: 'fx00' })
+        this.princeText = this.add.text(90, 300, '')
+        console.log('princepos:',this.princePos, this.monster.tile.id)
+        if (this.princePos == this.monster.tile.id) {
+            this.princeText.setText('Prince: +4 dmg')
+            this.princebonus = 4;
+        }
 
         //click the fight text to enter the fight.
         this.fighttext.on('pointerdown', function (pointer) {
@@ -288,28 +298,28 @@ export class Fight extends Window {
 
                             var totalattack = self.yourattack + alliedattacksum
                             console.log('totalatk:', totalattack, 'uratk:', self.yourattack, 'result', result)
-                            if (totalattack > result) {
+                            if (totalattack + self.princebonus > result) {
                                 //hero(s) win.
                                 //todo handle reinvite (i think done?)
-                                self.gameinstance.doDamageToMonster(self.monstername, totalattack - result)
-                                self.notificationtext.setText('WHAM!! You hit them for \n' + (totalattack - result) + ' damage!')
+                                self.gameinstance.doDamageToMonster(self.monstername, totalattack + self.princebonus - result)
+                                self.notificationtext.setText('WHAM!! You hit them for \n' + (totalattack + self.princebonus - result) + ' damage!')
                                 self.tween()
-                                self.monsterwill = self.monsterwill - (totalattack - result)
+                                self.monsterwill = self.monsterwill - (totalattack + self.princebonus - result)
                                 self.monsterwilltxt.setText('Will: ' + self.monsterwill)
                                 if (self.monsterwill < 1) {
                                     self.victory()
                                 }
                             }
-                            else if (totalattack < result) {
+                            else if (totalattack + self.princebonus < result) {
                                 //monster win.
                                 //WARNING: here im doing some client side calculations on heros will to determine if they die.
                                 // I think this is wrong and will have to be changed, as those values are only up to date if
                                 // youve opened their hero panel recently. TODO.
 
                                 //do damage to all involved heros, backend
-                                self.gameinstance.doDamageToHero(self.hero.getKind(), result - totalattack)
+                                self.gameinstance.doDamageToHero(self.hero.getKind(), result - totalattack - self.princebonus)
                                 for (let ally of self.actuallyjoinedheros) {
-                                    self.gameinstance.doDamageToHero(ally, result - totalattack)
+                                    self.gameinstance.doDamageToHero(ally, result - totalattack - self.princebonus)
                                 }
 
                                 // determine which allies died and remove them from possible allies and display death on their screen
@@ -317,7 +327,7 @@ export class Fight extends Window {
                                 // this is the one shaky part of the code basically.
                                 self.heroobjectsforcollab.forEach(hero => {
                                     if (self.actuallyjoinedheros.includes(hero.getKind())) {
-                                        hero.setwillPower(-(result - totalattack))
+                                        hero.setwillPower(-(result - totalattack - self.princebonus))
                                         if (hero.getWillPower() < 1) {
                                             var index = self.alliedheros.indexOf(hero.getKind());
                                             if (index > -1) {
@@ -330,10 +340,10 @@ export class Fight extends Window {
                                     }
                                 });
                                 
-                                self.hero.setwillPower(-(result - totalattack))
+                                self.hero.setwillPower(-(result - totalattack - self.princebonus))
                                 self.yourwill = self.hero.getWillPower()
                                 self.yourwilltxt.setText('Your will: ' + self.yourwill)
-                                self.notificationtext.setText('OUCH!! You take \n' + (result - totalattack) + ' damage!')
+                                self.notificationtext.setText('OUCH!! You take \n' + (result - totalattack - self.princebonus) + ' damage!')
                                 self.tweentext()
                                 if (self.hero.getWillPower() < 1) {
                                     self.hero.resetWillPower()
@@ -579,6 +589,7 @@ export class Fight extends Window {
         if (victory) {
             this.monster.destroy()
         }
+        this.princeText.destroy()
         this.alliedrollstxt.destroy()
         this.invitetext.destroy()
         this.yourwilltxt.destroy()
