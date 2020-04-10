@@ -114,6 +114,7 @@ export default class GameScene extends Phaser.Scene {
     this.load.image("Strength", "../assets/strength.png");
     this.load.image("pawn", "../assets/pawn.png");
     this.load.image('dshield', './assets/disabled_cracked_shield.png')
+    this.load.image('okay', './assets/ok.png')
   }
 
   public create() {

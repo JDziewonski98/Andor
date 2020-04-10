@@ -14,7 +14,7 @@ export default class BoardOverlay extends Phaser.Scene {
     private parent: Phaser.GameObjects.Zone
     private heroButtons: Map<string, Phaser.GameObjects.Text> = new Map();
     private gameinstance: game;
-    private endTurnButton: Phaser.GameObjects.Text;
+    private endTurnButton: Phaser.GameObjects.Image;
     private chatButton: Phaser.GameObjects.Text;
     private endturntext;
     private clientheroobject;
@@ -52,6 +52,7 @@ export default class BoardOverlay extends Phaser.Scene {
 
     public preload() {
         this.load.image('hourbar', './assets/hours.PNG')
+        this.load.image('endturn', './assets/endturn.png')
     }
 
     private addHeroCard(type, x) {
@@ -142,7 +143,8 @@ export default class BoardOverlay extends Phaser.Scene {
         }, this);
 
         // end turn button
-        this.endTurnButton = this.add.text(850, 560, "END TURN", style2)
+        // this.endTurnButton = this.add.text(850, 560, "END TURN", style2)
+        this.endTurnButton = this.add.image(900, 565, 'endturn').setScale(0.3)
         this.endTurnButton.on('pointerdown', function (pointer){
             if (this.gameinstance.myTurn) {
                 this.gameinstance.endTurn();
