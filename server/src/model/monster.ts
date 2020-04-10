@@ -85,6 +85,10 @@ export class Monster {
     public resetWill() {
         this.willpower = this.base_will;
     }
+    
+    public getName() : string {
+        return this.name;
+    }
 
     public rollDice() {
         var attack = 0;

@@ -71,14 +71,15 @@ export function dCastle(numPlayers) {
     }
 }
 
-export const dPrince = {
-    tile: {
-        id: 72
-    }
-}
+// Prince's default should be that it doesn't exist
+// export const dPrince = {
+//     tile: {
+//         id: -1
+//     }
+// }
 
 export const dNarrator = {
-    legendPosition: 0
+    legendPosition: -1
 }
 
 
