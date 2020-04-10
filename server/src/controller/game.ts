@@ -49,8 +49,10 @@ export function game(socket, model: Game, io) {
         tempModel[key] = Array.from(model[key]);
       } else
         tempModel[key] = model[key];
-       
     });
+    // acui: I'm sorry for this hack, used to get the order of heroes entering the game
+    tempModel["startGamePos"] = model.gameStartHeroPosition;
+    model.gameStartHeroPosition += 1;
     callback(tempModel)
   })
 
@@ -813,7 +815,7 @@ export function game(socket, model: Game, io) {
       model.resetActiveHeros();
       // Tell all clients to move monsters and refresh wells
       callback(true);
-      
+
       // TODO NARRATOR: this should probably trigger after the post-fight collab is completed instead
       advanceNarrator();
     } else {

@@ -38,6 +38,7 @@ export default class GameScene extends Phaser.Scene {
   private prince: Prince;
 
   private narrator: Narrator;
+  private gameStartHeroPosition: number;
   private event: EventCard
   private activeEvents: Array<EventCard>
   private mockText;
@@ -178,14 +179,14 @@ export default class GameScene extends Phaser.Scene {
 
       // Add narrator: this happens here because we want initial game instructions to be
       // added on top of the collab decision
+      this.gameStartHeroPosition = data.startGamePos;
+      console.log("gameStartHeroPos", this.gameStartHeroPosition);
       this.addNarrator();
       // Listens for all updates triggered by narrator advancing
       this.receiveNarratorEvents();
     })
 
     // this.addMerchants();
-
-    this.addNarrator();
 
     //Event Card adding at start of game
     //this.gameinstance.newEvent()
@@ -444,28 +445,27 @@ export default class GameScene extends Phaser.Scene {
     }
 
   // Add the narrator pawn to the game board
-  private addNarrator(character = enumPositionOfNarrator.A) {
+  private addNarrator() {
     var self = this;
 
     this.gameinstance.getNarratorPosition(function(pos: number) {
       // Trigger start of game instructions/story
       if (pos == -1) {
+        console.log("story0 triggering twice?");
         WindowManager.create(self, `story0`, StoryWindow, {
           x: reducedWidth / 2,
           y: reducedHeight / 2,
           id: 0
         })
 
-        // First hero triggers placement of the runestone legend
+        // Last hero to enter the game triggers placement of the runestone legend
         // This is the only "narrator event" that gets directly triggered from the client
         // because it doesn't happen on a monster kill or end of day
-        if (self.hero.tile.id == self.startingHeroRank) {
+        if (self.gameStartHeroPosition == self.heroes.length) {
           self.gameinstance.placeRuneStoneLegend();
-          // server will emit back a narrator update, which will be received by the general
-          // listener in each client. This will place the runestone card on the narrator
-          // track and update the narrator pawn to the correct starting position
         }
       }
+      
       // Otherwise we just add the narrator at whatever position the backend has stored
       console.log("creating narrator at position", pos);
       self.narrator = new Narrator(self, pos, "pawn", self.gameinstance).setScale(0.5);

@@ -53,6 +53,7 @@ export class Game {
     private prince: Prince | null = null;
 
     private narrator!: Narrator;
+    public gameStartHeroPosition: number = 1;
 
     // collab decision related state
     public numAccepts: number;
