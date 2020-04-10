@@ -160,6 +160,12 @@ export default class BoardOverlay extends Phaser.Scene {
         // end day setup
         this.endDaySetup();
 
+        // TODO: REMOVE LATER, FOR TESTING NARRATOR ONLY
+        var advance = this.add.text(300, 560, "ADVANCE NARRATOR", style2).setInteractive()
+        advance.on('pointerdown', function (pointer){
+            this.gameinstance.advanceNarrator();
+        }, this)
+
         console.log("finished overlay create()")
     }
 

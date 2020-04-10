@@ -47,6 +47,7 @@ export class BattleInvWindow extends Window {
 
         yesbutton.on('pointerdown', function(pointer) {
             self.hero.incrementHour()
+            self.gameinstance.updateHourTracker(self.herokind)
             self.gameinstance.sendBattleInviteResponse('yes', self.herokind)
             yesbutton.destroy()
             nobutton.destroy()
@@ -59,7 +60,6 @@ export class BattleInvWindow extends Window {
             }
 
             self.gameinstance.heroRoll(bow, function(data) {
-                self.hero.incrementHour()
                 self.str = data.strength
                 var alldice = data.alldice
                 //the case of either an archer or non archer attacking with bow from adjacent space

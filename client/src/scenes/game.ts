@@ -1,6 +1,6 @@
 import { Farmer, Hero, HourTracker, Monster, HeroKind, Well, Tile, Narrator, EventCard } from '../objects';
 import { game } from '../api';
-import { WindowManager, CollabWindow, MerchantWindow, DeathWindow, Fight, BattleInvWindow, GameOverWindow, TradeWindow } from "./windows";
+import { WindowManager, StoryWindow, CollabWindow, MerchantWindow, DeathWindow, Fight, BattleInvWindow, GameOverWindow, TradeWindow } from "./windows";
 import { RietburgCastle } from './rietburgcastle';
 import BoardOverlay from './boardoverlay';
 
@@ -37,6 +37,8 @@ export default class GameScene extends Phaser.Scene {
   private castle: RietburgCastle;
   private prince: Prince;
 
+  private narrator: Narrator;
+  private gameStartHeroPosition: number;
   private event: EventCard
   private activeEvents: Array<EventCard>
   private mockText;
@@ -149,9 +151,6 @@ export default class GameScene extends Phaser.Scene {
         this.addHero(hero[1].hk, hero[1].region.id, hero[1].hk);
       })
 
-      this.prince = new Prince(this, this.tiles[data.prince.tile.id], 'prince').setScale(.15);
-      this.add.existing(this.prince);
-
       this.hourTrackerSetup();
 
       this.setUpListeners();
@@ -178,11 +177,16 @@ export default class GameScene extends Phaser.Scene {
         this.gameinstance.setMyTurn(true);
       }
 
+      // Add narrator: this happens here because we want initial game instructions to be
+      // added on top of the collab decision
+      this.gameStartHeroPosition = data.startGamePos;
+      console.log("gameStartHeroPos", this.gameStartHeroPosition);
+      this.addNarrator();
+      // Listens for all updates triggered by narrator advancing
+      this.receiveNarratorEvents();
     })
 
     // this.addMerchants();
-
-    this.addNarrator();
 
     //Event Card adding at start of game
     //this.gameinstance.newEvent()
@@ -285,7 +289,6 @@ export default class GameScene extends Phaser.Scene {
         } else if (this.ctrlKey.isDown) {  //to move prince, hold ctrl key
           console.log("It is my turn: ", self.gameinstance.myTurn)
           self.gameinstance.movePrinceRequest(tile.id, updateMovePrinceRequest)
-
         } else {
           console.log("It is my turn: ", self.gameinstance.myTurn)
           self.gameinstance.moveRequest(tile.id, updateMoveRequest)
@@ -393,35 +396,24 @@ export default class GameScene extends Phaser.Scene {
   private addMonster(monsterTile: number, type: string, id: string) {
     const tile: Tile = this.tiles[monsterTile];
 
-    //check if tile has a monster already
-    if (tile.monster !== null) {
-      //get next region. do I have to get it from the backend? couldn't find region.next in frontend
-      // do recursive call. something like: this.addMonster(tile.nextRegion, type, id)
-      // exit condition of recursive call: if tile.id === 0 then we add the monster to the castle tile
-      // ie. decrease a shield count
-
-    }
-    else { // tile is empty. no monster on this tile
-
-      let monster: Monster = new Monster(this, tile, type, id).setInteractive().setScale(.5);
-      this.monsters.push(monster);
-      this.monsterNameMap[monster.name] = monster;
-      tile.setMonster(monster);
-      this.add.existing(monster);
-      monster.on('pointerdown', function (pointer) {
-        if (this.scene.isVisible(monster.name)) {
-          WindowManager.destroy(this, monster.name);
-        }
-        else {
-          WindowManager.create(this, monster.name, Fight, {
-            controller: this.gameinstance,
-            hero: this.hero, monster: monster, heroes: this.heroes,
-            overlayRef: this.overlay
-          });
-          this.scene.pause()
-        }
-      }, this)
-    }
+    let monster: Monster = new Monster(this, tile, type, id).setInteractive().setScale(.5);
+    this.monsters.push(monster);
+    this.monsterNameMap[monster.name] = monster;
+    tile.setMonster(monster);
+    this.add.existing(monster);
+    monster.on('pointerdown', function (pointer) {
+      if (this.scene.isVisible(monster.name)) {
+        WindowManager.destroy(this, monster.name);
+      }
+      else {
+        WindowManager.create(this, monster.name, Fight, {
+          controller: this.gameinstance,
+          hero: this.hero, monster: monster, heroes: this.heroes,
+          overlayRef: this.overlay
+        });
+        this.scene.pause()
+      }
+    }, this)
   }
 
   private addFarmer(id: number, tileID: number) {
@@ -467,16 +459,93 @@ export default class GameScene extends Phaser.Scene {
       y * scaleFactor + borderWidth, "well", tile, this.gameinstance).setDisplaySize(48, 54);
     this.add.existing(newWell);
     this.wells.set("" + newWell.getTileID(), newWell);
+    }
+
+  // Add the narrator pawn to the game board
+  private addNarrator() {
+    var self = this;
+
+    this.gameinstance.getNarratorPosition(function(pos: number) {
+      // Trigger start of game instructions/story
+      if (pos == -1) {
+        console.log("story0 triggering twice?");
+        WindowManager.create(self, `story0`, StoryWindow, {
+          x: reducedWidth / 2,
+          y: reducedHeight / 2,
+          id: 0
+        })
+
+        // Last hero to enter the game triggers placement of the runestone legend
+        // This is the only "narrator event" that gets directly triggered from the client
+        // because it doesn't happen on a monster kill or end of day
+        if (self.gameStartHeroPosition == self.heroes.length) {
+          self.gameinstance.placeRuneStoneLegend();
+        }
+      }
+      
+      // Otherwise we just add the narrator at whatever position the backend has stored
+      console.log("creating narrator at position", pos);
+      self.narrator = new Narrator(self, pos, "pawn", self.gameinstance).setScale(0.5);
+      self.add.existing(self.narrator);
+    })
   }
 
-  private addNarrator(character = enumPositionOfNarrator.A) {
-    // let A be the default. can change the .A to anything under N. checked that it works
-    var posNarrator = character
-    const newNarrator = new Narrator(this, posNarrator, "pawn", this.gameinstance).setDisplaySize(33, 79.5);
-    this.add.existing(newNarrator);
+  private receiveNarratorEvents() {
+    var self = this;
+    
+    // runestonePos is an optional argument that is only passed back for the start of game
+    this.gameinstance.updateNarrator(function(pos: number, runestonePos = -1, stoneLocs = []) {
+      // Switch on the new narrator position
+      self.narrator.advance();
+      console.log("client received narrator advance", pos, runestonePos, stoneLocs)
+      switch (pos) {
+        case 0: // Initial storytelling is done, rune legend card placed, narrator at A
+          // TODO NARRATOR: update rune card UI and position
+          self.placeRunestoneCard(runestonePos);
+          break;
+        case self.narrator.getRunestonePos():
+          // place the runestones on the board
+          self.narratorRunestones(stoneLocs);
+          break;
+        case 2: // Legend card C
+          self.narratorC();
+          break;
+        case 6: // Legend card G
+          self.narratorG();
+          break;
+      }
+    })
+  }
 
-    newNarrator.advance()
-    newNarrator.advance()
+  private placeRunestoneCard(runestonePos: number) {
+    let yPos = (6100 - (runestonePos * 455)) * scaleFactor + borderWidth
+
+    // place the runestone card marker on the legend track
+    this.add.image(2450, yPos, 'weed').setDisplaySize(40, 40);
+    this.narrator.setRunestonePos(runestonePos);
+  }
+
+  private narratorRunestones(stoneLocs: number[]) {
+    console.log("client narratorRunestones", stoneLocs)
+    // TODO NARRATOR: place a runestone on each corresponding tileID
+    // Display StoryWindows
+  }
+
+  // Note that adding monsters is handled in setupListeners
+  private narratorC() {
+    console.log("client narratorC")
+    // Place farmer and prince, these are hardcoded for now
+    this.addFarmer(2, 28);
+    
+    this.prince = new Prince(this, this.tiles[72], 'prince').setScale(.15);
+    this.add.existing(this.prince);
+    // TODO NARRATOR: Display StoryWindows
+  }
+
+  private narratorG() {
+    // Remove prince
+    this.prince.destroy();
+    // ODO NARRATOR: Display StoryWindows
   }
 
   private addFog(fogs) {
@@ -674,13 +743,12 @@ export default class GameScene extends Phaser.Scene {
       WindowManager.create(self, 'deathnotice', DeathWindow, { controller: self.gameinstance });
     })
     // Listening for shields lost due to monster attack
-    this.gameinstance.updateShields(function (shieldNums, add) {
-      for (let shieldNum of shieldNums) {
-        if (shieldNum < 0 || shieldNum > 5) continue;
-        if (add) {
-          self.castle.shields[shieldNum].visible = false;
+    this.gameinstance.updateShields(function (shieldsRemaining: number) {
+      for (let i=0; i<6; i++) {
+        if (i >= shieldsRemaining) {
+          self.castle.shields[i].visible = true;
         } else {
-          self.castle.shields[shieldNum].visible = true;
+          self.castle.shields[i].visible = false;
         }
       }
     })
@@ -732,6 +800,14 @@ export default class GameScene extends Phaser.Scene {
       // Freeze main game while collab window is active
       self.scene.pause();
     });
+
+    this.gameinstance.receiveUpdateHeroTracker(function(hero) {
+      for (let h of self.heroes) {
+        if (h.getKind() == hero) {
+          h.incrementHour()
+        }
+      }
+    })
 
   }
 

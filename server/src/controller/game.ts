@@ -49,8 +49,10 @@ export function game(socket, model: Game, io) {
         tempModel[key] = Array.from(model[key]);
       } else
         tempModel[key] = model[key];
-       
     });
+    // acui: I'm sorry for this hack, used to get the order of heroes entering the game
+    tempModel["startGamePos"] = model.gameStartHeroPosition;
+    model.gameStartHeroPosition += 1;
     callback(tempModel)
   })
 
@@ -96,7 +98,8 @@ export function game(socket, model: Game, io) {
     console.log(hero.getNumPrinceMoves());
 
     if (hero !== undefined) {
-      var currPrinceRegion: Region = model.getPrince().getRegion();
+      if (model.getPrince() == null) return;
+      var currPrinceRegion: Region = model.getPrince()!.getRegion();
       var adjPrinceRegions: Array<number> = currPrinceRegion.getAdjRegionsIds()
       
       for (var regionID of adjPrinceRegions) {
@@ -104,7 +107,7 @@ export function game(socket, model: Game, io) {
         if (regionID === id && timeLeft) { // successful move
           let targetRegion: Region = model.getRegions()[id];
 
-          model.getPrince().moveTo(targetRegion);
+          model.getPrince()!.moveTo(targetRegion);
           hero.movePrince();
 
           socket.broadcast.emit("updateMovePrinceRequest", hero.getKind(), id, hero.getNumPrinceMoves())
@@ -177,21 +180,56 @@ export function game(socket, model: Game, io) {
   });
 
 
-    socket.on("advanceNarrator", function (callback) {
-        var nar = model.getNarrator();
-        // check if position of narrator is already at N
-        if (nar.getLegendPosition() === 13) {
-            nar.checkEndGame()
-        }
-        else {
-            nar.advance();
-        }
-        
-        // doesn't work when more than 1 player. advances twice than desired
-        callback(nar.getLegendPosition());
-        socket.broadcast.emit("updateNarrator", nar.getLegendPosition())
-        }
-    );
+  /*
+  * NARRATOR RELATED
+  */
+  socket.on("getNarratorPosition", function(callback) {
+    callback(model.getNarrator().getLegendPosition());
+  })
+
+  socket.on("placeRuneStoneLegend", function() {
+    let runestonePos = model.getNarrator().setRunestoneLegendPos();
+    let narratorPos = model.getNarrator().advance();
+
+    socket.emit("updateNarrator", narratorPos, runestonePos)
+    socket.broadcast.emit("updateNarrator", narratorPos, runestonePos)
+  })
+
+  // TODO: FOR TESTING ONLY, REMOVE AFTER
+  socket.on("advanceNarrator", function() {
+    advanceNarrator();
+  })
+
+  function advanceNarrator() {
+    // Updates the backend model based on new narrator pos and emits to all clients
+    var newMonsters = model.advanceNarrator();
+    var narratorPos = model.getNarrator().getLegendPosition();
+    console.log("backend advanceNarrator", narratorPos, newMonsters)
+
+    // Emit new monsters back to clients if needed
+    let runestoneLegendPos = model.getNarrator().getRunestoneLegendPos();
+    if (narratorPos==runestoneLegendPos || narratorPos==2 || narratorPos==6) {
+      for (let m of newMonsters) {
+        socket.emit("addMonster", m.getType(), m.getTileID(), m.getName());
+        socket.broadcast.emit("addMonster", m.getType(), m.getTileID(), m.getName());
+      }
+    }
+    // Update shields
+    var shieldsRemaining = model.getCastle().getShields();
+    socket.broadcast.emit('updateShields', shieldsRemaining);
+    socket.emit('updateShields', shieldsRemaining);
+
+    // Pass back the runestone locations for the runestone narrator event, don't otherwise
+    if (narratorPos == runestoneLegendPos) {
+      let runestoneLocs = model.getNarrator().getRunestoneLocations();
+      socket.emit("updateNarrator", narratorPos, -1, runestoneLocs)
+      socket.broadcast.emit("updateNarrator", narratorPos, -1, runestoneLocs)
+    } else {
+      socket.emit("updateNarrator", narratorPos)
+      socket.broadcast.emit("updateNarrator", narratorPos)  
+    }
+  }
+  //////////////////////////////////////////////////
 
 
   socket.on("merchant", function (callback) {
@@ -233,14 +271,17 @@ export function game(socket, model: Game, io) {
     }
   });
 
+  // TODO: this will require a refactor to work with monster hopping
   socket.on("useFog", function (fogType, tile, callback) {
     let heroId = socket.conn.id;
     let hero = model.getHero(heroId);
     if (hero != undefined && tile == hero.getRegion().getID()) {
-      let { success, id, event } = model.useFog(fogType, +tile);
+      // useFog needs to return the actual tile the monster ends up on, can't assume that it is
+      // the same as the fog tile it spawned from.
+      let { success, id, event, newTile, createSuccess } = model.useFog(fogType, +tile);
       if (success) {
-        if (fogType === Fog.Gor) {
-          io.of("/" + model.getName()).emit("addMonster", MonsterKind.Gor, tile, id);
+        if (fogType === Fog.Gor && createSuccess) {
+          io.of("/" + model.getName()).emit("addMonster", MonsterKind.Gor, newTile, id);
         }
         if(fogType === Fog.EventCard){
           if(event != null){
@@ -263,6 +304,11 @@ export function game(socket, model: Game, io) {
         callback(tile);
         socket.broadcast.emit("destroyFog", tile);
       }
+
+      // Update shields
+      var shieldsRemaining = model.getCastle().getShields();
+      socket.broadcast.emit('updateShields', shieldsRemaining);
+      socket.emit('updateShields', shieldsRemaining);
 
     }
   });
@@ -568,6 +614,7 @@ export function game(socket, model: Game, io) {
     // console.log(convMonsters);
     socket.broadcast.emit('sendKilledMonsters', monstername);
     //socket.emit('sendKilledMonsters', monstername);
+    advanceNarrator();
   })
 
   socket.on('heroRoll', function (bow, callback) {
@@ -623,6 +670,11 @@ export function game(socket, model: Game, io) {
     //dont have to handle monster death here. a seperate message gets sent from fight window upon death.
   })
 
+  socket.on('resetMonsterStats', function(name) {
+    let monster = model.getMonsters().get(name)
+    monster?.resetWill()
+  })
+
   socket.on('doDamageToHero', function (thehero, damage) {
     let modelHeros = model.getHeros();
     for (let hero of modelHeros.values()) {
@@ -638,6 +690,10 @@ export function game(socket, model: Game, io) {
         }
       }
     }
+  })
+
+  socket.on('updateHeroTracker', function(hero) {
+    socket.broadcast.emit('receiveUpdateHeroTracker',hero)
   })
 
   socket.on('getHerosInRange', function (id, callback) {
@@ -753,7 +809,6 @@ export function game(socket, model: Game, io) {
     if (model.getActiveHeros().length == 1) {
       //remove active Events
       model.clearActiveEvents()
-      model.setNextDayFirstHero(socket.conn.id);
 
       //draw and apply new event
       let event = model.drawCard()
@@ -777,6 +832,9 @@ export function game(socket, model: Game, io) {
       model.resetActiveHeros();
       // Tell all clients to move monsters and refresh wells
       callback(true);
+
+      // TODO NARRATOR: this should probably trigger after the post-fight collab is completed instead
+      advanceNarrator();
     } else {
       // If not the last hero, then don't trigger end of day actions and pass turn to the
       // next hero by rank as normal
@@ -803,7 +861,7 @@ export function game(socket, model: Game, io) {
   })
 
   socket.on('moveMonstersEndDay', function () {
-    var shieldsLost = model.moveMonsters();
+    var shieldsRemaining = model.moveMonsters();
     // Convert monsters Map into passable object
     let convMonsters = {};
     for (let m of Array.from(model.getMonsters().values())) {
@@ -812,8 +870,8 @@ export function game(socket, model: Game, io) {
     socket.broadcast.emit('sendUpdatedMonsters', convMonsters);
     socket.emit('sendUpdatedMonsters', convMonsters);
 
-    socket.broadcast.emit('updateShields', shieldsLost, false);
-    socket.emit('updateShields', shieldsLost, false);
+    socket.broadcast.emit('updateShields', shieldsRemaining);
+    socket.emit('updateShields', shieldsRemaining);
 
     // Evaluate end of game state - currently only handles end of game due to loss of shields
     if (model.getEndOfGameState()) {

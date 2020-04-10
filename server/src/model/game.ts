@@ -23,7 +23,7 @@ import {
     dFogs,
     dEventDeck,
     dCastle,
-    dPrince,
+    // dPrince,
     dNarrator
 } from "./defaults";
 
@@ -50,9 +50,10 @@ export class Game {
     private monsters: Map<string, Monster>;
     private monstersInCastle: string[];
     private endOfGame: boolean = false;
-    private prince!: Prince;
+    private prince: Prince | null = null;
 
     private narrator!: Narrator;
+    public gameStartHeroPosition: number = 1;
 
     // collab decision related state
     public numAccepts: number;
@@ -115,7 +116,7 @@ export class Game {
         castle = castle || dCastle(this.numOfDesiredPlayers);
         monstersInCastle = monstersInCastle || [];
         endOfGameState = endOfGameState || false;
-        prince = prince || dPrince;
+        prince = prince || null; // prince does not exist until legend card C2
         narrator = narrator || dNarrator;
 
 
@@ -124,17 +125,15 @@ export class Game {
         this.setRegions(regions);
         // this.setHeros(heros);
         this.setFarmers(farmers);
+        this.castle = new RietburgCastle(castle.numDefenseShields, castle.numDefenseShieldsUsed);
         this.setMonsters(monsters);
         this.setFogs(fogs);
         this.setEventDeck(eventDeck);
         this.setActiveEvents(activeEvents);
         this.setActiveHeros(activeHeros);
-        this.castle = new RietburgCastle(castle.numDefenseShields, castle.numDefenseShieldsUsed);
         this.monstersInCastle = monstersInCastle;
         this.endOfGame = endOfGameState;
-        this.prince = new Prince(this.regions[prince.tile.id]);
         this.narrator = new Narrator(narrator.legendPosition);
-
     }
 
     private setFirstHerosTurn() {
@@ -215,23 +214,43 @@ export class Game {
         })
     }
 
-    public addMonster(kind: MonsterKind, tile: number, id: string) {
-
-        let monster = new Monster(kind, tile, this.numOfDesiredPlayers, id)
-        this.monsters.set(monster.name, monster);
-        this.regions[tile].setMonster(monster);
-
-        /* this crashes the server? this.regions['tile'] is undefined
-         * // check if tile to add monster already has a monster
-        if (this.regions[tile].getMonster() !== null) {
-            this.addMonster(kind, (this.regions[tile].getNextRegionId()), id)
-            
+    // Adds a monster to the next open space on the board, or sends the monster directly to the castle
+    // If the latter, return null instead of a Monster.
+    public addMonster(kind: MonsterKind, tile: number, id: string) : Monster | null {
+        var nextRegID = tile;
+        if (kind != MonsterKind.Fortress) { // jumping doesn't apply to Fortress
+            var shieldsRemaining: number = this.castle.getShields();
+            while (this.regions[nextRegID].getMonster()) {
+                nextRegID = this.regions[nextRegID].getNextRegionId();
+                // base case: the region is tile 0 (the castle)
+                if (nextRegID == 0) {
+                    // Monster is going to enter the castle
+                    // Decrement shields, monster will not get created
+                    shieldsRemaining = this.castle.attackOnCastle();
+                    break;
+                }
+            }
+            if (this.castle.getShields() <= 0) {
+                this.endOfGame = true;
+            }
         }
-        else { // if it has a monster, get next region and addMonster to that tile
-            let monster = new Monster(kind, tile, this.numOfDesiredPlayers, id)
+        // Remove any monster that is occupying the Fortress's space
+        if (kind == MonsterKind.Fortress) {
+            let currMonster = this.regions[nextRegID].getMonster();
+            if (currMonster) {
+                this.monsters.delete(currMonster.name);
+            }
+        }
+
+        let monster: Monster | null = null;
+        // nextRegID is either 0 (don't create monster) or the correct open tile
+        if (nextRegID != 0) {
+            monster = new Monster(kind, nextRegID, this.numOfDesiredPlayers, id)
             this.monsters.set(monster.name, monster);
-            this.regions[tile].setMonster(monster);
-        }*/
+            this.regions[nextRegID].setMonster(monster);
+        }
+
+        return monster;
     }
 
     public setRegions(regions) {
@@ -255,7 +274,7 @@ export class Game {
         return this.farmers;
     }
 
-    public getPrince(): Prince {
+    public getPrince(): Prince | null {
         return this.prince;
     }
 
@@ -427,10 +446,11 @@ export class Game {
         this.monsters.delete(monstername)
     }
 
-    // Returns list of shields lost
-    public moveMonsters() {
+    // Returns number of shields remaining
+    public moveMonsters() : number {
         var self = this;
-        var shieldsLost: number[] = [];
+        // var shieldsLost: number[] = [];
+        var shieldsRemaining: number = this.castle.getShields();
 
         // Move monsters in phases based on MonsterKind: Gors, Skrals, Wardraks
         // Also need to sort the monsters based on tileID
@@ -459,6 +479,7 @@ export class Game {
         skrals.sort((a, b) => (a.getTileID() - b.getTileID()));
         wardraks.sort((a, b) => (a.getTileID() - b.getTileID()));
 
+        // Note that fortress does not move
         var sortedMonsters = gors.concat(skrals).concat(wardraks).concat(wardraks);
         // Move each monster based on tile and type ordering
         // Note that wardraks get to move twice
@@ -478,7 +499,7 @@ export class Game {
                     // Monster is going to enter the castle
                     // Decrement shields, remove monster, evaluate end of game condition
                     this.monstersInCastle.push(m.name);
-                    shieldsLost.push(self.castle.attackOnCastle());
+                    shieldsRemaining = self.castle.attackOnCastle();
                     self.regions[startReg].setMonster(null);
                     // self.monsters.delete(m.name);
                     break;
@@ -495,7 +516,7 @@ export class Game {
             }
         }
 
-        return shieldsLost;
+        return shieldsRemaining;
     }
 
     public replenishWells() {
@@ -551,6 +572,106 @@ export class Game {
         return this.monstersInCastle;
     }
 
+    // Advances narrator, updates game state accordingly, and returns the new narrator position
+    public advanceNarrator() : Monster[] {
+        let newPos = this.narrator.advance();
+
+        var newMonsters: Monster[] = []
+        switch(newPos) {
+            case this.narrator.getRunestoneLegendPos():
+                // place the runestones on the board
+                newMonsters = this.narratorRunestones();
+                break;
+            case 2: // Legend card C
+                newMonsters = this.narratorC();
+                break;
+            case 6: // Legend card G
+                newMonsters = this.narratorG();
+                break;
+        }
+
+        return newMonsters;
+    }
+
+    // sets positions of the runestones and adds them to the regions
+    private narratorRunestones() : Monster[] {
+        this.narrator.setRunestoneLocations();
+        // TODO NARRATOR: Choose 5 random runestones and place them on the locations
+
+        // Place gor on space 43 and skral on space 39
+        // TODO: for naming, we need to use a separate count instead of basing it on the size of
+        // the monsters list. The list can decrease in size meaning monsters can end up with the same name
+        // For now, names are hardcoded
+        var monsterList: Monster[] = [];
+        let monster: Monster | null = this.addMonster(MonsterKind.Gor, 43, 'gor8')
+        if (monster != null) {
+            monsterList.push(monster);
+        }
+        monster = this.addMonster(MonsterKind.Skral, 39, 'skral2');
+        if (monster != null) {
+            monsterList.push(monster);
+        }
+
+        return monsterList;
+    }
+
+    private narratorC() : Monster[] {
+        var monsterList: Monster[] = [];
+        // Place Skral Stronghold and Skral, farmer, gors, skral, prince
+        // Determine position of stronghold
+        let dieRoll = this.narrator.randomInteger(1, 6);
+
+        let monster: Monster | null = this.addMonster(MonsterKind.Fortress, 50+dieRoll, 'fortress');
+        if (monster != null) {
+            monsterList.push(monster);
+        }
+
+        // Add farmer
+        let farmObj = new Farmer(2, 28);
+        this.farmers.push(farmObj)
+        this.regions[farmObj.getTileID()].addFarmer(farmObj);
+
+        // Add more monsters
+        monster = this.addMonster(MonsterKind.Gor, 27, 'gor9');
+        if (monster != null) {
+            monsterList.push(monster);
+        }
+        monster = this.addMonster(MonsterKind.Gor, 31, 'gor10');
+        if (monster != null) {
+            monsterList.push(monster);
+        }
+        monster = this.addMonster(MonsterKind.Skral, 29, 'skral3');
+        if (monster != null) {
+            monsterList.push(monster);
+        }
+
+        // Add my boy Thorald
+        this.prince = new Prince(this.regions[72]);
+
+        // Display StoryWindows
+        return monsterList;
+    }
+
+    private narratorG() : Monster[] {
+        // Remove prince, add wardraks
+        // Cya Thorald
+        this.prince = null;
+
+        var monsterList: Monster[] = [];
+        // Add spookyboys
+        let monster: Monster | null = this.addMonster(MonsterKind.Wardrak, 26, 'wardrak1');
+        if (monster != null) {
+            monsterList.push(monster);
+        }
+        monster = this.addMonster(MonsterKind.Wardrak, 27, 'wardrak2');
+        if (monster != null) {
+            monsterList.push(monster);
+        }
+
+        // Display StoryWindows
+        return monsterList;
+    }
+
     public useFog(fog: Fog, tile: number) {
         if (this.fogs.get(tile) != undefined && this.fogs.get(tile) == fog) { // make sure tile has a fog and its the same
             this.fogs.delete(tile); // delete fog from game
@@ -559,9 +680,11 @@ export class Game {
             console.log("fog test, currHero:", currHero);
 
             if (fog == Fog.Gor) {
+                // TODO: change this naming strategy
                 const id = `gor${this.monsters.size + 1}`;
-                this.addMonster(MonsterKind.Gor, tile, id)
-                return { success: true, id: id };
+                let newMonster = this.addMonster(MonsterKind.Gor, tile, id)
+                let status = (newMonster != null);
+                return { success: true, createSuccess: status, id: id, newTile: newMonster?.getTileID() };
             } else if (fog == Fog.Gold) {
                 this.getHeroFromHk(this.currPlayersTurn)!.updateGold(1);
                 return { success: true };

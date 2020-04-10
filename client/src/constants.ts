@@ -80,3 +80,46 @@ export const heroCardInfo = {
     warriorDesc: "Warrior from Rietland\nRank 14",
     warriorAbility: "Special ability: Thorn gets 5 willpower points\ninstead of 3 when he empties a well."
 }
+
+// Narrator story info
+export const storyCardWidths = [450, 450, 470]
+export const storyCardHeights = [150, 170, 110]
+export const storyCardTexts = [
+`A gloomy mood has fallen upon the people.
+Rumors are making the rounds that skrals have set up
+a stronghold in some undiscovered location. 
+The heroes have scattered themselves across the 
+entire land in search of this location. 
+The defense of the castle is in their hands alone.
+
+Many farmers have asked for help and are seeking 
+shelter behind the high walls of Rietburg Castle`,
+
+`At first sunlight, the heroes receive a message: 
+Old King Brandmur's willposwr seems to have weakened 
+with the passage of time. But there is said to be a 
+herb growing in the mountain passes that can revive 
+a person's life.
+
+Task:
+The heroes must heal the king with the medicinal herb.
+To do that, they must find the witch. 
+Only she know the locations where this herb grows.
+The witch is hiding behind one of the fog tokens.`,
+
+`From now on, any articles (in addition to strength points)
+may be purchased from the merchants (spaces 18, 57, and 71)
+for 2 gold each.
+Each hero starts with 2 strength points. The group receives
+5 gold and 2 wineskins, how to divide them is up to you.
+Best of luck, Andor depends on you!`
+]
+export const storyCardStyleText = {
+    fontSize: 12,
+    color: '#000000'
+}
+export const storyCardStyleTitle = {
+    fontSize: 16,
+    color: '#FFFFFF',
+    backgroundColor: '#4B2504'
+}

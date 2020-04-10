@@ -69,14 +69,31 @@ export class game {
     }
 
 
-    //narrator stuff
-    public advanceNarrator(callback) {
-        this.socket.emit("advanceNarrator", callback);
+    /*
+    * NARRATOR RELATED
+    */
+    public getNarratorPosition(callback) {
+        this.socket.emit("getNarratorPosition", callback);
     }
 
+    // updates ui position of narrator pawn and triggers client-side updates
     public updateNarrator(callback) {
         this.socket.on("updateNarrator", callback);
     }
+
+    public placeRuneStoneLegend() {
+        this.socket.emit("placeRuneStoneLegend");
+    }
+
+    public updateRunestoneLegend(callback) {
+        this.socket.on("updateRunestoneLegend", callback);
+    }
+
+    // TODO: REMOVE, FOR NARRATOR TESTING ONLY
+    public advanceNarrator() {
+        this.socket.emit("advanceNarrator");
+    }
+    /////////////////////////////
 
     /*
     *   GOLD RELATED
@@ -345,6 +362,10 @@ export class game {
         this.socket.on('sendKilledMonsters', callback)
     }
 
+    public resetMonsterStats(name) {
+        this.socket.emit('resetMonsterStats', name)
+    }
+
     public doDamageToHero(hero, damage) {
         this.socket.emit('doDamageToHero', hero, damage)
     }
@@ -409,6 +430,13 @@ export class game {
 
     public receiveDeathNotice(callback) {
         this.socket.on('receiveDeathNotice', callback)
+    }
+
+    public updateHourTracker(hero) {
+        this.socket.emit('updateHeroTracker', hero)
+    }
+    public receiveUpdateHeroTracker(callback) {
+        this.socket.on('receiveUpdateHeroTracker', callback)
     }
     /////////////////////////////
 
