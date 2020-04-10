@@ -225,29 +225,37 @@ export function game(socket, model: Game, io) {
             io.of("/" + model.getName()).emit("newEvent", event);
             //these will be blockable
             if(event.id ==  2 || event.id ==  5 || event.id ==  9 || event.id == 11 || event.id == 15 || event.id == 17 || 
-               event.id == 19 || event.id == 21 || event.id == 22 || event.id == 24 || event.id == 31 || event.id == 32){
+               event.id == 19 || event.id == 21 || event.id == 22 || event.id == 24 || event.id == 31 || event.id == 32 || event.id == 33){
+                //first must handle 33 uniquely
+                if(event.id == 33){
+                  //if someone has > 1 str point
+                  var herosWithStr = Array<Hero>()
+                  for(let [conn,hero] of model.getHeros()){
+                    if(hero.getStrength() > 1){
+                      herosWithStr.push(hero)
+                    }
+                  }
+                  if(herosWithStr.length != 0){
+                    //trigger collab with herosWithStr
+                    //blocked = collabCall
+                    //if !blocked
+                    //console.log(res)
+                    io.of("/" + model.getName()).emit("newCollab", event.id, model.getHero(heroId).getRegion().getID());
+                    model.applyEvent(event)
+                  }
+                  else{
+                    //event is not triggered. We should probably communicate this somehow.
+                  }
+                }
+                
+              //now for the rest
               //trigger collab decision between players. 
               //blocked = collabCall
               //if !blocked
-              model.applyEvent(event)
-            }
-            else if(event.id == 33){
-              //if someone has > 1 str point
-              var herosWithStr = Array<Hero>()
-              for(let [conn,hero] of model.getHeros()){
-                if(hero.getStrength() > 1){
-                  herosWithStr.push(hero)
-                }
-              }
-              if(herosWithStr != null){
-                //trigger collab with herosWithStr
-                //blocked = collabCall
-                //if !blocked
-                //console.log(res)
-                io.of("/" + model.getName()).emit("newCollab", event.id, model.getHero(heroId).getRegion().getID());
-              }
+              model.applyEvent(event) 
             }
             else{
+              
               model.applyEvent(event)
             }
           }

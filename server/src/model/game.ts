@@ -841,11 +841,6 @@ export class Game {
         }
         else if(event.id == 33){
             //to do
-            var res = new Map([
-                ["gold", 5],
-                ["wineskin", 2]
-              ])
-            return res
         } 
         //if one that returns to deck ?? not sure if any return
     }
