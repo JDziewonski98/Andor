@@ -33,14 +33,13 @@ export default class LobbyScene extends Phaser.Scene {
         this.load.image('dwarfmale', './assets/dwarfmale.png')
         this.load.image('archermale', './assets/archermale.png')
         this.load.image('fantasyhome', './assets/fantasyhome.jpg')
-        this.load.image('optionsIcon', './assets/icons/settings_icon.png')
+        this.load.image('optionsIcon', './assets/haus.png')
         this.load.image('scrollbg', './assets/windowbg.jpg')
         this.load.image('trademenubg', './assets/menubackground.png')
-        this.load.image('logo', './assets/main-screen-logo.png')
         this.load.image('main', './assets/mainscreen.png')
-
         this.load.image('goback', './assets/wizard-goes-back.png')
         this.load.image('entergame', './assets/enter.png')
+        this.load.image('herosd', './assets/heroes’\ dwelling.png')
     }
 
     public create() {
@@ -64,6 +63,12 @@ export default class LobbyScene extends Phaser.Scene {
             fontFamily: "Roboto Condensed",
             fontSize: "40px",
             fontStyle: "italic"
+        }
+        var housetText= {
+            fontFamily: "Roboto Condensed",
+            fontSize: "20px",
+            fontStyle: "italic",
+            color: "gray"
         }
 
         var self = this;
@@ -90,7 +95,8 @@ export default class LobbyScene extends Phaser.Scene {
             this.scene.start('Load', { controller: self.lobbyController });
         }, this);
 
-        this.optionsIcon = this.add.image(930, 80, 'optionsIcon').setInteractive();
+        this.optionsIcon = this.add.image(900, 80, 'optionsIcon').setInteractive().setScale(0.3);
+        this.add.text(900, 133, "heroes' dwelling", housetText).setOrigin(0.5)
         this.optionsIcon.on('pointerdown', function (pointer) {
             this.scene.bringToTop('Options')
             this.scene.wake('Options')
