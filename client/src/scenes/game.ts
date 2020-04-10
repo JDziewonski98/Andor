@@ -717,6 +717,14 @@ export default class GameScene extends Phaser.Scene {
       self.scene.pause();
     });
 
+    this.gameinstance.receiveUpdateHeroTracker(function(hero) {
+      for (let h of self.heroes) {
+        if (h.getKind() == hero) {
+          h.incrementHour()
+        }
+      }
+    })
+
   }
 
   public update() {

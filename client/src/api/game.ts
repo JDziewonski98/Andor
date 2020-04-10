@@ -414,6 +414,13 @@ export class game {
     public receiveDeathNotice(callback) {
         this.socket.on('receiveDeathNotice', callback)
     }
+
+    public updateHourTracker(hero) {
+        this.socket.emit('updateHeroTracker', hero)
+    }
+    public receiveUpdateHeroTracker(callback) {
+        this.socket.on('receiveUpdateHeroTracker', callback)
+    }
     /////////////////////////////
 
 

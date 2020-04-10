@@ -645,6 +645,10 @@ export function game(socket, model: Game, io) {
     }
   })
 
+  socket.on('updateHeroTracker', function(hero) {
+    socket.broadcast.emit('receiveUpdateHeroTracker',hero)
+  })
+
   socket.on('getHerosInRange', function (id, callback) {
     var centraltile = model.getRegions()[id]
     var centraltileid = centraltile.getID()

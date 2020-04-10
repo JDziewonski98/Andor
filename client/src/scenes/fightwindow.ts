@@ -290,11 +290,7 @@ export class Fight extends Window {
                             }
 
                             self.hero.incrementHour()
-                            self.heroobjectsforcollab.forEach(h => {
-                                if (self.actuallyjoinedheros.includes(h.getKind())) {
-                                    h.incrementHour()
-                                }
-                            })
+                            self.gameinstance.updateHourTracker(self.hero.getKind())
 
                             var totalattack = self.yourattack + alliedattacksum
                             console.log('totalatk:', totalattack, 'uratk:', self.yourattack, 'result', result)
