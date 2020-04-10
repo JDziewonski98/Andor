@@ -23,7 +23,7 @@ import {
     dFogs,
     dEventDeck,
     dCastle,
-    dPrince,
+    // dPrince,
     dNarrator
 } from "./defaults";
 
@@ -50,7 +50,7 @@ export class Game {
     private monsters: Map<string, Monster>;
     private monstersInCastle: string[];
     private endOfGame: boolean = false;
-    private prince!: Prince;
+    private prince: Prince | null = null;
 
     private narrator!: Narrator;
 
@@ -115,7 +115,7 @@ export class Game {
         castle = castle || dCastle(this.numOfDesiredPlayers);
         monstersInCastle = monstersInCastle || [];
         endOfGameState = endOfGameState || false;
-        prince = prince || dPrince;
+        prince = prince || null; // prince does not exist until legend card C2
         narrator = narrator || dNarrator;
 
 
@@ -132,9 +132,8 @@ export class Game {
         this.castle = new RietburgCastle(castle.numDefenseShields, castle.numDefenseShieldsUsed);
         this.monstersInCastle = monstersInCastle;
         this.endOfGame = endOfGameState;
-        this.prince = new Prince(this.regions[prince.tile.id]);
+        // this.prince = new Prince(this.regions[prince.tile.id]);
         this.narrator = new Narrator(narrator.legendPosition);
-
     }
 
     private setFirstHerosTurn() {
@@ -215,12 +214,17 @@ export class Game {
         })
     }
 
+    // BIG TODO
     public addMonster(kind: MonsterKind, tile: number, id: string) {
-
+        // TODO: this should use the monster jumping algo to make sure we have max 1 monster per tile
         let monster = new Monster(kind, tile, this.numOfDesiredPlayers, id)
         this.monsters.set(monster.name, monster);
         this.regions[tile].setMonster(monster);
 
+        // TODO: if adding the fortress, remove any monster currently on that tile
+        // TODO: monster hopping
+
+        return monster;
         /* this crashes the server? this.regions['tile'] is undefined
          * // check if tile to add monster already has a monster
         if (this.regions[tile].getMonster() !== null) {
@@ -255,7 +259,7 @@ export class Game {
         return this.farmers;
     }
 
-    public getPrince(): Prince {
+    public getPrince(): Prince | null {
         return this.prince;
     }
 
@@ -549,6 +553,80 @@ export class Game {
 
     public getMonstersInCastle() {
         return this.monstersInCastle;
+    }
+
+    // Advances narrator, updates game state accordingly, and returns the new narrator position
+    public advanceNarrator() : Monster[] {
+        let newPos = this.narrator.advance();
+
+        var newMonsters: Monster[] = []
+        switch(newPos) {
+            case this.narrator.getRunestoneLegendPos():
+                // place the runestones on the board
+                newMonsters = this.narratorRunestones();
+                break;
+            case 2: // Legend card C
+                newMonsters = this.narratorC();
+                break;
+            case 6: // Legend card G
+                newMonsters = this.narratorG();
+                break;
+        }
+
+        return newMonsters;
+    }
+
+    // sets positions of the runestones and adds them to the regions
+    private narratorRunestones() : Monster[] {
+        this.narrator.setRunestoneLocations();
+        // TODO NARRATOR: Choose 5 random runestones and place them on the locations
+
+        // Place gor on space 43 and skral on space 39
+        // TODO: for naming, we need to use a separate count instead of basing it on the size of
+        // the monsters list. The list can decrease in size meaning monsters can end up with the same name
+        // For now, names are hardcoded
+        var monsterList: Monster[] = [];
+        monsterList.push(this.addMonster(MonsterKind.Gor, 43, 'gor8'));
+        monsterList.push(this.addMonster(MonsterKind.Skral, 39, 'skral2'));
+        return monsterList;
+    }
+
+    private narratorC() : Monster[] {
+        var monsterList: Monster[] = [];
+        // Place Skral Stronghold and Skral, farmer, gors, skral, prince
+        // Determine position of stronghold
+        let dieRoll = this.narrator.randomInteger(1, 6);
+        monsterList.push(this.addMonster(MonsterKind.Fortress, 50+dieRoll, 'fortress'));
+
+        // Add farmer
+        let farmObj = new Farmer(2, 28);
+        this.farmers.push(farmObj)
+        this.regions[farmObj.getTileID()].addFarmer(farmObj);
+
+        // Add more monsters
+        monsterList.push(this.addMonster(MonsterKind.Gor, 27, 'gor9'));
+        monsterList.push(this.addMonster(MonsterKind.Gor, 31, 'gor10'));
+        monsterList.push(this.addMonster(MonsterKind.Skral, 29, 'skral3'));
+
+        // Add my boy Thorald
+        this.prince = new Prince(this.regions[72]);
+
+        // Display StoryWindows
+        return monsterList;
+    }
+
+    private narratorG() : Monster[] {
+        // Remove prince, add wardraks
+        // Cya Thorald
+        this.prince = null;
+
+        var monsterList: Monster[] = [];
+        // Add spookyboys
+        monsterList.push(this.addMonster(MonsterKind.Wardrak, 26, 'wardrak1'));
+        monsterList.push(this.addMonster(MonsterKind.Wardrak, 27, 'wardrak2'));
+
+        // Display StoryWindows
+        return monsterList;
     }
 
     public useFog(fog: Fog, tile: number) {

@@ -9,7 +9,7 @@ export class Monster {
     private tileID: number;
     //reward amount of gold and willpower are always same.
     private gold: number = 0;
-    public name;
+    public name: string;
 
     constructor(kind: MonsterKind, tile: number, numplayers: number = 0, name: string) {
         this.name = name
@@ -77,6 +77,9 @@ export class Monster {
         this.tileID = num;
     }
 
+    public getName() : string {
+        return this.name;
+    }
 
     public rollDice() {
         var attack = 0;

@@ -69,14 +69,31 @@ export class game {
     }
 
 
-    //narrator stuff
-    public advanceNarrator(callback) {
-        this.socket.emit("advanceNarrator", callback);
+    /*
+    * NARRATOR RELATED
+    */
+    public getNarratorPosition(callback) {
+        this.socket.emit("getNarratorPosition", callback);
     }
 
+    // updates ui position of narrator pawn and triggers client-side updates
     public updateNarrator(callback) {
         this.socket.on("updateNarrator", callback);
     }
+
+    public placeRuneStoneLegend() {
+        this.socket.emit("placeRuneStoneLegend");
+    }
+
+    public updateRunestoneLegend(callback) {
+        this.socket.on("updateRunestoneLegend", callback);
+    }
+
+    // TODO: REMOVE, FOR NARRATOR TESTING ONLY
+    public advanceNarrator() {
+        this.socket.emit("advanceNarrator");
+    }
+    /////////////////////////////
 
     /*
     *   GOLD RELATED
