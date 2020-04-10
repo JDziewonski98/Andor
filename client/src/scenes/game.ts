@@ -415,13 +415,15 @@ export default class GameScene extends Phaser.Scene {
     tile.farmerexist = true;
     this.add.existing(farmerObj);
 
+    var self = this;
+
     farmerObj.on('pointerdown', (pointer) => {
-      this.gameinstance.pickupFarmer(farmerObj.tile.getID(), function (tileid) {
-        let pickedFarmer: Farmer = this.tiles[tileid].farmer.pop();
+      self.gameinstance.pickupFarmer(farmerObj.tile.getID(), function (tileid) {
+        let pickedFarmer: Farmer = self.tiles[tileid].farmer.pop();
         for (var i = 0; i < 2; i++) {
-          if (this.farmers[i].id === pickedFarmer.id) {
-            this.farmers[i].tile = undefined;
-            this.hero.farmers.push(pickedFarmer)
+          if (self.farmers[i].id === pickedFarmer.id) {
+            self.farmers[i].tile = undefined;
+            self.hero.farmers.push(pickedFarmer)
             break;
           }
         }
