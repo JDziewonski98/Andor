@@ -214,6 +214,10 @@ export function game(socket, model: Game, io) {
         socket.broadcast.emit("addMonster", m.getType(), m.getTileID(), m.getName());
       }
     }
+    // Update shields
+    var shieldsRemaining = model.getCastle().getShields();
+    socket.broadcast.emit('updateShields', shieldsRemaining);
+    socket.emit('updateShields', shieldsRemaining);
 
     // Pass back the runestone locations for the runestone narrator event, don't otherwise
     if (narratorPos == runestoneLegendPos) {
@@ -274,10 +278,10 @@ export function game(socket, model: Game, io) {
     if (hero != undefined && tile == hero.getRegion().getID()) {
       // useFog needs to return the actual tile the monster ends up on, can't assume that it is
       // the same as the fog tile it spawned from.
-      let { success, id, event } = model.useFog(fogType, +tile);
+      let { success, id, event, newTile, createSuccess } = model.useFog(fogType, +tile);
       if (success) {
-        if (fogType === Fog.Gor) {
-          io.of("/" + model.getName()).emit("addMonster", MonsterKind.Gor, tile, id);
+        if (fogType === Fog.Gor && createSuccess) {
+          io.of("/" + model.getName()).emit("addMonster", MonsterKind.Gor, newTile, id);
         }
         if(fogType === Fog.EventCard){
           if(event != null){
@@ -300,6 +304,11 @@ export function game(socket, model: Game, io) {
         callback(tile);
         socket.broadcast.emit("destroyFog", tile);
       }
+
+      // Update shields
+      var shieldsRemaining = model.getCastle().getShields();
+      socket.broadcast.emit('updateShields', shieldsRemaining);
+      socket.emit('updateShields', shieldsRemaining);
 
     }
   });
@@ -800,7 +809,6 @@ export function game(socket, model: Game, io) {
     if (model.getActiveHeros().length == 1) {
       //remove active Events
       model.clearActiveEvents()
-      model.setNextDayFirstHero(socket.conn.id);
 
       //draw and apply new event
       let event = model.drawCard()
@@ -853,7 +861,7 @@ export function game(socket, model: Game, io) {
   })
 
   socket.on('moveMonstersEndDay', function () {
-    var shieldsLost = model.moveMonsters();
+    var shieldsRemaining = model.moveMonsters();
     // Convert monsters Map into passable object
     let convMonsters = {};
     for (let m of Array.from(model.getMonsters().values())) {
@@ -862,8 +870,8 @@ export function game(socket, model: Game, io) {
     socket.broadcast.emit('sendUpdatedMonsters', convMonsters);
     socket.emit('sendUpdatedMonsters', convMonsters);
 
-    socket.broadcast.emit('updateShields', shieldsLost, false);
-    socket.emit('updateShields', shieldsLost, false);
+    socket.broadcast.emit('updateShields', shieldsRemaining);
+    socket.emit('updateShields', shieldsRemaining);
 
     // Evaluate end of game state - currently only handles end of game due to loss of shields
     if (model.getEndOfGameState()) {

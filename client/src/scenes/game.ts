@@ -726,13 +726,12 @@ export default class GameScene extends Phaser.Scene {
       WindowManager.create(self, 'deathnotice', DeathWindow, { controller: self.gameinstance });
     })
     // Listening for shields lost due to monster attack
-    this.gameinstance.updateShields(function (shieldNums, add) {
-      for (let shieldNum of shieldNums) {
-        if (shieldNum < 0 || shieldNum > 5) continue;
-        if (add) {
-          self.castle.shields[shieldNum].visible = false;
+    this.gameinstance.updateShields(function (shieldsRemaining: number) {
+      for (let i=0; i<6; i++) {
+        if (i >= shieldsRemaining) {
+          self.castle.shields[i].visible = true;
         } else {
-          self.castle.shields[shieldNum].visible = true;
+          self.castle.shields[i].visible = false;
         }
       }
     })
