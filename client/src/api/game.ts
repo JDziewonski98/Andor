@@ -345,6 +345,10 @@ export class game {
         this.socket.on('sendKilledMonsters', callback)
     }
 
+    public resetMonsterStats(name) {
+        this.socket.emit('resetMonsterStats', name)
+    }
+
     public doDamageToHero(hero, damage) {
         this.socket.emit('doDamageToHero', hero, damage)
     }

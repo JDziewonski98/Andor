@@ -623,6 +623,11 @@ export function game(socket, model: Game, io) {
     //dont have to handle monster death here. a seperate message gets sent from fight window upon death.
   })
 
+  socket.on('resetMonsterStats', function(name) {
+    let monster = model.getMonsters().get(name)
+    monster?.resetWill()
+  })
+
   socket.on('doDamageToHero', function (thehero, damage) {
     let modelHeros = model.getHeros();
     for (let hero of modelHeros.values()) {

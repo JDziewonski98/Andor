@@ -369,6 +369,7 @@ export class Fight extends Window {
         }
         this.exitbutton = this.add.text(300, 10, 'X', style).setInteractive()
         this.exitbutton.on('pointerdown', function (pointer) {
+            self.gameinstance.resetMonsterStats(self.monstername)
             self.overlayRef.toggleInteractive(true);
             self.scene.resume("Game")
             self.scene.remove(self.windowname)
