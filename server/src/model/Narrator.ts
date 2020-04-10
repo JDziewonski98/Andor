@@ -1,8 +1,5 @@
-import { Game } from './Game';
-//import {Farmer, Region} from "."
-import { MonsterKind } from './MonsterKind';
-
 export enum enumPositionOfNarrator {
+    'X' = -1, // "Setup" phase: displaying story and instruction to clients at start of game
     'A' = 0,
     'B' = 1,
     'C' = 2,
@@ -21,7 +18,8 @@ export enum enumPositionOfNarrator {
 
 export class Narrator {
     private legendPosition: number;
-    private triggerRunestone: string | null = null;
+    private runestoneLegendPos: number = -1;
+    private initialRunestoneLocs: number[] = [];
 
     constructor(legendPosition: number = 0) {
         this.legendPosition = legendPosition;
@@ -31,13 +29,58 @@ export class Narrator {
         return this.legendPosition;
     }
 
-    private randomInteger(min, max) { // min and max are inclusive
+    public randomInteger(min, max) : number { // min and max are inclusive
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
-    /*private placeRunestoneOnBoard(gameController: game, tileId: number) { // TODO: implement this
-        console.log("the tile to place a runestone: ", tileId)
-    }*/
+    public setRunestoneLegendPos() {
+        // A5 decide when RuneStones come into play
+        const outcome = this.randomInteger(1, 6)
+        switch (outcome) {
+            case 1:
+                this.runestoneLegendPos = 1;
+                break;
+            case 2:
+                this.runestoneLegendPos = 3;
+                break;
+            case 3:
+                this.runestoneLegendPos = 4;
+                break;
+            case 6:
+                this.runestoneLegendPos = 7;
+                break;
+            default:
+                this.runestoneLegendPos = 5
+        }
+        return this.runestoneLegendPos;
+    }
+
+    public getRunestoneLegendPos() {
+        return this.runestoneLegendPos;
+    }
+    
+    public advance() : number {
+        this.legendPosition += 1
+        return this.legendPosition;
+    }
+
+    public setRunestoneLocations() {
+        // this is working. random 2 digit integer between 11 and 66 is correctly generated
+        for (var i = 0; i < 5; i++) { 
+            this.initialRunestoneLocs.push((this.randomInteger(1, 6) * 10) + this.randomInteger(1, 6))
+        }
+    }
+
+    public getRunestoneLocations() : number[] {
+        return this.initialRunestoneLocs;
+    }
+
+
+
+    
+    // private placeRunestoneOnBoard(tileId: number) { // TODO: implement this
+    //     console.log("the tile to place a runestone: ", tileId)
+    // }
 
     private addRunestone() {
         /*
@@ -60,6 +103,9 @@ export class Narrator {
             this.placeRunestoneOnBoard(self.gameController, (self.randomInteger(1, 6) * 10) + self.randomInteger(1, 6))
         }*/
 
+        // Place a gor on space 43. a skral on 39        
+        // this.gameController.addMonster(MonsterKind.Gor, 43, "gor43")
+        // this.gameController.addMonster(MonsterKind.Skral, 39, "skral39")
     }
 
 
@@ -125,26 +171,33 @@ export class Narrator {
 
               */
 
+        // A3 place monsters
+        // this.gameController.addMonster(MonsterKind.Gor, 8, 'gor1');
+        // this.gameController.addMonster(MonsterKind.Gor, 20, 'gor2');
+        // this.gameController.addMonster(MonsterKind.Gor, 21, 'gor3');
+        // this.gameController.addMonster(MonsterKind.Gor, 26, 'gor4');
+        // this.gameController.addMonster(MonsterKind.Gor, 48, 'gor5');
+        // this.gameController.addMonster(MonsterKind.Skral, 19, 'skral1');
 
         // A3 place farmers
         
 
 
         // A5 decide when RuneStones come into play
-        const outcome = this.randomInteger(1, 6)
-        if (outcome === 1) { this.triggerRunestone = "B"; }
-        else if (outcome === 2) { this.triggerRunestone = "D"; }
-        else if (outcome === 3) { this.triggerRunestone = "E"; }
-        else if (outcome === 4 || outcome === 5) { this.triggerRunestone = "F"; }
-        else { this.triggerRunestone = "H" }
+        // const outcome = this.randomInteger(1, 6)
+        // if (outcome === 1) { this.triggerRunestone = "B"; }
+        // else if (outcome === 2) { this.triggerRunestone = "D"; }
+        // else if (outcome === 3) { this.triggerRunestone = "E"; }
+        // else if (outcome === 4 || outcome === 5) { this.triggerRunestone = "F"; }
+        // else { this.triggerRunestone = "H" }
 
     }
 
 
     private B() {
-        if (this.triggerRunestone === "B") {
-            this.addRunestone()
-        }
+        // if (this.triggerRunestone === "B") {
+        //     this.addRunestone()
+        // }
 
     }
 
@@ -202,28 +255,35 @@ export class Narrator {
                      */
 
 
+        // C1 add fortress_skral
+        // this.gameController.addMonster(MonsterKind.Fortress, (50 + this.randomInteger(1,6)), "fortressSkral")
+
+        // C2 add gors on 27 and 31. add skral on 29       
+        // this.gameController.addMonster(MonsterKind.Gor, 27, "gor27")
+        // this.gameController.addMonster(MonsterKind.Gor, 31, "gor31")
+        // this.gameController.addMonster(MonsterKind.Skral, 29, "skral29")
 
         // C2 place a farmer on 28
         
     }
 
-    private D() {
-        if (this.triggerRunestone === "D") {
-            this.addRunestone()
-        }
-    }
+    // private D() {
+    //     if (this.triggerRunestone === "D") {
+    //         this.addRunestone()
+    //     }
+    // }
 
-    private E() {
-        if (this.triggerRunestone === "E") {
-            this.addRunestone()
-        }
-    }
+    // private E() {
+    //     if (this.triggerRunestone === "E") {
+    //         this.addRunestone()
+    //     }
+    // }
 
-    private F() {
-        if (this.triggerRunestone === "F") {
-            this.addRunestone()
-        }
-    }
+    // private F() {
+    //     if (this.triggerRunestone === "F") {
+    //         this.addRunestone()
+    //     }
+    // }
 
 
     private G() {
@@ -250,34 +310,14 @@ export class Narrator {
                      */
     }
 
-    private H() {
-        if (this.triggerRunestone === "H") {
-            this.addRunestone()
-        }
-    }
+    // private H() {
+    //     if (this.triggerRunestone === "H") {
+    //         this.addRunestone()
+    //     }
+    // }
     /////////////end of A to H/////////////
 
-    public advance() {
-        
-        this.legendPosition += 1
-               
-        switch (enumPositionOfNarrator[(this.legendPosition)]) {
-            case "A": { this.A(); break; }
-            case "B": { this.B(); break; }
-            case "C": { this.C(); break; }
-            case "D": { this.D(); break; }
-            case "E": { this.E(); break; }
-            case "F": { this.F(); break; }
-            case "G": { this.G(); break; }
-            case "H": { this.H(); break; }
-            case "I": { break; } // no narrator-related events will occur onward until N
-            case "J": { break; }
-            case "K": { break; }
-            case "L": { break; }
-            case "M": { break; }
-        }
-        
-    }
+    
 
     //TODO
     public checkEndGame(): boolean {

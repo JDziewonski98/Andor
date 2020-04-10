@@ -34,7 +34,7 @@ export const dMonsters = [{
     name: "gor5",
     type: MonsterKind.Gor,
     tileID: 48
-}, {
+}, { 
     name: "skral1",
     type: MonsterKind.Skral,
     tileID: 19
@@ -49,6 +49,9 @@ export function dEventDeck() {
 export function dFogs(): Map<number, Fog> {
     const fogIds = [8, 11, 12, 13, 49, 16, 32, 48, 42, 44, 47, 46, 64, 56, 63];
     const fogTypes = [Fog.EventCard, Fog.EventCard, Fog.EventCard, Fog.EventCard, Fog.EventCard, Fog.Strength, Fog.WillPower2, Fog.WillPower3, Fog.Gold, Fog.Gold, Fog.Gold, Fog.Gor, Fog.Gor, Fog.Wineskin, Fog.Brew];
+    // TODO REMOVE: For testing monster jumping from fog
+    // const fogTypes = [Fog.Gor, Fog.Gor, Fog.Gor, Fog.Gor, Fog.Gor, Fog.Gor, Fog.Gor, Fog.Gor, Fog.Gor, Fog.Gor, Fog.Gor, Fog.Gor, Fog.Gor, Fog.Gor, Fog.Gor];
+    ////////////////////////////
     _shuffle(fogTypes);
 
     let newObj = new Map();
@@ -74,14 +77,15 @@ export function dCastle(numPlayers) {
     }
 }
 
-export const dPrince = {
-    tile: {
-        id: 72
-    }
-}
+// Prince's default should be that it doesn't exist
+// export const dPrince = {
+//     tile: {
+//         id: -1
+//     }
+// }
 
 export const dNarrator = {
-    legendPosition: 0
+    legendPosition: -1
 }
 
 export const dHeros = [{
