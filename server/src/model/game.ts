@@ -24,7 +24,8 @@ import {
     dEventDeck,
     dCastle,
     dPrince,
-    dNarrator
+    dNarrator,
+    dHeros
 } from "./defaults";
 
 export class Game {
@@ -57,11 +58,11 @@ export class Game {
     // collab decision related state
     public numAccepts: number;
 
-    private availableHeros: Array<HeroKind> = new Array(HeroKind.Archer, HeroKind.Dwarf, HeroKind.Mage, HeroKind.Warrior);
+    private availableHeros: Array<Hero>;
 
     //EventCards
-    private eventDeck: Array<EventCard>
-    private activeEvents: Array<Number>
+    private eventDeck: Array<EventCard>;
+    private activeEvents: Array<Number>;
 
     constructor(name: string, numOfDesiredPlayers: number, difficulty: GameDifficulty, legendPosition = 0) {
         this.name = name;
@@ -80,49 +81,33 @@ export class Game {
         this.readyplayers = 0;
         this.numAccepts = 0;
         this.currPlayersTurn = HeroKind.Dwarf;
-        this.activeEvents = new Array<number>()
+        this.activeEvents = new Array<number>();
+        this.availableHeros = new Array<Hero>();
 
         // this.narrator = new Narrator(this, 0)
     }
 
-    public initialize(
-        currPlayersTurn?,
-        regions?,
-        farmers?,
-        monsters?,
-        fogs?,
-        heros?,        
-        eventDeck?,
-        activeEvents?,        
-        nextDayFirstHero?,
-        activeHeros?,
-        castle?,
-        monstersInCastle?,
-        endOfGameState?,
-        prince?,
-        narrator?
-    ) {
-        currPlayersTurn = currPlayersTurn || HeroKind.None;
-        regions = regions || dRegions;
-        farmers = farmers || dFarmers;
-        monsters = monsters || dMonsters;
-        fogs = fogs || dFogs();
-        heros = heros || [];
-        eventDeck = eventDeck || dEventDeck();
-        activeEvents = activeEvents || [];
-        nextDayFirstHero = nextDayFirstHero || HeroKind.None;
-        activeHeros = activeHeros || [];
-        castle = castle || dCastle(this.numOfDesiredPlayers);
-        monstersInCastle = monstersInCastle || [];
-        endOfGameState = endOfGameState || false;
-        prince = prince || dPrince;
-        narrator = narrator || dNarrator;
-
-
+    public initialize({
+        currPlayersTurn = HeroKind.None,
+        regions = dRegions,
+        farmers = dFarmers,
+        monsters = dMonsters,
+        fogs = dFogs(),
+        heros = dHeros,
+        eventDeck = dEventDeck(),
+        activeEvents = [],
+        nextDayFirstHero = HeroKind.None,
+        activeHeros = [],
+        castle = dCastle(this.numOfDesiredPlayers),
+        monstersInCastle = [],
+        endOfGameState = false,
+        prince = dPrince,
+        narrator = dNarrator
+    }) {
         this.currPlayersTurn = currPlayersTurn;
         this.nextDayFirstHero = nextDayFirstHero;
         this.setRegions(regions);
-        // this.setHeros(heros);
+        this.setAvailableHeros(heros);
         this.setFarmers(farmers);
         this.setMonsters(monsters);
         this.setFogs(fogs);
@@ -134,6 +119,31 @@ export class Game {
         this.endOfGame = endOfGameState;
         this.prince = new Prince(this.regions[prince.tile.id]);
         this.narrator = new Narrator(narrator.legendPosition);
+
+    }
+
+    private setAvailableHeros(heros) {
+        heros.forEach(heroData => {
+            console.log(heroData.hk)
+            this.availableHeros.push(new Hero({
+                hk: heroData.hk,
+                rank: heroData.rank,
+                gold: heroData.gold,
+                will: heroData.will,
+                strength: heroData.strength,
+                dice: heroData.dice,
+                timeOfDay: heroData.timeOfDay,
+                wineskin: heroData.wineskin,
+                largeItem: heroData.largeItem,
+                smallItems: heroData.smallItems,
+                helm: heroData.helm,
+                farmers: heroData.farmers,
+                freeMoves: heroData.freeMoves,
+                region: this.regions[heroData.region.id],
+                movePrinceCtr: heroData.movePrinceCtr
+            }))
+        })
+
 
     }
 
@@ -286,36 +296,16 @@ export class Game {
         })
         if (heroTaken) return false; // failed to bind hero
 
-        if (heroType === HeroKind.Dwarf) {
-            this.heroList.set(id, new Hero(heroType, this.regions[7]));
-            //REMOVE before merging to master
-            // let dwarf = this.heroList.get(id)
-            // dwarf?.pickUpLargeItem(dwarf.getRegion().getID(), LargeItem.Bow)
-            // dwarf?.pickUpSmallItem(dwarf.getRegion().getID(), SmallItem.Telescope)
-            // dwarf?.pickUpSmallItem(dwarf.getRegion().getID(), SmallItem.Wineskin)
-            // dwarf?.pickUpHelm(dwarf.getRegion().getID());
+        let hero = this.availableHeros.filter((hero) => hero.hk === heroType)
+        if (hero.length !== 0) {
+            this.heroList.set(id, hero[0]);
+            this.activeHeros.push(heroType);
+            // make hero no longer available.
+            this.availableHeros = this.availableHeros.filter(h => h.hk != heroType);
+            return true;
         }
-        else if (heroType === HeroKind.Archer) {
-            this.heroList.set(id, new Hero(heroType, this.regions[25]));
-            let archer = this.heroList.get(id)
-            archer?.pickUpSmallItem(archer.getRegion().getID(), SmallItem.GreenRunestone)
-        }
-        else if (heroType === HeroKind.Mage) {
-            this.heroList.set(id, new Hero(heroType, this.regions[34]));
-        }
-        else if (heroType === HeroKind.Warrior) {
-            this.heroList.set(id, new Hero(heroType, this.regions[14]));
-        }
+        return false;
 
-        this.activeHeros.push(heroType);
-        this.availableHeros = this.availableHeros.filter(h => h != heroType);
-        return true;
-
-    }
-
-    public setCastle(c) {
-        if (c != null)
-            this.castle = new RietburgCastle(c.numDefenseShields, c.numDefenseShieldsUsed);
     }
 
     public getCastle() {
@@ -381,7 +371,7 @@ export class Game {
             }
         })
         if (this.heroList.has(id)) {
-            this.availableHeros.push(this.heroList.get(id)!.getKind())
+            this.availableHeros.push(this.heroList.get(id)!)
             this.heroList.delete(id);
         }
     }

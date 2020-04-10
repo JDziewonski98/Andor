@@ -393,22 +393,14 @@ export function game(socket, model: Game, io) {
     const success = model.getHeros().size < model.numOfDesiredPlayers && model.bindHero(id, heroType);
     if (success) {
       model.readyplayers += 1;
-      let remaining = model.getAvailableHeros();
-      let heros = {
-        taken: ["archer", "warrior", "mage", "dwarf"].filter(f => !remaining.toString().includes(f)),
-        remaining: remaining
-      }
-      socket.broadcast.emit("updateHeroList", heros)
-      callback(heros);
+      socket.broadcast.emit("updateHeroList", heroType) // destroy it only for other clients
+      callback();
     }
   });
 
   socket.on("getBoundHeros", (callback) => {
-    let remaining = model.getAvailableHeros();
-    let heros = {
-      taken: ["archer", "warrior", "mage", "dwarf"].filter(f => !remaining.toString().includes(f)),
-      remaining: remaining
-    }
+    const heros = model.getAvailableHeros().map(h => h.hk)
+    console.log(heros)
     callback(heros);
   });
 
@@ -444,6 +436,7 @@ export function game(socket, model: Game, io) {
   })
 
   socket.on('allPlayersReady', function (callback) {
+    console.log(model.readyplayers, model.getNumOfDesiredPlayers())
     callback(model.readyplayers === model.getNumOfDesiredPlayers());
   })
 

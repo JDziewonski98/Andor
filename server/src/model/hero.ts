@@ -6,41 +6,40 @@ import { SmallItem } from './SmallItem'
 
 export class Hero {
     public hk: HeroKind;
-    private region!: Region;
-    private gold!: number;
-    private strength!: number;
-    private will!: number;
-    private moveCompleted: boolean = false;
-    private timeOfDay: number = 1;
+    private region: Region;
+    private gold: number;
+    private strength: number;
+    private will: number;
+    private timeOfDay: number;
     private farmers: Array<Farmer>;
     private rank: number;
     private dice
-    private freeMoves:number = 0;
-    private movePrinceCtr = 0;
+    private freeMoves:number;
+    private movePrinceCtr;
+    private moveCompleted: boolean = false;
 
     //items
-    private wineskin: boolean = false;
-    private largeItem: LargeItem = LargeItem.Empty
-    private helm: boolean = false;
-    private smallItems: SmallItem[] = []
+    private wineskin: boolean;
+    private largeItem: LargeItem;
+    private helm: boolean;
+    private smallItems: SmallItem[];
 
-    constructor(hk: HeroKind, region:Region) {
-        this.hk = hk
-        if(this.hk === "dwarf"){
-            this.rank = 7
-        }
-        else if(this.hk === "warrior"){
-            this.rank = 14
-        }
-        else if(this.hk === "archer"){
-            this.rank = 25
-        }
-        else{
-            this.rank = 34
-        }
+    constructor({ timeOfDay, wineskin, largeItem, helm, smallItems, hk, rank, region, farmers, will, strength, gold, dice, freeMoves, movePrinceCtr}) {
+        this.hk = hk;
+        this.rank = rank;
+        this.gold = gold;
+        this.strength = strength;
+        this.will = will;
+        this.dice = dice;
+        this.timeOfDay = timeOfDay;
+        this.wineskin = wineskin;
+        this.largeItem = largeItem;
+        this.smallItems = smallItems;
+        this.helm = helm;
         this.region = region;
-        this.farmers = new Array()
-        this.initializeResources()
+        this.farmers = farmers;
+        this.freeMoves = freeMoves;
+        this.movePrinceCtr = movePrinceCtr;
     }
 
     public getData(){
@@ -201,10 +200,6 @@ export class Hero {
             return result;
         }
         return result;
-    }
-
-    private farmerSlotEmpty() {
-        //what does this do?
     }
 
     public dropGold() {        

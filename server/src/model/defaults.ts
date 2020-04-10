@@ -1,4 +1,7 @@
 import { Fog } from '.';
+import { LargeItem } from './LargeItem';
+import { SmallItem } from './SmallItem';
+import { HeroKind } from './HeroKind';
 
 export const dFarmers = [{
     id: 0,
@@ -37,8 +40,8 @@ export const dMonsters = [{
     tileID: 19
 }]
 
-export function dEventDeck() { 
-    let map = require("./EventCardMap").map; 
+export function dEventDeck() {
+    let map = require("./EventCardMap").map;
     _shuffle(map);
     return map;
 }
@@ -81,6 +84,84 @@ export const dNarrator = {
     legendPosition: 0
 }
 
+export const dHeros = [{
+    timeOfDay: 0,
+    freeMoves: 0,
+    movePrinceCtr: 0,
+    wineskin: false,
+    largeItem: LargeItem.Empty,
+    helm: false,
+    smallItems: [],
+    hk: HeroKind.Dwarf,
+    rank: 7,
+    region: {
+        id: 65,
+    },
+    farmers: [
+    ],
+    will: 7,
+    strength: 1,
+    gold: 2,
+    dice: [1, 2, 3]
+}, {
+    timeOfDay: 0,
+    freeMoves: 0,
+    movePrinceCtr: 0,
+    wineskin: false,
+    largeItem: LargeItem.Empty,
+    helm: false,
+    smallItems: [],
+    hk: HeroKind.Warrior,
+    rank: 14,
+    region: {
+        id: 14,
+    },
+    farmers: [
+    ],
+    will: 7,
+    strength: 1,
+    gold: 1,
+    dice: [2,3,4]
+},{
+    timeOfDay: 0,
+    freeMoves: 0,
+    movePrinceCtr: 0,
+    wineskin: false,
+    largeItem: LargeItem.Empty,
+    helm: false,
+    smallItems: [],
+    hk: HeroKind.Archer,
+    rank: 25,
+    region: {
+        id: 25,
+    },
+    farmers: [
+    ],
+    will: 7,
+    strength: 1,
+    gold: 1,
+    dice: [3,4,5]
+},{
+    timeOfDay: 0,
+    freeMoves: 0,
+    movePrinceCtr: 0,
+    wineskin: false,
+    largeItem: LargeItem.Empty,
+    helm: false,
+    smallItems: [],
+    hk: HeroKind.Mage,
+    rank: 34,
+    region: {
+        id: 34,
+    },
+    farmers: [
+    ],
+    will: 7,
+    strength: 1,
+    gold: 4,
+    dice: [1,1,1]
+}]
+
 
 function _shuffle(a) {
     for (let i = a.length - 1; i > 0; i--) {
@@ -89,3 +170,5 @@ function _shuffle(a) {
     }
     return a;
 }
+
+
