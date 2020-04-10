@@ -301,12 +301,12 @@ export default class GameScene extends Phaser.Scene {
   }
 
   private addShieldsToRietburg(numShields) {
-    let s1 = this.add.sprite(85, 190, 'weed').setDisplaySize(40, 40)
-    let s2 = this.add.sprite(155, 190, 'weed').setDisplaySize(40, 40)
-    let s3 = this.add.sprite(225, 190, 'weed').setDisplaySize(40, 40)
-    let s4 = this.add.sprite(85, 310, 'weed').setDisplaySize(40, 40)
-    let s5 = this.add.sprite(155, 310, 'weed').setDisplaySize(40, 40)
-    let s6 = this.add.sprite(85, 430, 'weed').setDisplaySize(40, 40)
+    let s1 = this.add.sprite(85, 188, 'dshield').setDisplaySize(65, 81)
+    let s2 = this.add.sprite(153, 188, 'dshield').setDisplaySize(65, 81)
+    let s3 = this.add.sprite(218, 188, 'dshield').setDisplaySize(65, 81)
+    let s4 = this.add.sprite(85, 310, 'dshield').setDisplaySize(65, 81)
+    let s5 = this.add.sprite(153, 310, 'dshield').setDisplaySize(65, 81)
+    let s6 = this.add.sprite(85, 430, 'dshield').setDisplaySize(65, 81)
 
     this.castle.shields.push(s1)
     this.castle.shields.push(s2)
