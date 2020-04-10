@@ -596,7 +596,11 @@ export class Game {
     // sets positions of the runestones and adds them to the regions
     private narratorRunestones() : Monster[] {
         this.narrator.setRunestoneLocations();
-        // TODO NARRATOR: Choose 5 random runestones and place them on the locations
+        let runestoneLocs = this.narrator.getRunestoneLocations();
+        // Update tiles with runestones
+        runestoneLocs.forEach((stone, tileID) => {
+            this.regions[tileID].addItem(stone);
+        })
 
         // Place gor on space 43 and skral on space 39
         // TODO: for naming, we need to use a separate count instead of basing it on the size of

@@ -528,7 +528,7 @@ export default class GameScene extends Phaser.Scene {
   private narratorG() {
     // Remove prince
     this.prince.destroy();
-    // ODO NARRATOR: Display StoryWindows
+    // TODO NARRATOR: Display StoryWindows
   }
 
   private addFog(fogs) {
