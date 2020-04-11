@@ -472,7 +472,6 @@ export default class GameScene extends Phaser.Scene {
     this.gameinstance.getNarratorPosition(function(pos: number) {
       // Trigger start of game instructions/story
       if (pos == -1) {
-        console.log("story0 triggering twice?");
         WindowManager.create(self, `story0`, StoryWindow, {
           x: reducedWidth / 2,
           y: reducedHeight / 2,
@@ -532,6 +531,12 @@ export default class GameScene extends Phaser.Scene {
   private narratorRunestones(stoneLocs: number[]) {
     console.log("client narratorRunestones", stoneLocs)
     // Display StoryWindows
+    WindowManager.create(this, `story6`, StoryWindow, {
+      x: reducedWidth / 2,
+      y: reducedHeight / 2,
+      id: 6,
+      locs: stoneLocs
+    })
   }
 
   // Note that adding monsters is handled in setupListeners
@@ -543,12 +548,22 @@ export default class GameScene extends Phaser.Scene {
     this.prince = new Prince(this, this.tiles[72], 'prince').setScale(.15);
     this.add.existing(this.prince);
     // TODO NARRATOR: Display StoryWindows
+    WindowManager.create(this, `story3`, StoryWindow, {
+      x: reducedWidth / 2,
+      y: reducedHeight / 2,
+      id: 3
+    })
   }
 
   private narratorG() {
     // Remove prince
     this.prince.destroy();
     // TODO NARRATOR: Display StoryWindows
+    WindowManager.create(this, `story7`, StoryWindow, {
+      x: reducedWidth / 2,
+      y: reducedHeight / 2,
+      id: 7
+    })
   }
 
   private addFog(fogs) {
