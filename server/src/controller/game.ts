@@ -465,9 +465,10 @@ export function game(socket, model: Game, io) {
 
   socket.on('disconnect', function () {
     console.log('user disconnected', socket.conn.id, ' in game.');
+    const hk = model.getHkFromConnID(socket.conn.id);
     const success = model.removePlayer(socket.conn.id);
     if(success){
-      socket.broadcast.emit("receivePlayerDisconnected", model.getHkFromConnID(socket.conn.id));
+      socket.broadcast.emit("receivePlayerDisconnected", hk);
     }
   });
 

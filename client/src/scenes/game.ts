@@ -128,10 +128,10 @@ export default class GameScene extends Phaser.Scene {
     this.add.image(fullWidth / 2, fullHeight / 2, 'gameboard')
       .setDisplaySize(expandedWidth, expandedHeight);
 
-    setInterval(() => {
-      console.log("********* SAVING GAME");
-      this.gameinstance.save();
-    }, 30000);
+    // setInterval(() => {
+    //   console.log("********* SAVING GAME");
+    //   this.gameinstance.save();
+    // }, 30000);
 
     this.gameinstance.getGameData((data) => {
       console.log("GAME DATA IS:::::::::::::\n", data)
