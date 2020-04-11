@@ -80,6 +80,7 @@ export default class GameScene extends Phaser.Scene {
     this.load.image("gor", "../assets/gor.PNG")
     this.load.image("skral", "../assets/skral.PNG")
     this.load.image("wardrak", "../assets/wardrak.PNG")
+    this.load.image("fortress", "../assets/fortress.png")
     this.load.image("farmer", "../assets/farmer.png");
     this.load.multiatlas('tiles', './assets/tilesheet.json', 'assets')
     this.load.image("well", "../assets/well.png");
