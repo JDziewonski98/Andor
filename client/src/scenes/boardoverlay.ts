@@ -15,12 +15,12 @@ export default class BoardOverlay extends Phaser.Scene {
     private heroButtons: Map<string, Phaser.GameObjects.Text> = new Map();
     private gameinstance: game;
     private endTurnButton: Phaser.GameObjects.Image;
-    private chatButton: Phaser.GameObjects.Text;
+    private chatButton: Phaser.GameObjects.Image;
     private endturntext;
     private clientheroobject;
 
     // End Day
-    private endDayButton: Phaser.GameObjects.Text;
+    private endDayButton: Phaser.GameObjects.Image;
     private tiles: Tile[];
     private monsterNameMap: Map<string, Monster>;
     private hourTracker: HourTracker;
@@ -52,7 +52,9 @@ export default class BoardOverlay extends Phaser.Scene {
 
     public preload() {
         this.load.image('hourbar', './assets/hours.PNG')
-        this.load.image('endturn', './assets/endturn.png')
+        this.load.image('endturnicon', './assets/endturn.png')
+        this.load.image('enddayicon', './assets/endday.png')
+        this.load.image('chaticon', './assets/chat.png')
     }
 
     private addHeroCard(type, x) {
@@ -129,7 +131,8 @@ export default class BoardOverlay extends Phaser.Scene {
         }, this);
 
         // chat window
-        this.chatButton = this.add.text(750, 560, "CHAT", style2)
+        // this.chatButton = this.add.text(750, 560, "CHAT", style2)
+        this.chatButton = this.add.image(775, 565, 'chaticon').setScale(0.3)
         this.chatButton.setInteractive();
         this.chatButton.on('pointerdown', function (pointer) {
             console.log(this.scene, ' in overlay')
@@ -144,7 +147,7 @@ export default class BoardOverlay extends Phaser.Scene {
 
         // end turn button
         // this.endTurnButton = this.add.text(850, 560, "END TURN", style2)
-        this.endTurnButton = this.add.image(900, 565, 'endturn').setScale(0.3)
+        this.endTurnButton = this.add.image(900, 565, 'endturnicon').setScale(0.3)
         this.endTurnButton.on('pointerdown', function (pointer){
             if (this.gameinstance.myTurn) {
                 this.gameinstance.endTurn();
@@ -180,7 +183,9 @@ export default class BoardOverlay extends Phaser.Scene {
             backgroundColor: '#f00'
         }
     
-        this.endDayButton = this.add.text(600, 560, "END DAY", style2)
+        // end day button
+        // this.endDayButton = this.add.text(600, 560, "END DAY", style2)
+        this.endDayButton = this.add.image(650, 565, 'enddayicon').setScale(0.3)
         this.endDayButton.on('pointerdown', function (pointer) {
             // does nothing if not your turn
             if (!self.gameinstance.getTurn()) {
