@@ -380,16 +380,17 @@ export class Game {
         this.players.add(p);
     }
 
-    public removePlayer(id: string) {
+    public removePlayer(id: string) : boolean {
         this.players.forEach((player) => {
             if (player.getID() === id) {
                 this.players.delete(player);
-                return;
             }
         })
         if (this.heroList.has(id)) {
             this.heroList.delete(id);
+            return true;
         }
+        return false;
     }
 
     public removeFarmer(f: Farmer) {

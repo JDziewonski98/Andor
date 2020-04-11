@@ -539,6 +539,9 @@ export class game {
     }
     //////
 
+    public receivePlayerDisconnected(callback){
+        this.socket.on("receivePlayerDisconnected", callback)
+    }
 
     /*
     *   END OF GAME
