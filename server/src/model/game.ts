@@ -676,6 +676,30 @@ export class Game {
         return monsterList;
     }
 
+    private narratorN(): boolean {
+        // check fortSkral is defeated
+        var fortSkralDefeated: boolean = true;
+        if (this.monsters.has("fortress")) { fortSkralDefeated = false;}
+
+        // check region 0 has herb
+        var herbAtCastle: boolean = false;       
+        for (let [key, value] of Object.entries(this.regions[0].getItems())) {
+            if (key === SmallItem.Herb) { herbAtCastle = true; }
+        }
+
+        // check castle has at least 1 shield
+        var hasEnoughShields: boolean = true;
+        if (this.castle.getShields() <= 0) { hasEnoughShields = false; }
+
+        var winOrLose = (fortSkralDefeated && herbAtCastle && hasEnoughShields)
+
+        this.endOfGame = true;
+
+        return winOrLose
+        
+
+    }
+
     public useFog(fog: Fog, tile: number) {
         if (this.fogs.get(tile) != undefined && this.fogs.get(tile) == fog) { // make sure tile has a fog and its the same
             this.fogs.delete(tile); // delete fog from game
