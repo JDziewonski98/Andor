@@ -648,7 +648,10 @@ export class Game {
     public applyEvent(event){
         console.log("Applying event: ", event.id)
         //do something
-        if(event.id == 2){
+        if(event.id == 1){
+            //do nothing
+        }
+        else if(event.id == 2){
             for(let [conn,hero] of this.heroList){
                 let tID = hero.getRegion().getID()
                 if(0 <= tID && tID <= 20){

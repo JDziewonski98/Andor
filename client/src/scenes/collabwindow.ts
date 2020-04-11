@@ -5,6 +5,7 @@ import { game } from '../api/game';
 import { collabTextHeight, collabColWidth, collabRowHeight } from '../constants'
 import { ResourceToggle } from "../widgets/ResourceToggle";
 import BoardOverlay from "./boardoverlay";
+import { HeroKind } from "../objects";
 
 export class CollabWindow extends Window {
     private submitText;
@@ -37,6 +38,7 @@ export class CollabWindow extends Window {
 
     //for event windows
     private type
+    private ownerKind: HeroKind
     //private chosen
     public constructor(key: string, data) {
         super(key, {x: data.x, y: data.y, width: data.w, height: data.h});
@@ -51,6 +53,7 @@ export class CollabWindow extends Window {
         this.overlayRef = data.overlayRef;
         this.name = key
         this.type = data.type
+        this.ownerKind = data.ownerKind
         if (this.isOwner) {
             this.involvedHeroes = data.heroes;
             this.resources = data.resources;
@@ -74,13 +77,27 @@ export class CollabWindow extends Window {
         }
 
         var bg = this.add.image(0, 0, 'scrollbg').setOrigin(0.5);
-        console.log("yoink", this.type, this.type == "initial")
         if(this.type == "initial"){
             console.log("initial")
             this.populateWindow();
+            this.gameinstance.receiveDecisionSubmitSuccess(submitSuccess);
+        this.gameinstance.receiveDecisionSubmitFailure(submitFailure);
+        // Accepting decision callback
+        this.gameinstance.receiveDecisionAccepted(setAccepted);
         }
         else if(this.type == "event"){
+            this.gameinstance.receiveDecisionSubmitSuccess(submitSuccess);
+            this.gameinstance.receiveDecisionSubmitFailure(submitFailure);
+            // Accepting decision callback
+            this.gameinstance.receiveDecisionAccepted(setAccepted);
             this.populateEventWindow();
+        }
+        else if(this.type == "individual"){
+            this.gameinstance.receiveIndividualSubmitSuccess(submitIndividualSuccess);
+            this.gameinstance.receiveIndividualSubmitFailure(submitIndividualFailure);
+            // Accepting decision callback
+            this.gameinstance.receiveDecisionAccepted(setIndividualAccepted);
+            this.populateIndividualWindow()
         }
 
         //This drag is pretty f'd up.
@@ -101,10 +118,7 @@ export class CollabWindow extends Window {
         // Callbacks
         // Submitting decision callback
         console.log('in init', self.infight)
-        this.gameinstance.receiveDecisionSubmitSuccess(submitSuccess);
-        this.gameinstance.receiveDecisionSubmitFailure(submitFailure);
-        // Accepting decision callback
-        this.gameinstance.receiveDecisionAccepted(setAccepted);
+        
 
         function submitSuccess() {
             self.hasAccepted = false;
@@ -119,13 +133,42 @@ export class CollabWindow extends Window {
             self.scene.remove(self.name);
             self.gameinstance.unsubscribeListeners()
         }
+        function submitIndividualSuccess(heroKind) {
+            console.log("sendIndividualSubmitSuccess")
+            if(heroKind == self.ownerKind){
+                self.hasAccepted = false;
+                console.log("Callback: successfully submitted decision");
+                // Resume main game scene when collab decision is complete
+                
+                self.scene.resume('Game');
+
+                // Reset overlay interactive
+                self.overlayRef.toggleInteractive(true);
+                
+                self.scene.remove(self.name);
+                self.gameinstance.unsubscribeListeners()
+            }
+        }
         function submitFailure() {
             console.log("Callback: submit decision failed - not enough accepts");
             self.submitText.setText("Submit. You need more accepts!")
         }
+        function submitIndividualFailure(heroKind) {
+            if(heroKind == self.ownerKind){
+                console.log("Callback: submit decision failed - you must pick 1 or none!");
+                //self.submitText.setText("Submit. You need more accepts!")
+            }
+            
+        }
         function setAccepted(numAccepted) {
             self.hasAccepted = true;
             console.log("Callback: successfully accepted decision, numAccepted: ", numAccepted);
+        }
+        function setIndividualAccepted(heroKind) {
+            if(heroKind == self.ownerKind){
+                self.hasAccepted = true;
+                console.log("Callback: ", heroKind, "successfully accepted decision");
+            }
         }
     }
 
@@ -303,6 +346,75 @@ export class CollabWindow extends Window {
             // Not used for this milestone
         }
     }
+    private populateIndividualWindow(){
+        // Dynamically populate window based on its size
+        var self = this;
+
+        var textStyle = {
+            backgroundColor: 'fxb09696',
+            fontSize: collabTextHeight
+        }
+        
+        this.submitText = this.add.text(0, this.height-collabTextHeight, 'Submit', textStyle)
+        console.log('we here son.')
+        this.submitText.setInteractive()
+        this.submitText.on('pointerdown', function (pointer) {
+            // Check that resAllocated corresponds with specified quantities from data.resources
+            if (self.verifyAllocated()) {
+                // Need to convert map TS object to send to server
+                let convMap = {};
+                self.resAllocated.forEach((val: number[], key: string) => {
+                    convMap[key] = val;
+                });
+                // Pass map of allocated resources and list of resource names to map allocated 
+                // quantities to the name of the corresponding resource
+                self.gameinstance.individualDecisionSubmit(convMap, self.resourceNames);
+            } else {
+                console.log("Allocated quantities do not match those specified");
+                self.submitText.setText("Submit. Quantities must match!")
+            }
+        });
+
+        // For resource splitting collabs
+        if (this.resources) {
+            var numResources = this.resources.size;
+
+            for (let i=0; i<this.involvedHeroes.length; i++) {
+                // initiate all allocated resources to 0 for all heroes
+                let heroKindString = this.involvedHeroes[i].getKind().toString();
+                let initialResources = [];
+                initialResources.length = numResources;
+                initialResources.fill(0);
+                this.resAllocated.set(heroKindString, initialResources);
+            }
+
+            // Populate window with resource grid
+            for (let row=0; row<this.involvedHeroes.length; row++) {
+                for (let col=0; col<numResources+1; col++) {
+                    let heroKindString = this.involvedHeroes[row].getKind().toString();
+                    if (col == 0) {
+                        // Name of hero
+                        this.add.text(0, (row+1)*collabRowHeight, heroKindString, textStyle);
+                        continue;
+                    }
+                    // this.resources.get(Array.from(this.resources.keys())[col-1]) used to get the total amount of the resource
+                    // available to allocate, passed through data.resources in constructor
+                    new ResourceToggle(this, col*collabColWidth, (row+1)*collabRowHeight, 
+                        heroKindString, col-1, this.resources.get(Array.from(this.resources.keys())[col-1]),this.resAllocated);
+                }
+            }
+        }
+        // Add resource "columns" headers
+        if (this.resources) {
+            let col = 1;
+            Array.from(this.resources.keys()).forEach( key =>
+                self.add.text((col++)*collabColWidth, 0, key, textStyle)
+            );
+        } else if (this.textOptions != null) {
+            // Not used for this milestone
+        }
+    }
+
     private verifyAllocated() {
         if(this.type == "initial"){
             var self = this;
@@ -328,14 +440,12 @@ export class CollabWindow extends Window {
         }
         else if(this.type == "event"){
             var self = this;
-        
             var currCount = 0
             Array.from(this.resAllocated.values()).forEach( counts => {
                 for (let i=0; i<counts.length; i++) {
                     currCount += counts[i]
                 }
             });
-
             if(currCount == 1){
                 return true;
             }
@@ -343,5 +453,22 @@ export class CollabWindow extends Window {
                 return false;
             }
         }
+        else if(this.type == "individual"){
+            var self = this;
+            var currCount = 0
+            Array.from(this.resAllocated.values()).forEach( counts => {
+                for (let i=0; i<counts.length; i++) {
+                    currCount += counts[i]
+                }
+            });
+
+            if(currCount == 0 || currCount == 1){
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
     }
+    
 }

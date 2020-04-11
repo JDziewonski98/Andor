@@ -1,6 +1,11 @@
 //{"id": , "flavorText": "", "desc": ""},
 
 export var map = [
+    {
+    "id": 1, 
+    "flavorText": "The dwarf merchant Garz makes an offer.", 
+    "desc": "Each hero may now purchase any article from the equipment board (except the witch’s brew) in exchange for 3 willpower points."
+    },
     // {
     //     "id": 2, 
     //     "flavorText": "A biting wind blows across the coast from the sea.", 
@@ -103,10 +108,10 @@ export var map = [
     //     "id": 32,
     //     "flavorText": "A sleepless night awaits the heros.", 
     //     "desc": "Every hero whose time marker is presently in the sunrise box loses 2 willpower points."
+    // // },
+    // {
+    //     "id": 33, 
+    //     "flavorText": "Their adventure is wearing down the heroes.", 
+    //     "desc": "One of the heroes immediately loses 1 strength point. You can decide as a group which hero that will be. If no hero has more than 1 strength point, nothing happens."
     // },
-    {
-        "id": 33, 
-        "flavorText": "Their adventure is wearing down the heroes.", 
-        "desc": "One of the heroes immediately loses 1 strength point. You can decide as a group which hero that will be. If no hero has more than 1 strength point, nothing happens."
-    },
 ]

@@ -240,14 +240,14 @@ export function game(socket, model: Game, io) {
                     //blocked = collabCall
                     //if !blocked
                     //console.log(res)
-                    io.of("/" + model.getName()).emit("newCollab", event.id, model.getHero(heroId).getRegion().getID());
+                    io.of("/" + model.getName()).emit("newCollab", event.id, model.getHero(heroId).getRegion().getID(), herosWithStr);
                     model.applyEvent(event)
                   }
                   else{
                     //event is not triggered. We should probably communicate this somehow.
                   }
                 }
-                
+
               //now for the rest
               //trigger collab decision between players. 
               //blocked = collabCall
@@ -255,7 +255,11 @@ export function game(socket, model: Game, io) {
               model.applyEvent(event) 
             }
             else{
-              
+              if(event.id == 1){
+                for(let [conn,hero] of model.getHeros()){
+                  io.of("/" + model.getName()).emit("newIndividualCollab", event.id, hero.getRegion().getID(), hero.getKind());
+                }
+              }
               model.applyEvent(event)
             }
           }
@@ -555,14 +559,85 @@ export function game(socket, model: Game, io) {
     socket.broadcast.emit('sendDecisionSubmitSuccess')
     socket.emit('sendDecisionSubmitSuccess')
   })
+  socket.on('individualDecisionSubmit', function (resAllocated, resNames, heroKind) {
+    console.log('individualDecisionSubmit')
+    // Sets the first player at the beginning of the game
+    if (model.getCurrPlayersTurn() == HeroKind.None) {
+      model.setCurrPlayersTurn(model.getHkFromConnID(socket.conn.id));
+    }
+    // Success: distribute accordingly
+    let modelHeros = model.getHeros();
+    for (let hero of modelHeros.values()) {
+      if(!hero.getKind() == heroKind){
+        continue
+      }
+      let heroTypeString = hero.getKind().toString();
+      // if the hero was involved in the collab decision, update their resources
+      if (resAllocated[heroTypeString]) {
+        let currHero = hero;
+        // Iterate through resNames and map index to amount specified in resAllocated
+        for (let i = 0; i < resNames.length; i++) {
+          if (resNames[i] == "gold") {
+            currHero.updateGold(resAllocated[heroTypeString][i]);
+          }
+          else if (resNames[i] == "wineskin") {
+            // TODO: actually give the hero the wineskin (use smallItems API)
+            currHero?.setWineskin(resAllocated[heroTypeString][i] > 0);
+            for (let j = 0; j < resAllocated[heroTypeString][i]; j++) {
+              currHero.pickUpSmallItem(currHero.getRegion().getID(), SmallItem.Wineskin);
+            }
+          }
+          else if (resNames[i] == 'will') {
+            currHero?.setWill(resAllocated[heroTypeString][i])
+          }
+          else if(resNames[i] == '-Strength'){
+            currHero?.setStrength(-1*resAllocated[heroTypeString][i])
+          }
+          else if(resNames[i] == "Shield"){
+            for (let j = 0; j < resAllocated[heroTypeString][i]; j++) {
+              currHero.getRegion().addItem(LargeItem.Shield)
+              currHero.pickUpLargeItem(currHero.getRegion().getID(), LargeItem.Shield);
+            }
+          }
+          else if(resNames[i] == "Wineskin"){
+            currHero?.setWineskin(resAllocated[heroTypeString][i] > 0);
+            for (let j = 0; j < resAllocated[heroTypeString][i]; j++) {
+              currHero.getRegion().addItem(SmallItem.Wineskin)
+              currHero.pickUpSmallItem(currHero.getRegion().getID(), SmallItem.Wineskin);
+            }
+          }
+          else if(resNames[i] == "Falcon"){
+            for (let j = 0; j < resAllocated[heroTypeString][i]; j++) {
+              currHero.getRegion().addItem(LargeItem.Shield)
+              currHero.pickUpLargeItem(currHero.getRegion().getID(), LargeItem.Shield);
+            }
+          }
+          else if(resNames[i] == "Helm"){
+            for (let j = 0; j < resAllocated[heroTypeString][i]; j++) {
+              currHero.getRegion().addItem("helm")
+              currHero.pickUpHelm(currHero.getRegion().getID());
+            }
+          }
 
+        }
+        // console.log("Updated", heroTypeString, "gold:", currHero?.getGold(), "wineskin:", currHero?.getWineskin())
+      }
+    }
+
+    socket.broadcast.emit('sendIndividualSubmitSuccess', model.getHkFromConnID(socket.conn.id))
+    socket.emit('sendIndividualSubmitSuccess', model.getHkFromConnID(socket.conn.id))
+  })
   // Accepting a decision
   socket.on('collabDecisionAccept', function () {
     model.numAccepts += 1;
     // Tell the client that accepted to update their status
     socket.emit('sendDecisionAccepted', model.numAccepts)
   })
-
+  // socket.on('collabDecisionAccept', function () {
+  //   model.numAccepts += 1;
+  //   // Tell the client that accepted to update their status
+  //   socket.emit('sendDecisionAccepted', model.numAccepts)
+  // }
   /*
   * BATTLING
   */

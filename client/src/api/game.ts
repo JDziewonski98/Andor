@@ -524,6 +524,21 @@ export class game {
     public newCollabListener(callback){
         this.socket.on("newCollab", callback)
     }
+    public newIndividualCollabListener(callback){
+        this.socket.on("newIndividualCollab", callback)
+    }
+    public individualDecisionSubmit(resAllocated, resNames){
+        this.socket.emit("individualDecisionSubmit", resAllocated, resNames)
+    }
+    public receiveIndividualSubmitSuccess(callback) {
+        this.socket.on('sendIndividualSubmitSuccess', callback)
+    }
+    public receiveIndividualSubmitFailure(callback) {
+        this.socket.on('sendIndividualSuccessFailure', callback)
+    }
+    public receiveIndividualDecisionAccepted(callback) {
+        this.socket.on('sendIndividualDecisionAccepted', callback)
+    }
     //////
 
 
