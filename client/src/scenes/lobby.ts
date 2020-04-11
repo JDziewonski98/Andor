@@ -26,7 +26,7 @@ export default class LobbyScene extends Phaser.Scene {
         this.load.image('mountains', './assets/mountains_bg.jpg')
         this.load.image('andordude', './assets/andordude.jpg')
         this.load.image('gameboard', './assets/Andor_Board.jpg')
-        this.load.image('backbutton', './assets/Pass.png')
+        this.load.image('pointerbtn', './assets/Pass.png')
         this.load.image('playbutton', './assets/Play.png')
         this.load.image('warriormale', './assets/warriormale.png')
         this.load.image('magemale', './assets/magemale.png')

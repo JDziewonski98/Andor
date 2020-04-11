@@ -16,9 +16,9 @@ export class ResourceToggle {
         this.allocated = allocated;
 
         this.amountText = scene.add.text(x, y, this.amount);
-        this.incButton = scene.add.sprite(x+30, y, 'backbutton').setDisplaySize(15, 15).setInteractive();
+        this.incButton = scene.add.sprite(x+30, y, 'pointerbtn').setDisplaySize(15, 15).setInteractive();
         this.incButton.angle = 270;
-        this.decButton = scene.add.sprite(x+30, y+15, 'backbutton').setDisplaySize(15, 15).setInteractive();
+        this.decButton = scene.add.sprite(x+30, y+15, 'pointerbtn').setDisplaySize(15, 15).setInteractive();
         this.decButton.angle = 90;
 
         this.incButton.on('pointerdown', function (pointer) {

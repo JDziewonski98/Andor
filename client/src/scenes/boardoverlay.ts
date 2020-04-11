@@ -12,15 +12,15 @@ import { Prince } from '../objects/Prince';
 
 export default class BoardOverlay extends Phaser.Scene {
     private parent: Phaser.GameObjects.Zone
-    private heroButtons: Map<string, Phaser.GameObjects.Text> = new Map();
+    private heroButtons: Map<string, Phaser.GameObjects.Image> = new Map();
     private gameinstance: game;
-    private endTurnButton: Phaser.GameObjects.Text;
-    private chatButton: Phaser.GameObjects.Text;
+    private endTurnButton: Phaser.GameObjects.Image;
+    private chatButton: Phaser.GameObjects.Image;
     private endturntext;
     private clientheroobject;
 
     // End Day
-    private endDayButton: Phaser.GameObjects.Text;
+    private endDayButton: Phaser.GameObjects.Image;
     private tiles: Tile[];
     private monsterNameMap: Map<string, Monster>;
     private hourTracker: HourTracker;
@@ -52,17 +52,39 @@ export default class BoardOverlay extends Phaser.Scene {
 
     public preload() {
         this.load.image('hourbar', './assets/hours.PNG')
+        this.load.image('endturnicon', './assets/endturn.png')
+        this.load.image('enddayicon', './assets/endday.png')
+        this.load.image('chaticon', './assets/chat.png')
+        this.load.image('archericon', './assets/archerbtn.png')
+        this.load.image('dwarficon', './assets/dwarfbtn.png')
+        this.load.image('mageicon', './assets/magebtn.png')
+        this.load.image('warrioricon', './assets/warriorbtn.png')
     }
 
     private addHeroCard(type, x) {
-        const style2 = {
-            fontFamily: '"Roboto Condensed"',
-            fontSize: "20px",
-            backgroundColor: '#f00'
-        }
+        // const style2 = {
+        //     fontFamily: '"Roboto Condensed"',
+        //     fontSize: "20px",
+        //     backgroundColor: '#f00'
+        // }
         var self = this;
 
-        this.heroButtons.set(type, this.add.text(x, 10, type, style2));
+        // this.heroButtons.set(type, this.add.text(x, 10, type, style2));
+        switch (type) {
+            case "archer":
+                this.heroButtons.set(type, this.add.image(x+55, 25, 'archericon').setScale(0.25));
+                break;
+            case "dwarf":
+                this.heroButtons.set(type, this.add.image(x+55, 25, 'dwarficon').setScale(0.25));
+                break;
+            case "mage":
+                this.heroButtons.set(type, this.add.image(x+55, 25, 'mageicon').setScale(0.25));
+                break;
+            case "warrior":
+                this.heroButtons.set(type, this.add.image(x+55, 25, 'warrioricon').setScale(0.25));
+                break;
+        }
+        
         this.heroButtons.get(type).on('pointerdown', (pointer) => {
             this.gameinstance.getHeroAttributes(type, (herodata) => {
                 const cardID = `${type}Card`;
@@ -73,16 +95,16 @@ export default class BoardOverlay extends Phaser.Scene {
                     WindowManager.destroy(this, cardID);
                 } else {
                     console.log('in board overlay:xxxxxxxxxxxxxxx', this.clientheroobject)
-                    WindowManager.create(this, cardID, HeroWindow, 
-                        { 
-                            controller: this.gameinstance, 
-                            icon: `${type}male`, 
-                            clienthero: this.hk, 
-                            windowhero: type, 
-                            ...herodata , 
+                    WindowManager.create(this, cardID, HeroWindow,
+                        {
+                            controller: this.gameinstance,
+                            icon: `${type}male`,
+                            clienthero: this.hk,
+                            windowhero: type,
+                            ...herodata,
                             clientherotile: this.clientheroobject.tile.id,
                             x: pointer.x,
-                            y: pointer.y+20
+                            y: pointer.y + 20
                         }
                     );
                 }
@@ -108,11 +130,11 @@ export default class BoardOverlay extends Phaser.Scene {
         this.gameinstance.getHeros((heros) => {
             heros.forEach(type => {
                 if (type === "mage") {
-                    this.addHeroCard(type, 400);
+                    this.addHeroCard(type, 445);
                 } else if (type === "archer") {
-                    this.addHeroCard(type, 300);
+                    this.addHeroCard(type, 330);
                 } else if (type === "warrior") {
-                    this.addHeroCard(type, 200);
+                    this.addHeroCard(type, 215);
                 } else if (type === "dwarf") {
                     this.addHeroCard(type, 100);
                 }
@@ -128,7 +150,8 @@ export default class BoardOverlay extends Phaser.Scene {
         }, this);
 
         // chat window
-        this.chatButton = this.add.text(750, 560, "CHAT", style2)
+        // this.chatButton = this.add.text(750, 560, "CHAT", style2)
+        this.chatButton = this.add.image(775, 565, 'chaticon').setScale(0.3)
         this.chatButton.setInteractive();
         this.chatButton.on('pointerdown', function (pointer) {
             console.log(this.scene, ' in overlay')
@@ -142,8 +165,9 @@ export default class BoardOverlay extends Phaser.Scene {
         }, this);
 
         // end turn button
-        this.endTurnButton = this.add.text(850, 560, "END TURN", style2)
-        this.endTurnButton.on('pointerdown', function (pointer){
+        // this.endTurnButton = this.add.text(850, 560, "END TURN", style2)
+        this.endTurnButton = this.add.image(900, 565, 'endturnicon').setScale(0.3)
+        this.endTurnButton.on('pointerdown', function (pointer) {
             if (this.gameinstance.myTurn) {
                 this.gameinstance.endTurn();
                 this.tweens.add({
@@ -162,7 +186,7 @@ export default class BoardOverlay extends Phaser.Scene {
 
         // TODO: REMOVE LATER, FOR TESTING NARRATOR ONLY
         var advance = this.add.text(300, 560, "ADVANCE NARRATOR", style2).setInteractive()
-        advance.on('pointerdown', function (pointer){
+        advance.on('pointerdown', function (pointer) {
             this.gameinstance.advanceNarrator();
         }, this)
 
@@ -177,8 +201,10 @@ export default class BoardOverlay extends Phaser.Scene {
             fontSize: "20px",
             backgroundColor: '#f00'
         }
-    
-        this.endDayButton = this.add.text(600, 560, "END DAY", style2)
+
+        // end day button
+        // this.endDayButton = this.add.text(600, 560, "END DAY", style2)
+        this.endDayButton = this.add.image(650, 565, 'enddayicon').setScale(0.3)
         this.endDayButton.on('pointerdown', function (pointer) {
             // does nothing if not your turn
             if (!self.gameinstance.getTurn()) {
@@ -276,14 +302,14 @@ export default class BoardOverlay extends Phaser.Scene {
         if (interactive) {
             this.endTurnButton.setInteractive();
             this.endDayButton.setInteractive();
-            this.heroButtons.forEach(function(button) {
+            this.heroButtons.forEach(function (button) {
                 button.setInteractive();
             })
         } else {
             console.log(this.endTurnButton)
             this.endTurnButton.disableInteractive();
             this.endDayButton.disableInteractive();
-            this.heroButtons.forEach(function(button) {
+            this.heroButtons.forEach(function (button) {
                 button.disableInteractive();
             })
         }

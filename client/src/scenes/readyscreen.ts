@@ -63,13 +63,13 @@ export default class ReadyScreenScene extends Phaser.Scene {
         this.mage.name = "mage";
         this.attachHeroBinding(this.mage);
 
-        this.selection = this.add.sprite(200, 70, 'backbutton').setDisplaySize(48, 48)
+        this.selection = this.add.sprite(200, 70, 'pointerbtn').setDisplaySize(48, 48)
         this.selection.angle = 90
         this.readytext = this.add.text(200, 450, 'Ready?', { fontFamily: '"Roboto Condensed"', fontSize: "40px", color: "#E42168" })
 
         // back button
-        var backbutton = this.add.sprite(80, 475, 'goback').setInteractive().setScale(0.5)
-        backbutton.on('pointerdown', function (pointer) {
+        var gobackbtn = this.add.sprite(80, 475, 'goback').setInteractive().setScale(0.5)
+        gobackbtn.on('pointerdown', function (pointer) {
             this.scene.start('Lobby');
 
         }, this);
