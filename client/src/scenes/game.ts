@@ -306,7 +306,16 @@ export default class GameScene extends Phaser.Scene {
     function updateMoveRequest(heroKind, tileID) {
       self.heroes.forEach((hero: Hero) => {
         if (hero.getKind().toString() === heroKind) {
-          hero.moveTo(self.tiles[tileID])
+          let newCoords = hero.getPosOnTile(self.tiles[tileID]);
+          self.tweens.add({
+            targets: hero,
+            x: newCoords.x,
+            y: newCoords.y,
+            duration: 500,
+            ease: 'Power2',
+            completeDelay: 400,
+            onComplete: function () { hero.moveTo(self.tiles[tileID]) }
+          });
         }
       })
     }

@@ -61,26 +61,35 @@ export class Hero extends Phaser.GameObjects.Sprite {
     }
 
     public moveTo(newTile: Tile) {
-        switch (this.heroKind) {
-            case "archer":
-                this.x = newTile.x - 30
-                this.y = newTile.y - 30
-                break;
-            case "dwarf":
-                this.x = newTile.x + 30
-                this.y = newTile.y - 30
-                break;
-            case "mage":
-                this.x = newTile.x - 30
-                this.y = newTile.y + 30
-                break;
-            case "warrior":
-                this.x = newTile.x + 30
-                this.y = newTile.y + 30
-                break;
-        }
+        let newCoords = this.getPosOnTile(newTile);
+        this.x = newCoords.x;
+        this.y = newCoords.y;
         this.tile = newTile
         this.hourTracker.incHour(this.heroKind)
+    }
+
+    public getPosOnTile(t: Tile) {
+        let newX = t.x;
+        let newY = t.y;
+        switch (this.heroKind) {
+            case "archer":
+                newX = t.x - 30
+                newY = t.y - 30
+                break;
+            case "dwarf":
+                newX = t.x + 30
+                newY = t.y - 30
+                break;
+            case "mage":
+                newX = t.x - 30
+                newY = t.y + 30
+                break;
+            case "warrior":
+                newX = t.x + 30
+                newY = t.y + 30
+                break;
+        }
+        return { x: newX, y: newY };
     }
 
     public getHour(){
