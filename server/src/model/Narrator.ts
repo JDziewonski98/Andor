@@ -21,7 +21,8 @@ export enum enumPositionOfNarrator {
 export class Narrator {
     private legendPosition: number;
     private runestoneLegendPos: number = -1;
-    private initialRunestoneLocs: Map<number, string> = new Map();
+    // List of objects {tileID: runestone string}
+    private initialRunestoneLocs: Object[] = [];
 
     constructor(legendPosition: number = 0) {
         this.legendPosition = legendPosition;
@@ -68,13 +69,16 @@ export class Narrator {
 
     public setRunestoneLocations() {
         let choice = this.randomInteger(0, 2);
-        let stones = [SmallItem.YellowRunestone, SmallItem.BlueRunestone, SmallItem.GreenRunestone,
-            SmallItem.YellowRunestone, SmallItem.BlueRunestone, SmallItem.GreenRunestone,]
-        stones.splice(choice, 1); // Remove one of the runestones randomly
-        // this is working. random 2 digit integer between 11 and 66 is correctly generated
+         // Add 5 of the 6 runestones, one of the runestones is randomly removed
+        let stones = [SmallItem.YellowRunestoneH, SmallItem.BlueRunestoneH, SmallItem.GreenRunestoneH,
+            SmallItem.YellowRunestoneH, SmallItem.BlueRunestoneH, SmallItem.GreenRunestoneH]
+        stones.splice(choice, 1);
         for (var i = 0; i < 5; i++) {
+            // Generate random 2 digit integer between 11 and 66 for tile placement
             let pos = this.randomInteger(1, 6) * 10 + this.randomInteger(1, 6);
-            this.initialRunestoneLocs.set(pos, stones[i]);
+            let stoneObj = {};
+            stoneObj[""+pos] = stones[i];
+            this.initialRunestoneLocs.push(stoneObj);
         }
     }
 

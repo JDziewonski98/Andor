@@ -125,13 +125,13 @@ export class Hero {
     }
 
     // TODO: actual wineskin implementation instead of boolean flag
-    public getWineskin() {
-        return this.wineskin;
-    }
+    // public getWineskin() {
+    //     return this.wineskin;
+    // }
 
-    public setWineskin(hasWineskin) {
-        this.wineskin = hasWineskin;
-    }
+    // public setWineskin(hasWineskin) {
+    //     this.wineskin = hasWineskin;
+    // }
 
     public setTimeOfDay(time) {
         this.timeOfDay = time;

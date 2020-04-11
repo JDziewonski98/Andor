@@ -222,19 +222,37 @@ export function game(socket, model: Game, io) {
     // Pass back the runestone locations for the runestone narrator event, don't otherwise
     if (narratorPos == runestoneLegendPos) {
       let runestoneLocs = model.getNarrator().getRunestoneLocations()
-      let tileIDs = Array.from(runestoneLocs.keys());
+      // Emit hidden versions of the runestones to active TileWindows on the clients
+      let tileIDs: string[] = [];
+      runestoneLocs.forEach(stoneObj => {
+        Object.entries(stoneObj).forEach(([tileID, stone]) => {
+          tileIDs.push(tileID);
+          socket.emit("updateDropItemTile", tileID, stone, "smallItem")
+          socket.broadcast.emit("updateDropItemTile", tileID, stone, "smallItem")
+        })
+      })
+      // Emit the tile locations of the runestones to all clients
       socket.emit("updateNarrator", narratorPos, -1, tileIDs)
       socket.broadcast.emit("updateNarrator", narratorPos, -1, tileIDs)
-      // Place the runestones on clients
-      runestoneLocs.forEach((runestone, tileID) => {
-        socket.emit("updateDropItemTile", tileID, runestone, "smallItem")
-        socket.broadcast.emit("updateDropItemTile", tileID, runestone, "smallItem")
-      })
     } else {
       socket.emit("updateNarrator", narratorPos)
       socket.broadcast.emit("updateNarrator", narratorPos)  
     }
   }
+
+  socket.on("revealRunestone", function(tileID: number, stoneName: string) {
+    let success = false;
+    let heroId = socket.conn.id;
+    let hero = model.getHero(heroId);
+    success = model.revealRunestone(hero, tileID, stoneName);
+    if (success) {
+      let realStone = stoneName.slice(0, -2);
+      socket.emit("updatePickupItemTile", tileID, stoneName, "smallItem")
+      socket.broadcast.emit("updatePickupItemTile", tileID, stoneName, "smallItem")
+      socket.emit("updateDropItemTile", tileID, realStone, "smallItem")
+      socket.broadcast.emit("updateDropItemTile", tileID, realStone, "smallItem")
+    }
+  })
   //////////////////////////////////////////////////
 
 
@@ -277,13 +295,10 @@ export function game(socket, model: Game, io) {
     }
   });
 
-  // TODO: this will require a refactor to work with monster hopping
   socket.on("useFog", function (fogType, tile, callback) {
     let heroId = socket.conn.id;
     let hero = model.getHero(heroId);
     if (hero != undefined && tile == hero.getRegion().getID()) {
-      // useFog needs to return the actual tile the monster ends up on, can't assume that it is
-      // the same as the fog tile it spawned from.
       let { success, id, event, newTile, createSuccess } = model.useFog(fogType, +tile);
       if (success) {
         if (fogType === Fog.Gor && createSuccess) {
@@ -427,7 +442,7 @@ export function game(socket, model: Game, io) {
           break;
       }
     }
-    // console.log("successStatus:", successStatus)
+
     if (successStatus) {
       // Tell any active TileWindows of all clients to update
       socket.broadcast.emit("updateDropItemTile", hero.getRegion().getID(), name, itemType);
@@ -572,8 +587,7 @@ export function game(socket, model: Game, io) {
             currHero.updateGold(resAllocated[heroTypeString][i]);
           }
           else if (resNames[i] == "wineskin") {
-            // TODO: actually give the hero the wineskin (use smallItems API)
-            currHero?.setWineskin(resAllocated[heroTypeString][i] > 0);
+            // currHero?.setWineskin(resAllocated[heroTypeString][i] > 0);
             for (let j = 0; j < resAllocated[heroTypeString][i]; j++) {
               currHero.pickUpSmallItem(currHero.getRegion().getID(), SmallItem.Wineskin);
             }
@@ -1023,7 +1037,9 @@ export function game(socket, model: Game, io) {
       case "blue_runestone": return SmallItem.BlueRunestone
       case "yellow_runestone": return SmallItem.YellowRunestone
       case "green_runestone": return SmallItem.GreenRunestone
-      default: throw Error("String does not correspond to a SmallItem");
+      default:
+        console.log(`String ${str} does not correspond to a SmallItem`);
+        return SmallItem.None
     }
   }
 
@@ -1034,7 +1050,9 @@ export function game(socket, model: Game, io) {
       case "shield": return LargeItem.Shield
       case "bow": return LargeItem.Bow
       case "None": return LargeItem.Empty
-      default: throw Error("String does not correspond to a LargeItem");
+      default: 
+        console.log(`String ${str} does not correspond to a LargeItem`);
+        return LargeItem.Empty;
     }
   }
 

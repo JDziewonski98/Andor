@@ -105,6 +105,9 @@ export default class GameScene extends Phaser.Scene {
     this.load.image("blue_runestone", "../assets/runestone_b.PNG");
     this.load.image("green_runestone", "../assets/runestone_g.PNG");
     this.load.image("yellow_runestone", "../assets/runestone_y.PNG");
+    this.load.image("blue_runestone_h", "../assets/runestone_b_hidden.png");
+    this.load.image("green_runestone_h", "../assets/runestone_g_hidden.png");
+    this.load.image("yellow_runestone_h", "../assets/runestone_y_hidden.png");
     this.load.image("prince", "../assets/prince.png");
     this.load.image("telescope", "../assets/telescope.PNG");
     this.load.image("half_wineskin", "../assets/half_wineskin.jpg")
@@ -510,7 +513,6 @@ export default class GameScene extends Phaser.Scene {
 
   private narratorRunestones(stoneLocs: number[]) {
     console.log("client narratorRunestones", stoneLocs)
-    // TODO NARRATOR: place a runestone on each corresponding tileID
     // Display StoryWindows
   }
 

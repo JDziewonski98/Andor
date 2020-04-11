@@ -89,6 +89,10 @@ export class game {
         this.socket.on("updateRunestoneLegend", callback);
     }
 
+    public revealRunestone(tileID: number, stoneName: string) {
+        this.socket.emit("revealRunestone", tileID, stoneName);
+    }
+
     // TODO: REMOVE, FOR NARRATOR TESTING ONLY
     public advanceNarrator() {
         this.socket.emit("advanceNarrator");

@@ -5,7 +5,6 @@ export class TileWindow extends Window {
     private goldIcon: Phaser.GameObjects.Image;
     private goldButton: Phaser.GameObjects.Text;
     private currX = 30;
-    private xInc = 35;
 
     private gameController: game;
     private tileID: number;
@@ -14,8 +13,9 @@ export class TileWindow extends Window {
     private itemIcons: Phaser.GameObjects.Image[] = [];
     private bgImage: Phaser.GameObjects.Image;
     private titleText: Phaser.GameObjects.Text;
-
     private goldQuantity: number;
+    // Special case for placing the hidden runestones
+    private hiddenStoneIDs = ["blue_runestone_h", "yellow_runestone_h", "green_runestone_h"];
 
     private windowHeight;
 
@@ -28,7 +28,9 @@ export class TileWindow extends Window {
     }
 
     protected initialize() { 
-        let itemsLength = Object.keys(this.items).length;
+        // Ugly hack: Find extra width needed for hidden runestones
+        let hiddenStoneExtraW = this.getNumExtraStones();
+        let itemsLength = Object.keys(this.items).length + hiddenStoneExtraW;
         let extraWidth = 40 * (itemsLength > 1 ? itemsLength-1 : 0);
         // Size the background image based on how many distinct items need to be displayed
         let bgWidth = 110 + extraWidth;
@@ -56,11 +58,17 @@ export class TileWindow extends Window {
             // either adds a new icon with quantity 1 or increments an existing quantity
             if (tileID != self.tileID) return;
 
-            if (self.itemButtons.has(itemName)) {
-                let iconButton = self.itemButtons.get(itemName);
+            if (itemName in self.items) {
                 // increase the quantity displayed
-                let newAmount = Number(iconButton.text) + 1;
-                iconButton.setText(""+newAmount);
+                self.items[itemName] += 1;
+                // don't do this update for hidden runestones
+                if (!self.hiddenStoneIDs.includes(itemName)) {
+                    let iconButton = self.itemButtons.get(itemName);
+                    iconButton.setText(""+self.items[itemName]);
+                } else {
+                    // Always refresh for hidden runestone drops
+                    self.refreshWindow()
+                }
             } else {
                 // Add a new icon
                 self.items[itemName] = 1;
@@ -70,12 +78,15 @@ export class TileWindow extends Window {
         this.gameController.updatePickupItemTile(function(tileID: number, itemName: string, itemType: string) {
             if (tileID != self.tileID) return;
 
-            if (self.itemButtons.has(itemName)) {
+            if (itemName in self.items) {
                 let iconButton = self.itemButtons.get(itemName);
-                if (Number(iconButton.text) > 1) {
-                    // reduce the quantity displayed
-                    let newAmount = Number(iconButton.text) - 1;
-                    iconButton.setText(""+newAmount);
+                if (self.items[itemName] > 1) {
+                    self.items[itemName] -= 1;
+                    // reduce the quantity displayed if not hidden runestone
+                    if (!self.hiddenStoneIDs.includes(itemName)) {
+                        let newAmount = Number(iconButton.text) - 1;
+                        iconButton.setText(""+newAmount);
+                    }
                 } else {
                     // remove the item and re-populate the window
                     delete self.items[itemName];
@@ -108,8 +119,12 @@ export class TileWindow extends Window {
     // updates while the TileWindow remains active on the screen are handled by refreshWindow()
     public populateItems() {
         var self = this;
-        // Populate with items received from server
+
+        // Populate with items received from server, note that hidden runestones are handled separately
         for (let [key, value] of Object.entries(this.items)) {
+            if (this.hiddenStoneIDs.includes(key)) {
+                continue;
+            }
             var icon = this.add.image(this.currX, 25, key).setDisplaySize(30, 30).setOrigin(0);
             let buttonX = this.currX + 28;
             var iconButton = this.add.text(buttonX, 23, ""+value, { fontSize: 10, backgroundColor: '#f00' });
@@ -121,6 +136,23 @@ export class TileWindow extends Window {
             this.itemIcons.push(icon);
 
             this.currX += 40;
+        }
+        // Add hidden runestones
+        for (let [key, value] of Object.entries(this.items)) {
+            if (!this.hiddenStoneIDs.includes(key)) {
+                continue;
+            }
+            for (let i = 0; i < value; i++) {
+                var icon = this.add.image(this.currX, 25, key).setDisplaySize(30, 30).setOrigin(0);
+                icon.setInteractive();
+                // Request to server to reveal the runestone (key) on tile tileID
+                icon.on('pointerdown', function() {
+                    self.gameController.revealRunestone(self.tileID, key);
+                })
+                this.itemIcons.push(icon);
+    
+                this.currX += 40;
+            }
         }
     }
 
@@ -128,29 +160,32 @@ export class TileWindow extends Window {
     private refreshWindow() {
         this.clearWindow();
 
-        let itemsLength = Object.keys(this.items).length;
+        // Ugly hack: Find extra width needed for hidden runestones
+        let hiddenStoneExtraW = this.getNumExtraStones();
+        let itemsLength = Object.keys(this.items).length + hiddenStoneExtraW;
         let extraWidth = 40 * (itemsLength > 1 ? itemsLength-1 : 0);
         let bgWidth = 110 + extraWidth;
         this.bgImage = this.add.image(0, 0, 'scrollbg').setDisplaySize(bgWidth, this.windowHeight).setOrigin(0);
         this.titleText = this.add.text(5, 5, `Region ${this.tileID} items:`, { fontSize: 10, backgroundColor: '#f00' });
 
         this.populateGold();
-
-        var self = this;
         // Populate with items received from server
-        for (let [key, value] of Object.entries(this.items)) {
-            var icon = this.add.image(this.currX, 25, key).setDisplaySize(30, 30).setOrigin(0);
-            let buttonX = this.currX + 28;
-            var iconButton = this.add.text(buttonX, 23, ""+value, { fontSize: 10, backgroundColor: '#f00' });
-            iconButton.setInteractive();
-            iconButton.on('pointerdown', function(pointer) {
-                self.gameController.pickupItem(self.tileID, key, self.getItemTypeFromName(key));
-            })
-            this.itemButtons.set(key, iconButton);
-            this.itemIcons.push(icon);
+        this.populateItems();
+    }
 
-            this.currX += 40;
+    //ugly
+    private getNumExtraStones() : number {
+        let hiddenStoneExtraW = 0;
+        for (let [key, value] of Object.entries(this.items)) {
+            if (!this.hiddenStoneIDs.includes(key)) {
+                continue;
+            }
+            hiddenStoneExtraW -= 1;
+            for (let i = 0; i < value; i++) {
+                hiddenStoneExtraW += 1;
+            }
         }
+        return hiddenStoneExtraW;
     }
 
     // this is ugly for now
@@ -176,11 +211,14 @@ export class TileWindow extends Window {
         this.goldButton.removeAllListeners('pointerdown');
         this.goldButton.destroy();
 
-        this.itemIcons.forEach(icon => icon.destroy());
-        this.itemButtons.forEach(function(button) {
+        this.itemIcons.forEach(icon => {
+            icon.removeAllListeners('pointerdown');
+            icon.destroy()
+        });
+        this.itemButtons.forEach(button => {
             button.removeAllListeners('pointerdown');
             button.destroy();
-        })
+        });
         this.itemButtons.clear();
         this.itemIcons = [];
 
