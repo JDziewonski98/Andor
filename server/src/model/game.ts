@@ -124,7 +124,6 @@ export class Game {
 
     private setAvailableHeros(heros) {
         heros.forEach(heroData => {
-            console.log(heroData.hk)
             this.availableHeros.push(new Hero({
                 hk: heroData.hk,
                 rank: heroData.rank,
@@ -316,13 +315,10 @@ export class Game {
         })
         if (heroTaken) return false; // failed to bind hero
 
-        let hero = this.availableHeros.filter((hero) => hero.hk === heroType)
+        let hero = this.availableHeros.filter((hero) => hero.hk === heroType) // find hero
         if (hero.length === 1) {
             this.heroList.set(id, hero[0]);
             this.activeHeros.push(heroType);
-            // make hero no longer available.
-            this.availableHeros = this.availableHeros.filter(h => h.hk !== heroType);
-            console.log(this.availableHeros.map((h) => h.hk))
             return true;
         }
         return false;
@@ -392,7 +388,6 @@ export class Game {
             }
         })
         if (this.heroList.has(id)) {
-            this.availableHeros.push(this.heroList.get(id)!)
             this.heroList.delete(id);
         }
     }

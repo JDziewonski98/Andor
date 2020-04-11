@@ -450,9 +450,10 @@ export function game(socket, model: Game, io) {
     }
   });
 
-  socket.on("getBoundHeros", (callback) => {
-    const heros = model.getAvailableHeros().map(h => h.hk)
-    console.log("getBoundHeros: ", heros)
+  socket.on("getAvailableHeros", (callback) => {
+    const alreadyBound = Array.from(model.getHeros().values()).map(h => h.hk);
+    const heros = model.getAvailableHeros().map(h => h.hk).filter((hk) => !alreadyBound.includes(hk))
+    console.log("getAvailableHeros: ", heros)
     callback(heros);
   });
 

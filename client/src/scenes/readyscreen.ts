@@ -44,7 +44,7 @@ export default class ReadyScreenScene extends Phaser.Scene {
 
         this.add.image(500, 300, 'andordude').setDisplaySize(1000, 600)
 
-        this.gameController.getBoundHeros((heros) => {
+        this.gameController.getAvailableHeros((heros) => {
             // console.log(heros)
             if(!heros) {
                 console.log("NO HEROS??? ", heros)
