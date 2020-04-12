@@ -240,6 +240,11 @@ export class HeroWindow extends Window {
             }
         })
 
+        this.gameinstance.killHeroFarmers(() => {
+            self.farmers = 0;
+            self.refreshText();
+        })
+
         // TODO WELL: Listen for well use (WP inc) and farmer pickups/drops
 
         //todo account for falcon
@@ -363,5 +368,6 @@ export class HeroWindow extends Window {
         this.gameinstance.disconnectUpdateDropItemHero();
         this.gameinstance.disconnectUpdatePickupItemHero();
         this.gameinstance.disconnectReceiveUseWineskin();
+        this.gameinstance.unsubscribeKillHeroFarmers();
     }
 }

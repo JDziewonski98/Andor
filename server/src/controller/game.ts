@@ -72,7 +72,8 @@ export function game(socket, model: Game, io) {
         || hero.getTimeOfDay() <= 10 && hero.getWill() >=3 && event19
         if (regionID === id && timeLeft) { // successful move
           let targetRegion: Region = model.getRegions()[id];
-
+          // Check if the move kills any carried farmers
+          killFarmersOfHeroes(id, hero);
           //if event 26 is active and it is your 8th hour, move freely
           if(hero.getTimeOfDay() == 8 && event26){
             hero.freeMoveTo(targetRegion)
@@ -149,12 +150,12 @@ export function game(socket, model: Game, io) {
     if (hero !== undefined) {
       // if the hero's tile is not the same as the farmer's tile, return
       if (hero.getRegion().getID() != tileID) return;
-      region = hero.pickupFarmer();
-      console.log("pickup farmer", region)
+      let success = hero.pickupFarmer();
+      // console.log("pickup farmer", region)
 
-      if (region !== undefined) {
-        socket.broadcast.emit("destroyFarmer", region.getID());
-        callback(region.getID());
+      if (success) {
+        socket.broadcast.emit("destroyFarmer", hero.getRegion().getID());
+        callback();
       }
     }
   });
@@ -178,6 +179,24 @@ export function game(socket, model: Game, io) {
       }
     }
   });
+
+  function killFarmersOnTile(tileID: number) {
+    let numKilled = model.killFarmersOnTile(tileID);
+    for (let i = 0; i < numKilled; i++) {
+      console.log("killed farmer on tile", tileID);
+      socket.emit("destroyFarmer", tileID);
+      socket.broadcast.emit("destroyFarmer", tileID);
+    }
+  }
+
+  function killFarmersOfHeroes(tileID: number, hero: Hero | null) {
+    let heroes: HeroKind[] = model.killFarmersOfHeroes(tileID, hero);
+    heroes.forEach(hk => {
+      console.log("killed farmers of", hk);
+      socket.emit("killHeroFarmers", hk);
+      socket.broadcast.emit("killHeroFarmers", hk);
+    })
+  }
 
 
   /*
@@ -210,6 +229,9 @@ export function game(socket, model: Game, io) {
     let runestoneLegendPos = model.getNarrator().getRunestoneLegendPos();
     if (narratorPos==runestoneLegendPos || narratorPos==2 || narratorPos==6) {
       for (let m of newMonsters) {
+        // Check for killing farmers on new monster spawn tiles
+        killFarmersOnTile(m.getTileID());
+        killFarmersOfHeroes(m.getTileID(), null);
         socket.emit("addMonster", m.getType(), m.getTileID(), m.getName());
         socket.broadcast.emit("addMonster", m.getType(), m.getTileID(), m.getName());
       }
@@ -302,6 +324,9 @@ export function game(socket, model: Game, io) {
       let { success, id, event, newTile, createSuccess } = model.useFog(fogType, +tile);
       if (success) {
         if (fogType === Fog.Gor && createSuccess) {
+          // Check for killed monsters on monster spawn tile
+          killFarmersOnTile(newTile!);
+          killFarmersOfHeroes(newTile!, null);
           io.of("/" + model.getName()).emit("addMonster", MonsterKind.Gor, newTile, id);
         }
         if(fogType === Fog.EventCard){
@@ -886,6 +911,9 @@ export function game(socket, model: Game, io) {
     let convMonsters = {};
     for (let m of Array.from(model.getMonsters().values())) {
       convMonsters[m.name] = m.getTileID();
+      // Check for killing farmers on new positions of monsters
+      killFarmersOnTile(m.getTileID());
+      killFarmersOfHeroes(m.getTileID(), null);
     }
     socket.broadcast.emit('sendUpdatedMonsters', convMonsters);
     socket.emit('sendUpdatedMonsters', convMonsters);

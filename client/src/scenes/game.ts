@@ -434,23 +434,14 @@ export default class GameScene extends Phaser.Scene {
     const tile: Tile = this.tiles[tileID];
     const farmerObj = new Farmer(id, this, tile, 'farmer').setDisplaySize(40, 40).setInteractive();
     this.farmers.push(farmerObj);
-    tile.farmer.push(farmerObj);
-    tile.farmerexist = true;
+    tile.farmers.push(farmerObj);
     this.add.existing(farmerObj);
 
     var self = this;
 
-    farmerObj.on('pointerdown', (pointer) => {
+    farmerObj.on('pointerdown', () => {
       self.gameinstance.pickupFarmer(farmerObj.tile.getID(), function (tileid) {
-        let pickedFarmer: Farmer = self.tiles[tileid].farmer.pop();
-        for (var i = 0; i < 2; i++) {
-          if (self.farmers[i].id === pickedFarmer.id) {
-            self.farmers[i].tile = undefined;
-            self.hero.farmers.push(pickedFarmer)
-            break;
-          }
-        }
-        pickedFarmer.destroy()
+        farmerObj.destroy();
       });
     }, this);
   }
@@ -460,7 +451,7 @@ export default class GameScene extends Phaser.Scene {
     const tile: Tile = this.tiles[tileNumber]
     let hero: Hero = new Hero(this, tile, texture, type).setDisplaySize(40, 40);
     this.heroes.push(hero);
-    tile.hero = hero;
+    // tile.hero = hero;
     this.add.existing(hero);
     if (this.ownHeroType === type) {
       this.hero = hero;
@@ -783,20 +774,12 @@ export default class GameScene extends Phaser.Scene {
 
     // FARMERS
     this.gameinstance.destroyFarmer(function (tileid) {
-      let pickedFarmer: Farmer = this.tiles[tileid].farmer.pop();
-      for (var i = 0; i < 2; i++) {
-        if (this.farmers[i] === pickedFarmer) {
-          this.farmers[i].tile = undefined;
-          break;
-        }
-      }
+      let pickedFarmer: Farmer = self.tiles[tileid].farmers.pop();
       pickedFarmer.destroy()
-
     });
 
     this.gameinstance.addFarmer(function (tileid, farmerid) {
       if (tileid === 0) {
-        let newFarmer = self.hero.farmers.pop()
         for (var i = 0; i < 6; i++) {
           if (self.castle.shields[i].visible == true) {
             self.castle.shields[i].visible = false;
@@ -804,7 +787,6 @@ export default class GameScene extends Phaser.Scene {
           }
         }
       } else {
-        let newFarmer = self.hero.farmers.pop()
         self.addFarmer(+farmerid, tileid)
       }
     });

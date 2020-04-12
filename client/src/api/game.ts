@@ -42,6 +42,14 @@ export class game {
         this.socket.on("destroyFarmer", callback);
     }
 
+    public killHeroFarmers(callback) {
+        this.socket.on("killHeroFarmers", callback);
+    }
+
+    public unsubscribeKillHeroFarmers() {
+        this.socket.off("killHeroFarmers");
+    }
+
     public addFarmer(callback){
         this.socket.on("addFarmer", callback);
     }

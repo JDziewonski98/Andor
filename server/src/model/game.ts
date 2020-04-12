@@ -208,6 +208,33 @@ export class Game {
         })
     }
 
+    public killFarmersOnTile(tileID: number) : number {
+        let numKilled = this.regions[tileID].getFarmers().length;
+        this.regions[tileID].removeAllFarmers();
+        return numKilled;
+    }
+
+    public killFarmersOfHeroes(tileID: number, hero: Hero | null) : HeroKind[] {
+        let heroes: HeroKind[] = [];
+        let tile = this.regions[tileID];
+        if (hero != null) { // check is for a specific hero moving to new space
+            if (tile.getMonster() != null) {
+                hero.removeAllFarmers();
+                heroes.push(hero.getKind());
+            }
+        } else { // check is for all heroes on tile that a monster is now on
+            if (tile.getMonster() != null) {
+                this.heroList.forEach(hero => {
+                    if (hero.getRegion() === tile) {
+                        hero.removeAllFarmers();
+                        heroes.push(hero.getKind());
+                    }
+                })
+            }
+        }
+        return heroes;
+    }
+
     public setMonsters(monsters) {
         monsters.forEach(monster => {
             this.addMonster(monster.type, monster.tileID, monster.name);
@@ -404,10 +431,6 @@ export class Game {
             this.availableHeros.push(this.heroList.get(id)!.getKind())
             this.heroList.delete(id);
         }
-    }
-
-    public removeFarmer(f: Farmer) {
-        //TO BE IMPLEMENTED
     }
 
     public setCurrPlayersTurn(hk: HeroKind) {
