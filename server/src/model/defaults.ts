@@ -104,7 +104,7 @@ export const dHeros = [{
     farmers: [
     ],
     will: 7,
-    strength: 1,
+    strength: 2,
     gold: 2,
     dice: [1, 2, 3]
 }, {
@@ -123,7 +123,7 @@ export const dHeros = [{
     farmers: [
     ],
     will: 7,
-    strength: 1,
+    strength: 2,
     gold: 1,
     dice: [2,3,4]
 },{
@@ -142,7 +142,7 @@ export const dHeros = [{
     farmers: [
     ],
     will: 7,
-    strength: 1,
+    strength: 2,
     gold: 1,
     dice: [3,4,5]
 },{
@@ -161,7 +161,7 @@ export const dHeros = [{
     farmers: [
     ],
     will: 7,
-    strength: 1,
+    strength: 2,
     gold: 4,
     dice: [1,1,1]
 }]
