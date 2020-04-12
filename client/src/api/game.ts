@@ -42,6 +42,14 @@ export class game {
         this.socket.on("destroyFarmer", callback);
     }
 
+    public killHeroFarmers(callback) {
+        this.socket.on("killHeroFarmers", callback);
+    }
+
+    public unsubscribeKillHeroFarmers() {
+        this.socket.off("killHeroFarmers");
+    }
+
     public addFarmer(callback){
         this.socket.on("addFarmer", callback);
     }
@@ -87,6 +95,10 @@ export class game {
 
     public updateRunestoneLegend(callback) {
         this.socket.on("updateRunestoneLegend", callback);
+    }
+
+    public revealRunestone(tileID: number, stoneName: string) {
+        this.socket.emit("revealRunestone", tileID, stoneName);
     }
 
     // TODO: REMOVE, FOR NARRATOR TESTING ONLY
@@ -526,7 +538,11 @@ export class game {
     }
 
     public addMonster(callback){
-        this.socket.on("addMonster", callback)
+        this.socket.on("addMonster", callback);
+    }
+
+    public revealWitch(callback) {
+        this.socket.on("revealWitch", callback);
     }
 
     ///////////////////////////

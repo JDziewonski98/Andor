@@ -80,6 +80,7 @@ export default class GameScene extends Phaser.Scene {
     this.load.image("gor", "../assets/gor.PNG")
     this.load.image("skral", "../assets/skral.PNG")
     this.load.image("wardrak", "../assets/wardrak.PNG")
+    this.load.image("fortress", "../assets/fortress.png")
     this.load.image("farmer", "../assets/farmer.png");
     this.load.multiatlas('tiles', './assets/tilesheet.json', 'assets')
     this.load.image("well", "../assets/well.png");
@@ -89,13 +90,17 @@ export default class GameScene extends Phaser.Scene {
     this.load.image("Gold", "../assets/gold.png");
     this.load.image("EventCard", "../assets/event.png");
     this.load.image("Gor", "../assets/gorfog.png");
+    this.load.image("WitchFog", "../assets/witchfog.png");
+    this.load.image("WineskinFog", "../assets/wineskinfog.png");
+
+    this.load.image("witch", "../assets/witch.png");
 
     this.load.image("item_border", "../assets/border.png"); // uses hex 4b2504
     this.load.image("hero_border", "../assets/big_border.png");
 
     //items
-    this.load.image("Brew", "../assets/brew.png");
-    this.load.image("Wineskin", "../assets/wineskin.png");
+    // this.load.image("Brew", "../assets/brew.png");
+    // this.load.image("Wineskin", "../assets/wineskin.png");
     this.load.image("brew", "../assets/brew.png");
     this.load.image("wineskin", "../assets/wineskin.png");
     this.load.image("bow", "../assets/bow.PNG");
@@ -105,6 +110,9 @@ export default class GameScene extends Phaser.Scene {
     this.load.image("blue_runestone", "../assets/runestone_b.PNG");
     this.load.image("green_runestone", "../assets/runestone_g.PNG");
     this.load.image("yellow_runestone", "../assets/runestone_y.PNG");
+    this.load.image("blue_runestone_h", "../assets/runestone_b_hidden.png");
+    this.load.image("green_runestone_h", "../assets/runestone_g_hidden.png");
+    this.load.image("yellow_runestone_h", "../assets/runestone_y_hidden.png");
     this.load.image("prince", "../assets/prince.png");
     this.load.image("telescope", "../assets/telescope.PNG");
     this.load.image("half_wineskin", "../assets/half_wineskin.jpg")
@@ -303,7 +311,16 @@ export default class GameScene extends Phaser.Scene {
     function updateMoveRequest(heroKind, tileID) {
       self.heroes.forEach((hero: Hero) => {
         if (hero.getKind().toString() === heroKind) {
-          hero.moveTo(self.tiles[tileID])
+          let newCoords = hero.getPosOnTile(self.tiles[tileID]);
+          self.tweens.add({
+            targets: hero,
+            x: newCoords.x,
+            y: newCoords.y,
+            duration: 500,
+            ease: 'Power2',
+            completeDelay: 400,
+            onComplete: function () { hero.moveTo(self.tiles[tileID]) }
+          });
         }
       })
     }
@@ -421,23 +438,14 @@ export default class GameScene extends Phaser.Scene {
     const tile: Tile = this.tiles[tileID];
     const farmerObj = new Farmer(id, this, tile, 'farmer').setDisplaySize(40, 40).setInteractive();
     this.farmers.push(farmerObj);
-    tile.farmer.push(farmerObj);
-    tile.farmerexist = true;
+    tile.farmers.push(farmerObj);
     this.add.existing(farmerObj);
 
     var self = this;
 
-    farmerObj.on('pointerdown', (pointer) => {
+    farmerObj.on('pointerdown', () => {
       self.gameinstance.pickupFarmer(farmerObj.tile.getID(), function (tileid) {
-        let pickedFarmer: Farmer = self.tiles[tileid].farmer.pop();
-        for (var i = 0; i < 2; i++) {
-          if (self.farmers[i].id === pickedFarmer.id) {
-            self.farmers[i].tile = undefined;
-            self.hero.farmers.push(pickedFarmer)
-            break;
-          }
-        }
-        pickedFarmer.destroy()
+        farmerObj.destroy();
       });
     }, this);
   }
@@ -447,7 +455,7 @@ export default class GameScene extends Phaser.Scene {
     const tile: Tile = this.tiles[tileNumber]
     let hero: Hero = new Hero(this, tile, texture, type).setDisplaySize(40, 40);
     this.heroes.push(hero);
-    tile.hero = hero;
+    // tile.hero = hero;
     this.add.existing(hero);
     if (this.ownHeroType === type) {
       this.hero = hero;
@@ -469,7 +477,6 @@ export default class GameScene extends Phaser.Scene {
     this.gameinstance.getNarratorPosition(function (pos: number) {
       // Trigger start of game instructions/story
       if (pos == -1) {
-        console.log("story0 triggering twice?");
         WindowManager.create(self, `story0`, StoryWindow, {
           x: reducedWidth / 2,
           y: reducedHeight / 2,
@@ -528,8 +535,13 @@ export default class GameScene extends Phaser.Scene {
 
   private narratorRunestones(stoneLocs: number[]) {
     console.log("client narratorRunestones", stoneLocs)
-    // TODO NARRATOR: place a runestone on each corresponding tileID
     // Display StoryWindows
+    WindowManager.create(this, `story6`, StoryWindow, {
+      x: reducedWidth / 2,
+      y: reducedHeight / 2,
+      id: 6,
+      locs: stoneLocs
+    })
   }
 
   // Note that adding monsters is handled in setupListeners
@@ -541,12 +553,22 @@ export default class GameScene extends Phaser.Scene {
     this.prince = new Prince(this, this.tiles[72], 'prince').setScale(.15);
     this.add.existing(this.prince);
     // TODO NARRATOR: Display StoryWindows
+    WindowManager.create(this, `story3`, StoryWindow, {
+      x: reducedWidth / 2,
+      y: reducedHeight / 2,
+      id: 3
+    })
   }
 
   private narratorG() {
     // Remove prince
     this.prince.destroy();
     // TODO NARRATOR: Display StoryWindows
+    WindowManager.create(this, `story7`, StoryWindow, {
+      x: reducedWidth / 2,
+      y: reducedHeight / 2,
+      id: 7
+    })
   }
 
   private addFog(fogs) {
@@ -581,6 +603,7 @@ export default class GameScene extends Phaser.Scene {
             else {
               self.gameinstance.useFog(f.name, tile.id, (tile) => {
                 console.log(tile, typeof tile)
+                // Reveals the fog for set timeout before removing
                 let f = self.tiles[+tile].getFog();
                 f.clearTint();
                 setTimeout(() => {
@@ -593,7 +616,7 @@ export default class GameScene extends Phaser.Scene {
       }, this)
     })
 
-
+    // Reveals the fog for set timeout before removing
     this.gameinstance.destroyFog((tile) => {
       let f = this.tiles[+tile].getFog();
       f.clearTint();
@@ -720,6 +743,23 @@ export default class GameScene extends Phaser.Scene {
     // Listen for turn to be passed to yourself
     this.gameinstance.yourTurn()
 
+    // Reveal the witch
+    this.gameinstance.revealWitch(tileID => {
+      // Witch story
+      WindowManager.create(self, `story8`, StoryWindow, {
+        x: reducedWidth / 2,
+        y: reducedHeight / 2,
+        id: 8
+      })
+      // Place the witch on tileID
+      var witch = this.add.image(this.tiles[tileID].x + 50, this.tiles[tileID].y - 5, "witch");
+      witch.setInteractive();
+      witch.on('pointerdown', () => {
+        // TODO: Merchant witch interface, wait for merchants to be completed
+        console.log("Buy brew from witch");
+      })
+    })
+
     /**
      * FIGHT LISTENERS
      */
@@ -756,20 +796,12 @@ export default class GameScene extends Phaser.Scene {
 
     // FARMERS
     this.gameinstance.destroyFarmer(function (tileid) {
-      let pickedFarmer: Farmer = this.tiles[tileid].farmer.pop();
-      for (var i = 0; i < 2; i++) {
-        if (this.farmers[i] === pickedFarmer) {
-          this.farmers[i].tile = undefined;
-          break;
-        }
-      }
+      let pickedFarmer: Farmer = self.tiles[tileid].farmers.pop();
       pickedFarmer.destroy()
-
     });
 
     this.gameinstance.addFarmer(function (tileid, farmerid) {
       if (tileid === 0) {
-        let newFarmer = self.hero.farmers.pop()
         for (var i = 0; i < 6; i++) {
           if (self.castle.shields[i].visible == true) {
             self.castle.shields[i].visible = false;
@@ -777,7 +809,6 @@ export default class GameScene extends Phaser.Scene {
           }
         }
       } else {
-        let newFarmer = self.hero.farmers.pop()
         self.addFarmer(+farmerid, tileid)
       }
     });

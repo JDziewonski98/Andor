@@ -91,8 +91,13 @@ export class Region {
     }
 
     public removeFarmer() {
-         this.farmers = [];
+         this.farmers.pop();
     }
+
+    public removeAllFarmers() {
+        this.farmers = [];
+    }
+
     public addFarmer(f: Farmer) {
         this.farmers.push(f);
     }

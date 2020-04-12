@@ -11,7 +11,8 @@ import {
     Fog,
     EventCard,
     Prince,
-    Narrator
+    Narrator,
+    Witch
 } from "."
 import { LargeItem } from './LargeItem';
 import { SmallItem } from './SmallItem';
@@ -51,6 +52,7 @@ export class Game {
     private monstersInCastle: string[];
     private endOfGame: boolean = false;
     private prince: Prince | null = null;
+    private witch: Witch | null = null;
 
     private narrator!: Narrator;
     public gameStartHeroPosition: number = 1;
@@ -216,6 +218,33 @@ export class Game {
             this.farmers.push(farmObj)
             this.regions[farmObj.getTileID()].addFarmer(farmObj);
         })
+    }
+
+    public killFarmersOnTile(tileID: number) : number {
+        let numKilled = this.regions[tileID].getFarmers().length;
+        this.regions[tileID].removeAllFarmers();
+        return numKilled;
+    }
+
+    public killFarmersOfHeroes(tileID: number, hero: Hero | null) : HeroKind[] {
+        let heroes: HeroKind[] = [];
+        let tile = this.regions[tileID];
+        if (hero != null) { // check is for a specific hero moving to new space
+            if (tile.getMonster() != null) {
+                hero.removeAllFarmers();
+                heroes.push(hero.getKind());
+            }
+        } else { // check is for all heroes on tile that a monster is now on
+            if (tile.getMonster() != null) {
+                this.heroList.forEach(hero => {
+                    if (hero.getRegion() === tile) {
+                        hero.removeAllFarmers();
+                        heroes.push(hero.getKind());
+                    }
+                })
+            }
+        }
+        return heroes;
     }
 
     public setMonsters(monsters) {
@@ -391,10 +420,6 @@ export class Game {
             return true;
         }
         return false;
-    }
-
-    public removeFarmer(f: Farmer) {
-        //TO BE IMPLEMENTED
     }
 
     public setCurrPlayersTurn(hk: HeroKind) {
@@ -586,8 +611,10 @@ export class Game {
         this.narrator.setRunestoneLocations();
         let runestoneLocs = this.narrator.getRunestoneLocations();
         // Update tiles with runestones
-        runestoneLocs.forEach((stone, tileID) => {
-            this.regions[tileID].addItem(stone);
+        runestoneLocs.forEach(stoneObj => {
+            Object.entries(stoneObj).forEach(([tileID, stone]) => {
+                this.regions[tileID].addItem(stone);
+            })
         })
 
         // Place gor on space 43 and skral on space 39
@@ -664,6 +691,29 @@ export class Game {
         return monsterList;
     }
 
+    // Turns a hidden runestone into its real counterpart if a hero performs a valid reveal
+    public revealRunestone(h: Hero, tileID: number, stoneName: string) : boolean {
+        var heroTileID = h.getRegion().getID();
+        var region = this.regions[tileID];
+        // Success if hero is one the same region as the stone
+        if (heroTileID == tileID) {
+            region.removeItem(stoneName);
+            region.addItem(stoneName.slice(0, -2));
+            return true;
+        }
+        // Success if hero is on an adjacent tile and has a telescope
+        var adjTiles = region.getAdjRegionsIds();
+        var heroItems = h.getSmallItems()
+        if (adjTiles.includes(heroTileID) && heroItems.includes(SmallItem.Telescope)) {
+            region.removeItem(stoneName);
+            region.addItem(stoneName.slice(0, -2));
+            return true;
+        }
+        // Otherwise failure
+        return false;
+    }
+
+
     public useFog(fog: Fog, tile: number) {
         if (this.fogs.get(tile) != undefined && this.fogs.get(tile) == fog) { // make sure tile has a fog and its the same
             this.fogs.delete(tile); // delete fog from game
@@ -689,10 +739,29 @@ export class Game {
             } else if (fog == Fog.Strength) {
                 this.getHeroFromHk(this.currPlayersTurn)!.setStrength(2);
                 return { success: true };
-            } else if (fog == Fog.Brew) {
-
+            } else if (fog == Fog.WitchFog) {
+                // TODO WITCH
+                let toPlayer = false;
+                if (this.getHeroFromHk(this.currPlayersTurn)?.pickUpSmallItem(tile, SmallItem.Brew)) {
+                    toPlayer = true;
+                } else {
+                    this.regions[tile].addItem(SmallItem.Brew);
+                    toPlayer = false;
+                }
+                // Create new Witch
+                console.log("creating witch on tile with price", tile, this.numOfDesiredPlayers+1);
+                this.witch = new Witch(tile, this.numOfDesiredPlayers + 1);
+                let herbTileID = this.witch.placeHerb();
+                // TODO WITCH: create gor with herb, new monster type??
+                return { success: true, createSuccess: toPlayer };
             } else if (fog == Fog.Wineskin) {
-
+                // TODO DROP WINESKIN ON TILE
+                if (this.getHeroFromHk(this.currPlayersTurn)?.pickUpSmallItem(tile, SmallItem.Wineskin)) {
+                    return { success: true, createSuccess: true };
+                } else {
+                    this.regions[tile].addItem(SmallItem.Wineskin);
+                    return { success: true, createSuccess: false };
+                }
             } else if (fog == Fog.EventCard) {
                 var newEvent = this.drawCard()
                 if (newEvent != null) {
