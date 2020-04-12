@@ -740,6 +740,19 @@ export function game(socket, model: Game, io) {
     }
   })
 
+  socket.on('sendShieldPrompt', function(hero, damaged_shield, potentialdamage, yourself) {
+    console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
+    var otherplayer_id = model.getIDsByHeroname([hero])
+    if (yourself) {
+      socket.emit("receiveShieldPrompt", damaged_shield, potentialdamage)
+    }
+    else {
+      for (let playerid of otherplayer_id) {
+        socket.broadcast.to(`/${model.getName()}#${playerid}`).emit("receiveShieldPrompt", damaged_shield, potentialdamage)
+      }
+    }
+  })
+
 
   /*
   * END DAY

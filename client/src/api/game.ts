@@ -421,6 +421,14 @@ export class game {
     public receiveUpdateHeroTracker(callback) {
         this.socket.on('receiveUpdateHeroTracker', callback)
     }
+
+    public sendShieldPrompt(hero, shield_damaged, potentialdamage, yourself) {
+        this.socket.emit('sendShieldPrompt', hero, shield_damaged, potentialdamage, yourself)
+    }
+
+    public receiveShieldPrompt(callback) {
+        this.socket.on('receiveShieldPrompt', callback)
+    }
     /////////////////////////////
 
 

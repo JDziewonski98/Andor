@@ -313,9 +313,30 @@ export class Fight extends Window {
                                 // youve opened their hero panel recently. TODO.
 
                                 //do damage to all involved heros, backend
-                                self.gameinstance.doDamageToHero(self.hero.getKind(), result - totalattack - self.princebonus)
+                                self.gameinstance.getHeroItems(self.hero.getKind(), function(itemdict) {
+                                    if (itemdict['largeItem'] == 'shield') {
+                                        console.log('in shield prompto')
+                                        self.gameinstance.sendShieldPrompt(self.hero.getKind(), false, result - totalattack - self.princebonus, true)
+                                    }
+                                    else if (itemdict['largeItem'] == 'damaged_shield') {
+                                        self.gameinstance.sendShieldPrompt(self.hero.getKind(), true, result - totalattack - self.princebonus, true)
+                                    }
+                                    else {
+                                        self.gameinstance.doDamageToHero(self.hero.getKind(), result - totalattack - self.princebonus)
+                                    }
+                                })
                                 for (let ally of self.actuallyjoinedheros) {
-                                    self.gameinstance.doDamageToHero(ally, result - totalattack - self.princebonus)
+                                    self.gameinstance.getHeroItems(ally, function(itemdict) {
+                                        if (itemdict['largeItem'] == 'shield') {
+                                            self.gameinstance.sendShieldPrompt(ally, false, result - totalattack - self.princebonus, false)
+                                        }
+                                        else if (itemdict['largeItem'] == 'damaged_shield'){
+                                            self.gameinstance.sendShieldPrompt(ally, true, result - totalattack - self.princebonus, false)
+                                        }
+                                        else {
+                                            self.gameinstance.doDamageToHero(ally, result - totalattack - self.princebonus)
+                                        }
+                                    })
                                 }
 
                                 // determine which allies died and remove them from possible allies and display death on their screen

@@ -401,6 +401,15 @@ export class Hero {
                 }
                 break;
 
+            case 'shield':
+                this.largeItem = LargeItem.DamagedShield
+                this.pickUpLargeItem(this.region.getID(), LargeItem.DamagedShield)
+                break;
+
+            case 'damaged_shield':
+                this.largeItem = LargeItem.Empty
+                break;
+
             default:
                 console.log('Error! check your spelling on item to consume.')
         }
