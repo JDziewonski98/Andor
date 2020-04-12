@@ -72,7 +72,8 @@ export function game(socket, model: Game, io) {
         || hero.getTimeOfDay() <= 10 && hero.getWill() >=3 && event19
         if (regionID === id && timeLeft) { // successful move
           let targetRegion: Region = model.getRegions()[id];
-
+          // Check if the move kills any carried farmers
+          killFarmersOfHeroes(id, hero);
           //if event 26 is active and it is your 8th hour, move freely
           if(hero.getTimeOfDay() == 8 && event26){
             hero.freeMoveTo(targetRegion)
@@ -149,12 +150,12 @@ export function game(socket, model: Game, io) {
     if (hero !== undefined) {
       // if the hero's tile is not the same as the farmer's tile, return
       if (hero.getRegion().getID() != tileID) return;
-      region = hero.pickupFarmer();
-      console.log("pickup farmer", region)
+      let success = hero.pickupFarmer();
+      // console.log("pickup farmer", region)
 
-      if (region !== undefined) {
-        socket.broadcast.emit("destroyFarmer", region.getID());
-        callback(region.getID());
+      if (success) {
+        socket.broadcast.emit("destroyFarmer", hero.getRegion().getID());
+        callback();
       }
     }
   });
@@ -178,6 +179,24 @@ export function game(socket, model: Game, io) {
       }
     }
   });
+
+  function killFarmersOnTile(tileID: number) {
+    let numKilled = model.killFarmersOnTile(tileID);
+    for (let i = 0; i < numKilled; i++) {
+      console.log("killed farmer on tile", tileID);
+      socket.emit("destroyFarmer", tileID);
+      socket.broadcast.emit("destroyFarmer", tileID);
+    }
+  }
+
+  function killFarmersOfHeroes(tileID: number, hero: Hero | null) {
+    let heroes: HeroKind[] = model.killFarmersOfHeroes(tileID, hero);
+    heroes.forEach(hk => {
+      console.log("killed farmers of", hk);
+      socket.emit("killHeroFarmers", hk);
+      socket.broadcast.emit("killHeroFarmers", hk);
+    })
+  }
 
 
   /*
@@ -210,6 +229,9 @@ export function game(socket, model: Game, io) {
     let runestoneLegendPos = model.getNarrator().getRunestoneLegendPos();
     if (narratorPos==runestoneLegendPos || narratorPos==2 || narratorPos==6) {
       for (let m of newMonsters) {
+        // Check for killing farmers on new monster spawn tiles
+        killFarmersOnTile(m.getTileID());
+        killFarmersOfHeroes(m.getTileID(), null);
         socket.emit("addMonster", m.getType(), m.getTileID(), m.getName());
         socket.broadcast.emit("addMonster", m.getType(), m.getTileID(), m.getName());
       }
@@ -222,19 +244,37 @@ export function game(socket, model: Game, io) {
     // Pass back the runestone locations for the runestone narrator event, don't otherwise
     if (narratorPos == runestoneLegendPos) {
       let runestoneLocs = model.getNarrator().getRunestoneLocations()
-      let tileIDs = Array.from(runestoneLocs.keys());
+      // Emit hidden versions of the runestones to active TileWindows on the clients
+      let tileIDs: string[] = [];
+      runestoneLocs.forEach(stoneObj => {
+        Object.entries(stoneObj).forEach(([tileID, stone]) => {
+          tileIDs.push(tileID);
+          socket.emit("updateDropItemTile", tileID, stone, "smallItem")
+          socket.broadcast.emit("updateDropItemTile", tileID, stone, "smallItem")
+        })
+      })
+      // Emit the tile locations of the runestones to all clients
       socket.emit("updateNarrator", narratorPos, -1, tileIDs)
       socket.broadcast.emit("updateNarrator", narratorPos, -1, tileIDs)
-      // Place the runestones on clients
-      runestoneLocs.forEach((runestone, tileID) => {
-        socket.emit("updateDropItemTile", tileID, runestone, "smallItem")
-        socket.broadcast.emit("updateDropItemTile", tileID, runestone, "smallItem")
-      })
     } else {
       socket.emit("updateNarrator", narratorPos)
       socket.broadcast.emit("updateNarrator", narratorPos)  
     }
   }
+
+  socket.on("revealRunestone", function(tileID: number, stoneName: string) {
+    let success = false;
+    let heroId = socket.conn.id;
+    let hero = model.getHero(heroId);
+    success = model.revealRunestone(hero, tileID, stoneName);
+    if (success) {
+      let realStone = stoneName.slice(0, -2);
+      socket.emit("updatePickupItemTile", tileID, stoneName, "smallItem")
+      socket.broadcast.emit("updatePickupItemTile", tileID, stoneName, "smallItem")
+      socket.emit("updateDropItemTile", tileID, realStone, "smallItem")
+      socket.broadcast.emit("updateDropItemTile", tileID, realStone, "smallItem")
+    }
+  })
   //////////////////////////////////////////////////
 
 
@@ -277,16 +317,16 @@ export function game(socket, model: Game, io) {
     }
   });
 
-  // TODO: this will require a refactor to work with monster hopping
   socket.on("useFog", function (fogType, tile, callback) {
     let heroId = socket.conn.id;
     let hero = model.getHero(heroId);
     if (hero != undefined && tile == hero.getRegion().getID()) {
-      // useFog needs to return the actual tile the monster ends up on, can't assume that it is
-      // the same as the fog tile it spawned from.
       let { success, id, event, newTile, createSuccess } = model.useFog(fogType, +tile);
       if (success) {
         if (fogType === Fog.Gor && createSuccess) {
+          // Check for killed monsters on monster spawn tile
+          killFarmersOnTile(newTile!);
+          killFarmersOfHeroes(newTile!, null);
           io.of("/" + model.getName()).emit("addMonster", MonsterKind.Gor, newTile, id);
         }
         if(fogType === Fog.EventCard){
@@ -427,7 +467,7 @@ export function game(socket, model: Game, io) {
           break;
       }
     }
-    // console.log("successStatus:", successStatus)
+
     if (successStatus) {
       // Tell any active TileWindows of all clients to update
       socket.broadcast.emit("updateDropItemTile", hero.getRegion().getID(), name, itemType);
@@ -572,8 +612,7 @@ export function game(socket, model: Game, io) {
             currHero.updateGold(resAllocated[heroTypeString][i]);
           }
           else if (resNames[i] == "wineskin") {
-            // TODO: actually give the hero the wineskin (use smallItems API)
-            currHero?.setWineskin(resAllocated[heroTypeString][i] > 0);
+            // currHero?.setWineskin(resAllocated[heroTypeString][i] > 0);
             for (let j = 0; j < resAllocated[heroTypeString][i]; j++) {
               currHero.pickUpSmallItem(currHero.getRegion().getID(), SmallItem.Wineskin);
             }
@@ -872,6 +911,9 @@ export function game(socket, model: Game, io) {
     let convMonsters = {};
     for (let m of Array.from(model.getMonsters().values())) {
       convMonsters[m.name] = m.getTileID();
+      // Check for killing farmers on new positions of monsters
+      killFarmersOnTile(m.getTileID());
+      killFarmersOfHeroes(m.getTileID(), null);
     }
     socket.broadcast.emit('sendUpdatedMonsters', convMonsters);
     socket.emit('sendUpdatedMonsters', convMonsters);
@@ -1023,7 +1065,9 @@ export function game(socket, model: Game, io) {
       case "blue_runestone": return SmallItem.BlueRunestone
       case "yellow_runestone": return SmallItem.YellowRunestone
       case "green_runestone": return SmallItem.GreenRunestone
-      default: throw Error("String does not correspond to a SmallItem");
+      default:
+        console.log(`String ${str} does not correspond to a SmallItem`);
+        return SmallItem.None
     }
   }
 
@@ -1034,7 +1078,9 @@ export function game(socket, model: Game, io) {
       case "shield": return LargeItem.Shield
       case "bow": return LargeItem.Bow
       case "None": return LargeItem.Empty
-      default: throw Error("String does not correspond to a LargeItem");
+      default: 
+        console.log(`String ${str} does not correspond to a LargeItem`);
+        return LargeItem.Empty;
     }
   }
 

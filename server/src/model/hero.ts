@@ -125,13 +125,13 @@ export class Hero {
     }
 
     // TODO: actual wineskin implementation instead of boolean flag
-    public getWineskin() {
-        return this.wineskin;
-    }
+    // public getWineskin() {
+    //     return this.wineskin;
+    // }
 
-    public setWineskin(hasWineskin) {
-        this.wineskin = hasWineskin;
-    }
+    // public setWineskin(hasWineskin) {
+    //     this.wineskin = hasWineskin;
+    // }
 
     public setTimeOfDay(time) {
         this.timeOfDay = time;
@@ -156,6 +156,11 @@ export class Hero {
     public getFarmers(){
         return this.farmers
     }
+
+    public removeAllFarmers() {
+        this.farmers = new Array();
+    }
+
     public canMoveTo(tile){
        
     }
@@ -183,9 +188,11 @@ export class Hero {
             var farmer = this.region.getFarmers().pop()!;
             // farmer.carriedBy = this;
             this.farmers.push(farmer);
-            return this.region;
+            return true;
+            // return this.region;
         }
-        return this.region;
+        // return this.region;
+        return false;
     }
 
     public dropFarmer() {

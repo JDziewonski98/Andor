@@ -208,6 +208,33 @@ export class Game {
         })
     }
 
+    public killFarmersOnTile(tileID: number) : number {
+        let numKilled = this.regions[tileID].getFarmers().length;
+        this.regions[tileID].removeAllFarmers();
+        return numKilled;
+    }
+
+    public killFarmersOfHeroes(tileID: number, hero: Hero | null) : HeroKind[] {
+        let heroes: HeroKind[] = [];
+        let tile = this.regions[tileID];
+        if (hero != null) { // check is for a specific hero moving to new space
+            if (tile.getMonster() != null) {
+                hero.removeAllFarmers();
+                heroes.push(hero.getKind());
+            }
+        } else { // check is for all heroes on tile that a monster is now on
+            if (tile.getMonster() != null) {
+                this.heroList.forEach(hero => {
+                    if (hero.getRegion() === tile) {
+                        hero.removeAllFarmers();
+                        heroes.push(hero.getKind());
+                    }
+                })
+            }
+        }
+        return heroes;
+    }
+
     public setMonsters(monsters) {
         monsters.forEach(monster => {
             this.addMonster(monster.type, monster.tileID, monster.name);
@@ -307,17 +334,18 @@ export class Game {
 
         if (heroType === HeroKind.Dwarf) {
             this.heroList.set(id, new Hero(heroType, this.regions[7]));
-            //REMOVE before merging to master
-            // let dwarf = this.heroList.get(id)
+            //REMOVE before merging to master, used for item testing
+            let dwarf = this.heroList.get(id)
             // dwarf?.pickUpLargeItem(dwarf.getRegion().getID(), LargeItem.Bow)
-            // dwarf?.pickUpSmallItem(dwarf.getRegion().getID(), SmallItem.Telescope)
+            dwarf?.pickUpSmallItem(dwarf.getRegion().getID(), SmallItem.Telescope)
             // dwarf?.pickUpSmallItem(dwarf.getRegion().getID(), SmallItem.Wineskin)
             // dwarf?.pickUpHelm(dwarf.getRegion().getID());
         }
         else if (heroType === HeroKind.Archer) {
             this.heroList.set(id, new Hero(heroType, this.regions[25]));
-            let archer = this.heroList.get(id)
-            archer?.pickUpSmallItem(archer.getRegion().getID(), SmallItem.GreenRunestone)
+            //REMOVE before merging to master, used for item testing
+            // let archer = this.heroList.get(id)
+            // archer?.pickUpSmallItem(archer.getRegion().getID(), SmallItem.Telescope)
         }
         else if (heroType === HeroKind.Mage) {
             this.heroList.set(id, new Hero(heroType, this.regions[34]));
@@ -403,10 +431,6 @@ export class Game {
             this.availableHeros.push(this.heroList.get(id)!.getKind())
             this.heroList.delete(id);
         }
-    }
-
-    public removeFarmer(f: Farmer) {
-        //TO BE IMPLEMENTED
     }
 
     public setCurrPlayersTurn(hk: HeroKind) {
@@ -598,8 +622,10 @@ export class Game {
         this.narrator.setRunestoneLocations();
         let runestoneLocs = this.narrator.getRunestoneLocations();
         // Update tiles with runestones
-        runestoneLocs.forEach((stone, tileID) => {
-            this.regions[tileID].addItem(stone);
+        runestoneLocs.forEach(stoneObj => {
+            Object.entries(stoneObj).forEach(([tileID, stone]) => {
+                this.regions[tileID].addItem(stone);
+            })
         })
 
         // Place gor on space 43 and skral on space 39
@@ -676,6 +702,7 @@ export class Game {
         return monsterList;
     }
 
+
     private narratorN(): boolean {
         // check fortSkral is defeated
         var fortSkralDefeated: boolean = true;
@@ -697,7 +724,28 @@ export class Game {
 
         return winOrLose
         
+    }
 
+    // Turns a hidden runestone into its real counterpart if a hero performs a valid reveal
+    public revealRunestone(h: Hero, tileID: number, stoneName: string) : boolean {
+        var heroTileID = h.getRegion().getID();
+        var region = this.regions[tileID];
+        // Success if hero is one the same region as the stone
+        if (heroTileID == tileID) {
+            region.removeItem(stoneName);
+            region.addItem(stoneName.slice(0, -2));
+            return true;
+        }
+        // Success if hero is on an adjacent tile and has a telescope
+        var adjTiles = region.getAdjRegionsIds();
+        var heroItems = h.getSmallItems()
+        if (adjTiles.includes(heroTileID) && heroItems.includes(SmallItem.Telescope)) {
+            region.removeItem(stoneName);
+            region.addItem(stoneName.slice(0, -2));
+            return true;
+        }
+        // Otherwise failure
+        return false;
     }
 
     public useFog(fog: Fog, tile: number) {
