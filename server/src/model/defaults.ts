@@ -105,7 +105,7 @@ export const dHeros = [{
     ],
     will: 7,
     strength: 2,
-    gold: 2,
+    gold: 0,
     dice: [1, 2, 3]
 }, {
     timeOfDay: 0,
@@ -124,7 +124,7 @@ export const dHeros = [{
     ],
     will: 7,
     strength: 2,
-    gold: 1,
+    gold: 0,
     dice: [2,3,4]
 },{
     timeOfDay: 0,
@@ -143,7 +143,7 @@ export const dHeros = [{
     ],
     will: 7,
     strength: 2,
-    gold: 1,
+    gold: 0,
     dice: [3,4,5]
 },{
     timeOfDay: 0,
@@ -162,7 +162,7 @@ export const dHeros = [{
     ],
     will: 7,
     strength: 2,
-    gold: 4,
+    gold: 0,
     dice: [1,1,1]
 }]
 
