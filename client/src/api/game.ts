@@ -538,7 +538,11 @@ export class game {
     }
 
     public addMonster(callback){
-        this.socket.on("addMonster", callback)
+        this.socket.on("addMonster", callback);
+    }
+
+    public revealWitch(callback) {
+        this.socket.on("revealWitch", callback);
     }
 
     ///////////////////////////

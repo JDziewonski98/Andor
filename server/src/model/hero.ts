@@ -120,7 +120,7 @@ export class Hero {
         this.gold = amount;
     }
 
-    public updateGold(goldDelta) {
+    public updateGold(goldDelta: number) {
         this.gold += goldDelta;
     }
 

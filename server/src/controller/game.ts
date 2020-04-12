@@ -328,8 +328,30 @@ export function game(socket, model: Game, io) {
           killFarmersOnTile(newTile!);
           killFarmersOfHeroes(newTile!, null);
           io.of("/" + model.getName()).emit("addMonster", MonsterKind.Gor, newTile, id);
-        }
-        if(fogType === Fog.EventCard){
+        } else if (fogType === Fog.Wineskin) {
+          if (createSuccess) {
+            // Player was given the wineskin
+            socket.broadcast.emit("updatePickupItemHero", hero.getKind(), SmallItem.Wineskin, "smallItem");
+            socket.emit("updatePickupItemHero", hero.getKind(), SmallItem.Wineskin, "smallItem");
+          } else {
+            // Wineskin was placed on the tile
+            socket.broadcast.emit("updateDropItemTile", hero.getRegion().getID(), SmallItem.Wineskin, "smallItem");
+            socket.emit("updateDropItemTile", hero.getRegion().getID(), SmallItem.Wineskin, "smallItem");
+          }
+        } else if (fogType == Fog.WitchFog) {
+          if (createSuccess) {
+            // Player was given the brew
+            socket.broadcast.emit("updatePickupItemHero", hero.getKind(), SmallItem.Brew, "smallItem");
+            socket.emit("updatePickupItemHero", hero.getKind(), SmallItem.Brew, "smallItem");
+          } else {
+            // Brew was placed on the tile
+            socket.broadcast.emit("updateDropItemTile", hero.getRegion().getID(), SmallItem.Brew, "smallItem");
+            socket.emit("updateDropItemTile", hero.getRegion().getID(), SmallItem.Brew, "smallItem");
+          }
+          // Inform clients of position of witch
+          socket.broadcast.emit("revealWitch", tile);
+          socket.emit("revealWitch", tile);
+        } else if (fogType === Fog.EventCard) {
           if(event != null){
             //will have to add blockable events once shields are implemented
             io.of("/" + model.getName()).emit("newEvent", event);
@@ -355,7 +377,6 @@ export function game(socket, model: Game, io) {
       var shieldsRemaining = model.getCastle().getShields();
       socket.broadcast.emit('updateShields', shieldsRemaining);
       socket.emit('updateShields', shieldsRemaining);
-
     }
   });
 
