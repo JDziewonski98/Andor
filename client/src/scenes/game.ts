@@ -81,6 +81,7 @@ export default class GameScene extends Phaser.Scene {
     this.load.image("gor", "../assets/gor.PNG")
     this.load.image("skral", "../assets/skral.PNG")
     this.load.image("wardrak", "../assets/wardrak.PNG")
+    this.load.image("fortress", "../assets/fortress.png")
     this.load.image("farmer", "../assets/farmer.png");
     this.load.multiatlas('tiles', './assets/tilesheet.json', 'assets')
     this.load.image("well", "../assets/well.png");
@@ -91,13 +92,17 @@ export default class GameScene extends Phaser.Scene {
     this.load.image("Gold", "../assets/gold.png");
     this.load.image("EventCard", "../assets/event.png");
     this.load.image("Gor", "../assets/gorfog.png");
+    this.load.image("WitchFog", "../assets/witchfog.png");
+    this.load.image("WineskinFog", "../assets/wineskinfog.png");
+
+    this.load.image("witch", "../assets/witch.png");
 
     this.load.image("item_border", "../assets/border.png"); // uses hex 4b2504
     this.load.image("hero_border", "../assets/big_border.png");
 
     //items
-    this.load.image("Brew", "../assets/brew.png");
-    this.load.image("Wineskin", "../assets/wineskin.png");
+    // this.load.image("Brew", "../assets/brew.png");
+    // this.load.image("Wineskin", "../assets/wineskin.png");
     this.load.image("brew", "../assets/brew.png");
     this.load.image("wineskin", "../assets/wineskin.png");
     this.load.image("bow", "../assets/bow.PNG");
@@ -132,11 +137,6 @@ export default class GameScene extends Phaser.Scene {
     // Centered gameboard with border
     this.add.image(fullWidth / 2, fullHeight / 2, 'gameboard')
       .setDisplaySize(expandedWidth, expandedHeight);
-
-    // setInterval(() => {
-    //   console.log("********* SAVING GAME");
-    //   this.gameinstance.save();
-    // }, 600000);
 
     this.gameinstance.getGameData((data) => {
       console.log("GAME DATA IS:::::::::::::\n", data)
@@ -192,6 +192,10 @@ export default class GameScene extends Phaser.Scene {
       this.receiveNarratorEvents();
     })
 
+    setInterval(() => {
+      console.log("********* SAVING GAME");
+      this.gameinstance.save();
+    }, 10000);
     // this.addMerchants();
 
     //Event Card adding at start of game
@@ -241,7 +245,7 @@ export default class GameScene extends Phaser.Scene {
 
       if (t.hasWell) {
         // coordinates taken from previous version, adding wells to allocated wells positions
-        switch (t.id){
+        switch (t.id) {
           case 5:
             this.addWell(209, 2244, t.id as number);
             break;
@@ -449,23 +453,14 @@ export default class GameScene extends Phaser.Scene {
     const tile: Tile = this.tiles[tileID];
     const farmerObj = new Farmer(id, this, tile, 'farmer').setDisplaySize(40, 40).setInteractive();
     this.farmers.push(farmerObj);
-    tile.farmer.push(farmerObj);
-    tile.farmerexist = true;
+    tile.farmers.push(farmerObj);
     this.add.existing(farmerObj);
 
     var self = this;
 
-    farmerObj.on('pointerdown', (pointer) => {
+    farmerObj.on('pointerdown', () => {
       self.gameinstance.pickupFarmer(farmerObj.tile.getID(), function (tileid) {
-        let pickedFarmer: Farmer = self.tiles[tileid].farmer.pop();
-        for (var i = 0; i < 2; i++) {
-          if (self.farmers[i].id === pickedFarmer.id) {
-            self.farmers[i].tile = undefined;
-            self.hero.farmers.push(pickedFarmer)
-            break;
-          }
-        }
-        pickedFarmer.destroy()
+        farmerObj.destroy();
       });
     }, this);
   }
@@ -475,7 +470,7 @@ export default class GameScene extends Phaser.Scene {
     const tile: Tile = this.tiles[tileNumber]
     let hero: Hero = new Hero(this, tile, texture, type).setDisplaySize(40, 40);
     this.heroes.push(hero);
-    tile.hero = hero;
+    // tile.hero = hero;
     this.add.existing(hero);
     if (this.ownHeroType === type) {
       this.hero = hero;
@@ -518,7 +513,7 @@ export default class GameScene extends Phaser.Scene {
   private addNarrator() {
     var self = this;
 
-    this.gameinstance.getNarratorPosition(function(pos: number) {
+    this.gameinstance.getNarratorPosition(function (pos: number) {
       // Trigger start of game instructions/story
       if (pos == -1) {
         WindowManager.create(self, `story0`, StoryWindow, {
@@ -534,7 +529,7 @@ export default class GameScene extends Phaser.Scene {
           self.gameinstance.placeRuneStoneLegend();
         }
       }
-      
+
       // Otherwise we just add the narrator at whatever position the backend has stored
       console.log("creating narrator at position", pos);
       self.narrator = new Narrator(self, pos, "pawn", self.gameinstance).setScale(0.5);
@@ -544,9 +539,9 @@ export default class GameScene extends Phaser.Scene {
 
   private receiveNarratorEvents() {
     var self = this;
-    
+
     // runestonePos is an optional argument that is only passed back for the start of game
-    this.gameinstance.updateNarrator(function(pos: number, runestonePos = -1, stoneLocs = []) {
+    this.gameinstance.updateNarrator(function (pos: number, runestonePos = -1, stoneLocs = []) {
       // Switch on the new narrator position
       self.narrator.advance();
       console.log("client received narrator advance", pos, runestonePos, stoneLocs)
@@ -593,7 +588,7 @@ export default class GameScene extends Phaser.Scene {
     console.log("client narratorC")
     // Place farmer and prince, these are hardcoded for now
     this.addFarmer(2, 28);
-    
+
     this.prince = new Prince(this, this.tiles[72], 'prince').setScale(.15);
     this.add.existing(this.prince);
     // TODO NARRATOR: Display StoryWindows
@@ -647,6 +642,7 @@ export default class GameScene extends Phaser.Scene {
             else {
               self.gameinstance.useFog(f.name, tile.id, (tile) => {
                 console.log(tile, typeof tile)
+                // Reveals the fog for set timeout before removing
                 let f = self.tiles[+tile].getFog();
                 f.clearTint();
                 setTimeout(() => {
@@ -659,7 +655,7 @@ export default class GameScene extends Phaser.Scene {
       }, this)
     })
 
-
+    // Reveals the fog for set timeout before removing
     this.gameinstance.destroyFog((tile) => {
       let f = this.tiles[+tile].getFog();
       f.clearTint();
@@ -786,6 +782,23 @@ export default class GameScene extends Phaser.Scene {
     // Listen for turn to be passed to yourself
     this.gameinstance.yourTurn()
 
+    // Reveal the witch
+    this.gameinstance.revealWitch(tileID => {
+      // Witch story
+      WindowManager.create(self, `story8`, StoryWindow, {
+        x: reducedWidth / 2,
+        y: reducedHeight / 2,
+        id: 8
+      })
+      // Place the witch on tileID
+      var witch = this.add.image(this.tiles[tileID].x + 50, this.tiles[tileID].y - 5, "witch");
+      witch.setInteractive();
+      witch.on('pointerdown', () => {
+        // TODO: Merchant witch interface, wait for merchants to be completed
+        console.log("Buy brew from witch");
+      })
+    })
+
     /**
      * FIGHT LISTENERS
      */
@@ -811,7 +824,7 @@ export default class GameScene extends Phaser.Scene {
     })
     // Listening for shields lost due to monster attack
     this.gameinstance.updateShields(function (shieldsRemaining: number) {
-      for (let i=0; i<6; i++) {
+      for (let i = 0; i < 6; i++) {
         if (i >= shieldsRemaining) {
           self.castle.shields[i].visible = true;
         } else {
@@ -822,20 +835,12 @@ export default class GameScene extends Phaser.Scene {
 
     // FARMERS
     this.gameinstance.destroyFarmer(function (tileid) {
-      let pickedFarmer: Farmer = this.tiles[tileid].farmer.pop();
-      for (var i = 0; i < 2; i++) {
-        if (this.farmers[i] === pickedFarmer) {
-          this.farmers[i].tile = undefined;
-          break;
-        }
-      }
+      let pickedFarmer: Farmer = self.tiles[tileid].farmers.pop();
       pickedFarmer.destroy()
-
     });
 
     this.gameinstance.addFarmer(function (tileid, farmerid) {
       if (tileid === 0) {
-        let newFarmer = self.hero.farmers.pop()
         for (var i = 0; i < 6; i++) {
           if (self.castle.shields[i].visible == true) {
             self.castle.shields[i].visible = false;
@@ -843,7 +848,6 @@ export default class GameScene extends Phaser.Scene {
           }
         }
       } else {
-        let newFarmer = self.hero.farmers.pop()
         self.addFarmer(+farmerid, tileid)
       }
     });
@@ -868,12 +872,17 @@ export default class GameScene extends Phaser.Scene {
       self.scene.pause();
     });
 
-    this.gameinstance.receiveUpdateHeroTracker(function(hero) {
+    this.gameinstance.receiveUpdateHeroTracker(function (hero) {
       for (let h of self.heroes) {
         if (h.getKind() == hero) {
           h.incrementHour()
         }
       }
+    })
+
+    this.gameinstance.receivePlayerDisconnected((hk) => {
+      console.log("FREEZE GAME ", hk, " DISCONNECTED")
+      this.scene.pause();
     })
 
   }

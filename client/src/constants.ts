@@ -82,8 +82,8 @@ export const heroCardInfo = {
 }
 
 // Narrator story info
-export const storyCardWidths = [470, 470, 470, 470, 470, 470, 470, 470]
-export const storyCardHeights = [150, 170, 110, 200, 200, 140, 180, 170]
+export const storyCardWidths = [470, 470, 470, 470, 470, 470, 470, 470, 470]
+export const storyCardHeights = [150, 170, 110, 200, 200, 140, 180, 170, 200]
 export const storyCardTexts = [
 // A3, story0
 `A gloomy mood has fallen upon the people. Rumors are making 
@@ -167,7 +167,19 @@ be seen again for quite a long time.
 Black shadows are moving in the moonlight. The rumors were
 right - the wardraks are coming!
 Wardraks are powerful creatures that move twice each sunrise,
-but also yield a handsome reward of 6 gold or 6 willpower.`
+but also yield a handsome reward of 6 gold or 6 willpower.`,
+
+// Witch revealed, story8
+`Finally! There in the fog, one of the heroes discovers the
+witch named Reka. Reka prepares a special brew and hands one
+to the hero who found her.
+Any hero on the same space as the witch can buy a brew; the 
+archer pays 1 less coin. In a battle, the brew doubles the
+value of 1 die. One brew can be used twice.
+
+Reka knows where to find the medicinal herb to heal the king.
+But a Gor has obtained it! The Gor must be defeated to pick
+up the herb.`
 ]
 export const storyCardStyleText = {
     fontSize: 12,
