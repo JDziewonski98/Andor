@@ -256,13 +256,35 @@ export function game(socket, model: Game, io) {
   //////////////////////////////////////////////////
 
 
-  socket.on("merchant", function (callback) {
+  socket.on("merchant", function (item:string, callback) {
     let success = false;
     var heroId = socket.conn.id;
     let hero = model.getHero(heroId);
 
     if (hero !== undefined) {
-      success = hero.buyStrength();
+      switch(item){
+        case "strength":
+          success = hero.buyStrength();
+          break;
+        case "helm":
+          success = hero.buyHelm();
+          break;
+        case "wine":
+          success = hero.buyWine();
+          break;
+        case "telescope":
+          success = hero.buyTelescope();
+          break;
+        case "shield":
+          success = hero.buyShield();
+          break;
+        case "falcon":
+          success = hero.buyFalcon();
+          break;
+        case "bow":
+          success = hero.buyBow();
+          break;
+      }
     }
 
     if (success) {

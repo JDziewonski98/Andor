@@ -50,8 +50,8 @@ export class game {
         this.socket.emit("dropFarmer", callback);
     }
 
-    public merchant(callback){
-        this.socket.emit("merchant", callback);
+    public merchant(item: string, callback){
+        this.socket.emit("merchant", item, callback);
     }
     
     // Server uses the passed callback to tell the calling client to update the well
