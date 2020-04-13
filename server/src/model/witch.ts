@@ -30,12 +30,15 @@ export class Witch {
             case 1 :
             case 2 :
                 pos = 37;
+                break;
             case 3:
             case 4:
                 pos = 67;
+                break;
             case 5:
             case 6:
                 pos = 61;
+                break;
         }
         return pos;
     }

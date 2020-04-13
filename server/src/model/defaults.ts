@@ -47,7 +47,7 @@ export function dFogs(): Map<number, Fog> {
     const fogIds = [8, 11, 12, 13, 49, 16, 32, 48, 42, 44, 47, 46, 64, 56, 63];
     const fogTypes = [Fog.EventCard, Fog.EventCard, Fog.EventCard, Fog.EventCard, Fog.EventCard, Fog.Strength, Fog.WillPower2, Fog.WillPower3, Fog.Gold, Fog.Gold, Fog.Gold, Fog.Gor, Fog.Gor, Fog.Wineskin, Fog.WitchFog];
     // TODO REMOVE: For testing wineskins
-    // const fogTypes = [Fog.Wineskin, Fog.Wineskin, Fog.Wineskin, Fog.Wineskin, Fog.Wineskin, Fog.Wineskin, Fog.Wineskin, Fog.Wineskin, Fog.Wineskin, Fog.Wineskin, Fog.Wineskin, Fog.Wineskin, Fog.Wineskin, Fog.Wineskin, Fog.Wineskin];
+    // const fogTypes = [Fog.WitchFog, Fog.WitchFog, Fog.WitchFog, Fog.WitchFog, Fog.WitchFog, Fog.WitchFog, Fog.WitchFog, Fog.WitchFog, Fog.WitchFog, Fog.WitchFog, Fog.WitchFog, Fog.WitchFog, Fog.WitchFog, Fog.WitchFog, Fog.WitchFog];
     ////////////////////////////
     _shuffle(fogTypes);
 

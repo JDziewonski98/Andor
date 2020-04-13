@@ -18,6 +18,7 @@ export default class BoardOverlay extends Phaser.Scene {
     private chatButton: Phaser.GameObjects.Image;
     private endturntext;
     private clientheroobject;
+    private herb;
 
     // End Day
     private endDayButton: Phaser.GameObjects.Image;
@@ -46,6 +47,7 @@ export default class BoardOverlay extends Phaser.Scene {
         this.wells = data.wells;
         this.hk = data.hk
         this.clientheroobject = data.clientheroobject
+        this.herb = data.herb;
     }
 
     public init() { }
@@ -275,6 +277,10 @@ export default class BoardOverlay extends Phaser.Scene {
         for (const [mName, newTileID] of Object.entries(updatedMonsters)) {
             let newTile = this.tiles[newTileID as number];
             this.monsterMoveTween(this.monsterNameMap[mName], newTile, newTile.x, newTile.y);
+            if (mName == "gor_herb") {
+                // Move the herb
+                this.herbMoveTween(this.herb, newTile.x, newTile.y)
+            }
         }
     }
 
@@ -295,7 +301,25 @@ export default class BoardOverlay extends Phaser.Scene {
             completeDelay: 1000,
             onComplete: function () { monster.moveToTile(newTile) }
         });
+    }
 
+    public herbMoveTween(herb: Phaser.GameObjects.Image, newX, newY) {
+        this.tweens.add({
+            targets: herb,
+            x: newX + mOffset + 20,
+            y: newY,
+            duration: 1000,
+            ease: 'Power2',
+            completeDelay: 1000,
+            onComplete: function () { 
+                herb.x = newX + mOffset + 20,
+                herb.y = newY
+             }
+        });
+    }
+
+    public setHerb(herb: Phaser.GameObjects.Image) {
+        this.herb = herb;
     }
 
     public toggleInteractive(interactive: boolean) {

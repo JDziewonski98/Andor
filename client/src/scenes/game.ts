@@ -36,6 +36,7 @@ export default class GameScene extends Phaser.Scene {
   private monsterNameMap: Map<string, Monster>;
   private castle: RietburgCastle;
   private prince: Prince;
+  private herb: Phaser.GameObjects.Image;
 
   private narrator: Narrator;
   private gameStartHeroPosition: number;
@@ -52,7 +53,7 @@ export default class GameScene extends Phaser.Scene {
   private sceneplugin;
   private turntext;
 
-  private overlay;
+  private overlay: BoardOverlay;
 
   private shiftKey;
   private ctrlKey;
@@ -118,6 +119,7 @@ export default class GameScene extends Phaser.Scene {
     this.load.image("half_wineskin", "../assets/half_wineskin.jpg")
     this.load.image("half_brew", "../assets/half_brew.jpg")
     this.load.image("gold", "../assets/gold.png")
+    this.load.image("herb", "../assets/herb.png");
 
     this.load.image("Strength", "../assets/strength.png");
     this.load.image("pawn", "../assets/pawn.png");
@@ -173,7 +175,8 @@ export default class GameScene extends Phaser.Scene {
         hourTracker: this.hourTracker,
         wells: this.wells,
         hk: this.ownHeroType,
-        clientheroobject: this.hero
+        clientheroobject: this.hero,
+        herb: this.herb
       };
       this.overlay = new BoardOverlay(overlayData);
       this.scene.add('BoardOverlay', this.overlay, true);
@@ -758,6 +761,13 @@ export default class GameScene extends Phaser.Scene {
         // TODO: Merchant witch interface, wait for merchants to be completed
         console.log("Buy brew from witch");
       })
+    })
+
+    // Reveal the herb
+    this.gameinstance.revealHerb(tileID => {
+      let tile = this.tiles[tileID];
+      this.herb = this.add.image(tile.x+mOffset+20, tile.y, "herb").setDisplaySize(30, 30);
+      this.overlay.setHerb(this.herb);
     })
 
     /**

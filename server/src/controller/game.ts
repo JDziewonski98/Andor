@@ -348,6 +348,15 @@ export function game(socket, model: Game, io) {
             socket.broadcast.emit("updateDropItemTile", hero.getRegion().getID(), SmallItem.Brew, "smallItem");
             socket.emit("updateDropItemTile", hero.getRegion().getID(), SmallItem.Brew, "smallItem");
           }
+          // Add Gor carrying the herb
+          let m = model.addMonster(MonsterKind.Gor, newTile!, "gor_herb")
+          if (m != null) {
+            socket.emit("addMonster", m.getType(), m.getTileID(), m.getName());
+            socket.broadcast.emit("addMonster", m.getType(), m.getTileID(), m.getName());
+          }
+          // Inform clients of position of herb
+          socket.broadcast.emit("revealHerb", newTile);
+          socket.emit("revealHerb", newTile);
           // Inform clients of position of witch
           socket.broadcast.emit("revealWitch", tile);
           socket.emit("revealWitch", tile);
