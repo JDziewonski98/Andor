@@ -506,22 +506,15 @@ export function game(socket, model: Game, io) {
     const success = model.getHeros().size < model.numOfDesiredPlayers && model.bindHero(id, heroType);
     if (success) {
       model.readyplayers += 1;
-      let remaining = model.getAvailableHeros();
-      let heros = {
-        taken: ["archer", "warrior", "mage", "dwarf"].filter(f => !remaining.toString().includes(f)),
-        remaining: remaining
-      }
-      socket.broadcast.emit("updateHeroList", heros)
-      callback(heros);
+      socket.broadcast.emit("updateHeroList", heroType) // destroy it only for other clients
+      callback();
     }
   });
 
-  socket.on("getBoundHeros", (callback) => {
-    let remaining = model.getAvailableHeros();
-    let heros = {
-      taken: ["archer", "warrior", "mage", "dwarf"].filter(f => !remaining.toString().includes(f)),
-      remaining: remaining
-    }
+  socket.on("getAvailableHeros", (callback) => {
+    const alreadyBound = Array.from(model.getHeros().values()).map(h => h.hk);
+    const heros = model.getAvailableHeros().map(h => h.hk).filter((hk) => !alreadyBound.includes(hk))
+    console.log("getAvailableHeros: ", heros)
     callback(heros);
   });
 
@@ -533,7 +526,11 @@ export function game(socket, model: Game, io) {
 
   socket.on('disconnect', function () {
     console.log('user disconnected', socket.conn.id, ' in game.');
-    // model.removePlayer(socket.conn.id);
+    const hk = model.getHkFromConnID(socket.conn.id);
+    const success = model.removePlayer(socket.conn.id);
+    if(success){
+      socket.broadcast.emit("receivePlayerDisconnected", hk);
+    }
   });
 
   socket.on("send message", function (sent_msg, callback) {
@@ -557,6 +554,7 @@ export function game(socket, model: Game, io) {
   })
 
   socket.on('allPlayersReady', function (callback) {
+    console.log(model.readyplayers, model.getNumOfDesiredPlayers())
     callback(model.readyplayers === model.getNumOfDesiredPlayers());
   })
 

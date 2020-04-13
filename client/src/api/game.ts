@@ -30,8 +30,8 @@ export class game {
         this.socket.on("updateHeroList", callback)
     }
 
-    public getBoundHeros(callback){
-        this.socket.emit("getBoundHeros", callback);
+    public getAvailableHeros(callback){
+        this.socket.emit("getAvailableHeros", callback);
     }
 
     public pickupFarmer(tileID: number, callback){
@@ -555,6 +555,9 @@ export class game {
     }
     //////
 
+    public receivePlayerDisconnected(callback){
+        this.socket.on("receivePlayerDisconnected", callback)
+    }
 
     /*
     *   END OF GAME

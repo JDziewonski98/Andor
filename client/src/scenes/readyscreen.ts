@@ -43,28 +43,42 @@ export default class ReadyScreenScene extends Phaser.Scene {
         }
 
         this.add.image(500, 300, 'andordude').setDisplaySize(1000, 600)
-        this.archer = this.add.image(200, 200, 'archer').setDisplaySize(heroSize.x, heroSize.y)
-        this.add.text(176, 320, "Archer");
-        this.archer.name = "archer";
-        this.attachHeroBinding(this.archer);
 
-        this.dwarf = this.add.image(410, 200, 'dwarf').setDisplaySize(heroSize.x, heroSize.y)
-        this.add.text(385, 320, "Dwarf");
-        this.dwarf.name = "dwarf";
-        this.attachHeroBinding(this.dwarf);
-
-        this.warrior = this.add.image(620, 200, 'warrior').setDisplaySize(heroSize.x, heroSize.y)
-        this.add.text(595, 320, "Warrior");
-        this.warrior.name = "warrior";
-        this.attachHeroBinding(this.warrior);
-
-        this.mage = this.add.image(830, 200, 'mage').setDisplaySize(heroSize.x, heroSize.y)
-        this.add.text(805, 320, "Mage");
-        this.mage.name = "mage";
-        this.attachHeroBinding(this.mage);
+        this.gameController.getAvailableHeros((heros) => {
+            // console.log(heros)
+            if(!heros) {
+                console.log("NO HEROS??? ", heros)
+                return;
+            }
+            console.log(heros)
+            heros.forEach((h) => {
+                if (h === "archer") {
+                    this.archer = this.add.image(200, 200, 'archer').setDisplaySize(heroSize.x, heroSize.y)
+                    this.add.text(176, 320, "Archer");
+                    this.archer.name = "archer";
+                    this.attachHeroBinding(this.archer);
+                } else if (h === "dwarf") {
+                    this.dwarf = this.add.image(410, 200, 'dwarf').setDisplaySize(heroSize.x, heroSize.y)
+                    this.add.text(385, 320, "Dwarf");
+                    this.dwarf.name = "dwarf";
+                    this.attachHeroBinding(this.dwarf);
+                } else if (h === "warrior") {
+                    this.warrior = this.add.image(620, 200, 'warrior').setDisplaySize(heroSize.x, heroSize.y)
+                    this.add.text(595, 320, "Warrior");
+                    this.warrior.name = "warrior";
+                    this.attachHeroBinding(this.warrior);
+                } else {
+                    this.mage = this.add.image(830, 200, 'mage').setDisplaySize(heroSize.x, heroSize.y)
+                    this.add.text(805, 320, "Mage");
+                    this.mage.name = "mage";
+                    this.attachHeroBinding(this.mage);
+                }
+            })
+        }); // initialize the list of hero tints correctly
 
         this.selection = this.add.sprite(200, 70, 'pointerbtn').setDisplaySize(48, 48)
         this.selection.angle = 90
+        this.selection.setVisible(false);
         this.readytext = this.add.text(200, 450, 'Ready?', { fontFamily: '"Roboto Condensed"', fontSize: "40px", color: "#E42168" })
 
         // back button
@@ -108,24 +122,22 @@ export default class ReadyScreenScene extends Phaser.Scene {
         }, this);
         WindowManager.destroy(this, "chat")
 
-        function updateTints(heros) {
-            heros.taken.forEach(hero => {
-                self[hero].setTint(0x404040)
-                self.gameController.removeListener(hero)
-            });
-            heros.remaining.forEach(hero => {
-                self[hero].setTint()
-            })
-        }
+        this.gameController.updateHeroList((hero) => {
+            console.log(self[hero])
+            if (self[hero]) {
+                self[hero].removeListener('pointerdown')
+                self[hero].setVisible(false);
+            } else
+                console.log("Sorry cant find ", hero)
+        }); // listener for when other clients select heros
 
-        this.gameController.updateHeroList(updateTints); // listener for when other clients select heros
-        this.gameController.getBoundHeros(updateTints); // initialize the list of hero tints correctly
 
         //callbacks
         function remListener(hero) {
+            console.log(hero)
             self[hero].removeListener('pointerdown')
         }
-        
+
 
         this.gameController.removeObjListener(remListener)
     }
@@ -135,16 +147,12 @@ export default class ReadyScreenScene extends Phaser.Scene {
         var self = this;
         item.on('pointerdown', function () {
             if (!self.ready) {
-                self.gameController.bindHeroForSelf(item.name, function (heros) {
+                self.gameController.bindHeroForSelf(item.name, function () {
                     self.selection.x = item.x;
+                    self.selection.setVisible(true);
                     self.ready = true;
                     self.selection.name = item.name;
-                    heros.taken.forEach(hero => {
-                        self[hero].setTint(0x404040)
-                    });
-                    heros.remaining.forEach(hero => {
-                        self[hero].setTint()
-                    })
+                    self[item.name].setTint(0x404040)
                 })
             }
 

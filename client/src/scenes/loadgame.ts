@@ -46,14 +46,16 @@ export default class LoadGameScene extends Phaser.Scene {
 
                 //  Have they entered anything?
                 if (inputText.value !== '') {
-                    //  Turn off the click events
-                    this.removeListener('click')
 
-                    this.setVisible(false)
                     self.controller.loadGame(inputText.value, () => {
-                        self.scene.start('Ready', { name: inputText.value})
+                        console.log("wefiwhgrfeijklefhwioujkehio", inputText.value)
+                        //  Turn off the click events
+                        this.removeListener('click')
+
+                        this.setVisible(false)
+                        self.scene.start('Ready', { name: inputText.value })
                     });
-                    
+
                 }
                 else {
                     //  Flash the prompt
