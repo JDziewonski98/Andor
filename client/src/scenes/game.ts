@@ -90,13 +90,17 @@ export default class GameScene extends Phaser.Scene {
     this.load.image("Gold", "../assets/gold.png");
     this.load.image("EventCard", "../assets/event.png");
     this.load.image("Gor", "../assets/gorfog.png");
+    this.load.image("WitchFog", "../assets/witchfog.png");
+    this.load.image("WineskinFog", "../assets/wineskinfog.png");
+
+    this.load.image("witch", "../assets/witch.png");
 
     this.load.image("item_border", "../assets/border.png"); // uses hex 4b2504
     this.load.image("hero_border", "../assets/big_border.png");
 
     //items
-    this.load.image("Brew", "../assets/brew.png");
-    this.load.image("Wineskin", "../assets/wineskin.png");
+    // this.load.image("Brew", "../assets/brew.png");
+    // this.load.image("Wineskin", "../assets/wineskin.png");
     this.load.image("brew", "../assets/brew.png");
     this.load.image("wineskin", "../assets/wineskin.png");
     this.load.image("bow", "../assets/bow.PNG");
@@ -599,6 +603,7 @@ export default class GameScene extends Phaser.Scene {
             else {
               self.gameinstance.useFog(f.name, tile.id, (tile) => {
                 console.log(tile, typeof tile)
+                // Reveals the fog for set timeout before removing
                 let f = self.tiles[+tile].getFog();
                 f.clearTint();
                 setTimeout(() => {
@@ -611,7 +616,7 @@ export default class GameScene extends Phaser.Scene {
       }, this)
     })
 
-
+    // Reveals the fog for set timeout before removing
     this.gameinstance.destroyFog((tile) => {
       let f = this.tiles[+tile].getFog();
       f.clearTint();
@@ -737,6 +742,23 @@ export default class GameScene extends Phaser.Scene {
 
     // Listen for turn to be passed to yourself
     this.gameinstance.yourTurn()
+
+    // Reveal the witch
+    this.gameinstance.revealWitch(tileID => {
+      // Witch story
+      WindowManager.create(self, `story8`, StoryWindow, {
+        x: reducedWidth / 2,
+        y: reducedHeight / 2,
+        id: 8
+      })
+      // Place the witch on tileID
+      var witch = this.add.image(this.tiles[tileID].x + 50, this.tiles[tileID].y - 5, "witch");
+      witch.setInteractive();
+      witch.on('pointerdown', () => {
+        // TODO: Merchant witch interface, wait for merchants to be completed
+        console.log("Buy brew from witch");
+      })
+    })
 
     /**
      * FIGHT LISTENERS

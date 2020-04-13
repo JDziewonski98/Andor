@@ -11,7 +11,8 @@ import {
     Fog,
     EventCard,
     Prince,
-    Narrator
+    Narrator,
+    Witch
 } from "."
 import { LargeItem } from './LargeItem';
 import { SmallItem } from './SmallItem';
@@ -51,6 +52,7 @@ export class Game {
     private monstersInCastle: string[];
     private endOfGame: boolean = false;
     private prince: Prince | null = null;
+    private witch: Witch | null = null;
 
     private narrator!: Narrator;
     public gameStartHeroPosition: number = 1;
@@ -101,6 +103,7 @@ export class Game {
         monstersInCastle?,
         endOfGameState?,
         prince?,
+        witch?,
         narrator?
     ) {
         currPlayersTurn = currPlayersTurn || HeroKind.None;
@@ -117,6 +120,7 @@ export class Game {
         monstersInCastle = monstersInCastle || [];
         endOfGameState = endOfGameState || false;
         prince = prince || null; // prince does not exist until legend card C2
+        prince = witch || null; // witch does not exist until found in fog
         narrator = narrator || dNarrator;
 
 
@@ -773,10 +777,29 @@ export class Game {
             } else if (fog == Fog.Strength) {
                 this.getHeroFromHk(this.currPlayersTurn)!.setStrength(2);
                 return { success: true };
-            } else if (fog == Fog.Brew) {
-
+            } else if (fog == Fog.WitchFog) {
+                // TODO WITCH
+                let toPlayer = false;
+                if (this.getHeroFromHk(this.currPlayersTurn)?.pickUpSmallItem(tile, SmallItem.Brew)) {
+                    toPlayer = true;
+                } else {
+                    this.regions[tile].addItem(SmallItem.Brew);
+                    toPlayer = false;
+                }
+                // Create new Witch
+                console.log("creating witch on tile with price", tile, this.numOfDesiredPlayers+1);
+                this.witch = new Witch(tile, this.numOfDesiredPlayers + 1);
+                let herbTileID = this.witch.placeHerb();
+                // TODO WITCH: create gor with herb, new monster type??
+                return { success: true, createSuccess: toPlayer };
             } else if (fog == Fog.Wineskin) {
-
+                // TODO DROP WINESKIN ON TILE
+                if (this.getHeroFromHk(this.currPlayersTurn)?.pickUpSmallItem(tile, SmallItem.Wineskin)) {
+                    return { success: true, createSuccess: true };
+                } else {
+                    this.regions[tile].addItem(SmallItem.Wineskin);
+                    return { success: true, createSuccess: false };
+                }
             } else if (fog == Fog.EventCard) {
                 var newEvent = this.drawCard()
                 if (newEvent != null) {
