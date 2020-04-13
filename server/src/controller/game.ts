@@ -256,7 +256,15 @@ export function game(socket, model: Game, io) {
       // Emit the tile locations of the runestones to all clients
       socket.emit("updateNarrator", narratorPos, -1, tileIDs)
       socket.broadcast.emit("updateNarrator", narratorPos, -1, tileIDs)
-    } else {
+    }
+    else if (narratorPos === 13) {
+        console.log("narrator controller at N")
+        let win = model.narratorN(); // check win conditions
+        console.log("server game controller win=model.narratorN(): ", win);
+        socket.emit("updateNarrator", narratorPos, win);
+        socket.broadcast.emit("updateNarrator", narratorPos, win);  
+    }
+    else {
       socket.emit("updateNarrator", narratorPos)
       socket.broadcast.emit("updateNarrator", narratorPos)  
     }

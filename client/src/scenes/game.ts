@@ -501,10 +501,10 @@ export default class GameScene extends Phaser.Scene {
     var self = this;
 
     // runestonePos is an optional argument that is only passed back for the start of game
-    this.gameinstance.updateNarrator(function (pos: number, runestonePos = -1, stoneLocs = []) {
+    this.gameinstance.updateNarrator(function (pos: number, runestonePos = -1, stoneLocs = [], win: boolean = false) {
       // Switch on the new narrator position
       self.narrator.advance();
-      console.log("client received narrator advance", pos, runestonePos, stoneLocs)
+      console.log("client received narrator advance", pos, runestonePos, stoneLocs, win)
       switch (pos) {
         case 0: // Initial storytelling is done, rune legend card placed, narrator at A
           // TODO NARRATOR: update rune card UI and position
@@ -519,6 +519,10 @@ export default class GameScene extends Phaser.Scene {
           break;
         case 6: // Legend card G
           self.narratorG();
+          break;
+        case 13: // Legend card N
+          console.log("case 13");
+          self.narratorN(win); 
           break;
       }
     })
@@ -569,6 +573,27 @@ export default class GameScene extends Phaser.Scene {
       id: 7
     })
   }
+
+    private narratorN(win: boolean) {
+        // console.log("At narrator NNNNN. client game narratorN: ", win)
+        var self = this;
+        if (win) {
+            console.log("kokoniiruyo")
+            WindowManager.create(self, `story9`, StoryWindow, {
+                x: reducedWidth / 2,
+                y: reducedHeight / 2,
+                id: 9
+            })
+        }
+        else {
+            WindowManager.create(self, `story10`, StoryWindow, {
+                x: reducedWidth / 2,
+                y: reducedHeight / 2,
+                id: 10
+            })
+        }
+        
+    }
 
   private addFog(fogs) {
     fogs.forEach((fog) => {
@@ -830,6 +855,7 @@ export default class GameScene extends Phaser.Scene {
       WindowManager.create(self, 'gameover', GameOverWindow, windowData);
       // Freeze main game while collab window is active
       self.scene.pause();
+
     });
 
     this.gameinstance.receiveUpdateHeroTracker(function (hero) {

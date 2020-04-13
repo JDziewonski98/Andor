@@ -86,11 +86,6 @@ export class Narrator {
         return this.initialRunestoneLocs;
     }
 
-    //TODO
-    public checkEndGame(): boolean {
-        return true;
-    }
-
 }
 
 /*

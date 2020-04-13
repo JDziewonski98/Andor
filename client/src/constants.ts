@@ -82,8 +82,8 @@ export const heroCardInfo = {
 }
 
 // Narrator story info
-export const storyCardWidths = [470, 470, 470, 470, 470, 470, 470, 470, 470]
-export const storyCardHeights = [150, 170, 110, 200, 200, 140, 180, 170, 200]
+export const storyCardWidths = [470, 470, 470, 470, 470, 470, 470, 470, 470, 470, 470]
+export const storyCardHeights = [150, 170, 110, 200, 200, 140, 180, 170, 200, 200, 200]
 export const storyCardTexts = [
 // A3, story0
 `A gloomy mood has fallen upon the people. Rumors are making 
@@ -177,9 +177,35 @@ Any hero on the same space as the witch can buy a brew; the
 archer pays 1 less coin. In a battle, the brew doubles the
 value of 1 die. One brew can be used twice.
 
-Reka knows where to find the medicinal herb to heal the king.
+Reka knows where to find the medicinal herb to heal the king. 
 But a Gor has obtained it! The Gor must be defeated to pick
-up the herb.`
+up the herb.`,
+
+// N (win game), story9
+`With their combined powers, the heroes were able to take the 
+skral's stronghold. 
+
+The medicinal herb did its work as well, 
+and King Brandur soon felt better.
+
+And yet, the heroes still feld troubled.
+The king's son, Prince Thorald, had not yet returned.
+What was keeping him so long ?
+
+In the next Legend, you will find out.
+Congratulatioins. you won!!
+`,
+
+// N (lose game), story10
+`You Lost.
+Tips for next time:
++ Articles such as the falcon and telescope can be very helpful.
++ Prince Thorald's extra strength can help in a battle 
+  against skrals.
++ It's very important to find the witch quickly.
++ To save time, it is sometimes better for one hero to 
+  get the entire reward in gold.
+  Then just one hero has to het to the merchant`
 ]
 export const storyCardStyleText = {
     fontSize: 12,
