@@ -182,7 +182,7 @@ export class Hero {
     }
 
     public buyHelm(){
-        if(this.gold >= 2 && this.helm == false){
+        if(this.gold >= 2 && this.helm == false && this.region.getMerchant() === true){
             this.gold -= 2;
             this.helm = true;
             return true;
@@ -193,7 +193,7 @@ export class Hero {
     }
 
     public buyWine(){
-        if(this.gold >= 2 && this.smallItems.length < 3){
+        if(this.gold >= 2 && this.smallItems.length < 3 && this.region.getMerchant() === true){
             this.gold -= 2;
             this.smallItems.push(SmallItem.Wineskin);
             return true;
@@ -205,7 +205,7 @@ export class Hero {
     }
 
     public buyTelescope(){
-        if(this.gold >= 2 && this.smallItems.length < 3){
+        if(this.gold >= 2 && this.smallItems.length < 3 && this.region.getMerchant() === true){
             this.gold -= 2;
             this.smallItems.push(SmallItem.Telescope);
             return true;
@@ -216,7 +216,7 @@ export class Hero {
     }
 
     public buyBow(){
-        if(this.gold >= 2 && this.largeItem == LargeItem.Empty){
+        if(this.gold >= 2 && this.largeItem == LargeItem.Empty && this.region.getMerchant() === true){
             this.gold -= 2;
             this.largeItem = LargeItem.Bow;
             return true;
@@ -227,7 +227,7 @@ export class Hero {
     }
 
     public buyFalcon(){
-        if(this.gold >= 2 && this.largeItem == LargeItem.Empty){
+        if(this.gold >= 2 && this.largeItem == LargeItem.Empty && this.region.getMerchant() === true){
             this.gold -= 2;
             this.largeItem = LargeItem.Falcon;
             return true;
@@ -238,7 +238,7 @@ export class Hero {
     }
 
     public buyShield(){
-        if(this.gold >= 2 && this.largeItem == LargeItem.Empty){
+        if(this.gold >= 2 && this.largeItem == LargeItem.Empty && this.region.getMerchant() === true){
             this.gold -= 2;
             this.largeItem = LargeItem.Shield;
             return true;
