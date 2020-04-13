@@ -24,8 +24,8 @@ import {
     dFogs,
     dEventDeck,
     dCastle,
-    // dPrince,
-    dNarrator
+    dNarrator,
+    dHeros
 } from "./defaults";
 
 export class Game {
@@ -60,11 +60,11 @@ export class Game {
     // collab decision related state
     public numAccepts: number;
 
-    private availableHeros: Array<HeroKind> = new Array(HeroKind.Archer, HeroKind.Dwarf, HeroKind.Mage, HeroKind.Warrior);
+    private availableHeros: Array<Hero>;
 
     //EventCards
-    private eventDeck: Array<EventCard>
-    private activeEvents: Array<Number>
+    private eventDeck: Array<EventCard>;
+    private activeEvents: Array<Number>;
 
     constructor(name: string, numOfDesiredPlayers: number, difficulty: GameDifficulty, legendPosition = 0) {
         this.name = name;
@@ -83,51 +83,33 @@ export class Game {
         this.readyplayers = 0;
         this.numAccepts = 0;
         this.currPlayersTurn = HeroKind.Dwarf;
-        this.activeEvents = new Array<number>()
+        this.activeEvents = new Array<number>();
+        this.availableHeros = new Array<Hero>();
 
         // this.narrator = new Narrator(this, 0)
     }
 
-    public initialize(
-        currPlayersTurn?,
-        regions?,
-        farmers?,
-        monsters?,
-        fogs?,
-        heros?,        
-        eventDeck?,
-        activeEvents?,        
-        nextDayFirstHero?,
-        activeHeros?,
-        castle?,
-        monstersInCastle?,
-        endOfGameState?,
-        prince?,
-        witch?,
-        narrator?
-    ) {
-        currPlayersTurn = currPlayersTurn || HeroKind.None;
-        regions = regions || dRegions;
-        farmers = farmers || dFarmers;
-        monsters = monsters || dMonsters;
-        fogs = fogs || dFogs();
-        heros = heros || [];
-        eventDeck = eventDeck || dEventDeck();
-        activeEvents = activeEvents || [];
-        nextDayFirstHero = nextDayFirstHero || HeroKind.None;
-        activeHeros = activeHeros || [];
-        castle = castle || dCastle(this.numOfDesiredPlayers);
-        monstersInCastle = monstersInCastle || [];
-        endOfGameState = endOfGameState || false;
-        prince = prince || null; // prince does not exist until legend card C2
-        prince = witch || null; // witch does not exist until found in fog
-        narrator = narrator || dNarrator;
-
-
+    public initialize({
+        currPlayersTurn = HeroKind.None,
+        regions = dRegions,
+        farmers = dFarmers,
+        monsters = dMonsters,
+        fogs = dFogs(),
+        heros = dHeros,
+        eventDeck = dEventDeck(),
+        activeEvents = [],
+        nextDayFirstHero = HeroKind.None,
+        activeHeros = [],
+        castle = dCastle(this.numOfDesiredPlayers),
+        monstersInCastle = [],
+        endOfGameState = false,
+        prince = { tile: { id: -1 } },
+        narrator = dNarrator
+    }) {
         this.currPlayersTurn = currPlayersTurn;
         this.nextDayFirstHero = nextDayFirstHero;
         this.setRegions(regions);
-        // this.setHeros(heros);
+        this.setAvailableHeros(heros);
         this.setFarmers(farmers);
         this.castle = new RietburgCastle(castle.numDefenseShields, castle.numDefenseShieldsUsed);
         this.setMonsters(monsters);
@@ -138,6 +120,32 @@ export class Game {
         this.monstersInCastle = monstersInCastle;
         this.endOfGame = endOfGameState;
         this.narrator = new Narrator(narrator.legendPosition);
+        if (prince.tile.id !== -1)
+            this.prince = new Prince(this.regions[prince.tile.id])
+    }
+
+    private setAvailableHeros(heros) {
+        heros.forEach(heroData => {
+            this.availableHeros.push(new Hero({
+                hk: heroData.hk,
+                rank: heroData.rank,
+                gold: heroData.gold,
+                will: heroData.will,
+                strength: heroData.strength,
+                dice: heroData.dice,
+                timeOfDay: heroData.timeOfDay,
+                wineskin: heroData.wineskin,
+                largeItem: heroData.largeItem,
+                smallItems: heroData.smallItems,
+                helm: heroData.helm,
+                farmers: heroData.farmers,
+                freeMoves: heroData.freeMoves,
+                region: this.regions[heroData.region.id],
+                movePrinceCtr: heroData.movePrinceCtr
+            }))
+        })
+
+
     }
 
     private setFirstHerosTurn() {
@@ -247,7 +255,7 @@ export class Game {
 
     // Adds a monster to the next open space on the board, or sends the monster directly to the castle
     // If the latter, return null instead of a Monster.
-    public addMonster(kind: MonsterKind, tile: number, id: string) : Monster | null {
+    public addMonster(kind: MonsterKind, tile: number, id: string): Monster | null {
         var nextRegID = tile;
         if (kind != MonsterKind.Fortress) { // jumping doesn't apply to Fortress
             var shieldsRemaining: number = this.castle.getShields();
@@ -336,37 +344,14 @@ export class Game {
         })
         if (heroTaken) return false; // failed to bind hero
 
-        if (heroType === HeroKind.Dwarf) {
-            this.heroList.set(id, new Hero(heroType, this.regions[7]));
-            //REMOVE before merging to master, used for item testing
-            let dwarf = this.heroList.get(id)
-            // dwarf?.pickUpLargeItem(dwarf.getRegion().getID(), LargeItem.Bow)
-            dwarf?.pickUpSmallItem(dwarf.getRegion().getID(), SmallItem.Telescope)
-            // dwarf?.pickUpSmallItem(dwarf.getRegion().getID(), SmallItem.Wineskin)
-            // dwarf?.pickUpHelm(dwarf.getRegion().getID());
+        let hero = this.availableHeros.filter((hero) => hero.hk === heroType) // find hero
+        if (hero.length === 1) {
+            this.heroList.set(id, hero[0]);
+            this.activeHeros.push(heroType);
+            return true;
         }
-        else if (heroType === HeroKind.Archer) {
-            this.heroList.set(id, new Hero(heroType, this.regions[25]));
-            //REMOVE before merging to master, used for item testing
-            // let archer = this.heroList.get(id)
-            // archer?.pickUpSmallItem(archer.getRegion().getID(), SmallItem.Telescope)
-        }
-        else if (heroType === HeroKind.Mage) {
-            this.heroList.set(id, new Hero(heroType, this.regions[34]));
-        }
-        else if (heroType === HeroKind.Warrior) {
-            this.heroList.set(id, new Hero(heroType, this.regions[14]));
-        }
+        return false;
 
-        this.activeHeros.push(heroType);
-        this.availableHeros = this.availableHeros.filter(h => h != heroType);
-        return true;
-
-    }
-
-    public setCastle(c) {
-        if (c != null)
-            this.castle = new RietburgCastle(c.numDefenseShields, c.numDefenseShieldsUsed);
     }
 
     public getCastle() {
@@ -424,17 +409,17 @@ export class Game {
         this.players.add(p);
     }
 
-    public removePlayer(id: string) {
+    public removePlayer(id: string) : boolean {
         this.players.forEach((player) => {
             if (player.getID() === id) {
                 this.players.delete(player);
-                return;
             }
         })
         if (this.heroList.has(id)) {
-            this.availableHeros.push(this.heroList.get(id)!.getKind())
             this.heroList.delete(id);
+            return true;
         }
+        return false;
     }
 
     public setCurrPlayersTurn(hk: HeroKind) {
@@ -475,7 +460,7 @@ export class Game {
     }
 
     // Returns number of shields remaining
-    public moveMonsters() : number {
+    public moveMonsters(): number {
         var self = this;
         // var shieldsLost: number[] = [];
         var shieldsRemaining: number = this.castle.getShields();
@@ -601,11 +586,11 @@ export class Game {
     }
 
     // Advances narrator, updates game state accordingly, and returns the new narrator position
-    public advanceNarrator() : Monster[] {
+    public advanceNarrator(): Monster[] {
         let newPos = this.narrator.advance();
 
         var newMonsters: Monster[] = []
-        switch(newPos) {
+        switch (newPos) {
             case this.narrator.getRunestoneLegendPos():
                 // place the runestones on the board
                 newMonsters = this.narratorRunestones();
@@ -622,7 +607,7 @@ export class Game {
     }
 
     // sets positions of the runestones and adds them to the regions
-    private narratorRunestones() : Monster[] {
+    private narratorRunestones(): Monster[] {
         this.narrator.setRunestoneLocations();
         let runestoneLocs = this.narrator.getRunestoneLocations();
         // Update tiles with runestones
@@ -649,13 +634,13 @@ export class Game {
         return monsterList;
     }
 
-    private narratorC() : Monster[] {
+    private narratorC(): Monster[] {
         var monsterList: Monster[] = [];
         // Place Skral Stronghold and Skral, farmer, gors, skral, prince
         // Determine position of stronghold
         let dieRoll = this.narrator.randomInteger(1, 6);
 
-        let monster: Monster | null = this.addMonster(MonsterKind.Fortress, 50+dieRoll, 'fortress');
+        let monster: Monster | null = this.addMonster(MonsterKind.Fortress, 50 + dieRoll, 'fortress');
         if (monster != null) {
             monsterList.push(monster);
         }
@@ -686,7 +671,7 @@ export class Game {
         return monsterList;
     }
 
-    private narratorG() : Monster[] {
+    private narratorG(): Monster[] {
         // Remove prince, add wardraks
         // Cya Thorald
         this.prince = null;

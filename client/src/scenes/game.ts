@@ -17,6 +17,7 @@ import {
 
 import { TileWindow } from './tilewindow';
 import { Prince } from '../objects/Prince';
+import { Merchant } from '../objects/merchant';
 
 
 export default class GameScene extends Phaser.Scene {
@@ -85,6 +86,7 @@ export default class GameScene extends Phaser.Scene {
     this.load.image("farmer", "../assets/farmer.png");
     this.load.multiatlas('tiles', './assets/tilesheet.json', 'assets')
     this.load.image("well", "../assets/well.png");
+    this.load.image("merchant-trade", "../assets/merchant-trade.png")
 
     this.load.image("WillPower2", "../assets/will2.png");
     this.load.image("WillPower3", "../assets/will3.png");
@@ -137,11 +139,6 @@ export default class GameScene extends Phaser.Scene {
     // Centered gameboard with border
     this.add.image(fullWidth / 2, fullHeight / 2, 'gameboard')
       .setDisplaySize(expandedWidth, expandedHeight);
-
-    // setInterval(() => {
-    //   console.log("********* SAVING GAME");
-    //   this.gameinstance.save();
-    // }, 600000);
 
     this.gameinstance.getGameData((data) => {
       console.log("GAME DATA IS:::::::::::::\n", data)
@@ -198,6 +195,10 @@ export default class GameScene extends Phaser.Scene {
       this.receiveNarratorEvents();
     })
 
+    setInterval(() => {
+      console.log("********* SAVING GAME");
+      this.gameinstance.save();
+    }, 10000);
     // this.addMerchants();
 
     //Event Card adding at start of game
@@ -247,7 +248,7 @@ export default class GameScene extends Phaser.Scene {
 
       if (t.hasWell) {
         // coordinates taken from previous version, adding wells to allocated wells positions
-        switch (t.id){
+        switch (t.id) {
           case 5:
             this.addWell(209, 2244, t.id as number);
             break;
@@ -264,6 +265,20 @@ export default class GameScene extends Phaser.Scene {
 
         // this approach adds well on top of the trees
         // this.addWell(t.x, t.y, t.id as number);
+      }
+
+      if(t.hasMerchant){
+        switch (t.id){
+          case 18:
+            this.addMerchant(3060, 3680, t.id as number);
+            break;
+          case 57:
+            this.addMerchant(7337, 968, t.id as number);
+            break;
+          case 71:
+            this.addMerchant(7088, 4360, t.id as number);
+            break;
+        }
       }
     }
 
@@ -362,7 +377,7 @@ export default class GameScene extends Phaser.Scene {
     }
   }
 
-  private addMerchant(tileID: number) {
+  /*private addMerchant(tileID: number) {
     const merchtile_18: Tile = this.tiles[18];
     const merchtile_57: Tile = this.tiles[57];
     const merchtile_71: Tile = this.tiles[71];
@@ -412,7 +427,7 @@ export default class GameScene extends Phaser.Scene {
 
     }, this);
 
-  }
+  }*/
 
   private addMonster(monsterTile: number, type: string, id: string) {
     const tile: Tile = this.tiles[monsterTile];
@@ -471,13 +486,37 @@ export default class GameScene extends Phaser.Scene {
       y * scaleFactor + borderWidth, "well", tile, this.gameinstance).setDisplaySize(48, 54);
     this.add.existing(newWell);
     this.wells.set("" + newWell.getTileID(), newWell);
-    }
+  }
+
+  private addMerchant(x, y, tileNumber: number) {
+    const tile: Tile = this.tiles[tileNumber];
+    const newMerchant = new Merchant(this, x * scaleFactor + borderWidth,
+      y * scaleFactor + borderWidth, "merchant-trade", tile, this.gameinstance).setDisplaySize(35, 35);
+
+    var self = this;
+
+    newMerchant.on('pointerdown', function (pointer) {
+      if (self.hero.tile.id == newMerchant.getTileID()) {
+
+        if (this.scene.isVisible('merchant')) {
+          WindowManager.destroy(self, 'merchant');
+        } else {
+          WindowManager.create(self, 'merchant', MerchantWindow, { controller: self.gameinstance });
+          let window = WindowManager.get(self, 'merchant')
+        }
+
+      }
+
+    }, this);
+    this.add.existing(newMerchant);
+    
+  }
 
   // Add the narrator pawn to the game board
   private addNarrator() {
     var self = this;
 
-    this.gameinstance.getNarratorPosition(function(pos: number) {
+    this.gameinstance.getNarratorPosition(function (pos: number) {
       // Trigger start of game instructions/story
       if (pos == -1) {
         WindowManager.create(self, `story0`, StoryWindow, {
@@ -493,7 +532,7 @@ export default class GameScene extends Phaser.Scene {
           self.gameinstance.placeRuneStoneLegend();
         }
       }
-      
+
       // Otherwise we just add the narrator at whatever position the backend has stored
       console.log("creating narrator at position", pos);
       self.narrator = new Narrator(self, pos, "pawn", self.gameinstance).setScale(0.5);
@@ -503,9 +542,9 @@ export default class GameScene extends Phaser.Scene {
 
   private receiveNarratorEvents() {
     var self = this;
-    
+
     // runestonePos is an optional argument that is only passed back for the start of game
-    this.gameinstance.updateNarrator(function(pos: number, runestonePos = -1, stoneLocs = []) {
+    this.gameinstance.updateNarrator(function (pos: number, runestonePos = -1, stoneLocs = []) {
       // Switch on the new narrator position
       self.narrator.advance();
       console.log("client received narrator advance", pos, runestonePos, stoneLocs)
@@ -552,7 +591,7 @@ export default class GameScene extends Phaser.Scene {
     console.log("client narratorC")
     // Place farmer and prince, these are hardcoded for now
     this.addFarmer(2, 28);
-    
+
     this.prince = new Prince(this, this.tiles[72], 'prince').setScale(.15);
     this.add.existing(this.prince);
     // TODO NARRATOR: Display StoryWindows
@@ -795,7 +834,7 @@ export default class GameScene extends Phaser.Scene {
     })
     // Listening for shields lost due to monster attack
     this.gameinstance.updateShields(function (shieldsRemaining: number) {
-      for (let i=0; i<6; i++) {
+      for (let i = 0; i < 6; i++) {
         if (i >= shieldsRemaining) {
           self.castle.shields[i].visible = true;
         } else {
@@ -843,12 +882,17 @@ export default class GameScene extends Phaser.Scene {
       self.scene.pause();
     });
 
-    this.gameinstance.receiveUpdateHeroTracker(function(hero) {
+    this.gameinstance.receiveUpdateHeroTracker(function (hero) {
       for (let h of self.heroes) {
         if (h.getKind() == hero) {
           h.incrementHour()
         }
       }
+    })
+
+    this.gameinstance.receivePlayerDisconnected((hk) => {
+      console.log("FREEZE GAME ", hk, " DISCONNECTED")
+      this.scene.pause();
     })
 
   }

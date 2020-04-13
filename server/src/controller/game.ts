@@ -278,13 +278,35 @@ export function game(socket, model: Game, io) {
   //////////////////////////////////////////////////
 
 
-  socket.on("merchant", function (callback) {
+  socket.on("merchant", function (item:string, callback) {
     let success = false;
     var heroId = socket.conn.id;
     let hero = model.getHero(heroId);
 
     if (hero !== undefined) {
-      success = hero.buyStrength();
+      switch(item){
+        case "strength":
+          success = hero.buyStrength();
+          break;
+        case "helm":
+          success = hero.buyHelm();
+          break;
+        case "wine":
+          success = hero.buyWine();
+          break;
+        case "telescope":
+          success = hero.buyTelescope();
+          break;
+        case "shield":
+          success = hero.buyShield();
+          break;
+        case "falcon":
+          success = hero.buyFalcon();
+          break;
+        case "bow":
+          success = hero.buyBow();
+          break;
+      }
     }
 
     if (success) {
@@ -515,22 +537,15 @@ export function game(socket, model: Game, io) {
     const success = model.getHeros().size < model.numOfDesiredPlayers && model.bindHero(id, heroType);
     if (success) {
       model.readyplayers += 1;
-      let remaining = model.getAvailableHeros();
-      let heros = {
-        taken: ["archer", "warrior", "mage", "dwarf"].filter(f => !remaining.toString().includes(f)),
-        remaining: remaining
-      }
-      socket.broadcast.emit("updateHeroList", heros)
-      callback(heros);
+      socket.broadcast.emit("updateHeroList", heroType) // destroy it only for other clients
+      callback();
     }
   });
 
-  socket.on("getBoundHeros", (callback) => {
-    let remaining = model.getAvailableHeros();
-    let heros = {
-      taken: ["archer", "warrior", "mage", "dwarf"].filter(f => !remaining.toString().includes(f)),
-      remaining: remaining
-    }
+  socket.on("getAvailableHeros", (callback) => {
+    const alreadyBound = Array.from(model.getHeros().values()).map(h => h.hk);
+    const heros = model.getAvailableHeros().map(h => h.hk).filter((hk) => !alreadyBound.includes(hk))
+    console.log("getAvailableHeros: ", heros)
     callback(heros);
   });
 
@@ -542,7 +557,11 @@ export function game(socket, model: Game, io) {
 
   socket.on('disconnect', function () {
     console.log('user disconnected', socket.conn.id, ' in game.');
-    // model.removePlayer(socket.conn.id);
+    const hk = model.getHkFromConnID(socket.conn.id);
+    const success = model.removePlayer(socket.conn.id);
+    if(success){
+      socket.broadcast.emit("receivePlayerDisconnected", hk);
+    }
   });
 
   socket.on("send message", function (sent_msg, callback) {
@@ -566,6 +585,7 @@ export function game(socket, model: Game, io) {
   })
 
   socket.on('allPlayersReady', function (callback) {
+    console.log(model.readyplayers, model.getNumOfDesiredPlayers())
     callback(model.readyplayers === model.getNumOfDesiredPlayers());
   })
 

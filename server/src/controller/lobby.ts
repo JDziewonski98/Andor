@@ -7,7 +7,7 @@ export function lobby(socket, model: Lobby, io) {
   socket.on("createGame", function (name, numPlayers, difficulty) {
     numPlayers = +numPlayers
     let g = new Game(name, numPlayers, difficulty);
-    g.initialize();
+    g.initialize({});
     model.createGame(g);
 
     var gamensp = io.of("/" + name)
@@ -47,7 +47,8 @@ export function lobby(socket, model: Lobby, io) {
         castle: JSON.parse(gameData.castle),
         monstersInCastle: JSON.parse(gameData.monstersInCastle),
         endOfGameState: gameData.endOfGameState,
-        prince: JSON.parse(gameData.prince)
+        prince: JSON.parse(gameData.prince),
+        narrator: JSON.parse(gameData.narrator)
       })
       callback();
     }

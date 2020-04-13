@@ -30,8 +30,8 @@ export class game {
         this.socket.on("updateHeroList", callback)
     }
 
-    public getBoundHeros(callback){
-        this.socket.emit("getBoundHeros", callback);
+    public getAvailableHeros(callback){
+        this.socket.emit("getAvailableHeros", callback);
     }
 
     public pickupFarmer(tileID: number, callback){
@@ -58,8 +58,8 @@ export class game {
         this.socket.emit("dropFarmer", callback);
     }
 
-    public merchant(callback){
-        this.socket.emit("merchant", callback);
+    public merchant(item: string, callback){
+        this.socket.emit("merchant", item, callback);
     }
     
     // Server uses the passed callback to tell the calling client to update the well
@@ -558,6 +558,9 @@ export class game {
     }
     //////
 
+    public receivePlayerDisconnected(callback){
+        this.socket.on("receivePlayerDisconnected", callback)
+    }
 
     /*
     *   END OF GAME
