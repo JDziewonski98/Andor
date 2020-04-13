@@ -181,6 +181,73 @@ export class Hero {
         }
     }
 
+    public buyHelm(){
+        if(this.gold >= 2 && this.helm == false && this.region.getMerchant() === true){
+            this.gold -= 2;
+            this.helm = true;
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    public buyWine(){
+        if(this.gold >= 2 && this.smallItems.length < 3 && this.region.getMerchant() === true){
+            this.gold -= 2;
+            this.smallItems.push(SmallItem.Wineskin);
+            return true;
+        }
+        else{
+            return false;
+        }
+
+    }
+
+    public buyTelescope(){
+        if(this.gold >= 2 && this.smallItems.length < 3 && this.region.getMerchant() === true){
+            this.gold -= 2;
+            this.smallItems.push(SmallItem.Telescope);
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    public buyBow(){
+        if(this.gold >= 2 && this.largeItem == LargeItem.Empty && this.region.getMerchant() === true){
+            this.gold -= 2;
+            this.largeItem = LargeItem.Bow;
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    public buyFalcon(){
+        if(this.gold >= 2 && this.largeItem == LargeItem.Empty && this.region.getMerchant() === true){
+            this.gold -= 2;
+            this.largeItem = LargeItem.Falcon;
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    public buyShield(){
+        if(this.gold >= 2 && this.largeItem == LargeItem.Empty && this.region.getMerchant() === true){
+            this.gold -= 2;
+            this.largeItem = LargeItem.Shield;
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
     public pickupFarmer() {
         var r_farmers = this.region.getFarmers();
         if(r_farmers.length != 0 && (this.region.getID() === r_farmers[r_farmers.length-1].getTileID())){

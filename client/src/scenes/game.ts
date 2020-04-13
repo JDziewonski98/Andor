@@ -17,6 +17,7 @@ import {
 
 import { TileWindow } from './tilewindow';
 import { Prince } from '../objects/Prince';
+import { Merchant } from '../objects/merchant';
 
 
 export default class GameScene extends Phaser.Scene {
@@ -36,6 +37,7 @@ export default class GameScene extends Phaser.Scene {
   private monsterNameMap: Map<string, Monster>;
   private castle: RietburgCastle;
   private prince: Prince;
+  private herb: Phaser.GameObjects.Image;
 
   private narrator: Narrator;
   private gameStartHeroPosition: number;
@@ -52,7 +54,7 @@ export default class GameScene extends Phaser.Scene {
   private sceneplugin;
   private turntext;
 
-  private overlay;
+  private overlay: BoardOverlay;
 
   private shiftKey;
   private ctrlKey;
@@ -84,6 +86,7 @@ export default class GameScene extends Phaser.Scene {
     this.load.image("farmer", "../assets/farmer.png");
     this.load.multiatlas('tiles', './assets/tilesheet.json', 'assets')
     this.load.image("well", "../assets/well.png");
+    this.load.image("merchant-trade", "../assets/merchant-trade.png")
 
     this.load.image("WillPower2", "../assets/will2.png");
     this.load.image("WillPower3", "../assets/will3.png");
@@ -118,6 +121,7 @@ export default class GameScene extends Phaser.Scene {
     this.load.image("half_wineskin", "../assets/half_wineskin.jpg")
     this.load.image("half_brew", "../assets/half_brew.jpg")
     this.load.image("gold", "../assets/gold.png")
+    this.load.image("herb", "../assets/herb.png");
 
     this.load.image("Strength", "../assets/strength.png");
     this.load.image("pawn", "../assets/pawn.png");
@@ -168,7 +172,8 @@ export default class GameScene extends Phaser.Scene {
         hourTracker: this.hourTracker,
         wells: this.wells,
         hk: this.ownHeroType,
-        clientheroobject: this.hero
+        clientheroobject: this.hero,
+        herb: this.herb
       };
       this.overlay = new BoardOverlay(overlayData);
       this.scene.add('BoardOverlay', this.overlay, true);
@@ -260,6 +265,20 @@ export default class GameScene extends Phaser.Scene {
 
         // this approach adds well on top of the trees
         // this.addWell(t.x, t.y, t.id as number);
+      }
+
+      if(t.hasMerchant){
+        switch (t.id){
+          case 18:
+            this.addMerchant(3060, 3680, t.id as number);
+            break;
+          case 57:
+            this.addMerchant(7337, 968, t.id as number);
+            break;
+          case 71:
+            this.addMerchant(7088, 4360, t.id as number);
+            break;
+        }
       }
     }
 
@@ -358,7 +377,7 @@ export default class GameScene extends Phaser.Scene {
     }
   }
 
-  private addMerchant(tileID: number) {
+  /*private addMerchant(tileID: number) {
     const merchtile_18: Tile = this.tiles[18];
     const merchtile_57: Tile = this.tiles[57];
     const merchtile_71: Tile = this.tiles[71];
@@ -408,7 +427,7 @@ export default class GameScene extends Phaser.Scene {
 
     }, this);
 
-  }
+  }*/
 
   private addMonster(monsterTile: number, type: string, id: string) {
     const tile: Tile = this.tiles[monsterTile];
@@ -467,6 +486,30 @@ export default class GameScene extends Phaser.Scene {
       y * scaleFactor + borderWidth, "well", tile, this.gameinstance).setDisplaySize(48, 54);
     this.add.existing(newWell);
     this.wells.set("" + newWell.getTileID(), newWell);
+  }
+
+  private addMerchant(x, y, tileNumber: number) {
+    const tile: Tile = this.tiles[tileNumber];
+    const newMerchant = new Merchant(this, x * scaleFactor + borderWidth,
+      y * scaleFactor + borderWidth, "merchant-trade", tile, this.gameinstance).setDisplaySize(35, 35);
+
+    var self = this;
+
+    newMerchant.on('pointerdown', function (pointer) {
+      if (self.hero.tile.id == newMerchant.getTileID()) {
+
+        if (this.scene.isVisible('merchant')) {
+          WindowManager.destroy(self, 'merchant');
+        } else {
+          WindowManager.create(self, 'merchant', MerchantWindow, { controller: self.gameinstance });
+          let window = WindowManager.get(self, 'merchant')
+        }
+
+      }
+
+    }, this);
+    this.add.existing(newMerchant);
+    
   }
 
   // Add the narrator pawn to the game board
@@ -782,6 +825,13 @@ export default class GameScene extends Phaser.Scene {
         // TODO: Merchant witch interface, wait for merchants to be completed
         console.log("Buy brew from witch");
       })
+    })
+
+    // Reveal the herb
+    this.gameinstance.revealHerb(tileID => {
+      let tile = this.tiles[tileID];
+      this.herb = this.add.image(tile.x+mOffset+20, tile.y, "herb").setDisplaySize(30, 30);
+      this.overlay.setHerb(this.herb);
     })
 
     /**

@@ -286,13 +286,35 @@ export function game(socket, model: Game, io) {
   //////////////////////////////////////////////////
 
 
-  socket.on("merchant", function (callback) {
+  socket.on("merchant", function (item:string, callback) {
     let success = false;
     var heroId = socket.conn.id;
     let hero = model.getHero(heroId);
 
     if (hero !== undefined) {
-      success = hero.buyStrength();
+      switch(item){
+        case "strength":
+          success = hero.buyStrength();
+          break;
+        case "helm":
+          success = hero.buyHelm();
+          break;
+        case "wine":
+          success = hero.buyWine();
+          break;
+        case "telescope":
+          success = hero.buyTelescope();
+          break;
+        case "shield":
+          success = hero.buyShield();
+          break;
+        case "falcon":
+          success = hero.buyFalcon();
+          break;
+        case "bow":
+          success = hero.buyBow();
+          break;
+      }
     }
 
     if (success) {
@@ -356,6 +378,15 @@ export function game(socket, model: Game, io) {
             socket.broadcast.emit("updateDropItemTile", hero.getRegion().getID(), SmallItem.Brew, "smallItem");
             socket.emit("updateDropItemTile", hero.getRegion().getID(), SmallItem.Brew, "smallItem");
           }
+          // Add Gor carrying the herb
+          let m = model.addMonster(MonsterKind.Gor, newTile!, "gor_herb")
+          if (m != null) {
+            socket.emit("addMonster", m.getType(), m.getTileID(), m.getName());
+            socket.broadcast.emit("addMonster", m.getType(), m.getTileID(), m.getName());
+          }
+          // Inform clients of position of herb
+          socket.broadcast.emit("revealHerb", newTile);
+          socket.emit("revealHerb", newTile);
           // Inform clients of position of witch
           socket.broadcast.emit("revealWitch", tile);
           socket.emit("revealWitch", tile);

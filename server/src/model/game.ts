@@ -870,7 +870,6 @@ export class Game {
                 this.getHeroFromHk(this.currPlayersTurn)!.setStrength(2);
                 return { success: true };
             } else if (fog == Fog.WitchFog) {
-                // TODO WITCH
                 let toPlayer = false;
                 if (this.getHeroFromHk(this.currPlayersTurn)?.pickUpSmallItem(tile, SmallItem.Brew)) {
                     toPlayer = true;
@@ -882,10 +881,8 @@ export class Game {
                 console.log("creating witch on tile with price", tile, this.numOfDesiredPlayers + 1);
                 this.witch = new Witch(tile, this.numOfDesiredPlayers + 1);
                 let herbTileID = this.witch.placeHerb();
-                // TODO WITCH: create gor with herb, new monster type??
-                return { success: true, createSuccess: toPlayer };
+                return { success: true, createSuccess: toPlayer, newTile: herbTileID };
             } else if (fog == Fog.Wineskin) {
-                // TODO DROP WINESKIN ON TILE
                 if (this.getHeroFromHk(this.currPlayersTurn)?.pickUpSmallItem(tile, SmallItem.Wineskin)) {
                     return { success: true, createSuccess: true };
                 }
