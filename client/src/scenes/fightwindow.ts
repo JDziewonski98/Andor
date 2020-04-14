@@ -307,6 +307,7 @@ export class Fight extends Window {
                                 if (self.monsterwill < 1) {
                                     self.victory()
                                 }
+                                self.fighttext.setInteractive();
                             }
                             else if (totalattack + self.princebonus < result) {
                                 //monster win.
@@ -345,8 +346,11 @@ export class Fight extends Window {
                                         })
                                     }
                                 })
+                                console.log('actuallyjoinedzzzzzzzzzz', self.actuallyjoinedheros)
                                 for (let ally of self.actuallyjoinedheros) {
+                                    console.log('349999999999999999999999', ally)
                                     self.gameinstance.getHeroItems(ally, function(itemdict) {
+                                        console.log('351111111111111111111111111111', ally, itemdict)
                                         if (itemdict['largeItem'] == 'shield') {
                                             self.fighttext.disableInteractive()
                                             self.shieldresponsesexpected++
@@ -360,8 +364,10 @@ export class Fight extends Window {
                                         }
                                         else {
                                             self.shieldinteractivecheckcnt++
+                                            console.log('bruhhhhhhhhhhhh', self.shieldinteractivecheckcnt, self.actuallyjoinedheros.length)
                                             if (self.shieldinteractivecheckcnt == self.actuallyjoinedheros.length) {
                                                 console.log('here. not gD!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+                                                self.shieldinteractivecheckcnt = 0;
                                                 self.fighttext.setInteractive()
                                             }
                                             self.gameinstance.doDamageToHero(ally, result - totalattack - self.princebonus)
