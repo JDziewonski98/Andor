@@ -1,6 +1,6 @@
 import { Farmer, Hero, HourTracker, Monster, HeroKind, Well, Tile, Narrator, EventCard } from '../objects';
 import { game } from '../api';
-import { WindowManager, StoryWindow, CollabWindow, MerchantWindow, DeathWindow, Fight, BattleInvWindow, GameOverWindow, TradeWindow } from "./windows";
+import { WindowManager, StoryWindow, CollabWindow, MerchantWindow, DeathWindow, Fight, BattleInvWindow, GameOverWindow, TradeWindow, ShieldWindow } from "./windows";
 import { RietburgCastle } from './rietburgcastle';
 import BoardOverlay from './boardoverlay';
 
@@ -122,6 +122,7 @@ export default class GameScene extends Phaser.Scene {
     this.load.image("half_brew", "../assets/half_brew.jpg")
     this.load.image("gold", "../assets/gold.png")
     this.load.image("herb", "../assets/herb.png");
+    this.load.image("shield", "../assets/shield.PNG")
 
     this.load.image("Strength", "../assets/strength.png");
     this.load.image("pawn", "../assets/pawn.png");
@@ -866,6 +867,10 @@ export default class GameScene extends Phaser.Scene {
           self.castle.shields[i].visible = false;
         }
       }
+    })
+
+    this.gameinstance.receiveShieldPrompt(function(damaged_shield, potentialdamage) {
+      WindowManager.create(self, 'shieldprompt', ShieldWindow, { controller: self.gameinstance, hero:self.hero, potentialdamage:potentialdamage, damaged:damaged_shield});
     })
 
     // FARMERS

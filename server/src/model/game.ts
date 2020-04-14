@@ -398,6 +398,10 @@ export class Game {
             let dwarf = this.heroList.get(id)
             // dwarf?.pickUpLargeItem(dwarf.getRegion().getID(), LargeItem.Bow)
             dwarf?.pickUpSmallItem(dwarf.getRegion().getID(), SmallItem.Telescope)
+            
+            let dwarf = this.heroList.get(id)
+            //dwarf?.pickUpLargeItem(dwarf.getRegion().getID(), LargeItem.DamagedShield)
+            // dwarf?.pickUpSmallItem(dwarf.getRegion().getID(), SmallItem.Telescope)
             // dwarf?.pickUpSmallItem(dwarf.getRegion().getID(), SmallItem.Wineskin)
             // dwarf?.pickUpHelm(dwarf.getRegion().getID());
         }
@@ -406,6 +410,8 @@ export class Game {
             //REMOVE before merging to master, used for item testing
             // let archer = this.heroList.get(id)
             // archer?.pickUpSmallItem(archer.getRegion().getID(), SmallItem.Telescope)
+            let archer = this.heroList.get(id)
+            //archer?.pickUpSmallItem(archer.getRegion().getID(), SmallItem.GreenRunestone)
         }
         else if (heroType === HeroKind.Mage) {
             this.heroList.set(id, new Hero(heroType, this.regions[34]));
