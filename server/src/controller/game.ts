@@ -628,7 +628,7 @@ export function game(socket, model: Game, io) {
     monster?.resetWill()
   })
 
-  socket.on('doDamageToHero', function (thehero, damage) {
+  socket.on('doDamageToHero', function (thehero, damage, callback) {
     let modelHeros = model.getHeros();
     for (let hero of modelHeros.values()) {
       let heroTypeString = hero.getKind().toString();
@@ -640,6 +640,9 @@ export function game(socket, model: Game, io) {
           //hero death. remove them from all battles please.
           hero.setStrength(-1);
           hero.resetWill()
+          if (callback != null) {
+            callback()
+          }
         }
       }
     }
@@ -751,6 +754,10 @@ export function game(socket, model: Game, io) {
         socket.broadcast.to(`/${model.getName()}#${playerid}`).emit("receiveShieldPrompt", damaged_shield, potentialdamage)
       }
     }
+  })
+
+  socket.on('sendShieldResp', function(herotype, resp) {
+    socket.broadcast.emit('receiveShieldResp', herotype, resp)
   })
 
 
@@ -886,6 +893,7 @@ export function game(socket, model: Game, io) {
   socket.on('consumeItem', function (item) {
     var heroID = socket.conn.id
     let hero = model.getHero(heroID);
+    console.log('consuming item!!!!!!!!!!', hero.getKind(), item)
     hero.consumeItem(item)
   })
 

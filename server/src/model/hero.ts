@@ -360,9 +360,6 @@ export class Hero {
                 }
                 break;
 
-            case 'shield':
-                break;
-
             case 'herb':
                 break;
 
@@ -402,11 +399,13 @@ export class Hero {
                 break;
 
             case 'shield':
+                console.log('consuming shield zzzzzzzzzzzzzzzzzzzzzz')
                 this.largeItem = LargeItem.DamagedShield
                 this.pickUpLargeItem(this.region.getID(), LargeItem.DamagedShield)
                 break;
 
             case 'damaged_shield':
+                console.log('consuming damaged shield zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')
                 this.largeItem = LargeItem.Empty
                 break;
 

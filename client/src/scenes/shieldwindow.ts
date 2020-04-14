@@ -30,11 +30,13 @@ export class ShieldWindow extends Window {
             else {
                 self.gameinstance.consumeItem('shield')
             }
+            self.gameinstance.sendShieldResp(self.hero.getKind(),'yes');
             self.scene.remove(self.windowname)
 
         })
         nobutton.on('pointerdown', function(pointer) {
-            self.gameinstance.doDamageToHero(self.hero.getKind(), self.potentialdamage)
+            //self.gameinstance.doDamageToHero(self.hero.getKind(), self.potentialdamage)
+            self.gameinstance.sendShieldResp(self.hero.getKind(),'no');
             self.scene.remove(self.windowname)
         })
     }

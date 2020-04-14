@@ -349,8 +349,8 @@ export class game {
         this.socket.emit('resetMonsterStats', name)
     }
 
-    public doDamageToHero(hero, damage) {
-        this.socket.emit('doDamageToHero', hero, damage)
+    public doDamageToHero(hero, damage, callback = null) {
+        this.socket.emit('doDamageToHero', hero, damage, callback)
     }
 
     public doDamageToMonster(monstername, damage) {
@@ -407,6 +407,10 @@ export class game {
         this.socket.off('recieveBattleInviteResponse')
     }
 
+    public unsubscribeShieldListeners() {
+        this.socket.off('receiveShieldResp');
+    }
+
     public sendDeathNotice(hero) {
         this.socket.emit('deathNotice', hero)
     }
@@ -428,6 +432,14 @@ export class game {
 
     public receiveShieldPrompt(callback) {
         this.socket.on('receiveShieldPrompt', callback)
+    }
+
+    public sendShieldResp(herotype, resp) {
+        this.socket.emit('sendShieldResp',herotype, resp)
+    }
+
+    public receiveShieldResp(callback) {
+        this.socket.on('receiveShieldResp', callback)
     }
     /////////////////////////////
 

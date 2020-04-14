@@ -290,7 +290,7 @@ export class Game {
             this.heroList.set(id, new Hero(heroType, this.regions[7]));
             //REMOVE before merging to master
             let dwarf = this.heroList.get(id)
-            dwarf?.pickUpLargeItem(dwarf.getRegion().getID(), LargeItem.Shield)
+            dwarf?.pickUpLargeItem(dwarf.getRegion().getID(), LargeItem.DamagedShield)
             // dwarf?.pickUpSmallItem(dwarf.getRegion().getID(), SmallItem.Telescope)
             // dwarf?.pickUpSmallItem(dwarf.getRegion().getID(), SmallItem.Wineskin)
             // dwarf?.pickUpHelm(dwarf.getRegion().getID());
