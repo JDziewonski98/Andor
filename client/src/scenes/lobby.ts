@@ -39,7 +39,6 @@ export default class LobbyScene extends Phaser.Scene {
         this.load.image('main', './assets/mainscreen.png')
         this.load.image('goback', './assets/wizard-goes-back.png')
         this.load.image('entergame', './assets/enter.png')
-        this.load.image('herosd', './assets/heroes’\ dwelling.png')
     }
 
     public create() {
