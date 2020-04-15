@@ -1,6 +1,7 @@
 import { Farmer, Hero, HourTracker, Monster, HeroKind, Well, Tile, Narrator, EventCard } from '../objects';
 import { game } from '../api';
-import { WindowManager, StoryWindow, CollabWindow, MerchantWindow, DeathWindow, Fight, BattleInvWindow, GameOverWindow, TradeWindow, ShieldWindow } from "./windows";
+import { WindowManager, StoryWindow, CollabWindow, MerchantWindow, DeathWindow, Fight, 
+  BattleInvWindow, GameOverWindow, TradeWindow, ShieldWindow, WitchWindow } from "./windows";
 import { RietburgCastle } from './rietburgcastle';
 import BoardOverlay from './boardoverlay';
 
@@ -822,9 +823,23 @@ export default class GameScene extends Phaser.Scene {
       // Place the witch on tileID
       var witch = this.add.image(this.tiles[tileID].x + 50, this.tiles[tileID].y - 5, "witch");
       witch.setInteractive();
-      witch.on('pointerdown', () => {
+      witch.on('pointerdown', (pointer) => {
         // TODO: Merchant witch interface, wait for merchants to be completed
         console.log("Buy brew from witch");
+        if (self.scene.isVisible("witchwindow")) {
+          // console.log(this)
+          var thescene = WindowManager.get(self, "witchwindow")
+          thescene.disconnectListeners()
+          WindowManager.destroy(this, "witchwindow");
+        } else {
+          WindowManager.create(self, `witchwindow`, WitchWindow, {
+            controller: self.gameinstance,
+            x: pointer.x + 20,
+            y: pointer.y + 20,
+            w: 60,
+            h: 60,
+          })
+        }
       })
     })
 

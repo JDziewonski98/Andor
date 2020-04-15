@@ -13,8 +13,8 @@ export class Witch {
     }
 
     public purchaseBrew(hero: Hero) : boolean {
-        if (hero.getGold() >= this.brewPrice && this.numBrews > 0 && 
-                hero.pickUpSmallItem(hero.getRegion().getID(), SmallItem.Brew)) {
+        if (hero.getRegion().getID() == this.tileID && hero.getGold() >= this.brewPrice && 
+                this.numBrews > 0 && hero.assignSmallItem(SmallItem.Brew)) {
             hero.updateGold(this.brewPrice * -1);
             this.numBrews--;
             return true;
@@ -45,5 +45,14 @@ export class Witch {
 
     public randomInteger(min, max) : number { // min and max are inclusive
         return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    public getNumBrews(): number {
+        return this.numBrews;
+    }
+
+    // Returns as a cost
+    public getBrewPrice(): number {
+        return this.brewPrice * -1;
     }
 }

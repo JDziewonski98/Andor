@@ -488,6 +488,17 @@ export class Hero {
         return this.smallItems
     }
 
+    public assignSmallItem(item: SmallItem) {
+        if (this.smallItems.length < 3) {
+            this.smallItems.push(item)
+            console.log(this.hk, "has", this.getItemDict());
+            return true
+        }
+        else {
+            return false
+        }
+    }
+
     public pickUpSmallItem(tileID: number, item: SmallItem) {
         if (this.region.getID() != tileID) return false;
         if (this.smallItems.length < 3) {

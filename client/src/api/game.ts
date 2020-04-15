@@ -61,6 +61,22 @@ export class game {
     public merchant(item: string, callback){
         this.socket.emit("merchant", item, callback);
     }
+
+    public getNumBrews(callback) {
+        this.socket.emit("getNumBrews", callback);
+    }
+
+    public purchaseBrew() {
+        this.socket.emit("purchaseBrew");
+    }
+
+    public updateNumBrews(callback) {
+        this.socket.on("updateNumBrews", callback);
+    }
+
+    public disconnectUpdateNumBrews() {
+        this.socket.off("updateNumBrews");
+    }
     
     // Server uses the passed callback to tell the calling client to update the well
     // Server broadcasts to update the other clients

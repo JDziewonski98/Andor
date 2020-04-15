@@ -322,6 +322,32 @@ export function game(socket, model: Game, io) {
     }
   });
 
+  socket.on("getNumBrews", function (callback) {
+    var numBrews = model.getWitch()?.getNumBrews();
+
+    if (numBrews !== undefined) {
+      callback(numBrews)
+    }
+  });
+
+  socket.on("purchaseBrew", function () {
+    let success;
+    var heroId = socket.conn.id;
+    let hero = model.getHero(heroId);
+
+    success = model.getWitch()?.purchaseBrew(hero);
+    if (success) {
+      // Tell active hero windows to update with new brew and reduced gold
+      socket.emit("updatePickupItemHero", hero.getKind(), "brew", "smallItem");
+      socket.broadcast.emit("updatePickupItemHero", hero.getKind(), "brew", "smallItem");
+      socket.broadcast.emit("updateDropGold", hero.getKind(), model.getWitch()?.getBrewPrice());
+      socket.emit("updateDropGold", hero.getKind(), model.getWitch()?.getBrewPrice());
+      // Tell witch window to update with new numBrews
+      socket.emit("updateNumBrews", model.getWitch()?.getNumBrews());
+      socket.broadcast.emit("updateNumBrews", model.getWitch()?.getNumBrews());
+    }
+  });
+
   socket.on("getNumShields", function (callback) {
     var numShields = model.getCastle().getShields();
 

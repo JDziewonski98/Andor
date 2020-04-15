@@ -8,3 +8,4 @@ export * from './gameoverwindow';
 export * from './tradewindow';
 export * from './storywindow';
 export * from './shieldwindow';
+export * from './witchwindow';

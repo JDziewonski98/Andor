@@ -365,6 +365,10 @@ export class Game {
         return this.prince;
     }
 
+    public getWitch(): Witch | null {
+        return this.witch;
+    }
+
     public getRegions(): Region[] {
         return this.regions
     }
