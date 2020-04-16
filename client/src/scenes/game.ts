@@ -96,6 +96,7 @@ export default class GameScene extends Phaser.Scene {
     this.load.image("Gor", "../assets/gorfog.png");
     this.load.image("WitchFog", "../assets/witchfog.png");
     this.load.image("WineskinFog", "../assets/wineskinfog.png");
+    this.load.image("eventcard", "../assets/eventcard.png");
 
     this.load.image("witch", "../assets/witch.png");
 
@@ -577,7 +578,7 @@ export default class GameScene extends Phaser.Scene {
     let yPos = (6100 - (runestonePos * 455)) * scaleFactor + borderWidth
 
     // place the runestone card marker on the legend track
-    this.add.image(2450, yPos, 'weed').setDisplaySize(40, 40);
+    this.add.image(2450, yPos, 'eventcard').setAlpha(0.5);
     this.narrator.setRunestonePos(runestonePos);
   }
 
@@ -600,7 +601,6 @@ export default class GameScene extends Phaser.Scene {
 
     this.prince = new Prince(this, this.tiles[72], 'prince').setScale(.15);
     this.add.existing(this.prince);
-    // TODO NARRATOR: Display StoryWindows
     WindowManager.create(this, `story3`, StoryWindow, {
       x: reducedWidth / 2,
       y: reducedHeight / 2,
@@ -611,7 +611,6 @@ export default class GameScene extends Phaser.Scene {
   private narratorG() {
     // Remove prince
     this.prince.destroy();
-    // TODO NARRATOR: Display StoryWindows
     WindowManager.create(this, `story7`, StoryWindow, {
       x: reducedWidth / 2,
       y: reducedHeight / 2,
@@ -822,12 +821,9 @@ export default class GameScene extends Phaser.Scene {
       })
       // Place the witch on tileID
       var witch = this.add.image(this.tiles[tileID].x + 50, this.tiles[tileID].y - 5, "witch");
-      witch.setInteractive();
+      witch.setInteractive().setScale(0.75);
       witch.on('pointerdown', (pointer) => {
-        // TODO: Merchant witch interface, wait for merchants to be completed
-        console.log("Buy brew from witch");
         if (self.scene.isVisible("witchwindow")) {
-          // console.log(this)
           var thescene = WindowManager.get(self, "witchwindow")
           thescene.disconnectListeners()
           WindowManager.destroy(this, "witchwindow");
@@ -835,9 +831,9 @@ export default class GameScene extends Phaser.Scene {
           WindowManager.create(self, `witchwindow`, WitchWindow, {
             controller: self.gameinstance,
             x: pointer.x + 20,
-            y: pointer.y + 20,
-            w: 60,
-            h: 60,
+            y: pointer.y,
+            w: 105,
+            h: 70,
           })
         }
       })
