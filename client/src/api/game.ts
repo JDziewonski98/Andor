@@ -584,6 +584,10 @@ export class game {
     public revealHerb(callback) {
         this.socket.on("revealHerb", callback);
     }
+
+    public removeHerb(callback) {
+        this.socket.on("removeHerb", callback);
+    }
     ///////////////////////////
     /*
     *   Event Cards

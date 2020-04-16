@@ -40,6 +40,7 @@ export class Witch {
                 pos = 61;
                 break;
         }
+        // TODO: change back to pos, testing purposes only
         return pos;
     }
 

@@ -743,6 +743,15 @@ export function game(socket, model: Game, io) {
     // console.log(convMonsters);
     socket.broadcast.emit('sendKilledMonsters', monstername);
     //socket.emit('sendKilledMonsters', monstername);
+    // If the monster was carrying the herb, the herb is dropped on the tile
+    if (monstername == "gor_herb") {
+      monsterregion.addItem("herb");
+      socket.emit("updateDropItemTile", monstertile, "herb", "smallItem");
+      socket.broadcast.emit("updateDropItemTile", monstertile, "herb", "smallItem");
+      // remove the herb image from GameScene
+      socket.emit("removeHerb");
+      socket.broadcast.emit("removeHerb");
+    }
     advanceNarrator();
   })
 

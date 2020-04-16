@@ -850,6 +850,10 @@ export default class GameScene extends Phaser.Scene {
       this.overlay.setHerb(this.herb);
     })
 
+    this.gameinstance.removeHerb(() => {
+      this.herb.destroy();
+    })
+
     /**
      * FIGHT LISTENERS
      */
