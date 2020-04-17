@@ -486,6 +486,44 @@ export class game {
     public receiveShieldResp(callback) {
         this.socket.on('receiveShieldResp', callback)
     }
+
+    //ask allies if they want to continue fight
+    public continueFightRequest(herotype) {
+        this.socket.emit('continueFightRequest', herotype)
+    }
+
+    //listener in host client for allied heros responses
+    public receiveContinueFight(callback) {
+        this.socket.on('receiveContinueFight', callback)
+    }
+
+    //called before closing host fight window
+    public unsubscribeContFight() {
+        this.socket.off('receiveContinueFight')
+    }
+
+    //sent from server to open the window asking allies if they want to continue fight
+    public continueFightPrompt(callback) {
+        this.socket.on('continueFightPrompt', callback);
+    }
+
+    //sent from ally's client to server to inform host of decision
+    public sendContinueFight(response, herotype) {
+        this.socket.emit('sendContinueFight',response, herotype)
+    }
+
+    //message that force starts a heros turn and force starts a fight with target monster
+    public forceContinueFight(herokind, monstername){ 
+        this.socket.emit('forceContinueFight', herokind, monstername)
+    }
+
+    public forceFight(callback) {
+        this.socket.on('forceFight', callback)
+    }
+
+    public forceTurn(callback) {
+        this.socket.on('forceTurn', callback)
+    }
     /////////////////////////////
 
 

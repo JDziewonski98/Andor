@@ -833,6 +833,28 @@ export function game(socket, model: Game, io) {
     }
   })
 
+  socket.on('continueFightRequest', function(herotype) {
+    var heroid = model.getIDsByHeroname([herotype])
+    console.log('continuefightrequest', herotype)
+    for (let playerid of heroid) {
+      socket.broadcast.to(`/${model.getName()}#${playerid}`).emit("continueFightPrompt")
+    }
+  })
+
+  socket.on('sendContinueFight', function(response, herokind) {
+    console.log('in sendcontinuefight!!!!!!!!!', response, herokind)
+    socket.broadcast.emit('receiveContinueFight', response, herokind)
+  })
+
+  socket.on('forceContinueFight', function(herokind, monstername) {
+    var heroid = model.getIDsByHeroname([herokind])
+    model.setCurrPlayersTurn(herokind as HeroKind)
+    for (let playerid of heroid) {
+      socket.broadcast.to(`/${model.getName()}#${playerid}`).emit("forceTurn", monstername)
+      socket.broadcast.to(`/${model.getName()}#${playerid}`).emit("forceFight", monstername)
+    }
+  })
+
   socket.on('updateHeroTracker', function(hero) {
     socket.broadcast.emit('receiveUpdateHeroTracker',hero)
   })
