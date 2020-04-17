@@ -64,6 +64,10 @@ export class Fight extends Window {
     // To toggle interactivity of overlay
     private overlayRef: BoardOverlay;
 
+    //continue fight stuff
+    private continueresponsecnt = 0;
+    private continuinghero;
+
     public constructor(key, data, windowData = { x: 10, y: 10, width: 500, height: 380 }) {
         super(key, windowData);
         this.windowname = key
@@ -295,6 +299,7 @@ export class Fight extends Window {
                             self.gameinstance.updateHourTracker(self.hero.getKind())
 
                             var totalattack = self.yourattack + alliedattacksum
+                            console.log(self.allyrolls)
                             console.log('totalatk:', totalattack, 'uratk:', self.yourattack, 'result', result)
                             if (totalattack + self.princebonus > result) {
                                 //hero(s) win.
@@ -307,7 +312,12 @@ export class Fight extends Window {
                                 if (self.monsterwill < 1) {
                                     self.victory()
                                 }
+                                try {
                                 self.fighttext.setInteractive();
+                                }
+                                catch {
+                                    console.log('its fine')
+                                }
                             }
                             else if (totalattack + self.princebonus < result) {
                                 //monster win.
@@ -461,13 +471,24 @@ export class Fight extends Window {
         this.exitbutton = this.add.text(300, 10, 'X', style).setInteractive()
         this.exitbutton.on('pointerdown', function (pointer) {
             self.gameinstance.resetMonsterStats(self.monstername)
-            self.overlayRef.toggleInteractive(true);
-            self.scene.resume("Game")
-            self.scene.remove(self.windowname)
-            self.gameinstance.endTurn()
+            if (self.alliedheros.length == 0 || self.firstfight == true){
+                console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxxx')
+                self.endTurnStuff()
+            }
+            else {
+                console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
+                //we have to send em option to continue da fight
+                self.promptAlliesToContinueFight()
+            }
         })
     }
 
+    private endTurnStuff() {
+        this.overlayRef.toggleInteractive(true);
+        this.scene.resume("Game")
+        this.scene.remove(this.windowname)
+        this.gameinstance.endTurn()
+    }
 
     private displayInvList() {
         var self = this
@@ -686,6 +707,49 @@ export class Fight extends Window {
         this.theirroll.destroy()
         this.yourroll.destroy()
         this.exitbutton.destroy()
+    }
+
+    private promptAlliesToContinueFight() {
+        var self = this;
+        //use self.firstfight to determine if this is necessary.
+        for (let ally of this.alliedheros) {
+            console.log(ally)
+            this.gameinstance.continueFightRequest(ally)
+        }
+        //we have to wait until a) someone agrees to continue the fight or 
+        //b) no one wants to continue the fight
+        self.gameinstance.receiveContinueFight(function(response, herotype) {
+            console.log('we in here bihh!!!!!!!!!!!!!!!!!!!!!!!')
+            self.continueresponsecnt++
+            if (response == 'yes' && self.continuinghero == null) {
+                console.log('option uno')
+                self.gameinstance.unsubscribeContFight()
+                self.continuinghero = herotype;
+                self.gameinstance.forceContinueFight(self.continuinghero, self.monstername)
+                self.overlayRef.toggleInteractive(true);
+                self.gameinstance.endTurnOnEndDay()
+                self.scene.resume("Game")
+                self.scene.remove(this.windowname)
+                self.gameinstance.endTurnOnEndDay()
+                //make it their turn and make them immediately start the fight.
+                //perhaps send a message to all other continueFightRequest windows to close that window.
+            }
+            else if (response == 'yes' && self.continuinghero != null) {
+                console.log('option dos')
+                // do nothing?
+            }
+            else if (response == 'no') {
+                console.log('option tres')
+                //do nothing?
+            }
+            console.log(self.continueresponsecnt, self.alliedheros.length)
+            if (self.continueresponsecnt == self.alliedheros.length) {
+                console.log('option quatro')
+                //this means everyone said no to continue fight, so close window and end turn as normal with resetting monster stats.
+                self.gameinstance.unsubscribeContFight()
+                self.endTurnStuff()
+            }
+        })
     }
 
 }

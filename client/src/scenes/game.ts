@@ -1,6 +1,6 @@
 import { Farmer, Hero, HourTracker, Monster, HeroKind, Well, Tile, Narrator, EventCard } from '../objects';
 import { game } from '../api';
-import { WindowManager, CollabWindow, MerchantWindow, DeathWindow, Fight, BattleInvWindow, GameOverWindow, TradeWindow, ShieldWindow } from "./windows";
+import { WindowManager, CollabWindow, MerchantWindow, DeathWindow, Fight, BattleInvWindow, GameOverWindow, TradeWindow, ShieldWindow, ContinueFightWindow } from "./windows";
 import { RietburgCastle } from './rietburgcastle';
 import BoardOverlay from './boardoverlay';
 
@@ -652,6 +652,21 @@ export default class GameScene extends Phaser.Scene {
         });
 
     })
+
+    this.gameinstance.continueFightPrompt(function() {
+      console.log('continuefightprompt xxxxxxxxxxxxxxxxxxxxxxxxxx')
+      if (self.scene.isVisible('continuefightprompt')) {
+        WindowManager.destroy(self, 'continuefightprompt');
+      }
+      WindowManager.create(self, 'continuefightprompt', ContinueFightWindow,
+        {
+          controller: self.gameinstance,
+          hero: self.hero,
+          gamescene: self,
+          overlayRef: self.overlay
+        });
+    })
+
     this.gameinstance.receiveDeathNotice(function () {
       if (self.scene.isVisible('deathnotice')) {
         WindowManager.destroy(self, 'deathnotice');
