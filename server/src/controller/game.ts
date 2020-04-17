@@ -662,7 +662,12 @@ export function game(socket, model: Game, io) {
   })
 
   socket.on('forceContinueFight', function(herokind, monstername) {
-    
+    var heroid = model.getIDsByHeroname([herokind])
+    model.setCurrPlayersTurn(herokind as HeroKind)
+    for (let playerid of heroid) {
+      socket.broadcast.to(`/${model.getName()}#${playerid}`).emit("forceTurn", monstername)
+      socket.broadcast.to(`/${model.getName()}#${playerid}`).emit("forceFight", monstername)
+    }
   })
 
   socket.on('updateHeroTracker', function(hero) {

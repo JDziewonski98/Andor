@@ -667,6 +667,26 @@ export default class GameScene extends Phaser.Scene {
         });
     })
 
+    this.gameinstance.forceTurn(function() {
+      self.gameinstance.setMyTurn(true)
+    })
+
+    this.gameinstance.forceFight(function(monstername) {
+      var monster = self.monsterNameMap[monstername]
+      if (self.scene.isVisible(monster.name)) {
+        WindowManager.destroy(self, monster.name);
+      }
+      else {
+        WindowManager.create(self, monster.name, Fight, {
+          controller: self.gameinstance,
+          hero: self.hero, monster: monster, heroes: self.heroes,
+          overlayRef: self.overlay,
+          princePos: self.prince.tile.id
+        });
+        self.scene.pause()
+      }
+    })
+
     this.gameinstance.receiveDeathNotice(function () {
       if (self.scene.isVisible('deathnotice')) {
         WindowManager.destroy(self, 'deathnotice');

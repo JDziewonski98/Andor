@@ -471,6 +471,14 @@ export class game {
     public forceContinueFight(herokind, monstername){ 
         this.socket.emit('forceContinueFight', herokind, monstername)
     }
+
+    public forceFight(callback) {
+        this.socket.on('forceFight', callback)
+    }
+
+    public forceTurn(callback) {
+        this.socket.on('forceTurn', callback)
+    }
     /////////////////////////////
 
 

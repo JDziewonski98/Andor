@@ -470,7 +470,6 @@ export class Fight extends Window {
         }
         this.exitbutton = this.add.text(300, 10, 'X', style).setInteractive()
         this.exitbutton.on('pointerdown', function (pointer) {
-            self.gameinstance.resetMonsterStats(self.monstername)
             if (self.alliedheros.length == 0 || self.firstfight == true){
                 console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxxx')
                 self.endTurnStuff()
@@ -484,8 +483,14 @@ export class Fight extends Window {
     }
 
     private endTurnStuff() {
+        this.gameinstance.resetMonsterStats(this.monstername)
         this.overlayRef.toggleInteractive(true);
-        this.scene.resume("Game")
+        try{
+            this.scene.resume("Game") 
+        }
+        catch {
+            console.log('its fine')
+        }
         this.scene.remove(this.windowname)
         this.gameinstance.endTurn()
     }
