@@ -182,7 +182,7 @@ export default class GameScene extends Phaser.Scene {
       this.scene.add('BoardOverlay', this.overlay, true);
 
       // Need to wait for heroes to be created before creating collab decision
-      //this.startingCollabDecisionSetup("something");
+      this.startingCollabDecisionSetup();
       // Note that starting hero rank gets determined in collab setup
       if (this.hero.tile.id == this.startingHeroRank) {
         console.log("first turn goes to hero rank", this.startingHeroRank);
@@ -732,9 +732,10 @@ export default class GameScene extends Phaser.Scene {
     var heroRanks = [];
     for (let hero of self.heroes) { heroRanks.push(hero.tile.id); }
     self.startingHeroRank = Math.min(...heroRanks);
-    var collabWindowData =
+    var collabWindowData = (self.hero.tile.id == self.startingHeroRank) ?
       {
         controller: self.gameinstance,
+        isOwner: true,
         heroes: self.heroes,
         resources: res,
         textOptions: null,
@@ -743,10 +744,18 @@ export default class GameScene extends Phaser.Scene {
         w: width,
         h: height,
         infight: false,
-        overlayRef: self.overlay,
-        ownerKind: this.ownHeroType,
-        type: "distribute",
-      } 
+        overlayRef: self.overlay
+      } :
+      {
+        controller: self.gameinstance,
+        isOwner: false,
+        x: reducedWidth / 2 - width / 2,
+        y: reducedHeight / 2 - height / 2,
+        w: 200,
+        h: 100,
+        infight: false,
+        overlayRef: self.overlay
+      }
     WindowManager.create(this, 'collab', CollabWindow, collabWindowData);
     // Freeze main game while collab window is active
     this.scene.pause();
@@ -966,42 +975,7 @@ export default class GameScene extends Phaser.Scene {
       console.log("FREEZE GAME ", hk, " DISCONNECTED")
       this.scene.pause();
     })
-    this.gameinstance.newCollabDecision((eventID, involvedHeroes, type)=>{
-      var involved = involvedHeroes.includes(self.ownHeroType)
-      if(involved){
-        var res = new Map([
-          ["gold", 5],
-          ["wineskin", 2]
-        ])
-        // Determine width of the window based on how many resources are being distributed
-        var width = (res.size + 1) * collabColWidth; // Not sure if there's a better way of getting size of ts obj
-        // Determine height of the window based on number of players involved
-        var height = (self.heroes.length + 2) * collabRowHeight;
-        // Set data depending on whether the client is the owner of the decision
-        // Get hero of lowest rank, based on their starting tile
-        //var heroRanks = [];
-        //for (let hero of involvedHeroes) { heroRanks.push(hero.tile.id); }
-        //self.startingHeroRank = Math.min(...heroRanks);
-        var collabWindowData =
-          {
-            controller: self.gameinstance,
-            heroes: involvedHeroes,
-            resources: res,
-            textOptions: null,
-            x: reducedWidth / 2 - width / 2,
-            y: reducedHeight / 2 - height / 2,
-            w: width,
-            h: height,
-            infight: false,
-            overlayRef: self.overlay,
-            ownerKind: this.ownHeroType,
-            type: type,
-          } 
-        WindowManager.create(this, 'collab', CollabWindow, collabWindowData);
-        // Freeze main game while collab window is active
-        this.scene.pause();
-      }
-    })
+
   }
 
   public update() {

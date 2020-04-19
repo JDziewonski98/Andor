@@ -5,7 +5,6 @@ import { game } from '../api/game';
 import { collabTextHeight, collabColWidth, collabRowHeight } from '../constants'
 import { ResourceToggle } from "../widgets/ResourceToggle";
 import BoardOverlay from "./boardoverlay";
-import { HeroKind } from "../objects";
 
 export class CollabWindow extends Window {
     private submitText;
@@ -16,7 +15,7 @@ export class CollabWindow extends Window {
     // to distribute, what heroes are participating in the decision, and which hero
     // is the owner of the decision. Pass into constructor
     private involvedHeroes: Hero[];
-    //private isOwner: boolean;
+    private isOwner: boolean;
     private resources: Map<string, number>;
     private resourceNames: string[] = [];
     private resAllocated: Map<string, number[]> = new Map(); // track what has been allocated to who
@@ -36,15 +35,11 @@ export class CollabWindow extends Window {
 
     private name;
 
-    
-    private ownerKind: HeroKind //ties collab windows to clients through heroKind
-    private type: String
-
     public constructor(key: string, data) {
         super(key, {x: data.x, y: data.y, width: data.w, height: data.h});
 
         this.gameinstance = data.controller;
-        //this.isOwner = data.isOwner;
+        this.isOwner = data.isOwner;
         this.x = data.x;
         this.y = data.y;
         this.width = data.w;
@@ -53,14 +48,11 @@ export class CollabWindow extends Window {
         this.overlayRef = data.overlayRef;
         this.name = key
 
-        //if (this.isOwner) {
+        if (this.isOwner) {
             this.involvedHeroes = data.heroes;
             this.resources = data.resources;
             this.textOptions = data.textOptions;
-        //}
-
-        this.ownerKind = data.heroKind
-        this.type = data.type
+        }
     }
 
     protected initialize() {
@@ -137,7 +129,7 @@ export class CollabWindow extends Window {
         }
         
         // Done populating if this is just an accept window
-        //if (!this.isOwner) {
+        if (!this.isOwner) {
             this.acceptText = this.add.text(this.width/2, this.height-collabTextHeight, 'Accept', textStyle)
 
             this.acceptText.setInteractive()
@@ -152,28 +144,28 @@ export class CollabWindow extends Window {
                 self.gameinstance.collabDecisionAccept();
             });
 
-            //return;
-        //}
+            return;
+        }
 
-        // this.submitText = this.add.text(0, this.height-collabTextHeight, 'Submit', textStyle)
-        // console.log('we here son.')
-        // this.submitText.setInteractive()
-        // this.submitText.on('pointerdown', function (pointer) {
-        //     // Check that resAllocated corresponds with specified quantities from data.resources
-        //     if (self.verifyAllocated()) {
-        //         // Need to convert map TS object to send to server
-        //         let convMap = {};
-        //         self.resAllocated.forEach((val: number[], key: string) => {
-        //             convMap[key] = val;
-        //         });
-        //         // Pass map of allocated resources and list of resource names to map allocated 
-        //         // quantities to the name of the corresponding resource
-        //         self.gameinstance.collabDecisionSubmit(convMap, self.resourceNames, self.involvedHeroes);
-        //     } else {
-        //         console.log("Allocated quantities do not match those specified");
-        //         self.submitText.setText("Submit. Quantities must match!")
-        //     }
-        //});
+        this.submitText = this.add.text(0, this.height-collabTextHeight, 'Submit', textStyle)
+        console.log('we here son.')
+        this.submitText.setInteractive()
+        this.submitText.on('pointerdown', function (pointer) {
+            // Check that resAllocated corresponds with specified quantities from data.resources
+            if (self.verifyAllocated()) {
+                // Need to convert map TS object to send to server
+                let convMap = {};
+                self.resAllocated.forEach((val: number[], key: string) => {
+                    convMap[key] = val;
+                });
+                // Pass map of allocated resources and list of resource names to map allocated 
+                // quantities to the name of the corresponding resource
+                self.gameinstance.collabDecisionSubmit(convMap, self.resourceNames, self.involvedHeroes);
+            } else {
+                console.log("Allocated quantities do not match those specified");
+                self.submitText.setText("Submit. Quantities must match!")
+            }
+        });
 
         // For resource splitting collabs
         if (this.resources) {

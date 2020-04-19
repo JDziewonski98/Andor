@@ -59,7 +59,7 @@ export class Game {
     public gameStartHeroPosition: number = 1;
 
     // collab decision related state
-    //public numAccepts: number;
+    public numAccepts: number;
     private availableHeros: Array<Hero>;
     //private availableHeros: Array<HeroKind> = new Array(HeroKind.Archer, HeroKind.Dwarf, HeroKind.Mage, HeroKind.Warrior);
 

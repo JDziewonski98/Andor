@@ -314,9 +314,6 @@ export class game {
     /*
     * COLLAB DECISIONS
     */
-   public newCollabDecision(eventID, involvedHeroes, type ){
-       this.socket.on('newCollab', eventID, involvedHeroes, type )
-   }
     // Submitting a decision
     public collabDecisionSubmit(resAllocated, resNames, involvedHeroes) {
         this.socket.emit('collabDecisionSubmit', resAllocated, resNames, involvedHeroes)
