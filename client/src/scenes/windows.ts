@@ -7,5 +7,6 @@ export * from './merchantwindow';
 export * from './gameoverwindow';
 export * from './tradewindow';
 export * from './storywindow';
-export * from './shieldwindow';
 export * from './witchwindow';
+export * from './shieldwindow';
+export * from './continuefightwindow'

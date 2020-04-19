@@ -1,7 +1,7 @@
 import { Farmer, Hero, HourTracker, Monster, HeroKind, Well, Tile, Narrator, EventCard } from '../objects';
 import { game } from '../api';
 import { WindowManager, StoryWindow, CollabWindow, MerchantWindow, DeathWindow, Fight, 
-  BattleInvWindow, GameOverWindow, TradeWindow, ShieldWindow, WitchWindow } from "./windows";
+  BattleInvWindow, GameOverWindow, TradeWindow, ShieldWindow, WitchWindow, ContinueFightWindow } from "./windows";
 import { RietburgCastle } from './rietburgcastle';
 import BoardOverlay from './boardoverlay';
 
@@ -867,6 +867,41 @@ export default class GameScene extends Phaser.Scene {
         });
 
     })
+
+    this.gameinstance.continueFightPrompt(function() {
+      console.log('continuefightprompt xxxxxxxxxxxxxxxxxxxxxxxxxx')
+      if (self.scene.isVisible('continuefightprompt')) {
+        WindowManager.destroy(self, 'continuefightprompt');
+      }
+      WindowManager.create(self, 'continuefightprompt', ContinueFightWindow,
+        {
+          controller: self.gameinstance,
+          hero: self.hero,
+          gamescene: self,
+          overlayRef: self.overlay
+        });
+    })
+
+    this.gameinstance.forceTurn(function() {
+      self.gameinstance.setMyTurn(true)
+    })
+
+    this.gameinstance.forceFight(function(monstername) {
+      var monster = self.monsterNameMap[monstername]
+      if (self.scene.isVisible(monster.name)) {
+        WindowManager.destroy(self, monster.name);
+      }
+      else {
+        WindowManager.create(self, monster.name, Fight, {
+          controller: self.gameinstance,
+          hero: self.hero, monster: monster, heroes: self.heroes,
+          overlayRef: self.overlay,
+          princePos: self.prince.tile.id
+        });
+        self.scene.pause()
+      }
+    })
+
     this.gameinstance.receiveDeathNotice(function () {
       if (self.scene.isVisible('deathnotice')) {
         WindowManager.destroy(self, 'deathnotice');
