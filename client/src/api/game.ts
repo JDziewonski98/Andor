@@ -314,6 +314,13 @@ export class game {
     /*
     * COLLAB DECISIONS
     */
+    //Sharing info between clients
+    public sendIncResource(resourceHeroKind, resourceIndex){
+        this.socket.emit('sendIncResource', resourceHeroKind, resourceIndex)
+    }
+    public incListener(callback){
+        this.socket.on('receiveIncResource', callback)
+    }
     // Submitting a decision
     public collabDecisionSubmit(resAllocated, resNames, involvedHeroes) {
         this.socket.emit('collabDecisionSubmit', resAllocated, resNames, involvedHeroes)

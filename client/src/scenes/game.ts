@@ -717,6 +717,15 @@ export default class GameScene extends Phaser.Scene {
   }
 
   private startingCollabDecisionSetup() {
+    var self = this
+    // function incFunction(heroKind){
+
+    // }
+    // function incCallback(heroKind, resourceIndex){
+    //   self.gameinstance.sendIncResource(heroKind,resourceIndex)
+    // };
+
+    
     var self = this;
 
     var res = new Map([
@@ -732,11 +741,11 @@ export default class GameScene extends Phaser.Scene {
     var heroRanks = [];
     for (let hero of self.heroes) { heroRanks.push(hero.tile.id); }
     self.startingHeroRank = Math.min(...heroRanks);
-    var collabWindowData = (self.hero.tile.id == self.startingHeroRank) ?
+    var collabWindowData =
       {
         controller: self.gameinstance,
         isOwner: true,
-        heroes: self.heroes,
+        involvedHeroes: self.heroes,
         resources: res,
         textOptions: null,
         x: reducedWidth / 2 - width / 2,
@@ -744,18 +753,12 @@ export default class GameScene extends Phaser.Scene {
         w: width,
         h: height,
         infight: false,
-        overlayRef: self.overlay
-      } :
-      {
-        controller: self.gameinstance,
-        isOwner: false,
-        x: reducedWidth / 2 - width / 2,
-        y: reducedHeight / 2 - height / 2,
-        w: 200,
-        h: 100,
-        infight: false,
-        overlayRef: self.overlay
-      }
+        overlayRef: self.overlay,
+        ownHeroKind: this.ownHeroType,
+        incFunction: self.gameinstance.sendIncResource,
+        incListener: self.gameinstance.incListener
+
+      };
     WindowManager.create(this, 'collab', CollabWindow, collabWindowData);
     // Freeze main game while collab window is active
     this.scene.pause();

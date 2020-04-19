@@ -5,6 +5,8 @@ import { game } from '../api/game';
 import { collabTextHeight, collabColWidth, collabRowHeight } from '../constants'
 import { ResourceToggle } from "../widgets/ResourceToggle";
 import BoardOverlay from "./boardoverlay";
+import { HeroKind } from "../objects";
+import { Scene, Game } from "phaser";
 
 export class CollabWindow extends Window {
     private submitText;
@@ -35,7 +37,12 @@ export class CollabWindow extends Window {
 
     private name;
 
-    public constructor(key: string, data) {
+    //
+    private ownHeroKind: HeroKind
+    //private incFunction: Function
+    private incListener: Function
+    private resourceToggles: Array<ResourceToggle>
+    public constructor(key: string, data, incFunction) {
         super(key, {x: data.x, y: data.y, width: data.w, height: data.h});
 
         this.gameinstance = data.controller;
@@ -48,11 +55,15 @@ export class CollabWindow extends Window {
         this.overlayRef = data.overlayRef;
         this.name = key
 
-        if (this.isOwner) {
-            this.involvedHeroes = data.heroes;
+        //if (this.isOwner) {
+            this.involvedHeroes = data.involvedHeroes;
             this.resources = data.resources;
             this.textOptions = data.textOptions;
-        }
+        //}
+        this.ownHeroKind = data.ownHeroKind
+        //this.incFunction = this.gameinstance.sendIncResource
+        this.incListener = data.incListener
+        this.resourceToggles = new Array<ResourceToggle>()
     }
 
     protected initialize() {
@@ -91,6 +102,27 @@ export class CollabWindow extends Window {
         // Callbacks
         // Submitting decision callback
         console.log('in init', self.infight)
+        this.gameinstance.incListener((resourceHeroKind, resourceIndex, senderHeroKind)=>{
+            console.log("we got it baby")
+            var involved = false
+            for(let hero of self.involvedHeroes){
+                if(hero.getKind() == senderHeroKind){
+                    involved = true
+                }
+            }
+            if(self.ownHeroKind == senderHeroKind){
+                involved = false
+            }
+            if(involved){
+                for(let rt of this.resourceToggles){
+                    if(rt.getResourceIndex() == resourceIndex && resourceHeroKind == rt.getHeroKind()){
+                        console.log(rt)
+                        rt.incFunction()
+                        //this.gameinstance.sendIncResource(resourceHeroKind,resourceIndex)
+                    }        
+                } 
+            }
+        })
         this.gameinstance.receiveDecisionSubmitSuccess(submitSuccess);
         this.gameinstance.receiveDecisionSubmitFailure(submitFailure);
         // Accepting decision callback
@@ -129,7 +161,7 @@ export class CollabWindow extends Window {
         }
         
         // Done populating if this is just an accept window
-        if (!this.isOwner) {
+        //if (!this.isOwner) {
             this.acceptText = this.add.text(this.width/2, this.height-collabTextHeight, 'Accept', textStyle)
 
             this.acceptText.setInteractive()
@@ -144,8 +176,8 @@ export class CollabWindow extends Window {
                 self.gameinstance.collabDecisionAccept();
             });
 
-            return;
-        }
+           //return;
+        //}
 
         this.submitText = this.add.text(0, this.height-collabTextHeight, 'Submit', textStyle)
         console.log('we here son.')
@@ -191,8 +223,8 @@ export class CollabWindow extends Window {
                     }
                     // this.resources.get(Array.from(this.resources.keys())[col-1]) used to get the total amount of the resource
                     // available to allocate, passed through data.resources in constructor
-                    new ResourceToggle(this, col*collabColWidth, (row+1)*collabRowHeight, 
-                        heroKindString, col-1, this.resources.get(Array.from(this.resources.keys())[col-1]),this.resAllocated);
+                    this.resourceToggles.push(new ResourceToggle(this, col*collabColWidth, (row+1)*collabRowHeight, 
+                        heroKindString, col-1, this.resourceNames[col], this.resources.get(Array.from(this.resources.keys())[col-1]),this.resAllocated));
                 }
             }
         }
@@ -228,5 +260,15 @@ export class CollabWindow extends Window {
             }
         }
         return true;
+    }
+    public incFunction(heroKind, resourceIndex){
+        //ignoring checks for now
+        for(let rt of this.resourceToggles){
+            if(rt.getResourceIndex() == resourceIndex && heroKind == rt.getHeroKind()){
+                console.log(rt)
+                rt.incFunction()
+                this.gameinstance.sendIncResource(heroKind,resourceIndex)
+            }        
+        }
     }
 }

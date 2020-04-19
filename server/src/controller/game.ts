@@ -721,7 +721,12 @@ export function game(socket, model: Game, io) {
     // Tell the client that accepted to update their status
     socket.emit('sendDecisionAccepted', model.numAccepts)
   })
-
+  socket.on('sendIncResource', function(resourceHeroKind, resourceIndex){
+    //console.log("Received: sendIncResource", resourceHeroKind, resourceIndex)
+    //console.log(model.getHero(socket.conn.id), model.getHero(socket.conn.id).getKind())
+    io.of("/" + model.getName()).emit('receiveIncResource', resourceHeroKind, resourceIndex, model.getHero(socket.conn.id).getKind());
+    //socket.emit('receiveIncResource', resourceHeroKind, resourceIndex, model.getHero(socket.conn.id).getKind())
+  })
   /*
   * BATTLING
   */
