@@ -141,6 +141,11 @@ export function game(socket, model: Game, io) {
     var nextPlayerID = model.getConnIdFromHk(nextPlayer);
     console.log("Sending next turn to ", nextPlayer, "with ID", nextPlayerID);
     socket.broadcast.to(`/${model.getName()}#${nextPlayerID}`).emit("yourTurn");
+
+    // Update game log
+    var msg = `${hero.getKind()} ended their turn. It is now ${nextPlayer}'s turn.`
+    socket.emit("updateGameLog", msg);
+    socket.broadcast.emit("updateGameLog", msg);
   })
 
   socket.on("pickupFarmer", function (tileID: number, callback) {
