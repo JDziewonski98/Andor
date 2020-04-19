@@ -82,7 +82,7 @@ export class Game {
         this.fogs = new Map<number, Fog>();
         this.eventDeck = new Array<EventCard>()
         this.readyplayers = 0;
-        this.numAccepts = 0;
+        //this.numAccepts = 0;
         this.currPlayersTurn = HeroKind.Dwarf;
         this.activeEvents = new Array<number>();
         this.availableHeros = new Array<Hero>();
