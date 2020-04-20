@@ -336,6 +336,11 @@ export function game(socket, model: Game, io) {
     let success = false;
     var heroId = socket.conn.id;
     let hero = model.getHero(heroId);
+    // Check if hero is still active (not in sunrise box)
+    if (!model.getActiveHeros().includes(hero.getKind())) {
+      socket.emit("updateGameLog", "You cannot access a merchant after you have ended your day.");
+      return;
+    }
 
     if (hero !== undefined) {
       switch(item){
@@ -365,6 +370,15 @@ export function game(socket, model: Game, io) {
 
     if (success) {
       callback();
+      // Using a merchant ends your turn
+      // Update game log
+      var msg = `${hero.getKind()} bought something from a merchant.`
+      socket.emit("updateGameLog", msg);
+      socket.broadcast.emit("updateGameLog", msg);
+      // End turn
+      if (model.getCurrPlayersTurn() == hero.getKind()) {
+        freeActionEndTurn(hero);
+      }
     }
   });
 
