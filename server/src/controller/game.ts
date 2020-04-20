@@ -2,7 +2,59 @@ import { Game, HeroKind, Region, Hero, Monster, Fog, MonsterKind } from '../mode
 import { SmallItem } from '../model/SmallItem';
 import { LargeItem } from '../model/LargeItem';
 
+import { mapToJson } from "../utils/helpers";
+
 export function game(socket, model: Game, io) {
+
+  socket.on("save", function () {
+    var fs = require('fs');
+    let tempData = fs.readFileSync('db.json')
+    let data = JSON.parse(tempData);
+
+    const gameName = model.getName();
+    const game = {};
+    game['name'] = gameName;
+    game['difficulty'] = model.difficulty;
+    game['numOfDesiredPlayers'] = model.numOfDesiredPlayers;
+    game['castle'] = JSON.stringify(model.getCastle());
+    game['fogs'] = mapToJson(model.getFogs());
+    game['heros'] = JSON.stringify(Array.from(model.getHeros().values()));
+    game['farmers'] = JSON.stringify(model.getFarmers());
+    game['monsters'] = JSON.stringify(Array.from(model.getMonsters().values()));
+    game['monstersInCastle'] = JSON.stringify(model.getMonstersInCastle());
+    game['endOfGame'] = model.getEndOfGameState();
+    game['eventDeck'] = JSON.stringify(model.getEventDeck());
+    game['activeEvents'] = JSON.stringify(model.getActiveEvents());
+    game['nextDayFirstHero'] = model.nextDayFirstHero;
+    game['currPlayersTurn'] = model.currPlayersTurn;
+    game['activeHeros'] = JSON.stringify(model.getActiveHeros());
+    game['regions'] = JSON.stringify(model.getRegions());
+    game['prince'] = JSON.stringify(model.getPrince());
+    game['narrator'] = JSON.stringify(model.getNarrator(),["legendPosition"])
+
+    if (!data.games) {
+      data['games'] = {}
+    }
+    data['games'][gameName] = game;
+    // console.log(data);
+    fs.writeFileSync("db.json", JSON.stringify(data, null, 1));
+  })
+
+  socket.on("getGameData", function (callback) {
+    // im sorry for whoever will have to read this. We're too tight on time.
+    const maps = ["monsters", "players", "heroList", "fogs"]
+    let tempModel = {};
+    Object.keys(model).forEach((key) => {
+      if (maps.includes(key)) { // convert maps to arrays so that socket can pass them.
+        tempModel[key] = Array.from(model[key]);
+      } else
+        tempModel[key] = model[key];
+    });
+    // acui: I'm sorry for this hack, used to get the order of heroes entering the game
+    tempModel["startGamePos"] = model.gameStartHeroPosition;
+    model.gameStartHeroPosition += 1;
+    callback(tempModel)
+  })
 
   socket.on("moveRequest", function (id, callback) {
     id = +id // turning Id from string to number
@@ -26,7 +78,8 @@ export function game(socket, model: Game, io) {
         || hero.getFreeMoves() > 0
         if (regionID === id && canMove) { // successful move
           let targetRegion: Region = model.getRegions()[id];
-
+          // Check if the move kills any carried farmers
+          killFarmersOfHeroes(id, hero);
           //if event 26 is active and it is your 8th hour, move freely
           if(hero.getTimeOfDay() == 8 && event26){
             hero.freeMoveTo(targetRegion)
@@ -73,7 +126,8 @@ export function game(socket, model: Game, io) {
     console.log(hero.getNumPrinceMoves());
 
     if (hero !== undefined) {
-      var currPrinceRegion: Region = model.getPrince().getRegion();
+      if (model.getPrince() == null) return;
+      var currPrinceRegion: Region = model.getPrince()!.getRegion();
       var adjPrinceRegions: Array<number> = currPrinceRegion.getAdjRegionsIds()
       
       for (var regionID of adjPrinceRegions) {
@@ -81,7 +135,7 @@ export function game(socket, model: Game, io) {
         if (regionID === id && timeLeft) { // successful move
           let targetRegion: Region = model.getRegions()[id];
 
-          model.getPrince().moveTo(targetRegion);
+          model.getPrince()!.moveTo(targetRegion);
           hero.movePrince();
 
           socket.broadcast.emit("updateMovePrinceRequest", hero.getKind(), id, hero.getNumPrinceMoves())
@@ -123,12 +177,12 @@ export function game(socket, model: Game, io) {
     if (hero !== undefined) {
       // if the hero's tile is not the same as the farmer's tile, return
       if (hero.getRegion().getID() != tileID) return;
-      region = hero.pickupFarmer();
-      console.log("pickup farmer", region)
+      let success = hero.pickupFarmer();
+      // console.log("pickup farmer", region)
 
-      if (region !== undefined) {
-        socket.broadcast.emit("destroyFarmer", region.getID());
-        callback(region.getID());
+      if (success) {
+        socket.broadcast.emit("destroyFarmer", hero.getRegion().getID());
+        callback();
       }
     }
   });
@@ -153,35 +207,171 @@ export function game(socket, model: Game, io) {
     }
   });
 
+  function killFarmersOnTile(tileID: number) {
+    let numKilled = model.killFarmersOnTile(tileID);
+    for (let i = 0; i < numKilled; i++) {
+      console.log("killed farmer on tile", tileID);
+      socket.emit("destroyFarmer", tileID);
+      socket.broadcast.emit("destroyFarmer", tileID);
+    }
+  }
 
-    socket.on("advanceNarrator", function (callback) {
-        var nar = model.getNarrator();
-        // check if position of narrator is already at N
-        if (nar.getLegendPosition() === 13) {
-            nar.checkEndGame()
-        }
-        else {
-            nar.advance();
-        }
-        
-        // doesn't work when more than 1 player. advances twice than desired
-        callback(nar.getLegendPosition());
-        socket.broadcast.emit("updateNarrator", nar.getLegendPosition())
-        }
-    );
+  function killFarmersOfHeroes(tileID: number, hero: Hero | null) {
+    let heroes: HeroKind[] = model.killFarmersOfHeroes(tileID, hero);
+    heroes.forEach(hk => {
+      console.log("killed farmers of", hk);
+      socket.emit("killHeroFarmers", hk);
+      socket.broadcast.emit("killHeroFarmers", hk);
+    })
+  }
 
 
-  socket.on("merchant", function (callback) {
+  /*
+  * NARRATOR RELATED
+  */
+  socket.on("getNarratorPosition", function(callback) {
+    callback(model.getNarrator().getLegendPosition());
+  })
+
+  socket.on("placeRuneStoneLegend", function() {
+    let runestonePos = model.getNarrator().setRunestoneLegendPos();
+    let narratorPos = model.getNarrator().advance();
+
+    socket.emit("updateNarrator", narratorPos, runestonePos)
+    socket.broadcast.emit("updateNarrator", narratorPos, runestonePos)
+  })
+
+  // TODO: FOR TESTING ONLY, REMOVE AFTER
+  socket.on("advanceNarrator", function() {
+    advanceNarrator();
+  })
+
+  function advanceNarrator() {
+    // Updates the backend model based on new narrator pos and emits to all clients
+    var newMonsters = model.advanceNarrator();
+    var narratorPos = model.getNarrator().getLegendPosition();
+    console.log("backend advanceNarrator", narratorPos, newMonsters)
+
+    // Emit new monsters back to clients if needed
+    let runestoneLegendPos = model.getNarrator().getRunestoneLegendPos();
+    if (narratorPos==runestoneLegendPos || narratorPos==2 || narratorPos==6) {
+      for (let m of newMonsters) {
+        // Check for killing farmers on new monster spawn tiles
+        killFarmersOnTile(m.getTileID());
+        killFarmersOfHeroes(m.getTileID(), null);
+        socket.emit("addMonster", m.getType(), m.getTileID(), m.getName());
+        socket.broadcast.emit("addMonster", m.getType(), m.getTileID(), m.getName());
+      }
+    }
+    // Update shields
+    var shieldsRemaining = model.getCastle().getShields();
+    socket.broadcast.emit('updateShields', shieldsRemaining);
+    socket.emit('updateShields', shieldsRemaining);
+
+    // Pass back the runestone locations for the runestone narrator event, don't otherwise
+    if (narratorPos == runestoneLegendPos) {
+      let runestoneLocs = model.getNarrator().getRunestoneLocations()
+      // Emit hidden versions of the runestones to active TileWindows on the clients
+      let tileIDs: string[] = [];
+      runestoneLocs.forEach(stoneObj => {
+        Object.entries(stoneObj).forEach(([tileID, stone]) => {
+          tileIDs.push(tileID);
+          socket.emit("updateDropItemTile", tileID, stone, "smallItem")
+          socket.broadcast.emit("updateDropItemTile", tileID, stone, "smallItem")
+        })
+      })
+      // Emit the tile locations of the runestones to all clients
+      socket.emit("updateNarrator", narratorPos, -1, tileIDs)
+      socket.broadcast.emit("updateNarrator", narratorPos, -1, tileIDs)
+    }
+    else if (narratorPos === 13) {
+        console.log("narrator controller at N")
+        let win = model.narratorN(); // check win conditions
+        console.log("server game controller win=model.narratorN(): ", win);
+        socket.emit("updateNarrator", narratorPos, win);
+        socket.broadcast.emit("updateNarrator", narratorPos, win);  
+    }
+    else {
+      socket.emit("updateNarrator", narratorPos)
+      socket.broadcast.emit("updateNarrator", narratorPos)  
+    }
+  }
+
+  socket.on("revealRunestone", function(tileID: number, stoneName: string) {
+    let success = false;
+    let heroId = socket.conn.id;
+    let hero = model.getHero(heroId);
+    success = model.revealRunestone(hero, tileID, stoneName);
+    if (success) {
+      let realStone = stoneName.slice(0, -2);
+      socket.emit("updatePickupItemTile", tileID, stoneName, "smallItem")
+      socket.broadcast.emit("updatePickupItemTile", tileID, stoneName, "smallItem")
+      socket.emit("updateDropItemTile", tileID, realStone, "smallItem")
+      socket.broadcast.emit("updateDropItemTile", tileID, realStone, "smallItem")
+    }
+  })
+  //////////////////////////////////////////////////
+
+
+  socket.on("merchant", function (item:string, callback) {
     let success = false;
     var heroId = socket.conn.id;
     let hero = model.getHero(heroId);
 
     if (hero !== undefined) {
-      success = hero.buyStrength();
+      switch(item){
+        case "strength":
+          success = hero.buyStrength();
+          break;
+        case "helm":
+          success = hero.buyHelm();
+          break;
+        case "wine":
+          success = hero.buyWine();
+          break;
+        case "telescope":
+          success = hero.buyTelescope();
+          break;
+        case "shield":
+          success = hero.buyShield();
+          break;
+        case "falcon":
+          success = hero.buyFalcon();
+          break;
+        case "bow":
+          success = hero.buyBow();
+          break;
+      }
     }
 
     if (success) {
       callback();
+    }
+  });
+
+  socket.on("getNumBrews", function (callback) {
+    var numBrews = model.getWitch()?.getNumBrews();
+
+    if (numBrews !== undefined) {
+      callback(numBrews)
+    }
+  });
+
+  socket.on("purchaseBrew", function () {
+    let success;
+    var heroId = socket.conn.id;
+    let hero = model.getHero(heroId);
+
+    success = model.getWitch()?.purchaseBrew(hero);
+    if (success) {
+      // Tell active hero windows to update with new brew and reduced gold
+      socket.emit("updatePickupItemHero", hero.getKind(), "brew", "smallItem");
+      socket.broadcast.emit("updatePickupItemHero", hero.getKind(), "brew", "smallItem");
+      socket.broadcast.emit("updateDropGold", hero.getKind(), model.getWitch()?.getBrewPrice());
+      socket.emit("updateDropGold", hero.getKind(), model.getWitch()?.getBrewPrice());
+      // Tell witch window to update with new numBrews
+      socket.emit("updateNumBrews", model.getWitch()?.getNumBrews());
+      socket.broadcast.emit("updateNumBrews", model.getWitch()?.getNumBrews());
     }
   });
 
@@ -214,12 +404,46 @@ export function game(socket, model: Game, io) {
     let heroId = socket.conn.id;
     let hero = model.getHero(heroId);
     if (hero != undefined && tile == hero.getRegion().getID()) {
-      let { success, id, event } = model.useFog(fogType, +tile);
+      let { success, id, event, newTile, createSuccess } = model.useFog(fogType, +tile);
       if (success) {
-        if (fogType === Fog.Gor) {
-          io.of("/" + model.getName()).emit("addMonster", MonsterKind.Gor, tile, id);
-        }
-        if(fogType === Fog.EventCard){
+        if (fogType === Fog.Gor && createSuccess) {
+          // Check for killed monsters on monster spawn tile
+          killFarmersOnTile(newTile!);
+          killFarmersOfHeroes(newTile!, null);
+          io.of("/" + model.getName()).emit("addMonster", MonsterKind.Gor, newTile, id);
+        } else if (fogType === Fog.Wineskin) {
+          if (createSuccess) {
+            // Player was given the wineskin
+            socket.broadcast.emit("updatePickupItemHero", hero.getKind(), SmallItem.Wineskin, "smallItem");
+            socket.emit("updatePickupItemHero", hero.getKind(), SmallItem.Wineskin, "smallItem");
+          } else {
+            // Wineskin was placed on the tile
+            socket.broadcast.emit("updateDropItemTile", hero.getRegion().getID(), SmallItem.Wineskin, "smallItem");
+            socket.emit("updateDropItemTile", hero.getRegion().getID(), SmallItem.Wineskin, "smallItem");
+          }
+        } else if (fogType == Fog.WitchFog) {
+          if (createSuccess) {
+            // Player was given the brew
+            socket.broadcast.emit("updatePickupItemHero", hero.getKind(), SmallItem.Brew, "smallItem");
+            socket.emit("updatePickupItemHero", hero.getKind(), SmallItem.Brew, "smallItem");
+          } else {
+            // Brew was placed on the tile
+            socket.broadcast.emit("updateDropItemTile", hero.getRegion().getID(), SmallItem.Brew, "smallItem");
+            socket.emit("updateDropItemTile", hero.getRegion().getID(), SmallItem.Brew, "smallItem");
+          }
+          // Add Gor carrying the herb
+          let m = model.addMonster(MonsterKind.Gor, newTile!, "gor_herb")
+          if (m != null) {
+            socket.emit("addMonster", m.getType(), m.getTileID(), m.getName());
+            socket.broadcast.emit("addMonster", m.getType(), m.getTileID(), m.getName());
+          }
+          // Inform clients of position of herb
+          socket.broadcast.emit("revealHerb", newTile);
+          socket.emit("revealHerb", newTile);
+          // Inform clients of position of witch
+          socket.broadcast.emit("revealWitch", tile);
+          socket.emit("revealWitch", tile);
+        } else if (fogType === Fog.EventCard) {
           if(event != null){
             //will have to add blockable events once shields are implemented
             io.of("/" + model.getName()).emit("newEvent", event);
@@ -269,6 +493,10 @@ export function game(socket, model: Game, io) {
         socket.broadcast.emit("destroyFog", tile);
       }
 
+      // Update shields
+      var shieldsRemaining = model.getCastle().getShields();
+      socket.broadcast.emit('updateShields', shieldsRemaining);
+      socket.emit('updateShields', shieldsRemaining);
     }
   });
 
@@ -380,7 +608,7 @@ export function game(socket, model: Game, io) {
           break;
       }
     }
-    // console.log("successStatus:", successStatus)
+
     if (successStatus) {
       // Tell any active TileWindows of all clients to update
       socket.broadcast.emit("updateDropItemTile", hero.getRegion().getID(), name, itemType);
@@ -395,29 +623,22 @@ export function game(socket, model: Game, io) {
 
   socket.on('bind hero', function (heroType, callback) {
     let id = socket.conn.id;
-    const success = model.bindHero(id, heroType);
-
+    const success = model.getHeros().size < model.numOfDesiredPlayers && model.bindHero(id, heroType);
     if (success) {
-      let remaining = model.getAvailableHeros();
-      let heros = {
-        taken: ["archer", "warrior", "mage", "dwarf"].filter(f => !remaining.toString().includes(f)),
-        remaining: remaining
-      }
-      socket.broadcast.emit("updateHeroList", heros)
-      callback(heros);
+      model.readyplayers += 1;
+      socket.broadcast.emit("updateHeroList", heroType) // destroy it only for other clients
+      callback();
     }
   });
 
-  socket.on("getBoundHeros", (callback) => {
-    let remaining = model.getAvailableHeros();
-    let heros = {
-      taken: ["archer", "warrior", "mage", "dwarf"].filter(f => !remaining.toString().includes(f)),
-      remaining: remaining
-    }
+  socket.on("getAvailableHeros", (callback) => {
+    const alreadyBound = Array.from(model.getHeros().values()).map(h => h.hk);
+    const heros = model.getAvailableHeros().map(h => h.hk).filter((hk) => !alreadyBound.includes(hk))
+    console.log("getAvailableHeros: ", heros)
     callback(heros);
   });
 
-  socket.on('getAdjacentTiles', function(centraltileid, callback) {
+  socket.on('getAdjacentTiles', function (centraltileid, callback) {
     var region = model.getRegions()[centraltileid]
     var adjacentregions = region.getAdjRegionsIds()
     callback(adjacentregions)
@@ -425,7 +646,11 @@ export function game(socket, model: Game, io) {
 
   socket.on('disconnect', function () {
     console.log('user disconnected', socket.conn.id, ' in game.');
-    // model.removePlayer(socket.conn.id);
+    const hk = model.getHkFromConnID(socket.conn.id);
+    const success = model.removePlayer(socket.conn.id);
+    if(success){
+      socket.broadcast.emit("receivePlayerDisconnected", hk);
+    }
   });
 
   socket.on("send message", function (sent_msg, callback) {
@@ -448,19 +673,9 @@ export function game(socket, model: Game, io) {
     socket.broadcast.emit('removeObjListener', object)
   })
 
-  socket.on('playerReady', function () {
-    model.readyplayers += 1;
-    socket.broadcast.emit('recieveDesiredPlayerCount', model.getNumOfDesiredPlayers())
-  })
-
-  socket.on('getReadyPlayers', function () {
-    socket.broadcast.emit('sendReadyPlayers', model.readyplayers)
-    socket.emit('sendReadyPlayers', model.readyplayers)
-  })
-
-  socket.on('getDesiredPlayerCount', function () {
-    socket.broadcast.emit('recieveDesiredPlayerCount', model.getNumOfDesiredPlayers())
-    socket.emit('recieveDesiredPlayerCount', model.getNumOfDesiredPlayers())
+  socket.on('allPlayersReady', function (callback) {
+    console.log(model.readyplayers, model.getNumOfDesiredPlayers())
+    callback(model.readyplayers === model.getNumOfDesiredPlayers());
   })
 
   socket.on("getHeros", function (callback) {
@@ -472,7 +687,6 @@ export function game(socket, model: Game, io) {
 
   socket.on("getHeroAttributes", function (type, callback) {
     let data = {};
-    let hero: Hero;
 
     model.getHeros().forEach((hero, key) => {
       if (type === "mage" && hero.hk === HeroKind.Mage) {
@@ -513,16 +727,11 @@ export function game(socket, model: Game, io) {
    * COLLAB DECISION
    */
   // Submitting a decision
-  socket.on('collabDecisionSubmit', function (resAllocated, resNames, involvedHeroes) {
-    // Sets the first player at the beginning of the game
-    if (model.getCurrPlayersTurn() == HeroKind.None) {
+  socket.on('sendEndCollab', function(resAllocated, resNames, involvedHeroKinds){
+    console.log("Recieved sendEndCollab")
+     // Sets the first player at the beginning of the game
+     if (model.getCurrPlayersTurn() == HeroKind.None) {
       model.setCurrPlayersTurn(model.getHkFromConnID(socket.conn.id));
-    }
-    // Check that numAccepts equals total num of players-1
-    if (model.numAccepts != involvedHeroes.length - 1) {
-      // Failure: need more accepts before valid submit
-      socket.emit('sendDecisionSubmitFailure');
-      return;
     }
     // Success: distribute accordingly
     let modelHeros = model.getHeros();
@@ -537,8 +746,7 @@ export function game(socket, model: Game, io) {
             currHero.updateGold(resAllocated[heroTypeString][i]);
           }
           else if (resNames[i] == "wineskin") {
-            // TODO: actually give the hero the wineskin (use smallItems API)
-            currHero?.setWineskin(resAllocated[heroTypeString][i] > 0);
+            // currHero?.setWineskin(resAllocated[heroTypeString][i] > 0);
             for (let j = 0; j < resAllocated[heroTypeString][i]; j++) {
               currHero.pickUpSmallItem(currHero.getRegion().getID(), SmallItem.Wineskin);
             }
@@ -553,85 +761,18 @@ export function game(socket, model: Game, io) {
         // console.log("Updated", heroTypeString, "gold:", currHero?.getGold(), "wineskin:", currHero?.getWineskin())
       }
     }
-    // Reset decision related state
-    model.numAccepts = 0;
-
-    socket.broadcast.emit('sendDecisionSubmitSuccess')
-    socket.emit('sendDecisionSubmitSuccess')
+    io.of("/" + model.getName()).emit('receiveEndCollab', involvedHeroKinds);
   })
-  socket.on('individualDecisionSubmit', function (resAllocated, resNames, heroKind) {
-    console.log('individualDecisionSubmit')
-    // Sets the first player at the beginning of the game
-    if (model.getCurrPlayersTurn() == HeroKind.None) {
-      model.setCurrPlayersTurn(model.getHkFromConnID(socket.conn.id));
-    }
-    // Success: distribute accordingly
-    let modelHeros = model.getHeros();
-    for (let hero of modelHeros.values()) {
-      if(!hero.getKind() == heroKind){
-        continue
-      }
-      let heroTypeString = hero.getKind().toString();
-      // if the hero was involved in the collab decision, update their resources
-      if (resAllocated[heroTypeString]) {
-        let currHero = hero;
-        // Iterate through resNames and map index to amount specified in resAllocated
-        for (let i = 0; i < resNames.length; i++) {
-          if (resNames[i] == "gold") {
-            currHero.updateGold(resAllocated[heroTypeString][i]);
-          }
-          else if (resNames[i] == "wineskin") {
-            // TODO: actually give the hero the wineskin (use smallItems API)
-            currHero?.setWineskin(resAllocated[heroTypeString][i] > 0);
-            for (let j = 0; j < resAllocated[heroTypeString][i]; j++) {
-              currHero.pickUpSmallItem(currHero.getRegion().getID(), SmallItem.Wineskin);
-            }
-          }
-          else if (resNames[i] == 'will') {
-            currHero?.setWill(resAllocated[heroTypeString][i])
-          }
-          else if(resNames[i] == '-Strength'){
-            currHero?.setStrength(-1*resAllocated[heroTypeString][i])
-          }
-          else if(resNames[i] == "Shield"){
-            for (let j = 0; j < resAllocated[heroTypeString][i]; j++) {
-              currHero.getRegion().addItem(LargeItem.Shield)
-              currHero.pickUpLargeItem(currHero.getRegion().getID(), LargeItem.Shield);
-            }
-          }
-          else if(resNames[i] == "Wineskin"){
-            currHero?.setWineskin(resAllocated[heroTypeString][i] > 0);
-            for (let j = 0; j < resAllocated[heroTypeString][i]; j++) {
-              currHero.getRegion().addItem(SmallItem.Wineskin)
-              currHero.pickUpSmallItem(currHero.getRegion().getID(), SmallItem.Wineskin);
-            }
-          }
-          else if(resNames[i] == "Falcon"){
-            for (let j = 0; j < resAllocated[heroTypeString][i]; j++) {
-              currHero.getRegion().addItem(LargeItem.Shield)
-              currHero.pickUpLargeItem(currHero.getRegion().getID(), LargeItem.Shield);
-            }
-          }
-          else if(resNames[i] == "Helm"){
-            for (let j = 0; j < resAllocated[heroTypeString][i]; j++) {
-              currHero.getRegion().addItem("helm")
-              currHero.pickUpHelm(currHero.getRegion().getID());
-            }
-          }
-
-        }
-        // console.log("Updated", heroTypeString, "gold:", currHero?.getGold(), "wineskin:", currHero?.getWineskin())
-      }
-    }
-
-    socket.broadcast.emit('sendIndividualSubmitSuccess', model.getHkFromConnID(socket.conn.id))
-    socket.emit('sendIndividualSubmitSuccess', model.getHkFromConnID(socket.conn.id))
+  // increasing/decreasing resources
+  socket.on('sendIncResource', function(resourceHeroKind, resourceIndex){
+    io.of("/" + model.getName()).emit('receiveIncResource', resourceHeroKind, resourceIndex, model.getHero(socket.conn.id).getKind());
   })
-  // Accepting a decision
-  socket.on('collabDecisionAccept', function () {
-    model.numAccepts += 1;
-    // Tell the client that accepted to update their status
-    socket.emit('sendDecisionAccepted', model.numAccepts)
+  socket.on('sendDecResource', function(resourceHeroKind, resourceIndex){
+    io.of("/" + model.getName()).emit('receiveDecResource', resourceHeroKind, resourceIndex, model.getHero(socket.conn.id).getKind());
+  })
+  // Accepting a collab
+  socket.on('sendAccept', function(heroKind){
+    io.of("/" + model.getName()).emit('receiveAccept', heroKind);
   })
   // socket.on('collabDecisionAccept', function () {
   //   model.numAccepts += 1;
@@ -659,9 +800,19 @@ export function game(socket, model: Game, io) {
     // console.log(convMonsters);
     socket.broadcast.emit('sendKilledMonsters', monstername);
     //socket.emit('sendKilledMonsters', monstername);
+    // If the monster was carrying the herb, the herb is dropped on the tile
+    if (monstername == "gor_herb") {
+      monsterregion.addItem("herb");
+      socket.emit("updateDropItemTile", monstertile, "herb", "smallItem");
+      socket.broadcast.emit("updateDropItemTile", monstertile, "herb", "smallItem");
+      // remove the herb image from GameScene
+      socket.emit("removeHerb");
+      socket.broadcast.emit("removeHerb");
+    }
+    advanceNarrator();
   })
 
-  socket.on('heroRoll', function(bow, callback) {
+  socket.on('heroRoll', function (bow, callback) {
     let heroId = socket.conn.id
     var hero = model.getHero(heroId)
     var roll = hero.roll(bow)
@@ -673,7 +824,7 @@ export function game(socket, model: Game, io) {
     socket.broadcast.emit('receiveAlliedRoll', herokind, roll, str)
   })
 
-  socket.on('monsterRoll', function(m, callback) {
+  socket.on('monsterRoll', function (m, callback) {
     //the boolean parameter in the callback is to determine if the bow special ability will be used for the hero roll.
     var heroId = socket.conn.id;
     let hero = model.getHero(heroId);
@@ -692,7 +843,7 @@ export function game(socket, model: Game, io) {
       callback(monsterroll, true)
     }
     //if hero is archer
-    else if (hero.getKind() == HeroKind.Archer ){
+    else if (hero.getKind() == HeroKind.Archer) {
       if (hero.getRegion().getAdjRegionsIds().includes(monsterregion) || heroregion == monsterregion) {
         let monsterroll = monster!.rollDice()
         callback(monsterroll, false)
@@ -714,7 +865,12 @@ export function game(socket, model: Game, io) {
     //dont have to handle monster death here. a seperate message gets sent from fight window upon death.
   })
 
-  socket.on('doDamageToHero', function (thehero, damage) {
+  socket.on('resetMonsterStats', function(name) {
+    let monster = model.getMonsters().get(name)
+    monster?.resetWill()
+  })
+
+  socket.on('doDamageToHero', function (thehero, damage, callback) {
     let modelHeros = model.getHeros();
     for (let hero of modelHeros.values()) {
       let heroTypeString = hero.getKind().toString();
@@ -726,21 +882,50 @@ export function game(socket, model: Game, io) {
           //hero death. remove them from all battles please.
           hero.setStrength(-1);
           hero.resetWill()
+          if (callback != null) {
+            callback()
+          }
         }
       }
     }
+  })
+
+  socket.on('continueFightRequest', function(herotype) {
+    var heroid = model.getIDsByHeroname([herotype])
+    console.log('continuefightrequest', herotype)
+    for (let playerid of heroid) {
+      socket.broadcast.to(`/${model.getName()}#${playerid}`).emit("continueFightPrompt")
+    }
+  })
+
+  socket.on('sendContinueFight', function(response, herokind) {
+    console.log('in sendcontinuefight!!!!!!!!!', response, herokind)
+    socket.broadcast.emit('receiveContinueFight', response, herokind)
+  })
+
+  socket.on('forceContinueFight', function(herokind, monstername) {
+    var heroid = model.getIDsByHeroname([herokind])
+    model.setCurrPlayersTurn(herokind as HeroKind)
+    for (let playerid of heroid) {
+      socket.broadcast.to(`/${model.getName()}#${playerid}`).emit("forceTurn", monstername)
+      socket.broadcast.to(`/${model.getName()}#${playerid}`).emit("forceFight", monstername)
+    }
+  })
+
+  socket.on('updateHeroTracker', function(hero) {
+    socket.broadcast.emit('receiveUpdateHeroTracker',hero)
   })
 
   socket.on('getHerosInRange', function (id, callback) {
     var centraltile = model.getRegions()[id]
     var centraltileid = centraltile.getID()
     var adjregionids = centraltile.getAdjRegionsIds()
-    let dwarftile: number = -1 
+    let dwarftile: number = -1
     var dwarfbow = false
-    let archertile: number = -1 
-    let magetile: number = -1  
+    let archertile: number = -1
+    let magetile: number = -1
     var magebow = false
-    let warriortile: number = -1 
+    let warriortile: number = -1
     var warriorbow = false
 
     model.getHeros().forEach((hero, key) => {
@@ -782,7 +967,7 @@ export function game(socket, model: Game, io) {
       }
     });
 
-    var heroeswithinrange : string[] = []
+    var heroeswithinrange: string[] = []
     if (centraltileid == dwarftile || (adjregionids.includes(dwarftile) && dwarfbow)) {
       heroeswithinrange.push('dwarf')
     }
@@ -822,6 +1007,23 @@ export function game(socket, model: Game, io) {
     }
   })
 
+  socket.on('sendShieldPrompt', function(hero, damaged_shield, potentialdamage, yourself) {
+    console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
+    var otherplayer_id = model.getIDsByHeroname([hero])
+    if (yourself) {
+      socket.emit("receiveShieldPrompt", damaged_shield, potentialdamage)
+    }
+    else {
+      for (let playerid of otherplayer_id) {
+        socket.broadcast.to(`/${model.getName()}#${playerid}`).emit("receiveShieldPrompt", damaged_shield, potentialdamage)
+      }
+    }
+  })
+
+  socket.on('sendShieldResp', function(herotype, resp) {
+    socket.broadcast.emit('receiveShieldResp', herotype, resp)
+  })
+
 
   /*
   * END DAY
@@ -843,8 +1045,7 @@ export function game(socket, model: Game, io) {
     var nextPlayer: HeroKind;
     if (model.getActiveHeros().length == 1) {
       //remove active Events
-      model.removeDailyActiveEvents()
-      model.setNextDayFirstHero(socket.conn.id);
+      model.clearActiveEvents()
 
       //draw and apply new event
       let event = model.drawCard()
@@ -868,6 +1069,9 @@ export function game(socket, model: Game, io) {
       model.resetActiveHeros();
       // Tell all clients to move monsters and refresh wells
       callback(true);
+
+      // TODO NARRATOR: this should probably trigger after the post-fight collab is completed instead
+      advanceNarrator();
     } else {
       // If not the last hero, then don't trigger end of day actions and pass turn to the
       // next hero by rank as normal
@@ -894,17 +1098,20 @@ export function game(socket, model: Game, io) {
   })
 
   socket.on('moveMonstersEndDay', function () {
-    var shieldsLost = model.moveMonsters();
+    var shieldsRemaining = model.moveMonsters();
     // Convert monsters Map into passable object
     let convMonsters = {};
     for (let m of Array.from(model.getMonsters().values())) {
       convMonsters[m.name] = m.getTileID();
+      // Check for killing farmers on new positions of monsters
+      killFarmersOnTile(m.getTileID());
+      killFarmersOfHeroes(m.getTileID(), null);
     }
     socket.broadcast.emit('sendUpdatedMonsters', convMonsters);
     socket.emit('sendUpdatedMonsters', convMonsters);
 
-    socket.broadcast.emit('updateShields', shieldsLost, false);
-    socket.emit('updateShields', shieldsLost, false);
+    socket.broadcast.emit('updateShields', shieldsRemaining);
+    socket.emit('updateShields', shieldsRemaining);
 
     // Evaluate end of game state - currently only handles end of game due to loss of shields
     if (model.getEndOfGameState()) {
@@ -939,12 +1146,12 @@ export function game(socket, model: Game, io) {
   /////////////////////////
   // ITEM STUFF
   ////////////////////////
-  
-  socket.on('getHeroItems', function(herokind, callback) {
+
+  socket.on('getHeroItems', function (herokind, callback) {
     var thehero: Hero
     model.getHeros().forEach((hero, key) => {
       console.log(hero.getKind())
-      if (hero.getKind() == herokind){
+      if (hero.getKind() == herokind) {
         thehero = hero
       }
     })
@@ -952,16 +1159,17 @@ export function game(socket, model: Game, io) {
     callback(heroItemDict)
   })
 
-  socket.on('consumeItem', function(item) {
+  socket.on('consumeItem', function (item) {
     var heroID = socket.conn.id
     let hero = model.getHero(heroID);
+    console.log('consuming item!!!!!!!!!!', hero.getKind(), item)
     hero.consumeItem(item)
   })
 
-  socket.on('useWineskin', function(halforfull, callback) {
+  socket.on('useWineskin', function (halforfull, callback) {
     var heroID = socket.conn.id
     let hero = model.getHero(heroID);
-    if (halforfull == 'full'){
+    if (halforfull == 'full') {
       hero.consumeItem('wineskin')
     }
     else {
@@ -978,36 +1186,36 @@ export function game(socket, model: Game, io) {
   // TRADE STUFF
   /////////////////////
 
-  socket.on('sendTradeInvite', function(host, invitee) {
+  socket.on('sendTradeInvite', function (host, invitee) {
     var invitee_id = model.getIDsByHeroname([invitee])
     for (let playerid of invitee_id) {
       socket.broadcast.to(`/${model.getName()}#${playerid}`).emit("receiveTradeInvite", host, invitee)
     }
   })
 
-  socket.on('sendTradeOfferChanged', function(otherplayer, itemindex) {
+  socket.on('sendTradeOfferChanged', function (otherplayer, itemindex) {
     var otherplayer_id = model.getIDsByHeroname([otherplayer])
     for (let playerid of otherplayer_id) {
       socket.broadcast.to(`/${model.getName()}#${playerid}`).emit("receiveTradeOfferChanged", itemindex)
     }
   })
 
-  
-  socket.on('submitOffer', function(youroffer) {
+
+  socket.on('submitOffer', function (youroffer) {
     console.log(youroffer)
     socket.broadcast.emit('receiveOffer', youroffer)
   })
 
-  socket.on('executeTrade', function(herokind, items_given, items_gained) {
+  socket.on('executeTrade', function (herokind, items_given, items_gained) {
     var thehero: Hero
 
     //deleting given items
     console.log('xxxxxxxxxxxxx')
     console.log(Object.values(SmallItem))
-    console.log(herokind,items_given, items_gained)
+    console.log(herokind, items_given, items_gained)
     console.log('xxxxxxxxxxxxx')
     model.getHeros().forEach((hero, key) => {
-      if (hero.getKind() == herokind){
+      if (hero.getKind() == herokind) {
         thehero = hero
       }
     })
@@ -1043,14 +1251,16 @@ export function game(socket, model: Game, io) {
     switch(str){
       case "wineskin" : return SmallItem.Wineskin
       case "half_wineskin": return SmallItem.HalfWineskin
-      case "telescope":return SmallItem.Telescope
-      case "brew":return SmallItem.Brew
+      case "telescope": return SmallItem.Telescope
+      case "brew": return SmallItem.Brew
       case "half_brew": return SmallItem.HalfBrew
       case "herb": return SmallItem.Herb
       case "blue_runestone": return SmallItem.BlueRunestone
       case "yellow_runestone": return SmallItem.YellowRunestone
       case "green_runestone": return SmallItem.GreenRunestone
-      default: throw Error("String does not correspond to a SmallItem");
+      default:
+        console.log(`String ${str} does not correspond to a SmallItem`);
+        return SmallItem.None
     }
   }
 
@@ -1061,19 +1271,21 @@ export function game(socket, model: Game, io) {
       case "shield": return LargeItem.Shield
       case "bow": return LargeItem.Bow
       case "None": return LargeItem.Empty
-      default: throw Error("String does not correspond to a LargeItem");
+      default: 
+        console.log(`String ${str} does not correspond to a LargeItem`);
+        return LargeItem.Empty;
     }
   }
 
-  socket.on('tradeDone', function() {
+  socket.on('tradeDone', function () {
     socket.broadcast.emit('endTrade')
   })
 
-  socket.on('validateTrade', function(hero1, hero2, hero1receives, hero2receives, callback) {
+  socket.on('validateTrade', function (hero1, hero2, hero1receives, hero2receives, callback) {
     var hero1ref: Hero
     var hero2ref: Hero
     model.getHeros().forEach((hero, key) => {
-      if (hero.getKind() == hero1){
+      if (hero.getKind() == hero1) {
         hero1ref = hero
       }
       if (hero.getKind() == hero2) {
@@ -1081,30 +1293,30 @@ export function game(socket, model: Game, io) {
       }
     })
 
-    if (hero1receives['helm']!='None' && hero2receives['helm'] == 'None' && hero1ref!.getItemDict['helm'] != 'false') {
+    if (hero1receives['helm'] != 'None' && hero2receives['helm'] == 'None' && hero1ref!.getItemDict['helm'] != 'false') {
       console.log('xxxxxxxxxxxxxxxxxxxxxx1')
       callback('fail')
     }
-    if (hero2receives['helm']!='None' && hero1receives['helm'] == 'None' && hero2ref!.getItemDict['helm'] != 'false') {
+    if (hero2receives['helm'] != 'None' && hero1receives['helm'] == 'None' && hero2ref!.getItemDict['helm'] != 'false') {
       console.log('xxxxxxxxxxxxxxxxxxxxxx2')
       callback('fail')
     }
 
-    if (hero1receives['largeItem']!='None' && hero2receives['largeItem'] == 'None' && hero1ref!.getItemDict['largeItem'] != 'empty') {
+    if (hero1receives['largeItem'] != 'None' && hero2receives['largeItem'] == 'None' && hero1ref!.getItemDict['largeItem'] != 'empty') {
       console.log('xxxxxxxxxxxxxxxxxxxxxx3')
       callback('fail')
     }
-    if (hero2receives['helm']!='None' && hero1receives['helm'] == 'None' && hero2ref!.getItemDict['helm'] != 'empty') {
+    if (hero2receives['helm'] != 'None' && hero1receives['helm'] == 'None' && hero2ref!.getItemDict['helm'] != 'empty') {
       console.log('xxxxxxxxxxxxxxxxxxxxxx4')
       callback('fail')
     }
 
-    if (hero1receives['smallItems'].length + hero1ref!.getItemDict()['smallItems'].length - hero2receives['smallItems'].length > 3){
+    if (hero1receives['smallItems'].length + hero1ref!.getItemDict()['smallItems'].length - hero2receives['smallItems'].length > 3) {
       console.log('xxxxxxxxxxxxxxxxxxxxxx5')
       callback('fail')
     }
 
-    if (hero2receives['smallItems'].length + hero2ref!.getItemDict()['smallItems'].length - hero1receives['smallItems'].length > 3){
+    if (hero2receives['smallItems'].length + hero2ref!.getItemDict()['smallItems'].length - hero1receives['smallItems'].length > 3) {
       console.log('xxxxxxxxxxxxxxxxxxxxxx6')
       callback('fail')
     }

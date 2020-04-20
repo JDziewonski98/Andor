@@ -18,6 +18,10 @@ export class game {
         return io.connect(BASE_API + `/${name}`);
     }
 
+    public getGameData(callback){
+        this.socket.emit("getGameData", callback);
+    }
+ 
     public bindHeroForSelf(herotype, callback) {
         this.socket.emit("bind hero", herotype, callback)
     }
@@ -26,8 +30,8 @@ export class game {
         this.socket.on("updateHeroList", callback)
     }
 
-    public getBoundHeros(callback){
-        this.socket.emit("getBoundHeros", callback);
+    public getAvailableHeros(callback){
+        this.socket.emit("getAvailableHeros", callback);
     }
 
     public pickupFarmer(tileID: number, callback){
@@ -38,6 +42,14 @@ export class game {
         this.socket.on("destroyFarmer", callback);
     }
 
+    public killHeroFarmers(callback) {
+        this.socket.on("killHeroFarmers", callback);
+    }
+
+    public unsubscribeKillHeroFarmers() {
+        this.socket.off("killHeroFarmers");
+    }
+
     public addFarmer(callback){
         this.socket.on("addFarmer", callback);
     }
@@ -46,8 +58,24 @@ export class game {
         this.socket.emit("dropFarmer", callback);
     }
 
-    public merchant(callback){
-        this.socket.emit("merchant", callback);
+    public merchant(item: string, callback){
+        this.socket.emit("merchant", item, callback);
+    }
+
+    public getNumBrews(callback) {
+        this.socket.emit("getNumBrews", callback);
+    }
+
+    public purchaseBrew() {
+        this.socket.emit("purchaseBrew");
+    }
+
+    public updateNumBrews(callback) {
+        this.socket.on("updateNumBrews", callback);
+    }
+
+    public disconnectUpdateNumBrews() {
+        this.socket.off("updateNumBrews");
     }
     
     // Server uses the passed callback to tell the calling client to update the well
@@ -65,14 +93,35 @@ export class game {
     }
 
 
-    //narrator stuff
-    public advanceNarrator(callback) {
-        this.socket.emit("advanceNarrator", callback);
+    /*
+    * NARRATOR RELATED
+    */
+    public getNarratorPosition(callback) {
+        this.socket.emit("getNarratorPosition", callback);
     }
 
+    // updates ui position of narrator pawn and triggers client-side updates
     public updateNarrator(callback) {
         this.socket.on("updateNarrator", callback);
     }
+
+    public placeRuneStoneLegend() {
+        this.socket.emit("placeRuneStoneLegend");
+    }
+
+    public updateRunestoneLegend(callback) {
+        this.socket.on("updateRunestoneLegend", callback);
+    }
+
+    public revealRunestone(tileID: number, stoneName: string) {
+        this.socket.emit("revealRunestone", tileID, stoneName);
+    }
+
+    // TODO: REMOVE, FOR NARRATOR TESTING ONLY
+    public advanceNarrator() {
+        this.socket.emit("advanceNarrator");
+    }
+    /////////////////////////////
 
     /*
     *   GOLD RELATED
@@ -242,24 +291,8 @@ export class game {
         this.socket.on('removeObjListener', callback)
     }
 
-    public playerReady() {
-        this.socket.emit('playerReady')
-    }
-
-    public getReadyPlayers() {
-        this.socket.emit('getReadyPlayers')
-    }
-
-    public recieveReadyPlayers(callback) {
-        this.socket.on('sendReadyPlayers', callback)
-    }
-
-    public getDesiredPlayerCount() {
-        this.socket.emit('getDesiredPlayerCount')
-    }  
-
-    public recieveDesiredPlayerCount(callback) {
-        this.socket.on('recieveDesiredPlayerCount', callback)
+    public allPlayersReady(callback) {
+        this.socket.emit('allPlayersReady', callback)
     }
 
     public getHeros(callback){
@@ -281,28 +314,51 @@ export class game {
     /*
     * COLLAB DECISIONS
     */
-    // Submitting a decision
-    public collabDecisionSubmit(resAllocated, resNames, involvedHeroes) {
-        this.socket.emit('collabDecisionSubmit', resAllocated, resNames, involvedHeroes)
+    //Initiating new collabs
+    public receiveNewCollab(callback){
+        this.socket.on('receiveNewCollab', callback)
     }
-    public receiveDecisionSubmitSuccess(callback) {
-        this.socket.on('sendDecisionSubmitSuccess', callback)
+    //Sharing info between clients
+    public sendIncResource(resourceHeroKind, resourceIndex){
+        this.socket.emit('sendIncResource', resourceHeroKind, resourceIndex)
+    }
+    public incListener(callback){
+        this.socket.on('receiveIncResource', callback)
+    }
+    public sendDecResource(resourceHeroKind, resourceIndex){
+        this.socket.emit('sendDecResource', resourceHeroKind, resourceIndex)
+    }
+    public decListener(callback){
+        this.socket.on('receiveDecResource', callback)
+    }
+
+    //accepts
+    public sendAccept(heroKind){
+        this.socket.emit('sendAccept', heroKind)
+    }
+    public acceptListener(callback){
+        this.socket.on("receiveAccept", callback)
+    }
+    //removeAcceptListener is not implemented yet
+    // public removeAcceptListener(callback){
+    //     this.socket.on("receiveRemoveAccept", callback)
+    // } 
+
+    //ending collabs
+    public sendEndCollab(convMap, resourceNames, involvedHeroes ){
+        this.socket.emit('sendEndCollab', convMap, resourceNames, involvedHeroes )
+    }
+    public endCollabListener(callback){
+        this.socket.on('receiveEndCollab',callback)
     }
     public unsubscribeListeners() {
         //must be called once youre done using the collab decision listeners.
-        this.socket.off('sendDecisionSubmitSuccess')
-        this.socket.off('sendDecisionSubmitFailure')
-        this.socket.off('sendDecisionAccepted')
-    }
-    public receiveDecisionSubmitFailure(callback) {
-        this.socket.on('sendDecisionSubmitFailure', callback)
-    }
-    // Accepting a decision
-    public collabDecisionAccept() {
-        this.socket.emit('collabDecisionAccept')
-    }
-    public receiveDecisionAccepted(callback) {
-        this.socket.on('sendDecisionAccepted', callback)
+        this.socket.off('receiveIncResource')
+        this.socket.off('receiveDecResource')
+        this.socket.off('receiveAccept')
+        //this.socket.off('receiveRemoveAccept) this is not implemented yet
+        this.socket.off('receiveEndCollab')
+
     }
     /////////////////////////////
 
@@ -357,8 +413,12 @@ export class game {
         this.socket.on('sendKilledMonsters', callback)
     }
 
-    public doDamageToHero(hero, damage) {
-        this.socket.emit('doDamageToHero', hero, damage)
+    public resetMonsterStats(name) {
+        this.socket.emit('resetMonsterStats', name)
+    }
+
+    public doDamageToHero(hero, damage, callback = null) {
+        this.socket.emit('doDamageToHero', hero, damage, callback)
     }
 
     public doDamageToMonster(monstername, damage) {
@@ -415,12 +475,77 @@ export class game {
         this.socket.off('recieveBattleInviteResponse')
     }
 
+    public unsubscribeShieldListeners() {
+        this.socket.off('receiveShieldResp');
+    }
+
     public sendDeathNotice(hero) {
         this.socket.emit('deathNotice', hero)
     }
 
     public receiveDeathNotice(callback) {
         this.socket.on('receiveDeathNotice', callback)
+    }
+
+    public updateHourTracker(hero) {
+        this.socket.emit('updateHeroTracker', hero)
+    }
+    public receiveUpdateHeroTracker(callback) {
+        this.socket.on('receiveUpdateHeroTracker', callback)
+    }
+
+    public sendShieldPrompt(hero, shield_damaged, potentialdamage, yourself) {
+        this.socket.emit('sendShieldPrompt', hero, shield_damaged, potentialdamage, yourself)
+    }
+
+    public receiveShieldPrompt(callback) {
+        this.socket.on('receiveShieldPrompt', callback)
+    }
+
+    public sendShieldResp(herotype, resp) {
+        this.socket.emit('sendShieldResp',herotype, resp)
+    }
+
+    public receiveShieldResp(callback) {
+        this.socket.on('receiveShieldResp', callback)
+    }
+
+    //ask allies if they want to continue fight
+    public continueFightRequest(herotype) {
+        this.socket.emit('continueFightRequest', herotype)
+    }
+
+    //listener in host client for allied heros responses
+    public receiveContinueFight(callback) {
+        this.socket.on('receiveContinueFight', callback)
+    }
+
+    //called before closing host fight window
+    public unsubscribeContFight() {
+        this.socket.off('receiveContinueFight')
+    }
+
+    //sent from server to open the window asking allies if they want to continue fight
+    public continueFightPrompt(callback) {
+        this.socket.on('continueFightPrompt', callback);
+    }
+
+    //sent from ally's client to server to inform host of decision
+    public sendContinueFight(response, herotype) {
+        this.socket.emit('sendContinueFight',response, herotype)
+    }
+
+    //message that force starts a heros turn and force starts a fight with target monster
+    public forceContinueFight(herokind, monstername){ 
+        this.socket.emit('forceContinueFight', herokind, monstername)
+    }
+
+    public forceFight(callback) {
+        this.socket.on('forceFight', callback)
+    }
+
+    public forceTurn(callback) {
+        this.socket.on('forceTurn', callback)
     }
     /////////////////////////////
 
@@ -510,9 +635,20 @@ export class game {
     }
 
     public addMonster(callback){
-        this.socket.on("addMonster", callback)
+        this.socket.on("addMonster", callback);
     }
 
+    public revealWitch(callback) {
+        this.socket.on("revealWitch", callback);
+    }
+
+    public revealHerb(callback) {
+        this.socket.on("revealHerb", callback);
+    }
+
+    public removeHerb(callback) {
+        this.socket.on("removeHerb", callback);
+    }
     ///////////////////////////
     /*
     *   Event Cards
@@ -541,12 +677,19 @@ export class game {
     }
     //////
 
+    public receivePlayerDisconnected(callback){
+        this.socket.on("receivePlayerDisconnected", callback)
+    }
 
     /*
     *   END OF GAME
     */
     public receiveEndOfGame(callback) {
         this.socket.on('endGame', callback);
+    }
+
+    public save(){
+        this.socket.emit("save");
     }
 }
 

@@ -5,7 +5,8 @@
   "main": "src/app.ts",
   "scripts": {
     "test": "none",
-    "dev": "nodemon --config \"./util/nodemon.json\"/"
+    "dev": "nodemon --config \"./util/nodemon.json\"/",
+    "serve": "ts-node src/app.ts"
   },
   "dependencies": {
     "express": "^4.17.1",

@@ -10,6 +10,7 @@ export class Monster {
     //reward amount of gold and willpower are always same.
     private gold: number = 0;
     public name;
+    private base_will: number = 0;
 
     constructor(kind: MonsterKind, tile: number, numplayers: number = 0, name: string) {
         this.name = name
@@ -20,20 +21,24 @@ export class Monster {
                 this.strength = 2;
                 this.willpower = 4;
                 this.gold = 2;
+                this.base_will = 4;
                 break;
             case "skral":
                 this.strength = 6;
                 this.willpower = 6;
                 this.gold = 4;
+                this.base_will = 6;
                 break;
             case "wardrak":
                 this.strength = 10;
                 this.willpower = 7;
                 this.gold = 6;
                 this.dice = 'black'
+                this.base_will = 10;
                 break;
             case "fortress":
                 this.willpower = 6;
+                this.base_will = 6
                 this.gold = 4;
                 if (numplayers > 0) {
                     this.strength = 10 * numplayers - 10;
@@ -77,6 +82,13 @@ export class Monster {
         this.tileID = num;
     }
 
+    public resetWill() {
+        this.willpower = this.base_will;
+    }
+    
+    public getName() : string {
+        return this.name;
+    }
 
     public rollDice() {
         var attack = 0;

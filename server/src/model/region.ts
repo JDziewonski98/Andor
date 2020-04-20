@@ -12,6 +12,8 @@ export class Region {
     private hasMerchant: boolean;
     private wellUsed: boolean = false;
     private curMonster!: Monster | null;
+    private x: number;
+    private y: number;
 
     // Items, or maybe it's easier with a single list of itemIDs, since we don't actually
     // care how they're used/how they're different functionally
@@ -22,7 +24,9 @@ export class Region {
 
     private items: Map<string, number> = new Map();
     
-    constructor(gold:number, id: number, nextRegion: number, adjRegions: Array<number>, hasWell: boolean = false, hasMerchant: boolean = false) {
+    constructor(id: number, x: number, y: number, gold:number, nextRegion: number, adjRegions: Array<number>, hasWell: boolean = false, hasMerchant: boolean = false) {
+        this.x = x;
+        this.y = y;
         this.id = id;
         this.hasWell = hasWell;
         this.hasMerchant = hasMerchant;
@@ -87,8 +91,13 @@ export class Region {
     }
 
     public removeFarmer() {
-         this.farmers = [];
+         this.farmers.pop();
     }
+
+    public removeAllFarmers() {
+        this.farmers = [];
+    }
+
     public addFarmer(f: Farmer) {
         this.farmers.push(f);
     }

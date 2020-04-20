@@ -3,7 +3,7 @@ import { Region} from '.';
 export class Prince{
     private tile: Region;
 
-    constructor(tile) {
+    constructor(tile: Region) {
         this.tile = tile;
     }
 

@@ -6,42 +6,40 @@ import { SmallItem } from './SmallItem'
 
 export class Hero {
     public hk: HeroKind;
-    private region!: Region;
-    private gold!: number;
-    private strength!: number;
-    private will!: number;
-    private moveCompleted: boolean = false;
-    private timeOfDay: number = 1;
-    private farmer: boolean = false;
+    private region: Region;
+    private gold: number;
+    private strength: number;
+    private will: number;
+    private timeOfDay: number;
     private farmers: Array<Farmer>;
     private rank: number;
     private dice
-    private freeMoves:number = 0;
-    private movePrinceCtr = 0;
+    private freeMoves:number;
+    private movePrinceCtr;
+    private moveCompleted: boolean = false;
 
     //items
-    private wineskin: boolean = false;
-    private largeItem: LargeItem = LargeItem.Empty
-    private helm: boolean = false;
-    private smallItems: SmallItem[] = []
+    private wineskin: boolean;
+    private largeItem: LargeItem;
+    private helm: boolean;
+    private smallItems: SmallItem[];
 
-    constructor(hk: HeroKind, region:Region) {
-        this.hk = hk
-        if(this.hk === "dwarf"){
-            this.rank = 7
-        }
-        else if(this.hk === "warrior"){
-            this.rank = 14
-        }
-        else if(this.hk === "archer"){
-            this.rank = 25
-        }
-        else{
-            this.rank = 34
-        }
+    constructor({ timeOfDay, wineskin, largeItem, helm, smallItems, hk, rank, region, farmers, will, strength, gold, dice, freeMoves, movePrinceCtr}) {
+        this.hk = hk;
+        this.rank = rank;
+        this.gold = gold;
+        this.strength = strength;
+        this.will = will;
+        this.dice = dice;
+        this.timeOfDay = timeOfDay;
+        this.wineskin = wineskin;
+        this.largeItem = largeItem;
+        this.smallItems = smallItems;
+        this.helm = helm;
         this.region = region;
-        this.farmers = new Array()
-        this.initializeResources()
+        this.farmers = farmers;
+        this.freeMoves = freeMoves;
+        this.movePrinceCtr = movePrinceCtr;
     }
 
     public getData(){
@@ -121,18 +119,18 @@ export class Hero {
         this.gold = amount;
     }
 
-    public updateGold(goldDelta) {
+    public updateGold(goldDelta: number) {
         this.gold += goldDelta;
     }
 
     // TODO: actual wineskin implementation instead of boolean flag
-    public getWineskin() {
-        return this.wineskin;
-    }
+    // public getWineskin() {
+    //     return this.wineskin;
+    // }
 
-    public setWineskin(hasWineskin) {
-        this.wineskin = hasWineskin;
-    }
+    // public setWineskin(hasWineskin) {
+    //     this.wineskin = hasWineskin;
+    // }
 
     public setTimeOfDay(time) {
         this.timeOfDay = time;
@@ -157,6 +155,11 @@ export class Hero {
     public getFarmers(){
         return this.farmers
     }
+
+    public removeAllFarmers() {
+        this.farmers = new Array();
+    }
+
     public canMoveTo(tile){
        
     }
@@ -178,15 +181,84 @@ export class Hero {
         }
     }
 
+    public buyHelm(){
+        if(this.gold >= 2 && this.helm == false && this.region.getMerchant() === true){
+            this.gold -= 2;
+            this.helm = true;
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    public buyWine(){
+        if(this.gold >= 2 && this.smallItems.length < 3 && this.region.getMerchant() === true){
+            this.gold -= 2;
+            this.smallItems.push(SmallItem.Wineskin);
+            return true;
+        }
+        else{
+            return false;
+        }
+
+    }
+
+    public buyTelescope(){
+        if(this.gold >= 2 && this.smallItems.length < 3 && this.region.getMerchant() === true){
+            this.gold -= 2;
+            this.smallItems.push(SmallItem.Telescope);
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    public buyBow(){
+        if(this.gold >= 2 && this.largeItem == LargeItem.Empty && this.region.getMerchant() === true){
+            this.gold -= 2;
+            this.largeItem = LargeItem.Bow;
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    public buyFalcon(){
+        if(this.gold >= 2 && this.largeItem == LargeItem.Empty && this.region.getMerchant() === true){
+            this.gold -= 2;
+            this.largeItem = LargeItem.Falcon;
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    public buyShield(){
+        if(this.gold >= 2 && this.largeItem == LargeItem.Empty && this.region.getMerchant() === true){
+            this.gold -= 2;
+            this.largeItem = LargeItem.Shield;
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
     public pickupFarmer() {
         var r_farmers = this.region.getFarmers();
         if(r_farmers.length != 0 && (this.region.getID() === r_farmers[r_farmers.length-1].getTileID())){
             var farmer = this.region.getFarmers().pop()!;
-            farmer.carriedBy = this;
+            // farmer.carriedBy = this;
             this.farmers.push(farmer);
-            return this.region;
+            return true;
+            // return this.region;
         }
-        return this.region;
+        // return this.region;
+        return false;
     }
 
     public dropFarmer() {
@@ -194,7 +266,7 @@ export class Hero {
         var result = new Array()
         if(r_farmers.length < 2 && this.farmers.length > 0){
             var farmer = this.farmers.pop()!;
-            farmer.carriedBy = undefined;
+            // farmer.carriedBy = undefined;
             farmer.setTileID(this.region.getID());
             this.region.getFarmers().push(farmer);
             result.push(farmer.getFarmerID())
@@ -202,10 +274,6 @@ export class Hero {
             return result;
         }
         return result;
-    }
-
-    private farmerSlotEmpty() {
-        //what does this do?
     }
 
     public dropGold() {        
@@ -364,9 +432,6 @@ export class Hero {
                 }
                 break;
 
-            case 'shield':
-                break;
-
             case 'herb':
                 break;
 
@@ -405,6 +470,17 @@ export class Hero {
                 }
                 break;
 
+            case 'shield':
+                console.log('consuming shield zzzzzzzzzzzzzzzzzzzzzz')
+                this.largeItem = LargeItem.DamagedShield
+                this.pickUpLargeItem(this.region.getID(), LargeItem.DamagedShield)
+                break;
+
+            case 'damaged_shield':
+                console.log('consuming damaged shield zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')
+                this.largeItem = LargeItem.Empty
+                break;
+
             default:
                 console.log('Error! check your spelling on item to consume.')
         }
@@ -413,6 +489,17 @@ export class Hero {
 
     public getSmallItems() {
         return this.smallItems
+    }
+
+    public assignSmallItem(item: SmallItem) {
+        if (this.smallItems.length < 3) {
+            this.smallItems.push(item)
+            console.log(this.hk, "has", this.getItemDict());
+            return true
+        }
+        else {
+            return false
+        }
     }
 
     public pickUpSmallItem(tileID: number, item: SmallItem) {

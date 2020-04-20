@@ -1,7 +1,4 @@
 import { Window } from "./window";
-import { game } from '../api/game';
-import { WindowManager } from "../utils/WindowManager";
-import { CollabWindow } from './collabwindow';
 
 export class DeathWindow extends Window {
     private gameinstance

@@ -5,6 +5,6 @@ export enum Fog {
     WillPower3 = "WillPower3",
     Gold = "Gold",
     Gor = "Gor",
-    Wineskin = "Wineskin",
-    Brew = "Brew"
+    Wineskin = "WineskinFog",
+    WitchFog = "WitchFog"
 }

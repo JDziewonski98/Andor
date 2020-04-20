@@ -1,6 +1,9 @@
+import { game } from '../api/game';
+import { Hero } from '../objects/hero'
 export class ResourceToggle {
     private heroKind: string;
     private resourceIndex: number;
+    private resourceName: String;
     private maxAmount: number;
     private allocated: Map<string, number[]>;
 
@@ -9,35 +12,57 @@ export class ResourceToggle {
     private incButton;
     private decButton;
 
-    public constructor(scene, x, y, heroKind: string, resourceIndex: number, maxAmount: number, allocated: Map<string, number[]>) {
+    private collabWindow;
+    public constructor(scene, x, y, heroKind: string, resourceIndex: number, resourceName: String, maxAmount: number, allocated: Map<string, number[]>) {
         this.heroKind = heroKind;
         this.resourceIndex = resourceIndex;
         this.maxAmount = maxAmount;
         this.allocated = allocated;
 
         this.amountText = scene.add.text(x, y, this.amount);
-        this.incButton = scene.add.sprite(x+30, y, 'backbutton').setDisplaySize(15, 15).setInteractive();
+        this.amountText.setActive(true)
+        this.incButton = scene.add.sprite(x+30, y, 'pointerbtn').setDisplaySize(15, 15).setInteractive();
         this.incButton.angle = 270;
-        this.decButton = scene.add.sprite(x+30, y+15, 'backbutton').setDisplaySize(15, 15).setInteractive();
+        this.decButton = scene.add.sprite(x+30, y+15, 'pointerbtn').setDisplaySize(15, 15).setInteractive();
         this.decButton.angle = 90;
 
+        this.collabWindow = scene
+        let self = this
         this.incButton.on('pointerdown', function (pointer) {
-            if (this.amount == maxAmount) {
-                console.log("Already max allocatable amount");
-                return;
-            }
-            this.amount++;
-            this.allocated.get(heroKind)[resourceIndex] = this.amount;
-            this.amountText.setText(this.amount);
+            self.incFunctionRequest()
         }, this);
         this.decButton.on('pointerdown', function (pointer) {
-            if (this.amount == 0) {
-                console.log("Already min allocatable amount");
-                return;
-            }
-            this.amount--;
-            this.allocated.get(heroKind)[resourceIndex] = this.amount;
-            this.amountText.setText(this.amount);
+            self.decFunctionRequest()
         }, this);
+    }
+    public incFunctionRequest(){
+        this.collabWindow.incFunction(this.heroKind,this.resourceIndex)
+    }
+    public decFunctionRequest(){
+        this.collabWindow.decFunction(this.heroKind,this.resourceIndex)
+    }
+    public incFunction(){
+        
+        this.amount++;
+        this.allocated.get(this.heroKind)[this.resourceIndex] = this.amount;
+        var x = this.amountText.x
+        var y = this.amountText.y
+        this.amountText.destroy()
+        this.amountText = this.collabWindow.add.text(x, y, this.amount);
+    }
+    public decFunction(){
+        this.amount--;
+        this.allocated.get(this.heroKind)[this.resourceIndex] = this.amount;
+        var x = this.amountText.x
+        var y = this.amountText.y
+        this.amountText.destroy()
+        this.amountText = this.collabWindow.add.text(x, y, this.amount);
+    }
+    
+    public getResourceIndex(){
+        return this.resourceIndex
+    }
+    public getHeroKind(){
+        return this.heroKind
     }
 }

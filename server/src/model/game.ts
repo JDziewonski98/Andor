@@ -11,16 +11,28 @@ import {
     Fog,
     EventCard,
     Prince,
-    Narrator
+    Narrator,
+    Witch
 } from "."
 import { LargeItem } from './LargeItem';
 import { SmallItem } from './SmallItem';
-import { Socket } from 'dgram';
+
+import {
+    dFarmers,
+    dRegions,
+    dMonsters,
+    dFogs,
+    dEventDeck,
+    dCastle,
+    // dPrince,
+    dNarrator,
+    dHeros
+} from "./defaults";
 
 export class Game {
-    private numOfDesiredPlayers: number;
-    private difficulty: GameDifficulty;
-    private castle: RietburgCastle;
+    public numOfDesiredPlayers: number;
+    public difficulty: GameDifficulty;
+    private castle!: RietburgCastle;
     private players: Set<Player>;
     private name: string;
     private chatlog;
@@ -31,8 +43,8 @@ export class Game {
     // herokind of heroes who haven't ended their day yet
     private activeHeros: HeroKind[];
     // null when the game first starts
-    private nextDayFirstHero: HeroKind | null = null;
-    private currPlayersTurn: HeroKind;
+    public nextDayFirstHero: HeroKind | null = null;
+    public currPlayersTurn: HeroKind;
 
     private fogs: Map<number, Fog>;
     private regions: Array<Region>;
@@ -40,24 +52,25 @@ export class Game {
     private monsters: Map<string, Monster>;
     private monstersInCastle: string[];
     private endOfGame: boolean = false;
-    private prince: Prince;
+    private prince: Prince | null = null;
+    private witch: Witch | null = null;
 
-    private narrator: Narrator;
+    private narrator!: Narrator;
+    public gameStartHeroPosition: number = 1;
 
     // collab decision related state
     public numAccepts: number;
-
-    private availableHeros: Array<HeroKind> = new Array(HeroKind.Archer, HeroKind.Dwarf, HeroKind.Mage, HeroKind.Warrior);
+    private availableHeros: Array<Hero>;
+    //private availableHeros: Array<HeroKind> = new Array(HeroKind.Archer, HeroKind.Dwarf, HeroKind.Mage, HeroKind.Warrior);
 
     //EventCards
-    private eventDeck: Array<EventCard>
-    private activeEvents: Array<Number>
+    private eventDeck: Array<EventCard>;
+    private activeEvents: Array<Number>;
 
     constructor(name: string, numOfDesiredPlayers: number, difficulty: GameDifficulty, legendPosition = 0) {
         this.name = name;
         this.numOfDesiredPlayers = numOfDesiredPlayers;
         this.difficulty = difficulty;
-        this.castle = new RietburgCastle()
         this.chatlog = [];
         this.players = new Set<Player>();
         this.heroList = new Map<string, Hero>();
@@ -67,29 +80,122 @@ export class Game {
         this.monsters = new Map<string, Monster>();
         this.monstersInCastle = [];
         this.fogs = new Map<number, Fog>();
-        this.currPlayersTurn = HeroKind.None;
-        this.setRegions();
-        this.setFarmers();
-        this.setMonsters();
-        this.setShields();
-        this.setFogs();
-        this.prince = new Prince(this.regions[72]);
+        this.eventDeck = new Array<EventCard>()
         this.readyplayers = 0;
         this.numAccepts = 0;
-        this.eventDeck = new Array<EventCard>()
-        this.setEventDeck()
-        this.activeEvents = new Array<Number>()
+        this.currPlayersTurn = HeroKind.Dwarf;
+        this.activeEvents = new Array<number>();
+        this.availableHeros = new Array<Hero>();
 
-        this.narrator = new Narrator(this, 0)
+        // this.narrator = new Narrator(this, 0)
     }
 
-    private setNarrator(initialNarratorPosition: number) {
-        var newNarrator = new Narrator(this, initialNarratorPosition)
+    /*public initialize(
+        currPlayersTurn?,
+        regions?,
+        farmers?,
+        monsters?,
+        fogs?,
+        heros?,        
+        eventDeck?,
+        activeEvents?,        
+        nextDayFirstHero?,
+        activeHeros?,
+        castle?,
+        monstersInCastle?,
+        endOfGameState?,
+        prince?,
+        narrator?
+    ) {
+        currPlayersTurn = currPlayersTurn || HeroKind.None;
+        regions = regions || dRegions;
+        farmers = farmers || dFarmers;
+        monsters = monsters || dMonsters;
+        fogs = fogs || dFogs();
+        heros = heros || [];
+        eventDeck = eventDeck || dEventDeck();
+        activeEvents = activeEvents || [];
+        nextDayFirstHero = nextDayFirstHero || HeroKind.None;
+        activeHeros = activeHeros || [];
+        castle = castle || dCastle(this.numOfDesiredPlayers);
+        monstersInCastle = monstersInCastle || [];
+        endOfGameState = endOfGameState || false;
+        prince = prince || null; // prince does not exist until legend card C2
+        narrator = narrator || dNarrator;
 
 
+        this.currPlayersTurn = currPlayersTurn;
+        this.nextDayFirstHero = nextDayFirstHero;
+        this.setRegions(regions);
+        // this.setHeros(heros);
+        this.setFarmers(farmers);
+        this.castle = new RietburgCastle(castle.numDefenseShields, castle.numDefenseShieldsUsed);
+        this.setMonsters(monsters);
+        this.setFogs(fogs);
+        this.setEventDeck(eventDeck);
+        this.setActiveEvents(activeEvents);
+        this.setActiveHeros(activeHeros);
+        this.monstersInCastle = monstersInCastle;
+        this.endOfGame = endOfGameState;
+        this.narrator = new Narrator(narrator.legendPosition);
+    }*/
+    public initialize({
+        currPlayersTurn = HeroKind.None,
+        regions = dRegions,
+        farmers = dFarmers,
+        monsters = dMonsters,
+        fogs = dFogs(),
+        heros = dHeros,
+        eventDeck = dEventDeck(),
+        activeEvents = [],
+        nextDayFirstHero = HeroKind.None,
+        activeHeros = [],
+        castle = dCastle(this.numOfDesiredPlayers),
+        monstersInCastle = [],
+        endOfGameState = false,
+        prince = { tile: { id: -1 } },
+        narrator = dNarrator
+    }) {
+        this.currPlayersTurn = currPlayersTurn;
+        this.nextDayFirstHero = nextDayFirstHero;
+        this.setRegions(regions);
+        this.setAvailableHeros(heros);
+        this.setFarmers(farmers);
+        this.castle = new RietburgCastle(castle.numDefenseShields, castle.numDefenseShieldsUsed);
+        this.setMonsters(monsters);
+        this.setFogs(fogs);
+        this.setEventDeck(eventDeck);
+        this.setActiveEvents(activeEvents);
+        this.setActiveHeros(activeHeros);
+        this.monstersInCastle = monstersInCastle;
+        this.endOfGame = endOfGameState;
+        this.narrator = new Narrator(narrator.legendPosition);
+        if (prince.tile.id !== -1)
+            this.prince = new Prince(this.regions[prince.tile.id])
     }
 
-    
+    private setAvailableHeros(heros) {
+        heros.forEach(heroData => {
+            this.availableHeros.push(new Hero({
+                hk: heroData.hk,
+                rank: heroData.rank,
+                gold: heroData.gold,
+                will: heroData.will,
+                strength: heroData.strength,
+                dice: heroData.dice,
+                timeOfDay: heroData.timeOfDay,
+                wineskin: heroData.wineskin,
+                largeItem: heroData.largeItem,
+                smallItems: heroData.smallItems,
+                helm: heroData.helm,
+                farmers: heroData.farmers,
+                freeMoves: heroData.freeMoves,
+                region: this.regions[heroData.region.id],
+                movePrinceCtr: heroData.movePrinceCtr
+            }))
+        })
+    }
+
     private setFirstHerosTurn() {
         var minRank = Number.MAX_VALUE;
         var ID = "none";
@@ -117,7 +223,7 @@ export class Game {
     //  in this case we pass the next turn to the day's earliest ending player (nextDayFirstHero).
     //  False otherwise, in this case we pass the next turn based on increasing hero rank.
     // Returns HeroKind of the next player
-    public nextPlayer(endDayAll: boolean) : HeroKind {
+    public nextPlayer(endDayAll: boolean): HeroKind {
 
         // If the last person is ending their day, pass turn to earliest ending player
         if (endDayAll) {
@@ -154,87 +260,113 @@ export class Game {
         return hk; // None if not found
     }
 
-    private setShields() {
-        var numPlayers = this.numOfDesiredPlayers;
+    public setFarmers(f) {
+        f.forEach((farmer) => {
+            const farmObj = new Farmer(farmer.id, farmer.tileID);
+            this.farmers.push(farmObj)
+            this.regions[farmObj.getTileID()].addFarmer(farmObj);
+        })
+    }
 
-        if (numPlayers === 2) {
-            this.castle.setShields(3);
-        } else if (numPlayers === 3) {
-            this.castle.setShields(2);
-        } else if (numPlayers === 4) {
-            this.castle.setShields(1);
+    public killFarmersOnTile(tileID: number) : number {
+        let numKilled = this.regions[tileID].getFarmers().length;
+        this.regions[tileID].removeAllFarmers();
+        return numKilled;
+    }
+
+    public killFarmersOfHeroes(tileID: number, hero: Hero | null) : HeroKind[] {
+        let heroes: HeroKind[] = [];
+        let tile = this.regions[tileID];
+        if (hero != null) { // check is for a specific hero moving to new space
+            if (tile.getMonster() != null) {
+                hero.removeAllFarmers();
+                heroes.push(hero.getKind());
+            }
+        } else { // check is for all heroes on tile that a monster is now on
+            if (tile.getMonster() != null) {
+                this.heroList.forEach(hero => {
+                    if (hero.getRegion() === tile) {
+                        hero.removeAllFarmers();
+                        heroes.push(hero.getKind());
+                    }
+                })
+            }
         }
+        return heroes;
     }
 
-    private setFarmers() {
-        this.farmers.push(new Farmer(0, 24));
-        this.farmers.push(new Farmer(1, 36));
-        this.regions[24].addFarmer(this.farmers[0]);
-        this.regions[36].addFarmer(this.farmers[1]);
+    public setMonsters(monsters) {
+        monsters.forEach(monster => {
+            this.addMonster(monster.type, monster.tileID, monster.name);
+        })
     }
 
-    private setMonsters() {
-        this.addMonster(MonsterKind.Gor, 8, 'gor1');
-        this.addMonster(MonsterKind.Gor, 20, 'gor2');
-        this.addMonster(MonsterKind.Gor, 21, 'gor3');
-        this.addMonster(MonsterKind.Gor, 26, 'gor4');
-        this.addMonster(MonsterKind.Gor, 48, 'gor5');
-        this.addMonster(MonsterKind.Skral, 19, 'skral1');
-    }
-
-    public addMonster(kind: MonsterKind, tile: number, id: string) {
-
-        let monster = new Monster(kind, tile, this.numOfDesiredPlayers, id)
-        this.monsters.set(monster.name, monster);
-        this.regions[tile].setMonster(monster);
-
-        /* this crashes the server? this.regions['tile'] is undefined
-         * // check if tile to add monster already has a monster
-        if (this.regions[tile].getMonster() !== null) {
-            this.addMonster(kind, (this.regions[tile].getNextRegionId()), id)
-            
+    // Adds a monster to the next open space on the board, or sends the monster directly to the castle
+    // If the latter, return null instead of a Monster.
+    public addMonster(kind: MonsterKind, tile: number, id: string): Monster | null {
+        var nextRegID = tile;
+        if (kind != MonsterKind.Fortress) { // jumping doesn't apply to Fortress
+            var shieldsRemaining: number = this.castle.getShields();
+            while (this.regions[nextRegID].getMonster()) {
+                nextRegID = this.regions[nextRegID].getNextRegionId();
+                // base case: the region is tile 0 (the castle)
+                if (nextRegID == 0) {
+                    // Monster is going to enter the castle
+                    // Decrement shields, monster will not get created
+                    shieldsRemaining = this.castle.attackOnCastle();
+                    break;
+                }
+            }
+            if (this.castle.getShields() <= 0) {
+                this.endOfGame = true;
+            }
         }
-        else { // if it has a monster, get next region and addMonster to that tile
-            let monster = new Monster(kind, tile, this.numOfDesiredPlayers, id)
+        // Remove any monster that is occupying the Fortress's space
+        if (kind == MonsterKind.Fortress) {
+            let currMonster = this.regions[nextRegID].getMonster();
+            if (currMonster) {
+                this.monsters.delete(currMonster.name);
+            }
+        }
+
+        let monster: Monster | null = null;
+        // nextRegID is either 0 (don't create monster) or the correct open tile
+        if (nextRegID != 0) {
+            monster = new Monster(kind, nextRegID, this.numOfDesiredPlayers, id)
             this.monsters.set(monster.name, monster);
-            this.regions[tile].setMonster(monster);
-        }*/
+            this.regions[nextRegID].setMonster(monster);
+        }
+
+        return monster;
     }
 
-    private setRegions() {
+    public setRegions(regions) {
         // Note that regions 73-79 and 83 are unused, but created anyways to preserve direct
         // indexing between regions array and region IDs
-        var tilesData = require("./tilemap").map;
-        tilesData.forEach(t => {
+        regions.forEach(t => {
             // on top of setting t.something, also set amount of gold on each tile to 0
-            this.regions.push(new Region(0, t.id, t.nextRegionId, t.adjRegionsIds, t.hasWell, t.hasMerchant))
+            this.regions.push(new Region(t.id, t.xcoord, t.ycoord, 0, t.nextRegionId, t.adjRegionsIds, t.hasWell, t.hasMerchant))
         })
     }
 
-    private setFogs() {
-        const fogIds = [8, 11, 12, 13, 49, 16, 32, 48, 42, 44, 47, 46, 64, 56, 63];
-        let fogTypes = [Fog.EventCard, Fog.EventCard, Fog.EventCard, Fog.EventCard, Fog.EventCard, Fog.Strength, Fog.WillPower2, Fog.WillPower3, Fog.Gold, Fog.Gold, Fog.Gold, Fog.Gor, Fog.Gor, Fog.Wineskin, Fog.Brew];
-        shuffle(fogTypes);
-
-        fogIds.forEach((id, i) => {
-            this.fogs.set(id, fogTypes[i]);
-        })
-
-        function shuffle(a) {
-            for (let i = a.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [a[i], a[j]] = [a[j], a[i]];
-            }
-            return a;
-        }
+    public setFogs(fogs: Map<number, Fog>) {
+        this.fogs = fogs;
     }
 
     public getFogs(): Map<number, Fog> {
         return this.fogs;
     }
 
-    public getPrince(): Prince{
+    public getFarmers(): Array<Farmer> {
+        return this.farmers;
+    }
+
+    public getPrince(): Prince | null {
         return this.prince;
+    }
+
+    public getWitch(): Witch | null {
+        return this.witch;
     }
 
     public getRegions(): Region[] {
@@ -254,26 +386,36 @@ export class Game {
     * @param id is player socket ID
     * @param heroType
     */
-    public bindHero(id: string, heroType: HeroKind): boolean {
+   /* public bindHero(id: string, heroType: HeroKind): boolean {
         // Herokind already been taken
+        let heroTaken = false;
         this.heroList.forEach((hero, key) => {
             if (hero.getKind() === heroType) {
-                return false;
+                heroTaken = true;
             }
         })
+        if (heroTaken) return false; // failed to bind hero
+
         if (heroType === HeroKind.Dwarf) {
             this.heroList.set(id, new Hero(heroType, this.regions[7]));
-            //REMOVE before merging to master
+            //REMOVE before merging to master, used for item testing
             let dwarf = this.heroList.get(id)
-            dwarf?.pickUpLargeItem(dwarf.getRegion().getID(), LargeItem.Bow)
+            // dwarf?.pickUpLargeItem(dwarf.getRegion().getID(), LargeItem.Bow)
             dwarf?.pickUpSmallItem(dwarf.getRegion().getID(), SmallItem.Telescope)
-            dwarf?.pickUpSmallItem(dwarf.getRegion().getID(), SmallItem.Wineskin)
-            dwarf?.pickUpHelm(dwarf.getRegion().getID());
+            
+            let dwarf = this.heroList.get(id)
+            //dwarf?.pickUpLargeItem(dwarf.getRegion().getID(), LargeItem.DamagedShield)
+            // dwarf?.pickUpSmallItem(dwarf.getRegion().getID(), SmallItem.Telescope)
+            // dwarf?.pickUpSmallItem(dwarf.getRegion().getID(), SmallItem.Wineskin)
+            // dwarf?.pickUpHelm(dwarf.getRegion().getID());
         }
         else if (heroType === HeroKind.Archer) {
             this.heroList.set(id, new Hero(heroType, this.regions[25]));
+            //REMOVE before merging to master, used for item testing
+            // let archer = this.heroList.get(id)
+            // archer?.pickUpSmallItem(archer.getRegion().getID(), SmallItem.Telescope)
             let archer = this.heroList.get(id)
-            archer?.pickUpSmallItem(archer.getRegion().getID(), SmallItem.GreenRunestone)
+            //archer?.pickUpSmallItem(archer.getRegion().getID(), SmallItem.GreenRunestone)
         }
         else if (heroType === HeroKind.Mage) {
             this.heroList.set(id, new Hero(heroType, this.regions[34]));
@@ -286,6 +428,30 @@ export class Game {
         this.availableHeros = this.availableHeros.filter(h => h != heroType);
         return true;
 
+    }*/
+    public bindHero(id: string, heroType: HeroKind): boolean {
+        // Herokind already been taken
+        let heroTaken = false;
+        this.heroList.forEach((hero, key) => {
+            if (hero.getKind() === heroType) {
+                heroTaken = true;
+            }
+        })
+        if (heroTaken) return false; // failed to bind hero
+
+        let hero = this.availableHeros.filter((hero) => hero.hk === heroType) // find hero
+        if (hero.length === 1) {
+            this.heroList.set(id, hero[0]);
+            this.activeHeros.push(heroType);
+            return true;
+        }
+        return false;
+
+    }
+
+    public setCastle(c) {
+        if (c != null)
+            this.castle = new RietburgCastle(c.numDefenseShields, c.numDefenseShieldsUsed);
     }
 
     public getCastle() {
@@ -298,6 +464,10 @@ export class Game {
 
     public getActiveHeros() {
         return this.activeHeros;
+    }
+
+    public setActiveHeros(kinds) {
+        this.activeHeros = kinds;
     }
 
     public removeFromActiveHeros(connID: string) {
@@ -339,7 +509,7 @@ export class Game {
         this.players.add(p);
     }
 
-    public removePlayer(id: string) {
+    /*public removePlayer(id: string) {
         this.players.forEach((player) => {
             if (player.getID() === id) {
                 this.players.delete(player);
@@ -350,10 +520,18 @@ export class Game {
             this.availableHeros.push(this.heroList.get(id)!.getKind())
             this.heroList.delete(id);
         }
-    }
-
-    public removeFarmer(f: Farmer) {
-        //TO BE IMPLEMENTED
+    }*/
+    public removePlayer(id: string): boolean {
+        this.players.forEach((player) => {
+            if (player.getID() === id) {
+                this.players.delete(player);
+            }
+        })
+        if (this.heroList.has(id)) {
+            this.heroList.delete(id);
+            return true;
+        }
+        return false;
     }
 
     public setCurrPlayersTurn(hk: HeroKind) {
@@ -377,26 +555,6 @@ export class Game {
         hero.moveTo(tile)
     }
 
-    private endGame() {
-        //TO BE IMPLEMENTED
-    }
-
-    private checkMonsterInRietburg() {
-        //TO BE IMPLEMENTED
-    }
-
-    private checkForFarmer(tile: Region) {
-        //TO BE IMPLEMENTED
-    }
-
-    private checkHeroOnWellTile() {
-        //TO BE IMPLEMENTED
-    }
-
-    private incrementNarratorPosition() {
-        //TO BE IMPLEMENTED      
-    }
-
     public pushToLog(item) {
         this.chatlog.push(item)
     }
@@ -413,10 +571,11 @@ export class Game {
         this.monsters.delete(monstername)
     }
 
-    // Returns list of shields lost
-    public moveMonsters() {
+    // Returns number of shields remaining
+    public moveMonsters() : number {
         var self = this;
-        var shieldsLost: number[] = [];
+        // var shieldsLost: number[] = [];
+        var shieldsRemaining: number = this.castle.getShields();
 
         // Move monsters in phases based on MonsterKind: Gors, Skrals, Wardraks
         // Also need to sort the monsters based on tileID
@@ -445,6 +604,7 @@ export class Game {
         skrals.sort((a, b) => (a.getTileID() - b.getTileID()));
         wardraks.sort((a, b) => (a.getTileID() - b.getTileID()));
 
+        // Note that fortress does not move
         var sortedMonsters = gors.concat(skrals).concat(wardraks).concat(wardraks);
         // Move each monster based on tile and type ordering
         // Note that wardraks get to move twice
@@ -464,7 +624,7 @@ export class Game {
                     // Monster is going to enter the castle
                     // Decrement shields, remove monster, evaluate end of game condition
                     this.monstersInCastle.push(m.name);
-                    shieldsLost.push(self.castle.attackOnCastle());
+                    shieldsRemaining = self.castle.attackOnCastle();
                     self.regions[startReg].setMonster(null);
                     // self.monsters.delete(m.name);
                     break;
@@ -481,7 +641,7 @@ export class Game {
             }
         }
 
-        return shieldsLost;
+        return shieldsRemaining;
     }
 
     public replenishWells() {
@@ -522,20 +682,191 @@ export class Game {
         }
     }
 
+    public setEndOfGameState(b: boolean) {
+        this.endOfGame = b;
+    }
     public getEndOfGameState() {
         return this.endOfGame;
     }
 
+    public setMonstersInCastle(arr) {
+        this.monstersInCastle = arr;
+    }
+
+    public getMonstersInCastle() {
+        return this.monstersInCastle;
+    }
+
+    // Advances narrator, updates game state accordingly, and returns the new narrator position
+    public advanceNarrator() : Monster[] {
+        let newPos = this.narrator.advance();
+
+        var newMonsters: Monster[] = []
+        switch(newPos) {
+            case this.narrator.getRunestoneLegendPos():
+                // place the runestones on the board
+                newMonsters = this.narratorRunestones();
+                break;
+            case 2: // Legend card C
+                newMonsters = this.narratorC();
+                break;
+            case 6: // Legend card G
+                newMonsters = this.narratorG();
+                break;
+        }
+
+        return newMonsters;
+    }
+
+    // sets positions of the runestones and adds them to the regions
+    private narratorRunestones() : Monster[] {
+        this.narrator.setRunestoneLocations();
+        let runestoneLocs = this.narrator.getRunestoneLocations();
+        // Update tiles with runestones
+        runestoneLocs.forEach(stoneObj => {
+            Object.entries(stoneObj).forEach(([tileID, stone]) => {
+                this.regions[tileID].addItem(stone);
+            })
+        })
+
+        // Place gor on space 43 and skral on space 39
+        // TODO: for naming, we need to use a separate count instead of basing it on the size of
+        // the monsters list. The list can decrease in size meaning monsters can end up with the same name
+        // For now, names are hardcoded
+        var monsterList: Monster[] = [];
+        let monster: Monster | null = this.addMonster(MonsterKind.Gor, 43, 'gor8')
+        if (monster != null) {
+            monsterList.push(monster);
+        }
+        monster = this.addMonster(MonsterKind.Skral, 39, 'skral2');
+        if (monster != null) {
+            monsterList.push(monster);
+        }
+
+        return monsterList;
+    }
+
+    private narratorC() : Monster[] {
+        var monsterList: Monster[] = [];
+        // Place Skral Stronghold and Skral, farmer, gors, skral, prince
+        // Determine position of stronghold
+        let dieRoll = this.narrator.randomInteger(1, 6);
+
+        let monster: Monster | null = this.addMonster(MonsterKind.Fortress, 50+dieRoll, 'fortress');
+        if (monster != null) {
+            monsterList.push(monster);
+        }
+
+        // Add farmer
+        let farmObj = new Farmer(2, 28);
+        this.farmers.push(farmObj)
+        this.regions[farmObj.getTileID()].addFarmer(farmObj);
+
+        // Add more monsters
+        monster = this.addMonster(MonsterKind.Gor, 27, 'gor9');
+        if (monster != null) {
+            monsterList.push(monster);
+        }
+        monster = this.addMonster(MonsterKind.Gor, 31, 'gor10');
+        if (monster != null) {
+            monsterList.push(monster);
+        }
+        monster = this.addMonster(MonsterKind.Skral, 29, 'skral3');
+        if (monster != null) {
+            monsterList.push(monster);
+        }
+
+        // Add my boy Thorald
+        this.prince = new Prince(this.regions[72]);
+
+        // Display StoryWindows
+        return monsterList;
+    }
+
+    private narratorG() : Monster[] {
+        // Remove prince, add wardraks
+        // Cya Thorald
+        this.prince = null;
+
+        var monsterList: Monster[] = [];
+        // Add spookyboys
+        let monster: Monster | null = this.addMonster(MonsterKind.Wardrak, 26, 'wardrak1');
+        if (monster != null) {
+            monsterList.push(monster);
+        }
+        monster = this.addMonster(MonsterKind.Wardrak, 27, 'wardrak2');
+        if (monster != null) {
+            monsterList.push(monster);
+        }
+
+        // Display StoryWindows
+        return monsterList;
+    }
+
+
+    public narratorN(): boolean {
+        /*check fortSkral is defeated*/
+        var fortSkralDefeated: boolean = true;
+        //console.log("%%% model game narratorN fortressSkral", this.monsters)
+        if (this.monsters.has("fortress")) { fortSkralDefeated = false;}
+        //console.log("fortSkral defeated: ", fortSkralDefeated)
+
+        /*check region 0 has herb*/
+        var herbAtCastle: boolean = false;       
+        for (let [key, value] of Object.entries(this.regions[0].getItems())) {
+            if (key === SmallItem.Herb) { herbAtCastle = true; }
+        }
+        //console.log("%%% model game narratorN herb", Object.entries(this.regions[0].getItems()) )
+
+        /*check castle has at least 1 shield*/
+        var hasEnoughShields: boolean = true;
+        if (this.castle.getShields() <= 0) { hasEnoughShields = false; }
+        //console.log("%%% model game narratorN enoughShields", this.castle.getShields(), "hasEnoughShields: ", hasEnoughShields)
+
+        var winOrLose = (fortSkralDefeated && herbAtCastle && hasEnoughShields)
+        //console.log("%%% model game narratorN winOrLose", winOrLose) 
+
+        // this.endOfGame = true;
+
+        return winOrLose
+        
+    }
+
+    // Turns a hidden runestone into its real counterpart if a hero performs a valid reveal
+    public revealRunestone(h: Hero, tileID: number, stoneName: string) : boolean {
+        var heroTileID = h.getRegion().getID();
+        var region = this.regions[tileID];
+        // Success if hero is one the same region as the stone
+        if (heroTileID == tileID) {
+            region.removeItem(stoneName);
+            region.addItem(stoneName.slice(0, -2));
+            return true;
+        }
+        // Success if hero is on an adjacent tile and has a telescope
+        var adjTiles = region.getAdjRegionsIds();
+        var heroItems = h.getSmallItems()
+        if (adjTiles.includes(heroTileID) && heroItems.includes(SmallItem.Telescope)) {
+            region.removeItem(stoneName);
+            region.addItem(stoneName.slice(0, -2));
+            return true;
+        }
+        // Otherwise failure
+        return false;
+    }
+
     public useFog(fog: Fog, tile: number) {
         if (this.fogs.get(tile) != undefined && this.fogs.get(tile) == fog) { // make sure tile has a fog and its the same
+            this.fogs.delete(tile); // delete fog from game
             // testing useFog
             var currHero = this.getHeroFromHk(this.currPlayersTurn);
             console.log("fog test, currHero:", currHero);
 
             if (fog == Fog.Gor) {
+                // TODO: change this naming strategy
                 const id = `gor${this.monsters.size + 1}`;
-                this.addMonster(MonsterKind.Gor, tile, id)
-                return { success: true, id: id };
+                let newMonster = this.addMonster(MonsterKind.Gor, tile, id)
+                let status = (newMonster != null);
+                return { success: true, createSuccess: status, id: id, newTile: newMonster?.getTileID() };
             } else if (fog == Fog.Gold) {
                 this.getHeroFromHk(this.currPlayersTurn)!.updateGold(1);
                 return { success: true };
@@ -548,25 +879,38 @@ export class Game {
             } else if (fog == Fog.Strength) {
                 this.getHeroFromHk(this.currPlayersTurn)!.setStrength(2);
                 return { success: true };
-            } else if (fog == Fog.Brew) {
-
+            } else if (fog == Fog.WitchFog) {
+                let toPlayer = false;
+                if (this.getHeroFromHk(this.currPlayersTurn)?.pickUpSmallItem(tile, SmallItem.Brew)) {
+                    toPlayer = true;
+                } else {
+                    this.regions[tile].addItem(SmallItem.Brew);
+                    toPlayer = false;
+                }
+                // Create new Witch
+                console.log("creating witch on tile with price", tile, this.numOfDesiredPlayers + 1);
+                this.witch = new Witch(tile, this.numOfDesiredPlayers + 1);
+                let herbTileID = this.witch.placeHerb();
+                return { success: true, createSuccess: toPlayer, newTile: herbTileID };
             } else if (fog == Fog.Wineskin) {
-
+                if (this.getHeroFromHk(this.currPlayersTurn)?.pickUpSmallItem(tile, SmallItem.Wineskin)) {
+                    return { success: true, createSuccess: true };
+                }
             } else if (fog == Fog.EventCard) {
                 var newEvent = this.drawCard()
-                if(newEvent != null){
-                    return {success: true, event: newEvent}
+                if (newEvent != null) {
+                    return { success: true, event: newEvent }
                 }
-                return {success: false, event: null}
+                return { success: false, event: null }
             }
         }
         return { success: false };
     }
 
     // Returns the Hero instance in heroList corresponding to the HeroKind requested
-    private getHeroFromHk(hk: HeroKind) : Hero | null {
+    private getHeroFromHk(hk: HeroKind): Hero | null {
         var hero;
-        Array.from(this.heroList.values()).forEach( h => {
+        Array.from(this.heroList.values()).forEach(h => {
             if (h.hk == hk) {
                 hero = h;
             }
@@ -577,9 +921,9 @@ export class Game {
         return hero; // null if no corresponding hero is found
     }
 
-    public getConnIdFromHk(hk: HeroKind) : string | null {
+    public getConnIdFromHk(hk: HeroKind): string | null {
         var connID;
-        this.heroList.forEach(function(h, id) {
+        this.heroList.forEach(function (h, id) {
             if (h.hk == hk) {
                 connID = id;
             }
@@ -589,7 +933,7 @@ export class Game {
         }
         return connID; // null if no corresponding hero is found
     }
-    public getHkFromConnID(connID: string) : HeroKind {
+    public getHkFromConnID(connID: string): HeroKind {
         var hk = this.heroList.get(connID)?.hk;
         if (hk == null) {
             hk = HeroKind.None; // set to None if no match found
@@ -604,15 +948,16 @@ export class Game {
     public drawCard(){
         return this.eventDeck.shift()
     }
+    public setActiveEvents(events) {
+        events.forEach((id) => {
+            this.activeEvents.push(id);
+        })
+    }
 
-    
-    private setEventDeck(){
-        var eventCardData = require("./EventCardMap").map;
-        eventCardData.forEach(ec => {
+    public setEventDeck(events) {
+        events.forEach(ec => {
             this.eventDeck.push(new EventCard(ec.id, ec.flavorText, ec.desc))
         })
-        this.shuffleEventDeck()
-        console.log(this.eventDeck)
     }
 
     private shuffleEventDeck(){
@@ -623,16 +968,13 @@ export class Game {
             [this.eventDeck[m], this.eventDeck[i]] = [this.eventDeck[i], this.eventDeck[m]]
         }
     }
-    public getActiveEvents(){
-        return this.activeEvents
-    }
-    public removeDailyActiveEvents(){
-        //revert events which affected state
+    public clearActiveEvents() {
         var eventsLeft = Array<Number>()
-        for(var i = 0; i < this.activeEvents.length; i++){
+        //revert events which affected state
+        for (var i = 0; i < this.activeEvents.length; i++) {
             //revert changes to monster strength
-            if(this.activeEvents[i] == 11){
-                for(let [name,monster] of this.monsters){
+            if (this.activeEvents[i] == 11) {
+                for (let [name, monster] of this.monsters) {
                     let currStr = monster.getStrength()
                     monster.setStrength(currStr - 1)
                 }
@@ -645,7 +987,7 @@ export class Game {
         this.activeEvents = eventsLeft
     }
 
-    public applyEvent(event){
+    public applyEvent(event) {
         console.log("Applying event: ", event.id)
         //do something
         if(event.id == 1){
@@ -654,7 +996,7 @@ export class Game {
         else if(event.id == 2){
             for(let [conn,hero] of this.heroList){
                 let tID = hero.getRegion().getID()
-                if(0 <= tID && tID <= 20){
+                if (0 <= tID && tID <= 20) {
                     hero.setWill(-3)
                 }
             }
@@ -682,7 +1024,7 @@ export class Game {
         else if(event.id == 5){
             for(let [conn,hero] of this.heroList){
                 let tID = hero.getRegion().getID()
-                if(37 <= tID && tID <= 70){
+                if (37 <= tID && tID <= 70) {
                     hero.setWill(-3)
                 }
             }
@@ -697,40 +1039,40 @@ export class Game {
             }
             this.activeEvents.push(11)
         }
-        else if(event.id == 12){
-            for(let [conn,hero] of this.heroList){
-                if(hero.getKind() == HeroKind.Archer || hero.getKind() == HeroKind.Mage){
+        else if (event.id == 12) {
+            for (let [conn, hero] of this.heroList) {
+                if (hero.getKind() == HeroKind.Archer || hero.getKind() == HeroKind.Mage) {
                     hero.setWill(3)
                 }
             }
         }
-        else if(event.id == 13){
-            for(let [conn,hero] of this.heroList){
+        else if (event.id == 13) {
+            for (let [conn, hero] of this.heroList) {
                 let currWill = hero.getWill()
-                if(currWill < 10){
-                    hero.setWill(10-currWill)
+                if (currWill < 10) {
+                    hero.setWill(10 - currWill)
                 }
             }
         }
-        else if(event.id == 14){
-            for(let [conn,hero] of this.heroList){
-                if(hero.getKind() == HeroKind.Dwarf || hero.getKind() == HeroKind.Warrior){
+        else if (event.id == 14) {
+            for (let [conn, hero] of this.heroList) {
+                if (hero.getKind() == HeroKind.Dwarf || hero.getKind() == HeroKind.Warrior) {
                     hero.setWill(3)
                 }
             }
         }
-        else if(event.id == 15){
+        else if (event.id == 15) {
             this.regions[35].removeWell()
         }
-        else if(event.id == 17){
-            for(let [conn,hero] of this.heroList){
+        else if (event.id == 17) {
+            for (let [conn, hero] of this.heroList) {
                 let currWill = hero.getWill()
-                if(currWill > 12){
-                    hero.setWill(12-currWill)
+                if (currWill > 12) {
+                    hero.setWill(12 - currWill)
                 }
             }
         }
-        else if(event.id == 19){
+        else if (event.id == 19) {
             this.activeEvents.push(event.id)
         }
         else if(event.id == 21){
@@ -757,26 +1099,26 @@ export class Game {
         else if(event.id == 22){
             this.regions[45].removeWell()
         }
-        else if(event.id == 24){
-            for(let [conn,hero] of this.heroList){
+        else if (event.id == 24) {
+            for (let [conn, hero] of this.heroList) {
                 let tID = hero.getRegion().getID()
-                if(tID == 71 || tID == 72 || tID == 0 || 47 <= tID && tID <= 63){
+                if (tID == 71 || tID == 72 || tID == 0 || 47 <= tID && tID <= 63) {
                     //this hero is safe
                     continue
                 }
-                else{
+                else {
                     hero.setWill(-2)
                 }
             }
         }
-        else if(event.id == 26){
+        else if (event.id == 26) {
             this.activeEvents.push(event.id)
         }
-        else if(event.id == 28){
-            for(let [conn,hero] of this.heroList){
+        else if (event.id == 28) {
+            for (let [conn, hero] of this.heroList) {
                 let time = hero.getTimeOfDay()
                 console.log(hero.getKind(), time)
-                if(time == 1){
+                if (time == 1) {
                     hero.setWill(2)
                 }
             }
@@ -824,20 +1166,20 @@ export class Game {
         else if(event.id == 31){
             for(let [conn,hero] of this.heroList){
                 let tID = hero.getRegion().getID()
-                if(tID == 71 || tID == 72 || tID == 0 || 47 <= tID && tID <= 63){
+                if (tID == 71 || tID == 72 || tID == 0 || 47 <= tID && tID <= 63) {
                     //this hero is safe
                     continue
                 }
-                else{
+                else {
                     hero.setWill(-2)
                 }
             }
         }
-        else if(event.id == 32){
-            for(let [conn,hero] of this.heroList){
+        else if (event.id == 32) {
+            for (let [conn, hero] of this.heroList) {
                 let time = hero.getTimeOfDay()
                 console.log(hero.getKind(), time)
-                if(time == 1){
+                if (time == 1) {
                     hero.setWill(-2)
                 }
             }
@@ -846,5 +1188,21 @@ export class Game {
             //to do
         } 
         //if one that returns to deck ?? not sure if any return
+    }
+
+    public getEventDeck() {
+        return this.eventDeck;
+    }
+
+    public getActiveEvents() {
+        return this.activeEvents;
+    }
+
+    private shuffle(a) {
+        for (let i = a.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
     }
 }

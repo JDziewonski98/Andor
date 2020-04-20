@@ -50,7 +50,7 @@ yarn install
 #### Starting the server
 Simply run
 ```
-npm run dev
+npm run serve
 ```
 
 ### Game interface

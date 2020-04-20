@@ -31,6 +31,7 @@ export class Fight extends Window {
     private monstertypetxt
     private exitbutton
     private invitetext;
+    private princeText;
     //for helm
     private otherdicetext;
     private helmtext;
@@ -55,8 +56,17 @@ export class Fight extends Window {
     private heroobjectsforcollab
     private firstfight = true
     private inviteresponses = 0
+    private princePos;
+    private princebonus: number = 0;
+    private shieldresponsesexpected = 0
+    private shieldresponsecnt = 0
+    private shieldinteractivecheckcnt = 0
     // To toggle interactivity of overlay
     private overlayRef: BoardOverlay;
+
+    //continue fight stuff
+    private continueresponsecnt = 0;
+    private continuinghero;
 
     public constructor(key, data, windowData = { x: 10, y: 10, width: 500, height: 380 }) {
         super(key, windowData);
@@ -66,6 +76,7 @@ export class Fight extends Window {
         this.monstername = data.monster.name
         this.hero = data.hero
         this.monster = data.monster
+        this.princePos = data.princePos
         this.overlayRef = data.overlayRef;
         this.yourwill = this.hero.getWillPower()
         this.heroobjectsforcollab = data.heroes
@@ -90,7 +101,14 @@ export class Fight extends Window {
         var self = this
         var bg = this.add.image(0, 0, 'scrollbg').setOrigin(0.5)
         bg.tint = 0xff0000
-        this.monstericon = this.add.image(40, 40, this.monstertexture)
+        // this.monstericon = this.add.image(40, 40, this.monstertexture)
+        console.log(this.monstername)
+        if (this.monstername == "fortress") {
+            console.log("sanity")
+            this.monstericon = this.add.image(40, 60, this.monstertexture).setScale(0.6)
+        } else {
+            this.monstericon = this.add.image(40, 40, this.monstertexture)
+        }
 
         // disable the overlay
         this.overlayRef.toggleInteractive(false);
@@ -114,16 +132,20 @@ export class Fight extends Window {
         this.yourroll = this.add.text(90, 110, 'Your atk: ', { backgroundColor: 'fx00' })
         this.alliedrollstxt = this.add.text(90, 160, 'Allied atks: ', { backgroundColor: 'fx00' })
         this.yourwilltxt = this.add.text(90, 200, 'Your will: ' + this.yourwill, { backgroundColor: 'fx00' })
+        this.princeText = this.add.text(90, 300, '')
+        console.log('princepos:',this.princePos, this.monster.tile.id)
+        if (this.princePos == this.monster.tile.id) {
+            this.princeText.setText('Prince: +4 dmg')
+            this.princebonus = 4;
+        }
 
         //click the fight text to enter the fight.
         this.fighttext.on('pointerdown', function (pointer) {
-
             self.inviteresponses = 0
             var haveyourolled = false
             self.alliedrollstxt.setText('Allied rolls: ')
             self.actuallyjoinedheros = []
             self.fighttext.setText('Fight again!')
-            self.fighttext.disableInteractive()
 
             //the monster roll dice determines if you are actually in range to fight it and if you need to use bow.
             self.gameinstance.rollMonsterDice(self.monstername, function (result, bow) {
@@ -133,6 +155,7 @@ export class Fight extends Window {
                 }
 
                 else if (result != 'outofrange') {
+                    self.fighttext.disableInteractive()
 
                     //only generate the list of heroes in range text first time.
                     self.exitbutton.visible = false
@@ -261,8 +284,8 @@ export class Fight extends Window {
                     confirmbutton.on('pointerdown', function (pointer) {
                         if (alliedrollstxtreceived == self.actuallyjoinedheros.length && self.inviteresponses == self.alliedheros.length && haveyourolled == true) {
                             confirmbutton.destroy()
-                            self.fighttext.setInteractive()
                             self.gameinstance.unsubscribeAlliedRollListener()
+                            self.gameinstance.unsubscribeShieldListeners()
                             var alliedattacksum: number = 0;
                             rollbutton.destroy()
                             self.exitbutton.visible = true
@@ -280,70 +303,155 @@ export class Fight extends Window {
                             }
 
                             self.hero.incrementHour()
-                            self.heroobjectsforcollab.forEach(h => {
-                                if (self.actuallyjoinedheros.includes(h.getKind())) {
-                                    h.incrementHour()
-                                }
-                            })
+                            self.gameinstance.updateHourTracker(self.hero.getKind())
 
                             var totalattack = self.yourattack + alliedattacksum
+                            console.log(self.allyrolls)
                             console.log('totalatk:', totalattack, 'uratk:', self.yourattack, 'result', result)
-                            if (totalattack > result) {
+                            if (totalattack + self.princebonus > result) {
                                 //hero(s) win.
                                 //todo handle reinvite (i think done?)
-                                self.gameinstance.doDamageToMonster(self.monstername, totalattack - result)
-                                self.notificationtext.setText('WHAM!! You hit them for \n' + (totalattack - result) + ' damage!')
+                                self.gameinstance.doDamageToMonster(self.monstername, totalattack + self.princebonus - result)
+                                self.notificationtext.setText('WHAM!! You hit them for \n' + (totalattack + self.princebonus - result) + ' damage!')
                                 self.tween()
-                                self.monsterwill = self.monsterwill - (totalattack - result)
+                                self.monsterwill = self.monsterwill - (totalattack + self.princebonus - result)
                                 self.monsterwilltxt.setText('Will: ' + self.monsterwill)
                                 if (self.monsterwill < 1) {
                                     self.victory()
                                 }
+                                try {
+                                self.fighttext.setInteractive();
+                                }
+                                catch {
+                                    console.log('its fine')
+                                }
                             }
-                            else if (totalattack < result) {
+                            else if (totalattack + self.princebonus < result) {
                                 //monster win.
                                 //WARNING: here im doing some client side calculations on heros will to determine if they die.
                                 // I think this is wrong and will have to be changed, as those values are only up to date if
                                 // youve opened their hero panel recently. TODO.
 
                                 //do damage to all involved heros, backend
-                                self.gameinstance.doDamageToHero(self.hero.getKind(), result - totalattack)
-                                for (let ally of self.actuallyjoinedheros) {
-                                    self.gameinstance.doDamageToHero(ally, result - totalattack)
-                                }
-
-                                // determine which allies died and remove them from possible allies and display death on their screen
-                                // (this is the bad client side calculation that I need to change eventually)
-                                // this is the one shaky part of the code basically.
-                                self.heroobjectsforcollab.forEach(hero => {
-                                    if (self.actuallyjoinedheros.includes(hero.getKind())) {
-                                        hero.setwillPower(-(result - totalattack))
-                                        if (hero.getWillPower() < 1) {
-                                            var index = self.alliedheros.indexOf(hero.getKind());
-                                            if (index > -1) {
-                                                self.alliedheros.splice(index, 1);
-                                                console.log('removed', hero.getKind(), 'due to death.')
-                                                //send message to display death on their screen.
-                                                self.gameinstance.sendDeathNotice(hero.getKind())
-                                            }
-                                        }
+                                self.gameinstance.getHeroItems(self.hero.getKind(), function(itemdict) {
+                                    if (itemdict['largeItem'] == 'shield') {
+                                        //self.fighttext.disableInteractive()
+                                        self.gameinstance.sendShieldPrompt(self.hero.getKind(), false, result - totalattack - self.princebonus, true)
                                     }
-                                });
-                                
-                                self.hero.setwillPower(-(result - totalattack))
-                                self.yourwill = self.hero.getWillPower()
-                                self.yourwilltxt.setText('Your will: ' + self.yourwill)
-                                self.notificationtext.setText('OUCH!! You take \n' + (result - totalattack) + ' damage!')
-                                self.tweentext()
-                                if (self.hero.getWillPower() < 1) {
-                                    self.hero.resetWillPower()
-                                    self.hero.setStrength(-1)
-                                    self.death()
+                                    else if (itemdict['largeItem'] == 'damaged_shield') {
+                                        //self.fighttext.disableInteractive()
+                                        self.gameinstance.sendShieldPrompt(self.hero.getKind(), true, result - totalattack - self.princebonus, true)
+                                    }
+                                    else {
+                                        console.log('here 328 xxxxxx')
+                                        self.gameinstance.doDamageToHero(self.hero.getKind(), result - totalattack - self.princebonus, function() {
+                                            console.log('here 336 xxxxxxxxxxxxxxxxxxxxx')
+                                            self.hero.resetWillPower()
+                                            self.hero.setStrength(-1)
+                                            self.death()
+                                        })
+                                        self.gameinstance.getHeroAttributes(self.hero.getKind(), function(data) {
+                                            try{
+                                                self.yourwill = data.will
+                                                self.yourwilltxt.setText('Your will: ' + self.yourwill)
+                                                self.notificationtext.setText('OUCH!! You take \n' + (result - totalattack - self.princebonus) + ' damage!')
+                                                self.tweentext()
+                                            }
+                                            catch {
+                                                console.log('its fine, you just died.')
+                                            }
+                                        })
+                                    }
+                                })
+                                console.log('actuallyjoinedzzzzzzzzzz', self.actuallyjoinedheros)
+                                for (let ally of self.actuallyjoinedheros) {
+                                    console.log('349999999999999999999999', ally)
+                                    self.gameinstance.getHeroItems(ally, function(itemdict) {
+                                        console.log('351111111111111111111111111111', ally, itemdict)
+                                        if (itemdict['largeItem'] == 'shield') {
+                                            self.fighttext.disableInteractive()
+                                            self.shieldresponsesexpected++
+                                            self.gameinstance.sendShieldPrompt(ally, false, result - totalattack - self.princebonus, false)
+                                        }
+                                        else if (itemdict['largeItem'] == 'damaged_shield'){
+                                            self.fighttext.disableInteractive()
+                                            self.shieldresponsesexpected++
+                                            self.gameinstance.sendShieldPrompt(ally, true, result - totalattack - self.princebonus, false)
+
+                                        }
+                                        else {
+                                            self.shieldinteractivecheckcnt++
+                                            console.log('bruhhhhhhhhhhhh', self.shieldinteractivecheckcnt, self.actuallyjoinedheros.length)
+                                            if (self.shieldinteractivecheckcnt == self.actuallyjoinedheros.length) {
+                                                console.log('here. not gD!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+                                                self.shieldinteractivecheckcnt = 0;
+                                                self.fighttext.setInteractive()
+                                            }
+                                            self.gameinstance.doDamageToHero(ally, result - totalattack - self.princebonus)
+                                            self.gameinstance.getHeroAttributes(ally, function(data) {
+                                                if (data.will < 1){
+                                                    var index = self.alliedheros.indexOf(ally);
+                                                    if (index > -1) {
+                                                        self.alliedheros.splice(index, 1);
+                                                        console.log('removed', ally, 'due to death.')
+                                                        //send message to display death on their screen.
+                                                        self.gameinstance.sendDeathNotice(ally)
+                                                    } 
+                                                }
+                                            })
+                                        }
+                                    })
                                 }
+                                if (self.actuallyjoinedheros.length == 0){
+                                    console.log('not gdasda!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+                                    self.fighttext.setInteractive();
+                                }
+                                /*
+                                *todo:
+                                *set a listener for responses from the shield 
+                                *if its a yes response, just increment response cnt
+                                *if its a no reponse, increment response cnt, and check for death using get attributes.
+                                *if theyre dead, remove them from allied heroes, and send them a death reponse
+                                *once u get enough reponses, enable fight text interactive and reset both counts to 0
+                                *remember to unsubscribe this listener upon close of the window
+                                * */
+                               self.gameinstance.receiveShieldResp(function(herotype, resp){
+                                   console.log('ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ')
+                                   self.shieldresponsecnt++
+                                   if (resp == 'no') {
+                                       //check for death
+                                       self.gameinstance.getHeroAttributes(herotype, function(data){
+                                           if (data.will - (result - self.princebonus - totalattack) < 1){
+                                               //remove hero from alliedherolist
+                                               var index = self.alliedheros.indexOf(herotype);
+                                               if (index > -1) {
+                                                   self.alliedheros.splice(index, 1);
+                                                   console.log('removed', herotype, 'due to death.')
+                                               }
+                                               self.gameinstance.sendDeathNotice(herotype)
+                                           }
+                                           self.gameinstance.doDamageToHero(herotype, result - self.princebonus - totalattack)
+                                       })
+                                   }
+                                   if (self.shieldresponsecnt == self.shieldresponsesexpected) {
+                                       console.log(self.shieldresponsecnt, self.shieldresponsesexpected, 'herexxxxxxxx')
+                                       self.shieldresponsesexpected = 0;
+                                       self.shieldresponsecnt = 0;
+                                       self.shieldinteractivecheckcnt = 0;
+                                       try{
+                                        self.fighttext.setInteractive()
+                                       }
+                                       catch {
+                                           console.log('we good')
+                                       }
+                                   }
+                               })
                             }
+
                             else {
                                 //TODO tie (anything else to do?)
                                 self.notificationtext.setText('Tie! You are \nevenly matched...')
+                                self.fighttext.setInteractive()
                             }
                         }
                         else {
@@ -369,12 +477,30 @@ export class Fight extends Window {
         }
         this.exitbutton = this.add.text(300, 10, 'X', style).setInteractive()
         this.exitbutton.on('pointerdown', function (pointer) {
-            self.overlayRef.toggleInteractive(true);
-            self.scene.resume("Game")
-            self.scene.remove(self.windowname)
+            if (self.alliedheros.length == 0 || self.firstfight == true){
+                console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxxx')
+                self.endTurnStuff()
+            }
+            else {
+                console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
+                //we have to send em option to continue da fight
+                self.promptAlliesToContinueFight()
+            }
         })
     }
 
+    private endTurnStuff() {
+        this.gameinstance.resetMonsterStats(this.monstername)
+        this.overlayRef.toggleInteractive(true);
+        try{
+            this.scene.resume("Game") 
+        }
+        catch {
+            console.log('its fine')
+        }
+        this.scene.remove(this.windowname)
+        this.gameinstance.endTurn()
+    }
 
     private displayInvList() {
         var self = this
@@ -447,7 +573,6 @@ export class Fight extends Window {
 
     public tween() {
         //  Flash the mosntericon
-        this.fighttext.disableInteractive()
         this.monstericon.setTint('#000000')
         this.tweens.add({
             targets: this.monstericon,
@@ -457,12 +582,10 @@ export class Fight extends Window {
             yoyo: true
         });
         this.monstericon.clearTint()
-        this.fighttext.setInteractive()
     }
 
 
     public tweentext() {
-        this.fighttext.disableInteractive()
         this.tweens.add({
             targets: this.notificationtext,
             alpha: 0.2,
@@ -470,7 +593,6 @@ export class Fight extends Window {
             ease: 'Power3',
             yoyo: true
         });
-        this.fighttext.setInteractive()
     }
 
 
@@ -523,6 +645,8 @@ export class Fight extends Window {
             }
 
             WindowManager.create(this, self.monstername + 'collab', CollabWindow, collabwindowdata)
+            //TODO should move narrator
+            self.gameinstance.endTurn()
             self.scene.remove(self.monstername)
         }, this)
 
@@ -551,6 +675,8 @@ export class Fight extends Window {
             }
 
             WindowManager.create(this, self.monstername + 'collab', CollabWindow, collabwindowdata)
+            //TODO should move narrator
+            self.gameinstance.endTurn()
             self.scene.remove(self.monstername)
         }, this)
 
@@ -560,6 +686,7 @@ export class Fight extends Window {
 
     public death() {
         //if you died, end your turn and reset the stats.
+        console.log('doing death')
         var self = this
         this.destroyTexts(false)
         this.add.text(70, 50, "You lost and lose\n 1 strength. Your turn \n is over. Your \nwill is set to 3.")
@@ -578,6 +705,7 @@ export class Fight extends Window {
         if (victory) {
             this.monster.destroy()
         }
+        this.princeText.destroy()
         this.alliedrollstxt.destroy()
         this.invitetext.destroy()
         this.yourwilltxt.destroy()
@@ -591,6 +719,49 @@ export class Fight extends Window {
         this.theirroll.destroy()
         this.yourroll.destroy()
         this.exitbutton.destroy()
+    }
+
+    private promptAlliesToContinueFight() {
+        var self = this;
+        //use self.firstfight to determine if this is necessary.
+        for (let ally of this.alliedheros) {
+            console.log(ally)
+            this.gameinstance.continueFightRequest(ally)
+        }
+        //we have to wait until a) someone agrees to continue the fight or 
+        //b) no one wants to continue the fight
+        self.gameinstance.receiveContinueFight(function(response, herotype) {
+            console.log('we in here bihh!!!!!!!!!!!!!!!!!!!!!!!')
+            self.continueresponsecnt++
+            if (response == 'yes' && self.continuinghero == null) {
+                console.log('option uno')
+                self.gameinstance.unsubscribeContFight()
+                self.continuinghero = herotype;
+                self.gameinstance.forceContinueFight(self.continuinghero, self.monstername)
+                self.overlayRef.toggleInteractive(true);
+                self.gameinstance.endTurnOnEndDay()
+                self.scene.resume("Game")
+                self.scene.remove(this.windowname)
+                self.gameinstance.endTurnOnEndDay()
+                //make it their turn and make them immediately start the fight.
+                //perhaps send a message to all other continueFightRequest windows to close that window.
+            }
+            else if (response == 'yes' && self.continuinghero != null) {
+                console.log('option dos')
+                // do nothing?
+            }
+            else if (response == 'no') {
+                console.log('option tres')
+                //do nothing?
+            }
+            console.log(self.continueresponsecnt, self.alliedheros.length)
+            if (self.continueresponsecnt == self.alliedheros.length) {
+                console.log('option quatro')
+                //this means everyone said no to continue fight, so close window and end turn as normal with resetting monster stats.
+                self.gameinstance.unsubscribeContFight()
+                self.endTurnStuff()
+            }
+        })
     }
 
 }
