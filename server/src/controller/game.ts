@@ -526,6 +526,22 @@ export function game(socket, model: Game, io) {
                     }
                 }
               }
+              else if(event.id == 23){
+                var elligibleHeroes = new Array<Hero>()
+                for(let [conn,hero] of model.getHeros()){
+                  if(hero.getStrength() <6 ){
+                    elligibleHeroes.push(hero)
+                  }
+                }
+                if(elligibleHeroes.length > 0 && elligibleHeroes.length < 3){
+                  for(let hero of elligibleHeroes){
+                    hero.setStrength(1)
+                  }
+                }
+                else if(elligibleHeroes.length > 2){
+                  io.of("/" + model.getName()).emit('newCollab', event.id, elligibleHeroes);
+                }
+              }
               model.applyEvent(event)
             }
           }
@@ -841,6 +857,9 @@ export function game(socket, model: Game, io) {
               currHero.consumeItem(currHero.getLargeItem())
               model.setBlockedEvent(true)
             }
+          }
+          else if(resNames[i] == 'Strength'){
+            currHero?.setStrength(resAllocated[heroTypeString][i])
           }
         }
         // console.log("Updated", heroTypeString, "gold:", currHero?.getGold(), "wineskin:", currHero?.getWineskin())

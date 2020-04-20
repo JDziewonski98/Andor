@@ -12,11 +12,11 @@ export var map = [
     //     "desc": "Each hero standing on a space with a number between 0 and 20 now loses 3 willpower points."
     // },
     ////////3 IS ONLY PARTIALLY IMPLEMENTED
-    {
-        "id": 3, 
-        "flavorText": "Wisdom from the Tree of Songs", 
-        "desc": "A hero who enters the Tree of Songs space or is already standing there gets 1 strength point. If more than one hero is standing there, the one with the highest rank gets the strength point. Now place this card on space 57 until a hero has gotten the strength point. Then remove it from the game."
-    },
+    // {
+    //     "id": 3, 
+    //     "flavorText": "Wisdom from the Tree of Songs", 
+    //     "desc": "A hero who enters the Tree of Songs space or is already standing there gets 1 strength point. If more than one hero is standing there, the one with the highest rank gets the strength point. Now place this card on space 57 until a hero has gotten the strength point. Then remove it from the game."
+    // },
     // {
     //     "id": 5, 
     //     "flavorText": "Poisonous vapors from the mountain are tormenting the heroes.", 
@@ -77,11 +77,11 @@ export var map = [
     //     "flavorText": "Rampaging creatures despoil the well at the foot of the mountains.", 
     //     "desc": "The well token on space 45 is removed from the game."
     // },
-    // {
-    //     "id": 23, 
-    //     "flavorText": "The king’s blacksmiths are laboring tirelessly.", 
-    //     "desc": "Up to two heroes with 6 or fewer strength points can each add 1 strength point to what they already have. You can decide as a group which heroes those will be."
-    // },
+    {
+        "id": 23, 
+        "flavorText": "The king’s blacksmiths are laboring tirelessly.", 
+        "desc": "Up to two heroes with 6 or fewer strength points can each add 1 strength point to what they already have. You can decide as a group which heroes those will be."
+    },
     // {
     //     "id": 24,
     //     "flavorText": "A storm moves across the countryside and weighs upon the mood of the heroes.",

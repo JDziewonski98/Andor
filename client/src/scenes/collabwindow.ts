@@ -216,43 +216,46 @@ export class CollabWindow extends Window {
         this.acceptText = this.add.text(0, this.height-collabTextHeight, 'Accept', textStyle)
         this.acceptText.setInteractive()
         this.acceptText.on('pointerdown', function (pointer) {
-            // Check that resAllocated corresponds with specified quantities from data.resources
-            if (self.verifyAllocated()) {
+            if(!self.hasAccepted){
+               // Check that resAllocated corresponds with specified quantities from data.resources
+                if (self.verifyAllocated()) {
+                    self.hasAccepted = true
+                    self.acceptText.setColor('#00FF00')
 
-                self.acceptText.setColor('#00FF00')
+                    //emit server call
+                    self.gameinstance.sendAccept(self.ownHeroKind)
 
-                //emit server call
-                self.gameinstance.sendAccept(self.ownHeroKind)
-
-                self.numAccepts++
-                //if last to accept, initiate ending of collab
-                if(self.numAccepts == self.involvedHeroes.length){
-                    let convMap = {};
-                    // Need to convert map TS object to send to server
-                    self.resAllocated.forEach((val: number[], key: string) => {
-                        convMap[key] = val;
-                    });
-                    //emit end collab call
-                    // Pass map of allocated resources and list of resource names to map allocated 
-                    // quantities to the name of the corresponding resource
-                    //console.log(self.involvedHeroes)
-                    var involvedHeroKinds = new Array<HeroKind>()
-                    for(let hero of self.involvedHeroes){
-                        involvedHeroKinds.push(hero.getKind())
+                    self.numAccepts++
+                    //if last to accept, initiate ending of collab
+                    if(self.numAccepts == self.involvedHeroes.length){
+                        let convMap = {};
+                        // Need to convert map TS object to send to server
+                        self.resAllocated.forEach((val: number[], key: string) => {
+                            convMap[key] = val;
+                        });
+                        //emit end collab call
+                        // Pass map of allocated resources and list of resource names to map allocated 
+                        // quantities to the name of the corresponding resource
+                        //console.log(self.involvedHeroes)
+                        var involvedHeroKinds = new Array<HeroKind>()
+                        for(let hero of self.involvedHeroes){
+                            involvedHeroKinds.push(hero.getKind())
+                        }
+                        self.gameinstance.sendEndCollab(convMap, self.resourceNames, involvedHeroKinds)
                     }
-                    self.gameinstance.sendEndCollab(convMap, self.resourceNames, involvedHeroKinds)
-                }
-                //self.gameinstance.collabDecisionSubmit(convMap, self.resourceNames, self.involvedHeroes);
-                //
-            } else {
-                console.log("Allocated quantities do not match those specified");
-                self.acceptText.setText("Quantities must match!")
-                self.acceptText.setColor('#d11313')
-                setTimeout(function(){
-                    self.acceptText.setText("Accept");
-                    self.acceptText.setColor('#FFFFFF')
-                }, 3000);
+                    //self.gameinstance.collabDecisionSubmit(convMap, self.resourceNames, self.involvedHeroes);
+                    //
+                } else {
+                    console.log("Allocated quantities do not match those specified");
+                    self.acceptText.setText("Quantities must match!")
+                    self.acceptText.setColor('#d11313')
+                    setTimeout(function(){
+                        self.acceptText.setText("Accept");
+                        self.acceptText.setColor('#FFFFFF')
+                    }, 3000);
+                } 
             }
+            
         });
 
         // For resource splitting collabs
@@ -346,6 +349,33 @@ export class CollabWindow extends Window {
                 return true
             }
             return false;
+        }
+        else if(this.type == "singleDistribution"){
+            console.log("singy")
+            var self = this;
+            var currTotals = [];
+            currTotals.length = this.resources.size;
+            currTotals.fill(0);
+            console.log(Array.from(this.resAllocated))
+            Array.from(this.resAllocated.values()).forEach( counts => {
+                console.log(counts)
+                for (let i=0; i<counts.length; i++) {
+                    if(counts[i] > 1){
+                        return false
+                    }
+                    currTotals[i] += counts[i];
+                    
+                }
+            });
+            //console.log(currTotals);
+            var resMaxes = Array.from(this.resources.values());
+            for (let i=0; i<resMaxes.length; i++) {
+                if (resMaxes[i] != currTotals[i]) {
+                    console.log("resource", i, "count did not match");
+                    return false;
+                }
+            }
+            return true;
         }
        
     }

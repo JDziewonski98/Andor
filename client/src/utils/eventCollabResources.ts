@@ -17,4 +17,10 @@ export var map = [
     "partySize": 0,
     "type": "singleItemPay"
   },
+  {
+    "id": 23,
+    "list": [["Strength", 2]],
+    "partySize": 0,
+    "type": "singleDistribution"
+  },
 ]
