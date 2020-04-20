@@ -257,6 +257,9 @@ export class game {
     */
     // Note: this is not used when a hero's turn ends because they ended their day.
     // Logic for turn end on end day is handled on the server.
+    public getCurrPlayersTurn(callback) {
+        this.socket.emit("getCurrPlayersTurn", callback);
+    }
     
     public endTurn(){
         // The hero that gets the next turn depends on whether the day is over for all heroes

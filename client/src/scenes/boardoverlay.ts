@@ -235,12 +235,14 @@ export default class BoardOverlay extends Phaser.Scene {
         var panel = new ScrollablePanel(this, panelConfig).layout();
         this.add.existing(panel);
         this.updatePanel(panel, this.content);
+
+        this.gameinstance.getCurrPlayersTurn(function(hk: string) {
+            self.updateContent(panel, `It is ${hk}'s turn.`)
+        })
       
         // Listen for updates to log from server
         this.gameinstance.updateGameLog(function(update: string) {
-            self.content += `\n > ${update}`;
-            self.updatePanel(panel, self.content);
-            panel.scrollToBottom();
+            self.updateContent(panel, update);
         })
 
         // TODO: REMOVE LATER, FOR TESTING NARRATOR ONLY
@@ -250,6 +252,12 @@ export default class BoardOverlay extends Phaser.Scene {
         // }, this)
 
         console.log("finished overlay create()")
+    }
+
+    private updateContent(panel: ScrollablePanel, update: string) {
+        this.content += `\n > ${update}`;
+        this.updatePanel(panel, this.content);
+        panel.scrollToBottom();
     }
 
     private updatePanel(panel: ScrollablePanel, content: string) {
