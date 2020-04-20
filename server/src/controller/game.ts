@@ -496,14 +496,7 @@ export function game(socket, model: Game, io) {
                     }
                     model.applyEvent(event)
                   }
-                  
                 }
-                 
-                
-              //now for the rest
-              //trigger collab decision between players. 
-              //blocked = collabCall
-              //if !blocked
               model.applyEvent(event) 
             }
             else{
@@ -561,7 +554,6 @@ export function game(socket, model: Game, io) {
                     if(hero.getRegion().getID() == 57){
                         count++
                         if(lowestRank > hero.getRank()){
-                            //highestHero = hero
                             lowestRank = hero.getRank()
                             lowestHeroKind = hero.getKind()
                         }
@@ -592,7 +584,6 @@ export function game(socket, model: Game, io) {
                     if(hero.getRegion().getID() == 72){
                         count++
                         if(lowestRank > hero.getRank()){
-                            //highestHero = hero
                             lowestRank = hero.getRank()
                             lowestHeroKind = hero.getKind()
                         }
@@ -614,6 +605,15 @@ export function game(socket, model: Game, io) {
                   model.getRegions()[72].addItem(SmallItem.Wineskin)
                   //emit add item
                 }
+              }
+              else if(event.id == 34){
+                var elligibleHeroes = new Array<Hero>()
+                for(let [conn,hero] of model.getHeros()){
+                  if(hero.getStrength() > 2){
+                    elligibleHeroes.push(hero)
+                  }
+                }
+                io.of("/" + model.getName()).emit('newCollab', event.id, elligibleHeroes);
               }
               model.applyEvent(event)
             }
@@ -884,8 +884,14 @@ export function game(socket, model: Game, io) {
           }
           else if (resNames[i] == 'Will') {
             if(resAllocated[heroTypeString][i]>0){
-              currHero?.setWill(resAllocated[heroTypeString][i])
-              currHero?.setStrength(-1)
+              if(resAllocated[heroTypeString][i] == 3){
+                currHero?.setWill(3)
+                currHero?.setStrength(-1)
+              }
+              else if(resAllocated[heroTypeString][i] == 10){
+                currHero?.setWill(10)
+                currHero?.setStrength(-2)
+              }
             }
           }
           else if(resNames[i] == 'Shield'){

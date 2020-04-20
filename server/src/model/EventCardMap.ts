@@ -131,4 +131,9 @@ export var map = [
     //     "flavorText": "Their adventure is wearing down the heroes.", 
     //     "desc": "One of the heroes immediately loses 1 strength point. You can decide as a group which hero that will be. If no hero has more than 1 strength point, nothing happens."
     // },
+    {
+        "id": 34, 
+        "flavorText": "The dwarf merchant Garz meets one of the heroes and offers him a trade.", 
+        "desc": "One of the heroes can now purchase 10 willpower points in exchange for 2 strength points. You can decide as a group which hero that will be."
+    }
 ]

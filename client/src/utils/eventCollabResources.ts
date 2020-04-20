@@ -29,4 +29,10 @@ export var map = [
     "partySize": 0,
     "type": "pay"
   },
+  {
+    "id": 34,
+    "list": [["Will", 10]],
+    "partySize": 0,
+    "type": "allOrNothing"
+  },
 ]
