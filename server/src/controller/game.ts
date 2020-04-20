@@ -83,32 +83,25 @@ export function game(socket, model: Game, io) {
           //if event 26 is active and it is your 8th hour, move freely
           if(hero.getTimeOfDay() == 8 && event26){
             hero.freeMoveTo(targetRegion)
-            if(model.dangerousRegion(targetRegion)){
-              hero.setWill(-4)
-              let index = model.getActiveEvents().indexOf(21);
-              if (index > -1) {
-                model.getActiveEvents().splice(index, 1);
-              }
-            }
           }
           else if((hero.getTimeOfDay() == 9 || (hero.getTimeOfDay() == 10 && !event9 )) && event19){
             hero.exhaustingMoveTo(targetRegion)
-            if(model.dangerousRegion(targetRegion)){
-              hero.setWill(-4)
-              let index = model.getActiveEvents().indexOf(21);
-              if (index > -1) {
-                model.getActiveEvents().splice(index, 1);
-              }
-            }
           }
           else{
             hero.moveTo(targetRegion)
-            if(model.dangerousRegion(targetRegion)){
-              hero.setWill(-4)
-              let index = model.getActiveEvents().indexOf(21);
-              if (index > -1) {
-                model.getActiveEvents().splice(index, 1);
-              }
+          }
+          if(model.dangerousRegion(targetRegion)){
+            hero.setWill(-4)
+            let index = model.getActiveEvents().indexOf(21);
+            if (index > -1) {
+              model.getActiveEvents().splice(index, 1);
+            }
+          }
+          if(model.strengthRegion(targetRegion)){
+            hero.setStrength(1)
+            let index = model.getActiveEvents().indexOf(3);
+            if (index > -1) {
+              model.getActiveEvents().splice(index, 1);
             }
           }
           socket.broadcast.emit("updateMoveRequest", hero.getKind(), id)
@@ -459,6 +452,15 @@ export function game(socket, model: Game, io) {
             //these will be blockable
             if(event.id ==  2 || event.id ==  5 || event.id ==  9 || event.id == 11 || event.id == 15 || event.id == 17 || 
                event.id == 19 || event.id == 21 || event.id == 22 || event.id == 24 || event.id == 31 || event.id == 32 || event.id == 33){
+
+                var heroesWithShields = new Array<Hero>()
+                for(let [conn,hero] of model.getHeros()){
+                  let largeItem = hero.getLargeItem()
+                  if(largeItem == LargeItem.Shield || largeItem == LargeItem.DamagedShield){
+                    heroesWithShields.push(hero)
+                  }
+                }
+
                 //first must handle 33 uniquely
                 if(event.id == 33){
                   //if someone has > 1 str point
@@ -468,26 +470,23 @@ export function game(socket, model: Game, io) {
                       herosWithStr.push(hero)
                     }
                   }
-                  if(herosWithStr.length != 0){
-                    //trigger collab with herosWithStr
-                    //blocked = collabCall
-                    //if !blocked
-                    //console.log(res)
-                    io.of("/" + model.getName()).emit("newCollab", event.id, model.getHero(heroId).getRegion().getID(), herosWithStr);
-                    model.applyEvent(event)
+                  if(herosWithStr.length > 0){
+                    if(heroesWithShields.length > 0){
+                      io.of("/" + model.getName()).emit('newCollab', 0, heroesWithShields);
+                    }
+                    if(model.getBlockedEvent()){
+                      model.setBlockedEvent(false)
+                    }
+                    else{
+                      io.of("/" + model.getName()).emit("newCollab", event.id, model.getHero(heroId).getRegion().getID(), herosWithStr);
+                      model.applyEvent(event)
+                    }
                   }
                   else{
                     //event is not triggered. We should probably communicate this somehow.
                   }
                 }
                 else{
-                  var heroesWithShields = new Array<Hero>()
-                  for(let [conn,hero] of model.getHeros()){
-                    let largeItem = hero.getLargeItem()
-                    if(largeItem == LargeItem.Shield || largeItem == LargeItem.DamagedShield){
-                      heroesWithShields.push(hero)
-                    }
-                  }
                   if(heroesWithShields.length > 0){
                     io.of("/" + model.getName()).emit('newCollab', 0, heroesWithShields);
                   }

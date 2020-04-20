@@ -1,22 +1,22 @@
 //{"id": , "flavorText": "", "desc": ""},
 
 export var map = [
-    {
-    "id": 1, 
-    "flavorText": "The dwarf merchant Garz makes an offer.", 
-    "desc": "Each hero may now purchase any article from the equipment board (except the witch’s brew) in exchange for 3 willpower points."
-    },
-    {
-        "id": 2, 
-        "flavorText": "A biting wind blows across the coast from the sea.", 
-        "desc": "Each hero standing on a space with a number between 0 and 20 now loses 3 willpower points."
-    },
-    ////////3 IS ONLY PARTIALLY IMPLEMENTED
     // {
-    //     "id": 3, 
-    //     "flavorText": "Wisdom from the Tree of Songs", 
-    //     "desc": "A hero who enters the Tree of Songs space or is already standing there gets 1 strength point. If more than one hero is standing there, the one with the highest rank gets the strength point. Now place this card on space 57 until a hero has gotten the strength point. Then remove it from the game."
+    // "id": 1, 
+    // "flavorText": "The dwarf merchant Garz makes an offer.", 
+    // "desc": "Each hero may now purchase any article from the equipment board (except the witch’s brew) in exchange for 3 willpower points."
     // },
+    // {
+    //     "id": 2, 
+    //     "flavorText": "A biting wind blows across the coast from the sea.", 
+    //     "desc": "Each hero standing on a space with a number between 0 and 20 now loses 3 willpower points."
+    // },
+    ////////3 IS ONLY PARTIALLY IMPLEMENTED
+    {
+        "id": 3, 
+        "flavorText": "Wisdom from the Tree of Songs", 
+        "desc": "A hero who enters the Tree of Songs space or is already standing there gets 1 strength point. If more than one hero is standing there, the one with the highest rank gets the strength point. Now place this card on space 57 until a hero has gotten the strength point. Then remove it from the game."
+    },
     // {
     //     "id": 5, 
     //     "flavorText": "Poisonous vapors from the mountain are tormenting the heroes.", 

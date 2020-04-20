@@ -945,6 +945,9 @@ export class Game {
         return (reg.getID() == 22 || reg.getID() == 23 || reg.getID() == 24 || reg.getID() == 25) 
                 && this.activeEvents.includes(21)
     }
+    public strengthRegion(reg:Region){
+        return (reg.getID() == 57) && this.activeEvents.includes(3)
+    }
     public drawCard(){
         return this.eventDeck.shift()
     }
@@ -1005,19 +1008,27 @@ export class Game {
             var count = 0
             //var highestHero = new Hero()
             var highestRank = Number.MIN_VALUE
+            var highestHeroKind = HeroKind.None
             for(let [conn,hero] of this.heroList){
                 if(hero.getRegion().getID() == 57){
                     count++
                     if(highestRank < hero.getRank()){
                         //highestHero = hero
                         highestRank = hero.getRank()
+                        highestHeroKind = hero.getKind()
                     }
                 }
             }
-            if(count >= 2){
+            if(count >= 1){
+                for(let [conn,hero] of this.heroList){
+                    if(hero.getKind() == highestHeroKind){
+                        hero.setStrength(1)
+                    }
+                }
                 //give highestHero strength point
             }
             else{
+                this.activeEvents.push(event.id)
                 //drop strength on region 57
             }
         }
