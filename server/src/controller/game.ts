@@ -542,6 +542,68 @@ export function game(socket, model: Game, io) {
                   io.of("/" + model.getName()).emit('newCollab', event.id, elligibleHeroes);
                 }
               }
+              else if(event.id == 29){
+                var count = 0
+                var lowestRank = Number.MAX_VALUE
+                var lowestHeroKind = HeroKind.None
+                for(let [conn,hero] of model.getHeros()){
+                    if(hero.getRegion().getID() == 57){
+                        count++
+                        if(lowestRank > hero.getRank()){
+                            //highestHero = hero
+                            lowestRank = hero.getRank()
+                            lowestHeroKind = hero.getKind()
+                        }
+                    }
+                }
+                if(count >= 1){
+                    for(let [conn,hero] of model.getHeros()){
+                        if(hero.getKind() == lowestHeroKind){
+                          hero.getRegion().addItem(LargeItem.Shield)
+                          //emit add item
+                          if(hero?.pickUpLargeItem(hero.getRegion().getID(), LargeItem.Shield)){
+                            //emit removeitem 
+                          }
+                        }
+                    }
+                }
+                else{
+                  //drop shield on region 57
+                  model.getRegions()[57].addItem(LargeItem.Shield)
+                  //emit add item
+                }
+              }
+              else if(event.id == 30){
+                var count = 0
+                var lowestRank = Number.MAX_VALUE
+                var lowestHeroKind = HeroKind.None
+                for(let [conn,hero] of model.getHeros()){
+                    if(hero.getRegion().getID() == 72){
+                        count++
+                        if(lowestRank > hero.getRank()){
+                            //highestHero = hero
+                            lowestRank = hero.getRank()
+                            lowestHeroKind = hero.getKind()
+                        }
+                    }
+                }
+                if(count >= 1){
+                    for(let [conn,hero] of model.getHeros()){
+                        if(hero.getKind() == lowestHeroKind){
+                          hero.getRegion().addItem(SmallItem.Wineskin)
+                          //emit add item
+                          if(hero?.pickUpSmallItem(hero.getRegion().getID(), SmallItem.Wineskin)){
+                            //emit removeitem 
+                          }
+                        }
+                    }
+                }
+                else{
+                  //drop shield on region 57
+                  model.getRegions()[72].addItem(SmallItem.Wineskin)
+                  //emit add item
+                }
+              }
               model.applyEvent(event)
             }
           }

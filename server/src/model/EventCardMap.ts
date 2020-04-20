@@ -77,11 +77,11 @@ export var map = [
     //     "flavorText": "Rampaging creatures despoil the well at the foot of the mountains.", 
     //     "desc": "The well token on space 45 is removed from the game."
     // },
-    {
-        "id": 23, 
-        "flavorText": "The king’s blacksmiths are laboring tirelessly.", 
-        "desc": "Up to two heroes with 6 or fewer strength points can each add 1 strength point to what they already have. You can decide as a group which heroes those will be."
-    },
+    // {
+    //     "id": 23, 
+    //     "flavorText": "The king’s blacksmiths are laboring tirelessly.", 
+    //     "desc": "Up to two heroes with 6 or fewer strength points can each add 1 strength point to what they already have. You can decide as a group which heroes those will be."
+    // },
     // {
     //     "id": 24,
     //     "flavorText": "A storm moves across the countryside and weighs upon the mood of the heroes.",
@@ -97,17 +97,15 @@ export var map = [
     //     "flavorText": "A beautifully clear, starry night gives the heroes confidence.", 
     //     "desc": "Every hero whose time marker is presently in the sunrise box gets 2 willpower points."
     // },
-    ///////29 IS ONLY PARTIALLY IMPLEMENTED
     // {
     //     "id": 29, 
     //     "flavorText": "The keepers of the Tree of Songs offer a gift.", 
     //     "desc": "Now place a shield on space 57. A hero who enters space 57 or is already standing there can collect the shield and place it on the large storage space on his hero board. If more than one hero is standing there, the hero with the lowest rank gets the shield."
     // },
-    ///////30 IS ONLY PARTIALLY IMPLEMENTED
     // {
     //     "id": 30, 
     //     "flavorText": "A drink in the tavern", 
-    //     "desc": "Place a wineskin on the taver space (72). A hero who enters space 72 or is already standing there can collect the wineskin and place it on the small storage space on his hero board. If more than one hero is standing there, the hero with the lowest rank gets the wineskin."
+    //     "desc": "Place a wineskin on the tavern space (72). A hero who enters space 72 or is already standing there can collect the wineskin and place it on the small storage space on his hero board. If more than one hero is standing there, the hero with the lowest rank gets the wineskin."
     // },
     // {
     //     "id": 31, 

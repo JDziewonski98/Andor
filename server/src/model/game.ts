@@ -1138,44 +1138,10 @@ export class Game {
             }
         }
         else if(event.id == 29){
-            var count = 0
-            //var lowestHero = new Hero(HeroKind.None, this.regions[0])
-            var lowestRank = Number.MAX_VALUE
-            for(let [conn,hero] of this.heroList){
-                if(hero.getRegion().getID() == 57){
-                    count++
-                    if(lowestRank > hero.getRank()){
-                        //lowestHero = hero
-                        lowestRank = hero.getRank()
-                    }
-                }
-            }
-            if(count >= 2){
-                //give lowestHero shield
-            }
-            else{
-                //drop shield on region 57
-            }
+            //handled on server controller
         }
         else if(event.id == 30){
-            var count = 0
-            //var lowestHero = new Hero(HeroKind.None, this.regions[0])
-            var lowestRank = Number.MAX_VALUE
-            for(let [conn,hero] of this.heroList){
-                if(hero.getRegion().getID() == 57){
-                    count++
-                    if(lowestRank > hero.getRank()){
-                        //lowestHero = hero
-                        lowestRank = hero.getRank()
-                    }
-                }
-            }
-            if(count >= 2){
-                //give lowestHero wineskin
-            }
-            else{
-                //drop wineskin on region 72
-            }
+            //handled on server controller
         }
         else if(event.id == 31){
             for(let [conn,hero] of this.heroList){
