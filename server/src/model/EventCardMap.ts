@@ -61,6 +61,11 @@ export var map = [
     //     "id": 19, 
     //     "flavorText": "An exhausting day", 
     //     "desc": "On this day, the 9th and 10th hours will each cost 3 willpower points instead of 2. Place this card above the overtime area of the time track. At the end of the day, it is removed from the game."
+    // // },
+    // {
+    //     "id": 20, 
+    //     "flavorText": "A farmer falls ill", 
+    //     "desc": "One farmer token on the game board that has not yet been taken to the castle must be removed from the game. The group can prevent that by paying gold and/or willpower points: \nFor 2 heroes, 2 gold/willpower points \nFor 3 heroes, 3 gold/willpower points. \nFor 4 heroes, 4 gold/willpower points"
     // },
     // {
     //     "id": 21, 
@@ -71,6 +76,11 @@ export var map = [
     //     "id": 22, 
     //     "flavorText": "Rampaging creatures despoil the well at the foot of the mountains.", 
     //     "desc": "The well token on space 45 is removed from the game."
+    // },
+    // {
+    //     "id": 23, 
+    //     "flavorText": "The king’s blacksmiths are laboring tirelessly.", 
+    //     "desc": "Up to two heroes with 6 or fewer strength points can each add 1 strength point to what they already have. You can decide as a group which heroes those will be."
     // },
     // {
     //     "id": 24,

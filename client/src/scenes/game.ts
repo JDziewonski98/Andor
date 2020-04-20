@@ -972,8 +972,14 @@ export default class GameScene extends Phaser.Scene {
     this.gameinstance.newEventListener((event: EventCard) => {
       this.applyEvent(event)
     })
-    this.gameinstance.newCollabListener((eventID, involvedHeroKinds) =>{
-      console.log("Received newCollabb", eventID, involvedHeroKinds)
+    this.gameinstance.newCollabListener((eventID, heroes) =>{
+      console.log("Received newCollab")
+
+      var involvedHeroKinds = new Array<HeroKind>()
+      for(let hero of heroes){
+        involvedHeroKinds.push(hero.hk)
+      }
+      
       var involved = false
       var involvedHeroes = new Array<Hero>()
       for(let hero of self.heroes){
@@ -984,6 +990,7 @@ export default class GameScene extends Phaser.Scene {
           }
         }
       }
+
       if(involved){
         var allCollabRes = require("../utils/eventCollabResources").map;
         var res = new Map<String,Number>()

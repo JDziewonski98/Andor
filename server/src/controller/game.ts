@@ -480,7 +480,16 @@ export function game(socket, model: Game, io) {
                     //event is not triggered. We should probably communicate this somehow.
                   }
                 }
-
+                else if(event.id == 20){
+                  //check which heros have gold and willpower to lose. 
+                  var elligibleHeroes = Array<Hero>()
+                  for(let [conn,hero] of model.getHeros()){
+                    if(hero.getStrength() > 1){
+                      elligibleHeroes.push(hero)
+                    }
+                  }
+                }
+                
               //now for the rest
               //trigger collab decision between players. 
               //blocked = collabCall
@@ -490,12 +499,12 @@ export function game(socket, model: Game, io) {
             else{
               if(event.id == 1){
                 for(let [conn,hero] of model.getHeros()){
-                  let involvedHeroKinds = Array<HeroKind>()
-                  involvedHeroKinds.push(hero.getKind())
-                  console.log("emmitting newCollab", event.id, involvedHeroKinds)
-                  io.of("/" + model.getName()).emit('newCollab', event.id, involvedHeroKinds);
-                  //socket.broadcast.emit('newCollab', event.id, involvedHeroKinds);
-                  //socket.emit('newCollab', event.id, involvedHeroKinds);
+                  if(hero.getWill()>3){
+                    let involvedHeroes = new Array<Hero>()
+                    involvedHeroes.push(hero)
+                    console.log("emmitting newCollab", event.id, involvedHeroes)
+                    io.of("/" + model.getName()).emit('newCollab', event.id, involvedHeroes);
+                    }
                 }
               }
               model.applyEvent(event)
@@ -768,8 +777,37 @@ export function game(socket, model: Game, io) {
           else if (resNames[i] == 'will') {
             currHero?.setWill(resAllocated[heroTypeString][i])
           }
-          else if(resNames[i] == '-Strength'){
-            currHero?.setStrength(-1*resAllocated[heroTypeString][i])
+          else if(resNames[i] == 'Shield'){
+            currHero?.setWill(-3)
+            currHero.getRegion().addItem(LargeItem.Shield)
+            //emit add item
+            if(currHero?.pickUpLargeItem(currHero.getRegion().getID(), LargeItem.Shield)){
+              //emit removeitem 
+            }
+          }
+          else if(resNames[i] == 'Wineskin'){
+            currHero?.setWill(-3)
+            currHero.getRegion().addItem(SmallItem.Wineskin)
+            //emit add item
+            if(currHero.pickUpSmallItem(currHero.getRegion().getID(), SmallItem.Wineskin)){
+              //emit removeitem 
+            }
+          }
+          else if(resNames[i] == 'Falcon'){
+            currHero?.setWill(-3)
+            currHero.getRegion().addItem(LargeItem.Falcon)
+            //emit add item
+            if(currHero?.pickUpLargeItem(currHero.getRegion().getID(), LargeItem.Falcon)){
+              //emit removeitem 
+            }
+          }
+          else if(resNames[i] == 'Helm'){
+            currHero?.setWill(-3)
+            currHero.getRegion().addItem("helm")
+            //emit add item
+            if(currHero.pickUpHelm(currHero.getRegion().getID())){
+              //emit removeitem 
+            }
           }
         }
         // console.log("Updated", heroTypeString, "gold:", currHero?.getGold(), "wineskin:", currHero?.getWineskin())

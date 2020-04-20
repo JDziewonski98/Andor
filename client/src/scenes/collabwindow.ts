@@ -319,6 +319,34 @@ export class CollabWindow extends Window {
             }
             return true;
         }
+        else if(this.type == 'singleItemPay'){
+            var self = this;
+            var currTotals = [];
+            currTotals.length = this.resources.size;
+            currTotals.fill(0);
+            Array.from(this.resAllocated.values()).forEach( counts => {
+                for (let i=0; i<counts.length; i++) {
+                    currTotals[i] += counts[i];
+                }
+            });
+            //console.log(currTotals);
+            var total = 0
+            for(let value of currTotals){
+                total += value
+            }
+            
+            // var resMaxes = Array.from(this.resources.values());
+            // for (let i=0; i<resMaxes.length; i++) {
+            //     if (resMaxes[i] != currTotals[i]) {
+            //         console.log("resource", i, "count did not match");
+            //         return false;
+            //     }
+            // }
+            if(total == 0 || total == 1){
+                return true
+            }
+            return false;
+        }
        
     }
     public incFunction(heroKind, resourceIndex){

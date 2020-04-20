@@ -1075,6 +1075,9 @@ export class Game {
         else if (event.id == 19) {
             this.activeEvents.push(event.id)
         }
+        else if(event.id == 20){
+            //do nothing
+        }
         else if(event.id == 21){
             var count = 0
             //var highestHero = new Hero(HeroKind.None, this.regions[0])
