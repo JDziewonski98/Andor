@@ -713,31 +713,23 @@ export default class GameScene extends Phaser.Scene {
   }
 
   private startingCollabDecisionSetup() {
-    //console.log(this.heroes)
-    var self = this
-    // function incFunction(heroKind){
-
-    // }
-    // function incCallback(heroKind, resourceIndex){
-    //   self.gameinstance.sendIncResource(heroKind,resourceIndex)
-    // };
-
-    
     var self = this;
 
     var res = new Map([
       ["gold", 5],
       ["wineskin", 2]
     ])
+
     // Determine width of the window based on how many resources are being distributed
     var width = (res.size + 1) * collabColWidth; // Not sure if there's a better way of getting size of ts obj
     // Determine height of the window based on number of players involved
     var height = (self.heroes.length + 2) * collabRowHeight;
-    // Set data depending on whether the client is the owner of the decision
+    
     // Get hero of lowest rank, based on their starting tile
     var heroRanks = [];
     for (let hero of self.heroes) { heroRanks.push(hero.tile.id); }
     self.startingHeroRank = Math.min(...heroRanks);
+
     var collabWindowData =
       {
         controller: self.gameinstance,
@@ -752,14 +744,14 @@ export default class GameScene extends Phaser.Scene {
         infight: false,
         overlayRef: self.overlay,
         ownHeroKind: this.ownHeroType,
-        incFunction: self.gameinstance.sendIncResource,
-        incListener: self.gameinstance.incListener,
         type: 'distribute'
       };
+
     WindowManager.create(this, 'collab', CollabWindow, collabWindowData);
     // Freeze main game while collab window is active
     this.scene.pause();
   }
+
   // Creating the hour tracker
   private hourTrackerSetup() {
     //x, y coordinates
@@ -977,12 +969,62 @@ export default class GameScene extends Phaser.Scene {
 
 
     //EVENTS
-    this.gameinstance.receiveNewCollab((involvedHeroKinds, eventID) =>{
-      if(involvedHeroKinds.includes(self.ownHeroType)){
-        //create collab appropriately 
+    this.gameinstance.newEventListener((event: EventCard) => {
+      this.applyEvent(event)
+    })
+    this.gameinstance.newCollabListener((eventID, involvedHeroKinds) =>{
+      console.log("Received newCollabb", eventID, involvedHeroKinds)
+      var involved = false
+      var involvedHeroes = new Array<Hero>()
+      for(let hero of self.heroes){
+        if(involvedHeroKinds.includes(hero.getKind())){
+          involvedHeroes.push(hero)
+          if(hero.getKind()==self.ownHeroType){
+            involved = true
+          }
+        }
+      }
+      if(involved){
+        var allCollabRes = require("../utils/eventCollabResources").map;
+        var res = new Map<String,Number>()
+        var type
+        for(let element of allCollabRes){
+          if(element.id == eventID && (involvedHeroKinds.length == element.partySize || element.partySize == 0)){
+            type = element.type
+            for(let [name,number] of element.list){
+              res.set(name,number)
+            }
+          }
+        }
+        console.log(res)
+
+        // Determine width of the window based on how many resources are being distributed
+        var width = (res.size + 1) * collabColWidth; // Not sure if there's a better way of getting size of ts obj
+        // Determine height of the window based on number of players involved
+        var height = (self.heroes.length + 2) * collabRowHeight;
+        
+        var collabWindowData =
+          {
+            controller: self.gameinstance,
+            isOwner: true,
+            involvedHeroes: involvedHeroes,
+            resources: res,
+            textOptions: null,
+            x: reducedWidth / 2 - width / 2,
+            y: reducedHeight / 2 - height / 2,
+            w: width,
+            h: height,
+            infight: false,
+            overlayRef: self.overlay,
+            ownHeroKind: this.ownHeroType,
+            type: type
+          };
+
+        WindowManager.create(this, 'collab', CollabWindow, collabWindowData);
+        // Freeze main game while collab window is active
+        this.scene.pause();
       }
     })
-
   }
 
   public update() {

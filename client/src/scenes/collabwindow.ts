@@ -37,13 +37,12 @@ export class CollabWindow extends Window {
 
     private name;
 
-    //
+    
     private ownHeroKind: HeroKind
-    //private incFunction: Function
-    //private incListener: Function
     private numAccepts
     private type
     private resourceToggles: Array<ResourceToggle>
+
     public constructor(key: string, data, incFunction) {
         super(key, {x: data.x, y: data.y, width: data.w, height: data.h});
 
@@ -63,8 +62,6 @@ export class CollabWindow extends Window {
             this.textOptions = data.textOptions;
         //}
         this.ownHeroKind = data.ownHeroKind
-        //this.incFunction = this.gameinstance.sendIncResource
-        //this.incListener = data.incListener
         this.resourceToggles = new Array<ResourceToggle>()
         this.numAccepts = 0
         this.type = data.type

@@ -446,7 +446,16 @@ export function game(socket, model: Game, io) {
         } else if (fogType === Fog.EventCard) {
           if(event != null){
             //will have to add blockable events once shields are implemented
-            io.of("/" + model.getName()).emit("newEvent", event);
+
+            //io.of("/" + model.getName()).emit("newEvent", event);
+            socket.broadcast.emit("newEvent", event);
+            socket.emit("newEvent", event);
+            //io.of("/" + model.getName()).emit("newEvent", event);
+            //io.of("/" + model.getName()).emit("newEvent", event);
+            //io.of("/" + model.getName()).emit("newEvent", event);
+            //io.of("/" + model.getName()).emit("newEvent", event);
+            //io.of("/" + model.getName()).emit("newEvent", event);
+
             //these will be blockable
             if(event.id ==  2 || event.id ==  5 || event.id ==  9 || event.id == 11 || event.id == 15 || event.id == 17 || 
                event.id == 19 || event.id == 21 || event.id == 22 || event.id == 24 || event.id == 31 || event.id == 32 || event.id == 33){
@@ -481,7 +490,12 @@ export function game(socket, model: Game, io) {
             else{
               if(event.id == 1){
                 for(let [conn,hero] of model.getHeros()){
-                  io.of("/" + model.getName()).emit("newIndividualCollab", event.id, hero.getRegion().getID(), hero.getKind());
+                  let involvedHeroKinds = Array<HeroKind>()
+                  involvedHeroKinds.push(hero.getKind())
+                  console.log("emmitting newCollab", event.id, involvedHeroKinds)
+                  io.of("/" + model.getName()).emit('newCollab', event.id, involvedHeroKinds);
+                  //socket.broadcast.emit('newCollab', event.id, involvedHeroKinds);
+                  //socket.emit('newCollab', event.id, involvedHeroKinds);
                 }
               }
               model.applyEvent(event)
