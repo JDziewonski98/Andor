@@ -948,6 +948,11 @@ export class Game {
     public strengthRegion(reg:Region){
         return (reg.getID() == 57) && this.activeEvents.includes(3)
     }
+    public regionBordersRiver(reg:Region){
+        var riverBorderRegionIds = [11,12,13,16,32,38,28,29,30,33,31,27,26,37,41,40,39,42,44,46,64,63,56,47,48,49]
+        var id = reg.getID()
+        return riverBorderRegionIds.includes(id)
+    }
     public drawCard(){
         return this.eventDeck.shift()
     }
@@ -1165,7 +1170,7 @@ export class Game {
             }
         }
         else if(event.id == 33){
-            //to do
+            //handled on server controller
         } 
         //if one that returns to deck ?? not sure if any return
     }

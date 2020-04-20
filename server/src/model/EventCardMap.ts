@@ -11,11 +11,15 @@ export var map = [
     //     "flavorText": "A biting wind blows across the coast from the sea.", 
     //     "desc": "Each hero standing on a space with a number between 0 and 20 now loses 3 willpower points."
     // },
-    ////////3 IS ONLY PARTIALLY IMPLEMENTED
     // {
     //     "id": 3, 
     //     "flavorText": "Wisdom from the Tree of Songs", 
     //     "desc": "A hero who enters the Tree of Songs space or is already standing there gets 1 strength point. If more than one hero is standing there, the one with the highest rank gets the strength point. Now place this card on space 57 until a hero has gotten the strength point. Then remove it from the game."
+    // },
+    // {
+    //     "id": 4, 
+    //     "flavorText": "The heroes replenish their water supplies at the river.", 
+    //     "desc": "Each hero who is now standing on a space bordering the river gets a wineskin."
     // },
     // {
     //     "id": 5, 
@@ -27,6 +31,11 @@ export var map = [
     //     "flavorText": "Dark clouds cover the sun, filling all the good people of Andor with strange foreboding.", 
     //     "desc": "On this day no hero is allowed to use a 10th hour. Place this card above the overtime area of the time track. At the end of the day, it is removed from the game."
     // },
+        {
+            "id": 10, 
+            "flavorText": "Jugglers from the north display their art.", 
+            "desc": "Each hero can now purchase 3 willpower points in exchange for 1 gold."
+        },
     // {
     //     "id": 11, 
     //     "flavorText": "The creatures gather their strength.", 

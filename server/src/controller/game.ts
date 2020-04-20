@@ -526,6 +526,26 @@ export function game(socket, model: Game, io) {
                     }
                 }
               }
+              else if(event.id == 4){
+                for(let [conn,hero] of model.getHeros()){
+                  if(model.regionBordersRiver(hero.getRegion())){
+                    hero.getRegion().addItem(SmallItem.Wineskin)
+                    //emit add item
+                    if(hero.pickUpSmallItem(hero.getRegion().getID(), SmallItem.Wineskin)){
+                      //emit removeitem 
+                    }
+                  }
+                }
+              }
+              else if(event.id == 10){
+                for(let [conn,hero] of model.getHeros()){
+                  let elligibleHeroes = new Array<Hero>()
+                  if(hero.getStrength()>1){
+                    elligibleHeroes.push(hero)
+                    io.of("/" + model.getName()).emit('newCollab', event.id, elligibleHeroes);
+                  }
+                }
+              }
               else if(event.id == 23){
                 var elligibleHeroes = new Array<Hero>()
                 for(let [conn,hero] of model.getHeros()){
@@ -871,8 +891,11 @@ export function game(socket, model: Game, io) {
               currHero.pickUpSmallItem(currHero.getRegion().getID(), SmallItem.Wineskin);
             }
           }
-          else if (resNames[i] == 'will') {
-            currHero?.setWill(resAllocated[heroTypeString][i])
+          else if (resNames[i] == 'Will') {
+            if(resAllocated[heroTypeString][i]>0){
+              currHero?.setWill(resAllocated[heroTypeString][i])
+              currHero?.setStrength(-1)
+            }
           }
           else if(resNames[i] == 'Shield'){
             if(resAllocated[heroTypeString][i] == 1){
