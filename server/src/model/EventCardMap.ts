@@ -6,11 +6,11 @@ export var map = [
     "flavorText": "The dwarf merchant Garz makes an offer.", 
     "desc": "Each hero may now purchase any article from the equipment board (except the witch’s brew) in exchange for 3 willpower points."
     },
-    // {
-    //     "id": 2, 
-    //     "flavorText": "A biting wind blows across the coast from the sea.", 
-    //     "desc": "Each hero standing on a space with a number between 0 and 20 now loses 3 willpower points."
-    // },
+    {
+        "id": 2, 
+        "flavorText": "A biting wind blows across the coast from the sea.", 
+        "desc": "Each hero standing on a space with a number between 0 and 20 now loses 3 willpower points."
+    },
     ////////3 IS ONLY PARTIALLY IMPLEMENTED
     // {
     //     "id": 3, 

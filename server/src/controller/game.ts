@@ -480,15 +480,35 @@ export function game(socket, model: Game, io) {
                     //event is not triggered. We should probably communicate this somehow.
                   }
                 }
-                else if(event.id == 20){
-                  //check which heros have gold and willpower to lose. 
-                  var elligibleHeroes = Array<Hero>()
+                else{
+                  var heroesWithShields = new Array<Hero>()
                   for(let [conn,hero] of model.getHeros()){
-                    if(hero.getStrength() > 1){
-                      elligibleHeroes.push(hero)
+                    let largeItem = hero.getLargeItem()
+                    if(largeItem == LargeItem.Shield || largeItem == LargeItem.DamagedShield){
+                      heroesWithShields.push(hero)
                     }
                   }
+                  if(heroesWithShields.length > 0){
+                    io.of("/" + model.getName()).emit('newCollab', 0, heroesWithShields);
+                  }
+                  if(model.getBlockedEvent()){
+                    model.setBlockedEvent(false)
+                  }
+                  else{
+                    if(event.id == 20){
+                      //check which heros have gold and willpower to lose. 
+                      var elligibleHeroes = Array<Hero>()
+                      for(let [conn,hero] of model.getHeros()){
+                        if(hero.getStrength() > 1){
+                          elligibleHeroes.push(hero)
+                        }
+                      }
+                    }
+                    model.applyEvent(event)
+                  }
+                  
                 }
+                 
                 
               //now for the rest
               //trigger collab decision between players. 
@@ -778,35 +798,49 @@ export function game(socket, model: Game, io) {
             currHero?.setWill(resAllocated[heroTypeString][i])
           }
           else if(resNames[i] == 'Shield'){
-            currHero?.setWill(-3)
-            currHero.getRegion().addItem(LargeItem.Shield)
-            //emit add item
-            if(currHero?.pickUpLargeItem(currHero.getRegion().getID(), LargeItem.Shield)){
-              //emit removeitem 
+            if(resAllocated[heroTypeString][i] == 1){
+              currHero?.setWill(-3)
+              currHero.getRegion().addItem(LargeItem.Shield)
+              //emit add item
+              if(currHero?.pickUpLargeItem(currHero.getRegion().getID(), LargeItem.Shield)){
+                //emit removeitem 
+              }
             }
           }
           else if(resNames[i] == 'Wineskin'){
-            currHero?.setWill(-3)
-            currHero.getRegion().addItem(SmallItem.Wineskin)
-            //emit add item
-            if(currHero.pickUpSmallItem(currHero.getRegion().getID(), SmallItem.Wineskin)){
-              //emit removeitem 
+            if(resAllocated[heroTypeString][i] == 1){
+              currHero?.setWill(-3)
+              currHero.getRegion().addItem(SmallItem.Wineskin)
+              //emit add item
+              if(currHero.pickUpSmallItem(currHero.getRegion().getID(), SmallItem.Wineskin)){
+                //emit removeitem 
+              }
             }
           }
           else if(resNames[i] == 'Falcon'){
-            currHero?.setWill(-3)
-            currHero.getRegion().addItem(LargeItem.Falcon)
-            //emit add item
-            if(currHero?.pickUpLargeItem(currHero.getRegion().getID(), LargeItem.Falcon)){
-              //emit removeitem 
+            if(resAllocated[heroTypeString][i] == 1){
+              currHero?.setWill(-3)
+              currHero.getRegion().addItem(LargeItem.Falcon)
+              //emit add item
+              if(currHero?.pickUpLargeItem(currHero.getRegion().getID(), LargeItem.Falcon)){
+                //emit removeitem 
+              }
             }
           }
           else if(resNames[i] == 'Helm'){
-            currHero?.setWill(-3)
-            currHero.getRegion().addItem("helm")
-            //emit add item
-            if(currHero.pickUpHelm(currHero.getRegion().getID())){
-              //emit removeitem 
+            if(resAllocated[heroTypeString][i] == 1){
+              currHero?.setWill(-3)
+              currHero.getRegion().addItem("helm")
+              //emit add item
+              if(currHero.pickUpHelm(currHero.getRegion().getID())){
+                //emit removeitem 
+              }
+            }
+          }
+          else if(resNames[i] == '-Shield'){
+            if(resAllocated[heroTypeString][i] == 1){
+              currHero.consumeItem(currHero.getLargeItem())
+              model.setBlockedEvent(true)
             }
           }
         }

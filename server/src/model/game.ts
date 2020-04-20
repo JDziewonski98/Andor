@@ -66,7 +66,7 @@ export class Game {
     //EventCards
     private eventDeck: Array<EventCard>;
     private activeEvents: Array<Number>;
-
+    private blockedEvent: boolean;
     constructor(name: string, numOfDesiredPlayers: number, difficulty: GameDifficulty, legendPosition = 0) {
         this.name = name;
         this.numOfDesiredPlayers = numOfDesiredPlayers;
@@ -86,7 +86,7 @@ export class Game {
         this.currPlayersTurn = HeroKind.Dwarf;
         this.activeEvents = new Array<number>();
         this.availableHeros = new Array<Hero>();
-
+        this.blockedEvent = false
         // this.narrator = new Narrator(this, 0)
     }
 
@@ -1193,6 +1193,13 @@ export class Game {
         //if one that returns to deck ?? not sure if any return
     }
 
+    public setBlockedEvent(b){
+        this.blockedEvent = b
+    }
+    public getBlockedEvent(){
+        return this.blockedEvent
+    }
+    
     public getEventDeck() {
         return this.eventDeck;
     }
