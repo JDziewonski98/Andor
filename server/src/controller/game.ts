@@ -152,6 +152,10 @@ export function game(socket, model: Game, io) {
     callback(heroType, tile);
   })
 
+  socket.on("getCurrPlayersTurn", function(callback) {
+    callback(model.getCurrPlayersTurn());
+  })
+
   socket.on("endTurn", function () {
     var nextPlayer = model.nextPlayer(false)
 
@@ -332,6 +336,11 @@ export function game(socket, model: Game, io) {
     let success = false;
     var heroId = socket.conn.id;
     let hero = model.getHero(heroId);
+    // Check if hero is still active (not in sunrise box)
+    if (!model.getActiveHeros().includes(hero.getKind())) {
+      socket.emit("updateGameLog", "You cannot access a merchant after you have ended your day.");
+      return;
+    }
 
     if (hero !== undefined) {
       switch(item){
@@ -361,6 +370,15 @@ export function game(socket, model: Game, io) {
 
     if (success) {
       callback();
+      // Using a merchant ends your turn
+      // Update game log
+      var msg = `${hero.getKind()} bought something from a merchant.`
+      socket.emit("updateGameLog", msg);
+      socket.broadcast.emit("updateGameLog", msg);
+      // End turn
+      if (model.getCurrPlayersTurn() == hero.getKind()) {
+        freeActionEndTurn(hero);
+      }
     }
   });
 
@@ -401,9 +419,15 @@ export function game(socket, model: Game, io) {
   socket.on("useWell", function (callback) {
     let heroId = socket.conn.id;
     let hero = model.getHero(heroId);
+    // Check if hero is still active (not in sunrise box)
+    if (!model.getActiveHeros().includes(hero.getKind())) {
+      // Cannot use well when you have ended your day
+      socket.emit("updateGameLog", "You cannot use a well after you have ended your day.");
+      return;
+    }
     if (hero !== undefined) {
       let wpInc = hero.useWell();
-      if (wpInc != -1) {
+      if (wpInc != -1) { // success
         // pass back the determined amount of wp to add to the hero
         console.log("Server: Well use success,", hero.getKind(), wpInc); //may need to convert to string
         // Update the hero that used the well
@@ -411,9 +435,31 @@ export function game(socket, model: Game, io) {
         // Update the other heroes
         socket.broadcast.emit("updateWell", hero.getRegion().getID(), wpInc);
         // TODO WELL: update hero windows
+
+        // Update game log
+        var msg = `${hero.getKind()} drank from a well.`
+        socket.emit("updateGameLog", msg);
+        socket.broadcast.emit("updateGameLog", msg);
+        // End turn
+        if (model.getCurrPlayersTurn() == hero.getKind()) {
+          freeActionEndTurn(hero);
+        }
       }
     }
   });
+
+  function freeActionEndTurn(hero: Hero) {
+    var nextPlayer = model.nextPlayer(false)
+    hero.resetPrinceMoves();
+    if (model.getCurrPlayersTurn() == nextPlayer) {
+      return;
+    }
+    model.setCurrPlayersTurn(nextPlayer)
+    // Update game log
+    var msg = `${hero.getKind()} ended their turn. It is now ${nextPlayer}'s turn.`
+    socket.emit("updateGameLog", msg);
+    socket.broadcast.emit("updateGameLog", msg);
+  }
 
   socket.on("useFog", function (fogType, tile, callback) {
     let heroId = socket.conn.id;
