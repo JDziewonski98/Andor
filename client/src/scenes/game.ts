@@ -225,20 +225,25 @@ export default class GameScene extends Phaser.Scene {
     // Set bounds of camera to the limits of the gameboard
     var camera = this.cameras.main;
     camera.setBounds(0, 0, fullWidth, fullHeight);
-    // switch (this.ownHeroType) {
-    //   case "dwarf":
-    //     camera.setBounds(0, 0, fullWidth, fullHeight);
-    //     break;
-    //   case "archer":
-    //     camera.setBounds(0, 3632 * scaleFactor + borderWidth, fullWidth, fullHeight);
-    //     break;
-    //   case "warrior":
-    //     camera.setBounds(1176 * scaleFactor + borderWidth, 1840 * scaleFactor + borderWidth, fullWidth, fullHeight);
-    //     break;
-    //   case "mage":
-    //     camera.setBounds(528 * scaleFactor + borderWidth, 3296 * scaleFactor + borderWidth, fullWidth, fullHeight);
-    //     break;
-    // }
+    // set initial camera positions for herKind
+    switch (this.ownHeroType) {
+      case "dwarf":
+        camera.scrollX = 0;
+        camera.scrollY = 0;
+        break;
+      case "archer":
+        camera.scrollX = 0;
+        camera.scrollY = 3632 * scaleFactor + borderWidth;
+        break;
+      case "warrior":
+        camera.scrollX = 1176 * scaleFactor + borderWidth;
+        camera.scrollY = 1840 * scaleFactor + borderWidth;
+        break;
+      case "mage":
+        camera.scrollX = 528 * scaleFactor + borderWidth;
+        camera.scrollY = 3296 * scaleFactor + borderWidth;
+        break;
+    }
     // Set keys for scrolling
     // Set keys for scrolling and zooming
     this.cameraKeys = this.input.keyboard.addKeys({
