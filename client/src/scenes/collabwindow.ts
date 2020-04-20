@@ -88,28 +88,7 @@ export class CollabWindow extends Window {
         }
 
         var bg = this.add.image(0, 0, 'scrollbg').setOrigin(0.5);
-        if(this.type == "initial"){
-            console.log("initial")
-            this.populateWindow();
-            this.gameinstance.receiveDecisionSubmitSuccess(submitSuccess);
-        this.gameinstance.receiveDecisionSubmitFailure(submitFailure);
-        // Accepting decision callback
-        this.gameinstance.receiveDecisionAccepted(setAccepted);
-        }
-        else if(this.type == "event"){
-            this.gameinstance.receiveDecisionSubmitSuccess(submitSuccess);
-            this.gameinstance.receiveDecisionSubmitFailure(submitFailure);
-            // Accepting decision callback
-            this.gameinstance.receiveDecisionAccepted(setAccepted);
-            this.populateEventWindow();
-        }
-        else if(this.type == "individual"){
-            this.gameinstance.receiveIndividualSubmitSuccess(submitIndividualSuccess);
-            this.gameinstance.receiveIndividualSubmitFailure(submitIndividualFailure);
-            // Accepting decision callback
-            this.gameinstance.receiveDecisionAccepted(setIndividualAccepted);
-            this.populateIndividualWindow()
-        }
+        this.populateWindow();
 
         //This drag is pretty f'd up.
         bg.on('drag', function (pointer, dragX, dragY) {
@@ -321,6 +300,7 @@ export class CollabWindow extends Window {
         //add hero images
 
     }
+
     private verifyAllocated() {
         if(this.type == 'distribute'){
             var self = this;
@@ -364,5 +344,4 @@ export class CollabWindow extends Window {
             }        
         }
     }
-    
 }

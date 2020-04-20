@@ -1003,13 +1003,13 @@ export class Game {
         }
         else if(event.id == 3){
             var count = 0
-            var highestHero = new Hero(HeroKind.None, this.regions[0])
+            //var highestHero = new Hero()
             var highestRank = Number.MIN_VALUE
             for(let [conn,hero] of this.heroList){
                 if(hero.getRegion().getID() == 57){
                     count++
                     if(highestRank < hero.getRank()){
-                        highestHero = hero
+                        //highestHero = hero
                         highestRank = hero.getRank()
                     }
                 }
@@ -1077,20 +1077,20 @@ export class Game {
         }
         else if(event.id == 21){
             var count = 0
-            var highestHero = new Hero(HeroKind.None, this.regions[0])
+            //var highestHero = new Hero(HeroKind.None, this.regions[0])
             var highestRank = Number.MIN_VALUE
             for(let [conn,hero] of this.heroList){
                 let reg = hero.getRegion().getID()
                 if(reg == 22 || reg == 23 || reg == 24 || reg == 25){
                     count++
                     if(highestRank < hero.getRank()){
-                        highestHero = hero
+                        //highestHero = hero
                         highestRank = hero.getRank()
                     }
                 }
             }
             if(count >= 2){
-                highestHero.setWill(-4)
+                //highestHero.setWill(-4)
             }
             else{
                 this.activeEvents.push(21)
@@ -1125,13 +1125,13 @@ export class Game {
         }
         else if(event.id == 29){
             var count = 0
-            var lowestHero = new Hero(HeroKind.None, this.regions[0])
+            //var lowestHero = new Hero(HeroKind.None, this.regions[0])
             var lowestRank = Number.MAX_VALUE
             for(let [conn,hero] of this.heroList){
                 if(hero.getRegion().getID() == 57){
                     count++
                     if(lowestRank > hero.getRank()){
-                        lowestHero = hero
+                        //lowestHero = hero
                         lowestRank = hero.getRank()
                     }
                 }
@@ -1145,13 +1145,13 @@ export class Game {
         }
         else if(event.id == 30){
             var count = 0
-            var lowestHero = new Hero(HeroKind.None, this.regions[0])
+            //var lowestHero = new Hero(HeroKind.None, this.regions[0])
             var lowestRank = Number.MAX_VALUE
             for(let [conn,hero] of this.heroList){
                 if(hero.getRegion().getID() == 57){
                     count++
                     if(lowestRank > hero.getRank()){
-                        lowestHero = hero
+                        //lowestHero = hero
                         lowestRank = hero.getRank()
                     }
                 }
