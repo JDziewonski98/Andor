@@ -852,14 +852,14 @@ export class Game {
     }
 
     // Turns a hidden runestone into its real counterpart if a hero performs a valid reveal
-    public revealRunestone(h: Hero, tileID: number, stoneName: string) : boolean {
+    public revealRunestone(h: Hero, tileID: number, stoneName: string) : {success: boolean, usedTelescope: boolean} {
         var heroTileID = h.getRegion().getID();
         var region = this.regions[tileID];
         // Success if hero is one the same region as the stone
         if (heroTileID == tileID) {
             region.removeItem(stoneName);
             region.addItem(stoneName.slice(0, -2));
-            return true;
+            return { success: true, usedTelescope: false };
         }
         // Success if hero is on an adjacent tile and has a telescope
         var adjTiles = region.getAdjRegionsIds();
@@ -867,10 +867,10 @@ export class Game {
         if (adjTiles.includes(heroTileID) && heroItems.includes(SmallItem.Telescope)) {
             region.removeItem(stoneName);
             region.addItem(stoneName.slice(0, -2));
-            return true;
+            return { success: true, usedTelescope: true };
         }
         // Otherwise failure
-        return false;
+        return { success: false, usedTelescope: false };
     }
 
     public useFog(fog: Fog, tile: number) {
