@@ -717,7 +717,7 @@ export default class GameScene extends Phaser.Scene {
   }
 
   private startingCollabDecisionSetup() {
-    console.log(this.heroes)
+    //console.log(this.heroes)
     var self = this
     // function incFunction(heroKind){
 

@@ -314,7 +314,10 @@ export class game {
     /*
     * COLLAB DECISIONS
     */
-
+    //Initiating new collabs
+    public receiveNewCollab(callback){
+        this.socket.on('receiveNewCollab', callback)
+    }
     //Sharing info between clients
     public sendIncResource(resourceHeroKind, resourceIndex){
         this.socket.emit('sendIncResource', resourceHeroKind, resourceIndex)

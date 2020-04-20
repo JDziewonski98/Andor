@@ -69,7 +69,7 @@ export class CollabWindow extends Window {
         this.numAccepts = 0
         this.type = data.type
 
-        console.log(this.involvedHeroes)
+        //console.log(this.involvedHeroes)
     }
 
     protected initialize() {
@@ -84,7 +84,7 @@ export class CollabWindow extends Window {
             Array.from(this.resources.keys()).forEach( key => {
                 this.resourceNames.push(key);
             });
-            console.log(this.resourceNames);
+            //console.log(this.resourceNames);
         }
 
         var bg = this.add.image(0, 0, 'scrollbg').setOrigin(0.5);
@@ -122,7 +122,7 @@ export class CollabWindow extends Window {
             if(involved){
                 for(let rt of this.resourceToggles){
                     if(rt.getResourceIndex() == resourceIndex && resourceHeroKind == rt.getHeroKind()){
-                        console.log(rt)
+                        //console.log(rt)
                         rt.incFunction()
                         //this.gameinstance.sendIncResource(resourceHeroKind,resourceIndex)
                     }        
@@ -143,7 +143,7 @@ export class CollabWindow extends Window {
             if(involved){
                 for(let rt of this.resourceToggles){
                     if(rt.getResourceIndex() == resourceIndex && resourceHeroKind == rt.getHeroKind()){
-                        console.log(rt)
+                        //console.log(rt)
                         rt.decFunction()
                         //this.gameinstance.sendIncResource(resourceHeroKind,resourceIndex)
                     }        
@@ -164,7 +164,7 @@ export class CollabWindow extends Window {
             if(involved){
                 self.numAccepts++
             }
-            console.log(self.numAccepts)
+            //console.log(self.numAccepts)
         })
         this.gameinstance.endCollabListener((involvedHeroKinds: HeroKind[]) =>{
             console.log("entered end collab listener")
@@ -217,18 +217,18 @@ export class CollabWindow extends Window {
         //}
 
         this.acceptText = this.add.text(0, this.height-collabTextHeight, 'Accept', textStyle)
-        console.log('we here son.')
         this.acceptText.setInteractive()
         this.acceptText.on('pointerdown', function (pointer) {
             // Check that resAllocated corresponds with specified quantities from data.resources
             if (self.verifyAllocated()) {
+
                 self.acceptText.setColor('#00FF00')
-                
-                //emit server 
+
+                //emit server call
                 self.gameinstance.sendAccept(self.ownHeroKind)
-                
+
                 self.numAccepts++
-                //console.log(self.numAccepts, self.involvedHeroes.length)
+                //if last to accept, initiate ending of collab
                 if(self.numAccepts == self.involvedHeroes.length){
                     let convMap = {};
                     // Need to convert map TS object to send to server
@@ -312,7 +312,7 @@ export class CollabWindow extends Window {
                     currTotals[i] += counts[i];
                 }
             });
-            console.log(currTotals);
+            //console.log(currTotals);
             var resMaxes = Array.from(this.resources.values());
             for (let i=0; i<resMaxes.length; i++) {
                 if (resMaxes[i] != currTotals[i]) {
@@ -328,7 +328,7 @@ export class CollabWindow extends Window {
         //ignoring checks for now
         for(let rt of this.resourceToggles){
             if(rt.getResourceIndex() == resourceIndex && heroKind == rt.getHeroKind()){
-                console.log(rt)
+                //console.log(rt)
                 rt.incFunction()
                 this.gameinstance.sendIncResource(heroKind,resourceIndex)
             }        
@@ -338,7 +338,7 @@ export class CollabWindow extends Window {
         //ignoring checks for now
         for(let rt of this.resourceToggles){
             if(rt.getResourceIndex() == resourceIndex && heroKind == rt.getHeroKind()){
-                console.log(rt)
+                //console.log(rt)
                 rt.decFunction()
                 this.gameinstance.sendDecResource(heroKind,resourceIndex)
             }        
