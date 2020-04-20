@@ -9,4 +9,3 @@ client/src/config/env.js
 .vs/VSWorkspaceState.json
 .vs/Apr_11/v16/.suo
 server/db.json
-client/package-lock.json

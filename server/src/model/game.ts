@@ -157,7 +157,6 @@ export class Game {
         narrator = dNarrator
     }) {
         this.currPlayersTurn = currPlayersTurn;
-        this.readyplayers = 0
         this.nextDayFirstHero = nextDayFirstHero;
         this.setRegions(regions);
         this.setAvailableHeros(heros);
@@ -171,7 +170,7 @@ export class Game {
         this.monstersInCastle = monstersInCastle;
         this.endOfGame = endOfGameState;
         this.narrator = new Narrator(narrator.legendPosition);
-        if (prince && prince.tile && prince.tile.id !== -1)
+        if (prince.tile.id !== -1)
             this.prince = new Prince(this.regions[prince.tile.id])
     }
 
@@ -530,8 +529,7 @@ export class Game {
         })
         if (this.heroList.has(id)) {
             this.heroList.delete(id);
-            this.readyplayers--;
-            return true;   
+            return true;
         }
         return false;
     }
