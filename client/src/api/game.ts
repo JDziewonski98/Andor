@@ -5,13 +5,13 @@ export class game {
     private name: string;
     private socket;
     private chatlog: any;
-    private myTurn: boolean;
+    // private myTurn: boolean;
 
     constructor(name) {
         this.name = name
         this.socket = this.connect(this.name)
         this.chatlog = []
-        this.myTurn = false;
+        // this.myTurn = false;
     }
 
     private connect(name) {
@@ -228,9 +228,10 @@ export class game {
     }
 
     public moveRequest(tileID, callback){
-        if(this.myTurn){
+        // moved turn validation to backend
+        // if(this.myTurn){
             this.socket.emit('moveRequest', tileID, callback)
-        }
+        // }
     }
 
     public updateMoveRequest(callback){
@@ -238,9 +239,9 @@ export class game {
     }
 
     public movePrinceRequest(tileID, callback){
-        if(this.myTurn){
+        // if(this.myTurn){
             this.socket.emit('movePrinceRequest', tileID, callback)
-        }
+        // }
     }
 
     public updateMovePrinceRequest(callback){
@@ -256,30 +257,32 @@ export class game {
     */
     // Note: this is not used when a hero's turn ends because they ended their day.
     // Logic for turn end on end day is handled on the server.
-    public getTurn() {
-        return this.myTurn
-    }
     
     public endTurn(){
         // The hero that gets the next turn depends on whether the day is over for all heroes
         this.socket.emit('endTurn');
-        this.myTurn = false;
+        // this.myTurn = false;
     }
 
-    public endTurnOnEndDay() {
-        this.myTurn = false;
-    }
+    // **** DEPRECATED 04/20/20: removed turn logic from frontend ***
+    // public getTurn() {
+    //     return this.myTurn
+    // }
+
+    // public endTurnOnEndDay() {
+    //     this.myTurn = false;
+    // }
     
-    public yourTurn(){
-        var self = this
-        this.socket.on("yourTurn", function() {
-            self.myTurn = true
-        })
-    }
+    // public yourTurn(){
+    //     var self = this
+    //     this.socket.on("yourTurn", function() {
+    //         self.myTurn = true
+    //     })
+    // }
 
-    public setMyTurn(b:boolean){
-        this.myTurn = b;
-    }
+    // public setMyTurn(b:boolean){
+    //     this.myTurn = b;
+    // }
     /////////////////////////////
 
     public removeListener(object){

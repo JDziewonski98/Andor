@@ -24,7 +24,7 @@ import { Merchant } from '../objects/merchant';
 export default class GameScene extends Phaser.Scene {
   private heroes: Hero[];
   private hero: Hero;
-  private startingHeroRank: number;
+  // private startingHeroRank: number;
   private ownHeroType: HeroKind;
 
   private tiles: Tile[];
@@ -185,10 +185,11 @@ export default class GameScene extends Phaser.Scene {
       // Need to wait for heroes to be created before creating collab decision
       this.startingCollabDecisionSetup();
       // Note that starting hero rank gets determined in collab setup
-      if (this.hero.tile.id == this.startingHeroRank) {
-        console.log("first turn goes to hero rank", this.startingHeroRank);
-        this.gameinstance.setMyTurn(true);
-      }
+      // Deprecated: removed turn logic from frontend
+      // if (this.hero.tile.id == this.startingHeroRank) {
+      //   console.log("first turn goes to hero rank", this.startingHeroRank);
+      //   this.gameinstance.setMyTurn(true);
+      // }
 
       // Add narrator: this happens here because we want initial game instructions to be
       // added on top of the collab decision
@@ -314,10 +315,10 @@ export default class GameScene extends Phaser.Scene {
             })
           }
         } else if (this.ctrlKey.isDown) {  //to move prince, hold ctrl key
-          console.log("It is my turn: ", self.gameinstance.myTurn)
+          // console.log("It is my turn: ", self.gameinstance.myTurn)
           self.gameinstance.movePrinceRequest(tile.id, updateMovePrinceRequest)
         } else {
-          console.log("It is my turn: ", self.gameinstance.myTurn)
+          // console.log("It is my turn: ", self.gameinstance.myTurn)
           self.gameinstance.moveRequest(tile.id, updateMoveRequest)
         }
       }, this)
@@ -727,10 +728,10 @@ export default class GameScene extends Phaser.Scene {
     // Determine height of the window based on number of players involved
     var height = (self.heroes.length + 2) * collabRowHeight;
     
-    // Get hero of lowest rank, based on their starting tile
-    var heroRanks = [];
-    for (let hero of self.heroes) { heroRanks.push(hero.tile.id); }
-    self.startingHeroRank = Math.min(...heroRanks);
+    // DEPRECATED: Get hero of lowest rank, based on their starting tile
+    // var heroRanks = [];
+    // for (let hero of self.heroes) { heroRanks.push(hero.tile.id); }
+    // self.startingHeroRank = Math.min(...heroRanks);
 
     var collabWindowData =
       {
@@ -802,7 +803,8 @@ export default class GameScene extends Phaser.Scene {
     })
 
     // Listen for turn to be passed to yourself
-    this.gameinstance.yourTurn()
+    // Deprecated: removed turn logic from frontend
+    // this.gameinstance.yourTurn()
 
     // Reveal the witch
     this.gameinstance.revealWitch(tileID => {
@@ -875,8 +877,10 @@ export default class GameScene extends Phaser.Scene {
         });
     })
 
+    // TODO: should be able to remove this listener
     this.gameinstance.forceTurn(function() {
-      self.gameinstance.setMyTurn(true)
+      // Deprecated: removed turn logic from frontend
+      // self.gameinstance.setMyTurn(true)
     })
 
     this.gameinstance.forceFight(function(monstername) {

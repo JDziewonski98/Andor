@@ -174,17 +174,18 @@ export default class BoardOverlay extends Phaser.Scene {
         // end turn button
         this.endTurnButton = this.add.image(900, 565, 'endturnicon').setScale(0.3)
         this.endTurnButton.on('pointerdown', function (pointer) {
-            if (this.gameinstance.myTurn) {
-                this.gameinstance.endTurn();
-                this.tweens.add({
-                    targets: this.endTurnButton,
-                    alpha: 0.3,
-                    duration: 350,
-                    ease: 'Power3',
-                    yoyo: true
-                });
+            // if (this.gameinstance.myTurn) {
+            this.gameinstance.endTurn();
+            // Todo: Tween will trigger whether or not it is your turn, not sure if we want to change that
+            this.tweens.add({
+                targets: this.endTurnButton,
+                alpha: 0.3,
+                duration: 350,
+                ease: 'Power3',
+                yoyo: true
+            });
 
-            }
+            // }
         }, this)
 
         // end day setup
@@ -293,15 +294,17 @@ export default class BoardOverlay extends Phaser.Scene {
         // end day button
         this.endDayButton = this.add.image(650, 565, 'enddayicon').setScale(0.3)
         this.endDayButton.on('pointerdown', function (pointer) {
+            // Deprecated: removed turn logic from frontend
             // does nothing if not your turn
-            if (!self.gameinstance.getTurn()) {
-                console.log("cannot end your day when it is not your turn");
-                return;
-            }
+            // if (!self.gameinstance.getTurn()) {
+            //     console.log("cannot end your day when it is not your turn");
+            //     return;
+            // }
 
             self.gameinstance.endDay(function (all: boolean) {
                 // Update this client's turn state
-                self.gameinstance.endTurnOnEndDay();
+                // Deprecated: removed turn logic from frontend
+                // self.gameinstance.endTurnOnEndDay();
                 // the last client to end their day triggers end of day actions for everyone
                 if (all) {
                     self.gameinstance.moveMonstersEndDay();

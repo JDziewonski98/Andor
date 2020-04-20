@@ -57,6 +57,7 @@ export class Game {
 
     private narrator!: Narrator;
     public gameStartHeroPosition: number = 1;
+    private gameStartMinRank: number = Number.MAX_VALUE;
 
     // collab decision related state
     public numAccepts: number;
@@ -197,18 +198,26 @@ export class Game {
         })
     }
 
-    private setFirstHerosTurn() {
-        var minRank = Number.MAX_VALUE;
-        var ID = "none";
-        for (var socketID in this.heroList) {
-            var hero = this.heroList[socketID]
-            if (hero.getRank() < minRank) {
-                minRank = hero.getRank()
-                ID = socketID
-            }
-        }
-        return this.heroList[ID].getKind()
-    }
+    // private setFirstHerosTurn() {
+    //     if (this.currPlayersTurn != HeroKind.None) {
+    //         // We only set the first hero turn at the start of the game
+    //         console.log("not start of game - don't call setFirstHerosTurn")
+    //         return;
+    //     }
+    //     console.log("backend heroList:", this.heroList);
+    //     // Set the first turn of the game based on min hero rank
+    //     var minRank = Number.MAX_VALUE;
+    //     var ID = "none";
+    //     for (var socketID in this.heroList) {
+    //         var hero = this.heroList[socketID]
+    //         if (hero.getRank() < minRank) {
+    //             minRank = hero.getRank()
+    //             ID = socketID
+    //         }
+    //     }
+    //     console.log("setting first player turn to", this.heroList[ID].getKind());
+    //     this.currPlayersTurn = this.heroList[ID].getKind();
+    // }
 
     public getIDsByHeroname(heronames) {
         var heroids: string[] = []
@@ -237,6 +246,7 @@ export class Game {
             return this.currPlayersTurn;
         }
         // Otherwise, find the hero with the next highest rank
+        console.log("server nextplayer: currplayer is", this.currPlayersTurn)
         let currPlayerID = this.getConnIdFromHk(this.currPlayersTurn);
         if (currPlayerID == null) currPlayerID = "none";
         var minRank = this.getHero(currPlayerID).getRank();
@@ -444,6 +454,13 @@ export class Game {
         if (hero.length === 1) {
             this.heroList.set(id, hero[0]);
             this.activeHeros.push(heroType);
+            // update start of game currPlayersTurn
+            console.log("binding hero rank", hero[0].getRank())
+            if (hero[0].getRank() < this.gameStartMinRank) {
+                this.gameStartMinRank = hero[0].getRank();
+                this.currPlayersTurn = heroType;
+                console.log("currplayersturn updated to", heroType, hero[0].getRank());
+            }
             return true;
         }
         return false;

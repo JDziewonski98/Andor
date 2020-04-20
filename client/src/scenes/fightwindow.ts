@@ -148,12 +148,15 @@ export class Fight extends Window {
             self.fighttext.setText('Fight again!')
 
             //the monster roll dice determines if you are actually in range to fight it and if you need to use bow.
-            self.gameinstance.rollMonsterDice(self.monstername, function (result, bow) {
+            self.gameinstance.rollMonsterDice(self.monstername, function (result, bow, isMyTurn = true) {
 
-                if (self.gameinstance.getTurn() == false) {
-                    self.notificationtext.setText('Not your Turn!')
+                // Deprecated: removed turn logic from frontend
+                // if (self.gameinstance.getTurn() == false) {
+                //     self.notificationtext.setText('Not your Turn!')
+                // }
+                if (!isMyTurn) {
+                    self.notificationtext.setText('Not your turn!')
                 }
-
                 else if (result != 'outofrange') {
                     self.fighttext.disableInteractive()
 
@@ -695,9 +698,10 @@ export class Fight extends Window {
             self.overlayRef.toggleInteractive(true);
             self.scene.resume("Game");
             self.scene.remove(self.windowname);
-            if (self.gameinstance.getTurn()) {
-                self.gameinstance.endTurn();
-            }
+            // Deprecated: removed turn logic from frontend
+            // if (self.gameinstance.getTurn()) {
+            //     self.gameinstance.endTurn();
+            // }
         })
     }
 
@@ -739,10 +743,11 @@ export class Fight extends Window {
                 self.continuinghero = herotype;
                 self.gameinstance.forceContinueFight(self.continuinghero, self.monstername)
                 self.overlayRef.toggleInteractive(true);
-                self.gameinstance.endTurnOnEndDay()
+                // Deprecated: removed turn logic from frontend
+                // self.gameinstance.endTurnOnEndDay()
                 self.scene.resume("Game")
                 self.scene.remove(this.windowname)
-                self.gameinstance.endTurnOnEndDay()
+                // self.gameinstance.endTurnOnEndDay()
                 //make it their turn and make them immediately start the fight.
                 //perhaps send a message to all other continueFightRequest windows to close that window.
             }

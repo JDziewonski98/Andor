@@ -60,6 +60,11 @@ export function game(socket, model: Game, io) {
     id = +id // turning Id from string to number
     var heroID = socket.conn.id
     let hero = model.getHero(heroID);
+    // Turn validation
+    if (model.getCurrPlayersTurn() != hero.getKind()) {
+      socket.emit("updateGameLog", "You cannot move when it is not your turn!");
+      return;
+    }
 
     if (hero !== undefined) {
       var currRegion: Region = hero.getRegion()
@@ -115,6 +120,11 @@ export function game(socket, model: Game, io) {
     id = +id // turning Id from string to number
     var heroID = socket.conn.id
     let hero = model.getHero(heroID);
+    // Turn validation
+    if (model.getCurrPlayersTurn() != hero.getKind()) {
+      socket.emit("updateGameLog", "You cannot move the prince when it is not your turn!");
+      return;
+    }
 
     console.log(hero.getNumPrinceMoves());
 
@@ -147,12 +157,18 @@ export function game(socket, model: Game, io) {
 
     var heroID = socket.conn.id
     let hero = model.getHero(heroID);
+    // Turn validation
+    if (model.getCurrPlayersTurn() != hero.getKind()) {
+      socket.emit("updateGameLog", "You can't do that when it is not your turn!");
+      return;
+    }
 
     hero.resetPrinceMoves();
 
     // Emitting with broadcast.to to the caller doesn't seem to work. Below is a workaround
     if (model.getCurrPlayersTurn() == nextPlayer) {
-      socket.emit("yourTurn");
+      // Deprecated: removed turn logic from frontend
+      // socket.emit("yourTurn");
       return;
     }
 
@@ -160,7 +176,8 @@ export function game(socket, model: Game, io) {
     // get the connID corresponding to the HK
     var nextPlayerID = model.getConnIdFromHk(nextPlayer);
     console.log("Sending next turn to ", nextPlayer, "with ID", nextPlayerID);
-    socket.broadcast.to(`/${model.getName()}#${nextPlayerID}`).emit("yourTurn");
+    // Deprecated: removed turn logic from frontend
+    // socket.broadcast.to(`/${model.getName()}#${nextPlayerID}`).emit("yourTurn");
 
     // Update game log
     var msg = `${hero.getKind()} ended their turn. It is now ${nextPlayer}'s turn.`
@@ -865,10 +882,6 @@ export function game(socket, model: Game, io) {
   // Submitting a decision
   socket.on('sendEndCollab', function(resAllocated, resNames, involvedHeroKinds){
     console.log("Recieved sendEndCollab")
-     // Sets the first player at the beginning of the game
-     if (model.getCurrPlayersTurn() == HeroKind.None) {
-      model.setCurrPlayersTurn(model.getHkFromConnID(socket.conn.id));
-    }
     // Success: distribute accordingly
     let modelHeros = model.getHeros();
     for (let hero of modelHeros.values()) {
@@ -1019,6 +1032,13 @@ export function game(socket, model: Game, io) {
     //the boolean parameter in the callback is to determine if the bow special ability will be used for the hero roll.
     var heroId = socket.conn.id;
     let hero = model.getHero(heroId);
+    // Turn validation
+    if (model.getCurrPlayersTurn() != hero.getKind()) {
+      socket.emit("updateGameLog", "You can't do that when it is not your turn!");
+      // Tell client to display "Not your turn!" message in FightWindow
+      callback(0, false, false);
+    }
+
     let heroregion = hero.getRegion().getID()
     let monster = model.getMonsters().get(m)
     let monsterregion = monster!.getTileID()
@@ -1222,6 +1242,11 @@ export function game(socket, model: Game, io) {
   socket.on('endDay', function (callback) {
     var heroID = socket.conn.id
     let hero = model.getHero(heroID);
+    // Turn validation
+    if (model.getCurrPlayersTurn() != hero.getKind()) {
+      socket.emit("updateGameLog", "You can't do that when it is not your turn!");
+      return;
+    }
     // Reset this hero's hours and tell all clients to update their hourtracker
     var resetHoursHk = model.resetHeroHours(socket.conn.id);
     var firstEndDay = false;
@@ -1450,14 +1475,16 @@ export function game(socket, model: Game, io) {
     // is a workaround for emitting yourTurn back to the caller without using broadcast.to
     if (model.getCurrPlayersTurn() == nextPlayer) {
       console.log("Currplayer is only one left and keeps turn");
-      socket.emit("yourTurn");
+      // Deprecated: removed turn logic from frontend
+      // socket.emit("yourTurn");
       return;
     }
 
     // Inform client that gets the next turn
     model.setCurrPlayersTurn(nextPlayer);
     console.log("Emitting yourTurn to ", nextPlayer, "with id", model.getConnIdFromHk(nextPlayer));
-    socket.broadcast.to(`/${model.getName()}#${model.getConnIdFromHk(nextPlayer)}`).emit("yourTurn");
+    // Deprecated: removed turn logic from frontend
+    // socket.broadcast.to(`/${model.getName()}#${model.getConnIdFromHk(nextPlayer)}`).emit("yourTurn");
 
     // Update game log
     var msg = `${hero.getKind()} ended their day.`;
