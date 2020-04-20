@@ -1,7 +1,9 @@
 import { Farmer, Hero, HourTracker, Monster, HeroKind, Well, Tile, Narrator, EventCard } from '../objects';
 import { game } from '../api';
-import { WindowManager, StoryWindow, CollabWindow, MerchantWindow, DeathWindow, Fight, 
-  BattleInvWindow, GameOverWindow, TradeWindow, ShieldWindow, WitchWindow, ContinueFightWindow } from "./windows";
+import {
+  WindowManager, StoryWindow, CollabWindow, MerchantWindow, DeathWindow, Fight,
+  BattleInvWindow, GameOverWindow, TradeWindow, ShieldWindow, WitchWindow, ContinueFightWindow
+} from "./windows";
 import { RietburgCastle } from './rietburgcastle';
 import BoardOverlay from './boardoverlay';
 
@@ -221,8 +223,22 @@ export default class GameScene extends Phaser.Scene {
 
   private cameraSetup() {
     // Set bounds of camera to the limits of the gameboard
+    // camera positions at game startup according to heroKind
     var camera = this.cameras.main;
-    camera.setBounds(0, 0, fullWidth, fullHeight);
+    switch (this.ownHeroType) {
+      case "dwarf":
+        camera.setBounds(0, 0, fullWidth, fullHeight);
+        break;
+      case "archer":
+        camera.setBounds(0, 3632 * scaleFactor + borderWidth, fullWidth, fullHeight);
+        break;
+      case "warrior":
+        camera.setBounds(1176 * scaleFactor + borderWidth, 1840 * scaleFactor + borderWidth, fullWidth, fullHeight);
+        break;
+      case "mage":
+        camera.setBounds(528 * scaleFactor + borderWidth, 3296 * scaleFactor + borderWidth, fullWidth, fullHeight);
+        break;
+    }
     // Set keys for scrolling
     // Set keys for scrolling and zooming
     this.cameraKeys = this.input.keyboard.addKeys({
@@ -268,8 +284,8 @@ export default class GameScene extends Phaser.Scene {
         // this.addWell(t.x, t.y, t.id as number);
       }
 
-      if(t.hasMerchant){
-        switch (t.id){
+      if (t.hasMerchant) {
+        switch (t.id) {
           case 18:
             this.addMerchant(3060, 3680, t.id as number);
             break;
@@ -510,7 +526,7 @@ export default class GameScene extends Phaser.Scene {
 
     }, this);
     this.add.existing(newMerchant);
-    
+
   }
 
   // Add the narrator pawn to the game board
@@ -566,7 +582,7 @@ export default class GameScene extends Phaser.Scene {
           break;
         case 13: // Legend card N
           console.log("case 13");
-          self.narratorN(win); 
+          self.narratorN(win);
           break;
       }
     })
@@ -616,30 +632,30 @@ export default class GameScene extends Phaser.Scene {
     })
   }
 
-    private narratorN(win: boolean) {
-        // console.log("At narrator NNNNN. client game narratorN: ", win)
-        var self = this;
-        if (win) {
-            console.log("kokoniiruyo")
-            WindowManager.create(self, `story9`, StoryWindow, {
-                x: reducedWidth / 2,
-                y: reducedHeight / 2,
-                id: 9
-            })
-        }
-        else {
-            WindowManager.create(self, `story10`, StoryWindow, {
-                x: reducedWidth / 2,
-                y: reducedHeight / 2,
-                id: 10
-            })
-        }
-        
+  private narratorN(win: boolean) {
+    // console.log("At narrator NNNNN. client game narratorN: ", win)
+    var self = this;
+    if (win) {
+      console.log("kokoniiruyo")
+      WindowManager.create(self, `story9`, StoryWindow, {
+        x: reducedWidth / 2,
+        y: reducedHeight / 2,
+        id: 9
+      })
     }
+    else {
+      WindowManager.create(self, `story10`, StoryWindow, {
+        x: reducedWidth / 2,
+        y: reducedHeight / 2,
+        id: 10
+      })
+    }
+
+  }
 
   private addFog(fogs) {
     fogs.forEach((fog) => {
-      const tile: Tile = this.tiles[fog[0]]; 
+      const tile: Tile = this.tiles[fog[0]];
       // console.log(fog[0], tile)
       const f = this.add.sprite(tile.x + 50, tile.y - 5, fog[1]).setDisplaySize(60, 60);
       f.name = fog[1];
@@ -727,28 +743,28 @@ export default class GameScene extends Phaser.Scene {
     var width = (res.size + 1) * collabColWidth; // Not sure if there's a better way of getting size of ts obj
     // Determine height of the window based on number of players involved
     var height = (self.heroes.length + 2) * collabRowHeight;
-    
+
     // DEPRECATED: Get hero of lowest rank, based on their starting tile
     // var heroRanks = [];
     // for (let hero of self.heroes) { heroRanks.push(hero.tile.id); }
     // self.startingHeroRank = Math.min(...heroRanks);
 
     var collabWindowData =
-      {
-        controller: self.gameinstance,
-        isOwner: true,
-        involvedHeroes: self.heroes,
-        resources: res,
-        textOptions: null,
-        x: reducedWidth / 2 - width / 2,
-        y: reducedHeight / 2 - height / 2,
-        w: width,
-        h: height,
-        infight: false,
-        overlayRef: self.overlay,
-        ownHeroKind: this.ownHeroType,
-        type: 'distribute'
-      };
+    {
+      controller: self.gameinstance,
+      isOwner: true,
+      involvedHeroes: self.heroes,
+      resources: res,
+      textOptions: null,
+      x: reducedWidth / 2 - width / 2,
+      y: reducedHeight / 2 - height / 2,
+      w: width,
+      h: height,
+      infight: false,
+      overlayRef: self.overlay,
+      ownHeroKind: this.ownHeroType,
+      type: 'distribute'
+    };
 
     WindowManager.create(this, 'collab', CollabWindow, collabWindowData);
     // Freeze main game while collab window is active
@@ -837,7 +853,7 @@ export default class GameScene extends Phaser.Scene {
     // Reveal the herb
     this.gameinstance.revealHerb(tileID => {
       let tile = this.tiles[tileID];
-      this.herb = this.add.image(tile.x+mOffset+20, tile.y, "herb").setDisplaySize(30, 30);
+      this.herb = this.add.image(tile.x + mOffset + 20, tile.y, "herb").setDisplaySize(30, 30);
       this.overlay.setHerb(this.herb);
     })
 
@@ -863,7 +879,7 @@ export default class GameScene extends Phaser.Scene {
 
     })
 
-    this.gameinstance.continueFightPrompt(function() {
+    this.gameinstance.continueFightPrompt(function () {
       console.log('continuefightprompt xxxxxxxxxxxxxxxxxxxxxxxxxx')
       if (self.scene.isVisible('continuefightprompt')) {
         WindowManager.destroy(self, 'continuefightprompt');
@@ -878,12 +894,12 @@ export default class GameScene extends Phaser.Scene {
     })
 
     // TODO: should be able to remove this listener
-    this.gameinstance.forceTurn(function() {
+    this.gameinstance.forceTurn(function () {
       // Deprecated: removed turn logic from frontend
       // self.gameinstance.setMyTurn(true)
     })
 
-    this.gameinstance.forceFight(function(monstername) {
+    this.gameinstance.forceFight(function (monstername) {
       var monster = self.monsterNameMap[monstername]
       if (self.scene.isVisible(monster.name)) {
         WindowManager.destroy(self, monster.name);
@@ -916,8 +932,8 @@ export default class GameScene extends Phaser.Scene {
       }
     })
 
-    this.gameinstance.receiveShieldPrompt(function(damaged_shield, potentialdamage) {
-      WindowManager.create(self, 'shieldprompt', ShieldWindow, { controller: self.gameinstance, hero:self.hero, potentialdamage:potentialdamage, damaged:damaged_shield});
+    this.gameinstance.receiveShieldPrompt(function (damaged_shield, potentialdamage) {
+      WindowManager.create(self, 'shieldprompt', ShieldWindow, { controller: self.gameinstance, hero: self.hero, potentialdamage: potentialdamage, damaged: damaged_shield });
     })
 
     // FARMERS
@@ -978,34 +994,34 @@ export default class GameScene extends Phaser.Scene {
     this.gameinstance.newEventListener((event: EventCard) => {
       this.applyEvent(event)
     })
-    this.gameinstance.newCollabListener((eventID, heroes) =>{
+    this.gameinstance.newCollabListener((eventID, heroes) => {
       console.log("Received newCollab")
 
       var involvedHeroKinds = new Array<HeroKind>()
-      for(let hero of heroes){
+      for (let hero of heroes) {
         involvedHeroKinds.push(hero.hk)
       }
-      
+
       var involved = false
       var involvedHeroes = new Array<Hero>()
-      for(let hero of self.heroes){
-        if(involvedHeroKinds.includes(hero.getKind())){
+      for (let hero of self.heroes) {
+        if (involvedHeroKinds.includes(hero.getKind())) {
           involvedHeroes.push(hero)
-          if(hero.getKind()==self.ownHeroType){
+          if (hero.getKind() == self.ownHeroType) {
             involved = true
           }
         }
       }
 
-      if(involved){
+      if (involved) {
         var allCollabRes = require("../utils/eventCollabResources").map;
-        var res = new Map<String,Number>()
+        var res = new Map<String, Number>()
         var type
-        for(let element of allCollabRes){
-          if(element.id == eventID && (involvedHeroKinds.length == element.partySize || element.partySize == 0)){
+        for (let element of allCollabRes) {
+          if (element.id == eventID && (involvedHeroKinds.length == element.partySize || element.partySize == 0)) {
             type = element.type
-            for(let [name,number] of element.list){
-              res.set(name,number)
+            for (let [name, number] of element.list) {
+              res.set(name, number)
             }
           }
         }
@@ -1015,23 +1031,23 @@ export default class GameScene extends Phaser.Scene {
         var width = (res.size + 1) * collabColWidth; // Not sure if there's a better way of getting size of ts obj
         // Determine height of the window based on number of players involved
         var height = (self.heroes.length + 2) * collabRowHeight;
-        
+
         var collabWindowData =
-          {
-            controller: self.gameinstance,
-            isOwner: true,
-            involvedHeroes: involvedHeroes,
-            resources: res,
-            textOptions: null,
-            x: reducedWidth / 2 - width / 2,
-            y: reducedHeight / 2 - height / 2,
-            w: width,
-            h: height,
-            infight: false,
-            overlayRef: self.overlay,
-            ownHeroKind: this.ownHeroType,
-            type: type
-          };
+        {
+          controller: self.gameinstance,
+          isOwner: true,
+          involvedHeroes: involvedHeroes,
+          resources: res,
+          textOptions: null,
+          x: reducedWidth / 2 - width / 2,
+          y: reducedHeight / 2 - height / 2,
+          w: width,
+          h: height,
+          infight: false,
+          overlayRef: self.overlay,
+          ownHeroKind: this.ownHeroType,
+          type: type
+        };
 
         WindowManager.create(this, 'collab', CollabWindow, collabWindowData);
         // Freeze main game while collab window is active
