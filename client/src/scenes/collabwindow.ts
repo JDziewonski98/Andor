@@ -223,7 +223,6 @@ export class CollabWindow extends Window {
             // Check that resAllocated corresponds with specified quantities from data.resources
             if (self.verifyAllocated()) {
                 self.acceptText.setColor('#00FF00')
-                // Need to convert map TS object to send to server
                 
                 //emit server 
                 self.gameinstance.sendAccept(self.ownHeroKind)
@@ -232,6 +231,7 @@ export class CollabWindow extends Window {
                 //console.log(self.numAccepts, self.involvedHeroes.length)
                 if(self.numAccepts == self.involvedHeroes.length){
                     let convMap = {};
+                    // Need to convert map TS object to send to server
                     self.resAllocated.forEach((val: number[], key: string) => {
                         convMap[key] = val;
                     });
