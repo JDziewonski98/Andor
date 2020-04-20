@@ -36,7 +36,7 @@ export class Chat extends Window {
         console.log(this)
         var self = this;
         this.text = "";
-        this.cameras.main.setBackgroundColor(0xffffff)
+        // this.cameras.main.setBackgroundColor(0xffffff) //remove duplicated window
 
         this.element = this.add.dom(200, 140).createFromCache('chatform');
 

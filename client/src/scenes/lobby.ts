@@ -33,7 +33,7 @@ export default class LobbyScene extends Phaser.Scene {
         this.load.image('dwarfmale', './assets/dwarfmale.png')
         this.load.image('archermale', './assets/archermale.png')
         this.load.image('fantasyhome', './assets/fantasyhome.jpg')
-        this.load.image('optionsIcon', './assets/haus.png')
+        this.load.image('optionsicon', './assets/haus.png')
         this.load.image('scrollbg', './assets/windowbg.jpg')
         this.load.image('trademenubg', './assets/menubackground.png')
         this.load.image('main', './assets/mainscreen.png')
@@ -94,7 +94,7 @@ export default class LobbyScene extends Phaser.Scene {
             this.scene.start('Load', { controller: self.lobbyController });
         }, this);
 
-        this.optionsIcon = this.add.image(900, 80, 'optionsIcon').setInteractive().setScale(0.3);
+        this.optionsIcon = this.add.image(900, 80, 'optionsicon').setInteractive().setScale(0.3);
         this.add.text(900, 133, "heroes' dwelling", housetText).setOrigin(0.5)
         this.optionsIcon.on('pointerdown', function (pointer) {
             this.scene.bringToTop('Options')
