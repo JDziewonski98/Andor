@@ -313,7 +313,7 @@ export default class BoardOverlay extends Phaser.Scene {
 
         // Callbacks
         // Server handles logic for whose hours are getting reset
-        self.gameinstance.receiveResetHours(resetHeroHours);
+        // self.gameinstance.receiveResetHours(resetHeroHours);
 
         self.gameinstance.receiveUpdatedMonsters(moveMonstersOnMap);
         function moveMonstersOnMap(updatedMonsters) {
@@ -335,8 +335,8 @@ export default class BoardOverlay extends Phaser.Scene {
         }
 
         self.gameinstance.receiveResetHours(resetHeroHours);
-        function resetHeroHours(resetHoursHk: string) {
-            console.log("resetting hourtracker for", resetHoursHk)
+        function resetHeroHours(resetHoursHk: string, firstEndDay: boolean) {
+            console.log("resetting hourtracker for", resetHoursHk, firstEndDay)
             // Note: we don't keep track of hero hours on client, so only need to update 
             // visual hourTracker
             var hk;
@@ -353,7 +353,7 @@ export default class BoardOverlay extends Phaser.Scene {
                 default:
                     hk = HeroKind.Warrior;
             }
-            self.hourTracker.reset(hk);
+            self.hourTracker.reset(hk, firstEndDay);
         }
     }
 
@@ -383,7 +383,7 @@ export default class BoardOverlay extends Phaser.Scene {
             y: newY,
             duration: 1000,
             ease: 'Power2',
-            completeDelay: 1000,
+            // completeDelay: 1000,
             onComplete: function () { monster.moveToTile(newTile) }
         });
     }

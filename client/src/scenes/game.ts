@@ -9,7 +9,7 @@ import {
   expandedWidth, expandedHeight, borderWidth,
   fullWidth, fullHeight, htX, htY, scaleFactor,
   mageTile, archerTile, warriorTile, dwarfTile,
-  reducedWidth, reducedHeight,
+  reducedWidth, reducedHeight, htShift,
   collabTextHeight, collabColWidth, collabRowHeight,
   wellTile1, wellTile2, wellTile3, wellTile4,
   mOffset, enumPositionOfNarrator
@@ -337,9 +337,9 @@ export default class GameScene extends Phaser.Scene {
             targets: hero,
             x: newCoords.x,
             y: newCoords.y,
-            duration: 500,
+            duration: 300,
             ease: 'Power2',
-            completeDelay: 400,
+            // completeDelay: 200,
             onComplete: function () { hero.moveTo(self.tiles[tileID]) }
           });
         }
@@ -773,19 +773,19 @@ export default class GameScene extends Phaser.Scene {
       heroSprites.set(h.getKind(), sprite);
       switch (h.getKind()) {
         case HeroKind.Archer:
-          sprite.x = htx - 20
+          sprite.x = htx - 20 - htShift
           sprite.y = hty - 20
           break
         case HeroKind.Dwarf:
-          sprite.x = htx + 20
+          sprite.x = htx + 20 - htShift
           sprite.y = hty - 20
           break
         case HeroKind.Mage:
-          sprite.x = htx - 20
+          sprite.x = htx - 20 - htShift
           sprite.y = hty + 20
           break
         case HeroKind.Warrior:
-          sprite.x = htx + 20
+          sprite.x = htx + 20 - htShift
           sprite.y = hty + 20
           break
       }

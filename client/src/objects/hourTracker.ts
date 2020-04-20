@@ -13,11 +13,14 @@ export class HourTracker extends Phaser.GameObjects.Sprite {
         this.heroSprites = heroSprites
     }
     
-    public reset(hk: HeroKind) {
+    public reset(hk: HeroKind, firstEndDay: boolean) {
+        // Place sprite on the rooster
+        console.log("ht resetting for", hk, firstEndDay)
+        var extraShift = firstEndDay ? 0 : htShift;
         if (hk == HeroKind.Archer || hk == HeroKind.Mage) {
-            this.heroSprites.get(hk).x = htX-20;
+            this.heroSprites.get(hk).x = htX-20-extraShift;
         } else {
-            this.heroSprites.get(hk).x = htX+20;
+            this.heroSprites.get(hk).x = htX+20-extraShift;
         }
     }
 
@@ -32,8 +35,10 @@ export class HourTracker extends Phaser.GameObjects.Sprite {
         })
     }
 
-    public incHour(hk: HeroKind ) {
-        this.heroSprites.get(hk).x += htShift
+    public incHour(hk: HeroKind) {
+        console.log(hk, "ht inc");
+        var shift = this.heroSprites.get(hk).x < htX-20 ? htShift*2 : htShift;
+        this.heroSprites.get(hk).x += shift;
     }
 
     // public getCount(hk: HeroKind) {
