@@ -38,12 +38,12 @@ export class Chat extends Window {
         this.text = "";
         // this.cameras.main.setBackgroundColor(0xffffff) //remove duplicated window
 
-        this.element = this.add.dom(200, 140).createFromCache('chatform');
+        this.element = this.add.dom(200, 170).createFromCache('chatform');
 
         this.element.addListener('click');
         this.element.on('click', function (event) {
             console.log("clicking")
-            if (event.target.name === 'playButton') {
+            if (event.target.name === 'sendButton') {
                 var inputText = this.getChildByName('nameField');
                 //  Have they entered anything?
                 if (inputText.value !== '') {

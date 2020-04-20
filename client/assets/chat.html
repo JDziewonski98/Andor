@@ -4,7 +4,8 @@
 <head>
     <title>ChatJS</title>
     <style>
-        body input, body #history {
+        body input,
+        body #history {
             text-align: right;
         }
 
@@ -14,14 +15,16 @@
             background: #eaeaea;
         }
 
-        html, body, input {
+        html,
+        body,
+        input {
             font-family: Georgia, Tahoma, Arial, sans-serif;
             margin: 0;
             padding: 0;
         }
-        
-        
-        form {
+
+        /* unused code */
+        /* form {
             margin: 15px 0;
         }
         
@@ -41,16 +44,38 @@
             font-weight: bold;
             padding: 7px 5px;
             width: 19%;
+        } */
+
+        /* text box properties */
+        .form-container {
+            font-size: 16px;
+            background-color: beige;
+            height: 22px;
         }
-        
-        </style>
+
+        /* Add a red background color to the cancel button */
+        .btn {
+            font-size: 18px;
+            background-color: rgb(24, 226, 132);
+            color: white;
+            border: none;
+            cursor: pointer;
+            opacity: 1;
+            height: 25px;
+        }
+
+        /* Add some hover effects to buttons */
+        .btn:hover {
+            opacity: 0.8;
+        }
+    </style>
 </head>
 
 <body>
     <div id="history">
     </div>
-    <input type="text" name="nameField" placeholder="Type something" style="font-size: 22px">
-    <input type="button" name="playButton" value="Send" style="font-size: 22px" autocomplete="off"><br />
+    <input type="text" name="nameField" placeholder="Type something" class="form-container">
+    <input type="button" name="sendButton" value="Send" autocomplete="off" class="btn"><br />
 </body>
 
 </html>
