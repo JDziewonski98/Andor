@@ -166,6 +166,11 @@ export function game(socket, model: Game, io) {
       socket.emit("updateGameLog", "You can't do that when it is not your turn!");
       return;
     }
+    // Check if they are on a tile with an unrevealed fog
+    if (model.getFogs().has(hero.getRegion().getID())) {
+      socket.emit("updateGameLog", "You must reveal the fog before ending your turn.");
+      return;
+    }
 
     hero.resetPrinceMoves();
 
@@ -405,6 +410,14 @@ export function game(socket, model: Game, io) {
       // Tell witch window to update with new numBrews
       socket.emit("updateNumBrews", model.getWitch()?.getNumBrews());
       socket.broadcast.emit("updateNumBrews", model.getWitch()?.getNumBrews());
+      // Update game log
+      var msg = `${hero.getKind()} bought a brew from the witch.`
+      socket.emit("updateGameLog", msg);
+      socket.broadcast.emit("updateGameLog", msg);
+      // End turn
+      if (model.getCurrPlayersTurn() == hero.getKind()) {
+        freeActionEndTurn(hero);
+      }
     }
   });
 
@@ -690,6 +703,11 @@ export function game(socket, model: Game, io) {
 
         callback(tile);
         socket.broadcast.emit("destroyFog", tile);
+
+        // End turn
+        if (model.getCurrPlayersTurn() == hero.getKind()) {
+          freeActionEndTurn(hero);
+        }
       }
 
       // Update shields
@@ -1293,6 +1311,12 @@ export function game(socket, model: Game, io) {
       socket.emit("updateGameLog", "You can't do that when it is not your turn!");
       return;
     }
+    // Check if they are on a tile with an unrevealed fog
+    if (model.getFogs().has(hero.getRegion().getID())) {
+      socket.emit("updateGameLog", "You must reveal the fog before ending your day.");
+      return;
+    }
+
     // Reset this hero's hours and tell all clients to update their hourtracker
     var resetHoursHk = model.resetHeroHours(socket.conn.id);
     var firstEndDay = false;
