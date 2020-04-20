@@ -161,6 +161,11 @@ export function game(socket, model: Game, io) {
     var nextPlayerID = model.getConnIdFromHk(nextPlayer);
     console.log("Sending next turn to ", nextPlayer, "with ID", nextPlayerID);
     socket.broadcast.to(`/${model.getName()}#${nextPlayerID}`).emit("yourTurn");
+
+    // Update game log
+    var msg = `${hero.getKind()} ended their turn. It is now ${nextPlayer}'s turn.`
+    socket.emit("updateGameLog", msg);
+    socket.broadcast.emit("updateGameLog", msg);
   })
 
   socket.on("pickupFarmer", function (tileID: number, callback) {
@@ -1215,21 +1220,26 @@ export function game(socket, model: Game, io) {
   * END DAY
   */
   socket.on('endDay', function (callback) {
+    var heroID = socket.conn.id
+    let hero = model.getHero(heroID);
     // Reset this hero's hours and tell all clients to update their hourtracker
     var resetHoursHk = model.resetHeroHours(socket.conn.id);
-    console.log("tell client to reset hour tracker for", resetHoursHk)
-    socket.emit("sendResetHours", resetHoursHk);
-    socket.broadcast.emit("sendResetHours", resetHoursHk);
-
+    var firstEndDay = false;
     // Hero gets first turn of next day if they were first to end the current day
     if (model.getActiveHeros().length == model.getHeros().size) {
       model.setNextDayFirstHero(socket.conn.id);
+      firstEndDay = true;
     }
+    console.log("tell client to reset hour tracker for", resetHoursHk)
+    socket.emit("sendResetHours", resetHoursHk, firstEndDay);
+    socket.broadcast.emit("sendResetHours", resetHoursHk, firstEndDay);
 
     // If they were the last hero to end the day, trigger all actions and pass turn to
     // the hero who ended the day first
     var nextPlayer: HeroKind;
+    var newDayMsg = false;
     if (model.getActiveHeros().length == 1) {
+      newDayMsg = true;
       //remove active Events
       model.clearActiveEvents()
 
@@ -1448,6 +1458,15 @@ export function game(socket, model: Game, io) {
     model.setCurrPlayersTurn(nextPlayer);
     console.log("Emitting yourTurn to ", nextPlayer, "with id", model.getConnIdFromHk(nextPlayer));
     socket.broadcast.to(`/${model.getName()}#${model.getConnIdFromHk(nextPlayer)}`).emit("yourTurn");
+
+    // Update game log
+    var msg = `${hero.getKind()} ended their day.`;
+    if (newDayMsg) {
+      msg += '\n\tA new day begins.'
+    }
+    msg += ` It is now ${nextPlayer}'s turn.`
+    socket.emit("updateGameLog", msg);
+    socket.broadcast.emit("updateGameLog", msg);
   })
 
   socket.on('moveMonstersEndDay', function () {

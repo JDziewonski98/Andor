@@ -9,7 +9,7 @@ import {
   expandedWidth, expandedHeight, borderWidth,
   fullWidth, fullHeight, htX, htY, scaleFactor,
   mageTile, archerTile, warriorTile, dwarfTile,
-  reducedWidth, reducedHeight,
+  reducedWidth, reducedHeight, htShift,
   collabTextHeight, collabColWidth, collabRowHeight,
   wellTile1, wellTile2, wellTile3, wellTile4,
   mOffset, enumPositionOfNarrator
@@ -147,6 +147,7 @@ export default class GameScene extends Phaser.Scene {
       console.log("GAME DATA IS:::::::::::::\n", data)
 
       this.setRegions(data.regions);
+      console.log("FOGS ARE::****", data.fogs)
       this.addFog(data.fogs);
       this.addShieldsToRietburg(data.castle.numDefenseShields - data.castle.numDefenseShieldsUsed);
 
@@ -239,8 +240,8 @@ export default class GameScene extends Phaser.Scene {
     // var tilesData = require("../utils/xycoords").map;
     var treeTile = this.textures.get('tiles').getFrameNames()[12];
     for (let t of tilesData) {
-      // console.log(t)
-      var tile = new Tile(t.id, this, t.x * scaleFactor + borderWidth, t.y * scaleFactor + borderWidth, treeTile, t.adjRegionsIds);
+      // console.log(t, scaleFactor, borderWidth)
+      var tile = new Tile(t.id, this, t.xcoord * scaleFactor + borderWidth, t.ycoord * scaleFactor + borderWidth, treeTile, t.adjRegionsIds);
       this.tiles[t.id] = tile;
       tile.setInteractive();
       this.add.existing(tile);
@@ -333,9 +334,9 @@ export default class GameScene extends Phaser.Scene {
             targets: hero,
             x: newCoords.x,
             y: newCoords.y,
-            duration: 500,
+            duration: 300,
             ease: 'Power2',
-            completeDelay: 400,
+            // completeDelay: 200,
             onComplete: function () { hero.moveTo(self.tiles[tileID]) }
           });
         }
@@ -637,7 +638,8 @@ export default class GameScene extends Phaser.Scene {
 
   private addFog(fogs) {
     fogs.forEach((fog) => {
-      const tile: Tile = this.tiles[fog[0]];
+      const tile: Tile = this.tiles[fog[0]]; 
+      // console.log(fog[0], tile)
       const f = this.add.sprite(tile.x + 50, tile.y - 5, fog[1]).setDisplaySize(60, 60);
       f.name = fog[1];
       f.setTint(0x101010); // darken
@@ -764,19 +766,19 @@ export default class GameScene extends Phaser.Scene {
       heroSprites.set(h.getKind(), sprite);
       switch (h.getKind()) {
         case HeroKind.Archer:
-          sprite.x = htx - 20
+          sprite.x = htx - 20 - htShift
           sprite.y = hty - 20
           break
         case HeroKind.Dwarf:
-          sprite.x = htx + 20
+          sprite.x = htx + 20 - htShift
           sprite.y = hty - 20
           break
         case HeroKind.Mage:
-          sprite.x = htx - 20
+          sprite.x = htx - 20 - htShift
           sprite.y = hty + 20
           break
         case HeroKind.Warrior:
-          sprite.x = htx + 20
+          sprite.x = htx + 20 - htShift
           sprite.y = hty + 20
           break
       }

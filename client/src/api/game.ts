@@ -673,5 +673,10 @@ export class game {
     public save(){
         this.socket.emit("save");
     }
+
+    // GAME LOG
+    public updateGameLog(callback) {
+        this.socket.on("updateGameLog", callback);
+    }
 }
 
