@@ -267,6 +267,10 @@ export class game {
         // this.myTurn = false;
     }
 
+    public telescopeEndTurn(){
+        this.socket.emit('telescopeEndTurn');
+    }
+
     // **** DEPRECATED 04/20/20: removed turn logic from frontend ***
     // public getTurn() {
     //     return this.myTurn

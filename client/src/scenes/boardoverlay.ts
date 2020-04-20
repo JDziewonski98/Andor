@@ -237,7 +237,7 @@ export default class BoardOverlay extends Phaser.Scene {
         this.updatePanel(panel, this.content);
 
         this.gameinstance.getCurrPlayersTurn(function(hk: string) {
-            self.updateContent(panel, `It is ${hk}'s turn.`)
+            self.updateContent(panel, `It is the ${hk}'s turn.`)
         })
       
         // Listen for updates to log from server
