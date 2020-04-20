@@ -672,16 +672,11 @@ export function game(socket, model: Game, io) {
    * COLLAB DECISION
    */
   // Submitting a decision
-  socket.on('collabDecisionSubmit', function (resAllocated, resNames, involvedHeroes) {
-    // Sets the first player at the beginning of the game
-    if (model.getCurrPlayersTurn() == HeroKind.None) {
+  socket.on('sendEndCollab', function(resAllocated, resNames, involvedHeroKinds){
+    console.log("Recieved sendEndCollab")
+     // Sets the first player at the beginning of the game
+     if (model.getCurrPlayersTurn() == HeroKind.None) {
       model.setCurrPlayersTurn(model.getHkFromConnID(socket.conn.id));
-    }
-    // Check that numAccepts equals total num of players-1
-    if (model.numAccepts != involvedHeroes.length - 1) {
-      // Failure: need more accepts before valid submit
-      socket.emit('sendDecisionSubmitFailure');
-      return;
     }
     // Success: distribute accordingly
     let modelHeros = model.getHeros();
@@ -708,25 +703,20 @@ export function game(socket, model: Game, io) {
         // console.log("Updated", heroTypeString, "gold:", currHero?.getGold(), "wineskin:", currHero?.getWineskin())
       }
     }
-    // Reset decision related state
-    model.numAccepts = 0;
-
-    socket.broadcast.emit('sendDecisionSubmitSuccess')
-    socket.emit('sendDecisionSubmitSuccess')
+    io.of("/" + model.getName()).emit('receiveEndCollab', involvedHeroKinds);
   })
-
-  // Accepting a decision
-  socket.on('collabDecisionAccept', function () {
-    model.numAccepts += 1;
-    // Tell the client that accepted to update their status
-    socket.emit('sendDecisionAccepted', model.numAccepts)
-  })
+  // increasing/decreasing resources
   socket.on('sendIncResource', function(resourceHeroKind, resourceIndex){
-    //console.log("Received: sendIncResource", resourceHeroKind, resourceIndex)
-    //console.log(model.getHero(socket.conn.id), model.getHero(socket.conn.id).getKind())
     io.of("/" + model.getName()).emit('receiveIncResource', resourceHeroKind, resourceIndex, model.getHero(socket.conn.id).getKind());
-    //socket.emit('receiveIncResource', resourceHeroKind, resourceIndex, model.getHero(socket.conn.id).getKind())
   })
+  socket.on('sendDecResource', function(resourceHeroKind, resourceIndex){
+    io.of("/" + model.getName()).emit('receiveDecResource', resourceHeroKind, resourceIndex, model.getHero(socket.conn.id).getKind());
+  })
+  // Accepting a collab
+  socket.on('sendAccept', function(heroKind){
+    io.of("/" + model.getName()).emit('receiveAccept', heroKind);
+  })
+
   /*
   * BATTLING
   */

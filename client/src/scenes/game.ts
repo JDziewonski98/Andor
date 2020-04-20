@@ -717,6 +717,7 @@ export default class GameScene extends Phaser.Scene {
   }
 
   private startingCollabDecisionSetup() {
+    console.log(this.heroes)
     var self = this
     // function incFunction(heroKind){
 
@@ -756,8 +757,8 @@ export default class GameScene extends Phaser.Scene {
         overlayRef: self.overlay,
         ownHeroKind: this.ownHeroType,
         incFunction: self.gameinstance.sendIncResource,
-        incListener: self.gameinstance.incListener
-
+        incListener: self.gameinstance.incListener,
+        type: 'distribute'
       };
     WindowManager.create(this, 'collab', CollabWindow, collabWindowData);
     // Freeze main game while collab window is active
@@ -977,6 +978,14 @@ export default class GameScene extends Phaser.Scene {
     this.gameinstance.receivePlayerDisconnected((hk) => {
       console.log("FREEZE GAME ", hk, " DISCONNECTED")
       this.scene.pause();
+    })
+
+
+    //EVENTS
+    this.gameinstance.receiveNewCollab((involvedHeroKinds, eventID) =>{
+      if(involvedHeroKinds.includes(self.ownHeroType)){
+        //create collab appropriately 
+      }
     })
 
   }

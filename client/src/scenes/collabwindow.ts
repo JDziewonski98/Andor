@@ -40,7 +40,9 @@ export class CollabWindow extends Window {
     //
     private ownHeroKind: HeroKind
     //private incFunction: Function
-    private incListener: Function
+    //private incListener: Function
+    private numAccepts
+    private type
     private resourceToggles: Array<ResourceToggle>
     public constructor(key: string, data, incFunction) {
         super(key, {x: data.x, y: data.y, width: data.w, height: data.h});
@@ -62,8 +64,12 @@ export class CollabWindow extends Window {
         //}
         this.ownHeroKind = data.ownHeroKind
         //this.incFunction = this.gameinstance.sendIncResource
-        this.incListener = data.incListener
+        //this.incListener = data.incListener
         this.resourceToggles = new Array<ResourceToggle>()
+        this.numAccepts = 0
+        this.type = data.type
+
+        console.log(this.involvedHeroes)
     }
 
     protected initialize() {
@@ -103,7 +109,7 @@ export class CollabWindow extends Window {
         // Submitting decision callback
         console.log('in init', self.infight)
         this.gameinstance.incListener((resourceHeroKind, resourceIndex, senderHeroKind)=>{
-            console.log("we got it baby")
+            console.log("entered inc listener")
             var involved = false
             for(let hero of self.involvedHeroes){
                 if(hero.getKind() == senderHeroKind){
@@ -123,32 +129,63 @@ export class CollabWindow extends Window {
                 } 
             }
         })
-        this.gameinstance.receiveDecisionSubmitSuccess(submitSuccess);
-        this.gameinstance.receiveDecisionSubmitFailure(submitFailure);
-        // Accepting decision callback
-        this.gameinstance.receiveDecisionAccepted(setAccepted);
+        this.gameinstance.decListener((resourceHeroKind, resourceIndex, senderHeroKind)=>{
+            console.log("entered dec listener")
+            var involved = false
+            for(let hero of self.involvedHeroes){
+                if(hero.getKind() == senderHeroKind){
+                    involved = true
+                }
+            }
+            if(self.ownHeroKind == senderHeroKind){
+                involved = false
+            }
+            if(involved){
+                for(let rt of this.resourceToggles){
+                    if(rt.getResourceIndex() == resourceIndex && resourceHeroKind == rt.getHeroKind()){
+                        console.log(rt)
+                        rt.decFunction()
+                        //this.gameinstance.sendIncResource(resourceHeroKind,resourceIndex)
+                    }        
+                } 
+            }
+        })
+        this.gameinstance.acceptListener((heroKind) => {
+            console.log("entered accept listener")
+            var involved = false
+            for(let hero of self.involvedHeroes){
+                if(hero.getKind() == heroKind){
+                    involved = true
+                }
+            }
+            if(self.ownHeroKind == heroKind){
+                involved = false
+            }
+            if(involved){
+                self.numAccepts++
+            }
+            console.log(self.numAccepts)
+        })
+        this.gameinstance.endCollabListener((involvedHeroKinds: HeroKind[]) =>{
+            console.log("entered end collab listener")
+            //console.log("we got it baby")
+            //console.log(involvedHeroKinds)
+            var involved = false
+            for(let heroKind of involvedHeroKinds){
+                if(heroKind == self.ownHeroKind){
+                    involved = true
+                }
+            }
+            if(involved){
+                self.scene.resume('Game');
 
-        function submitSuccess() {
-            self.hasAccepted = false;
-            console.log("Callback: successfully submitted decision");
-            // Resume main game scene when collab decision is complete
-            
-            self.scene.resume('Game');
-
-            // Reset overlay interactive
-            self.overlayRef.toggleInteractive(true);
-            
-            self.scene.remove(self.name);
-            self.gameinstance.unsubscribeListeners()
-        }
-        function submitFailure() {
-            console.log("Callback: submit decision failed - not enough accepts");
-            self.submitText.setText("Submit. You need more accepts!")
-        }
-        function setAccepted(numAccepted) {
-            self.hasAccepted = true;
-            console.log("Callback: successfully accepted decision, numAccepted: ", numAccepted);
-        }
+                // Reset overlay interactive
+                self.overlayRef.toggleInteractive(true);
+                
+                self.scene.remove(self.name);
+                self.gameinstance.unsubscribeListeners()
+            }
+        })
     }
 
     private populateWindow() {
@@ -162,40 +199,62 @@ export class CollabWindow extends Window {
         
         // Done populating if this is just an accept window
         //if (!this.isOwner) {
-            this.acceptText = this.add.text(this.width/2, this.height-collabTextHeight, 'Accept', textStyle)
+            // this.acceptText = this.add.text(this.width/2, this.height-collabTextHeight, 'Accept', textStyle)
 
-            this.acceptText.setInteractive()
-            this.acceptText.on('pointerdown', function (pointer) {
-                console.log("Current distribution", self.resAllocated);
-                if (self.hasAccepted) {
-                    console.log("You have already accepted this decision");
-                    return;
-                }
-                self.acceptText.setText('Accepted!')
-                self.acceptText.setColor('#d11313')
-                self.gameinstance.collabDecisionAccept();
-            });
+            // this.acceptText.setInteractive()
+            // this.acceptText.on('pointerdown', function (pointer) {
+            //     console.log("Current distribution", self.resAllocated);
+            //     if (self.hasAccepted) {
+            //         console.log("You have already accepted this decision");
+            //         return;
+            //     }
+            //     self.acceptText.setText('Accepted!')
+            //     self.acceptText.setColor('#d11313')
+            //     self.gameinstance.collabDecisionAccept();
+            // });
 
            //return;
         //}
 
-        this.submitText = this.add.text(0, this.height-collabTextHeight, 'Submit', textStyle)
+        this.acceptText = this.add.text(0, this.height-collabTextHeight, 'Accept', textStyle)
         console.log('we here son.')
-        this.submitText.setInteractive()
-        this.submitText.on('pointerdown', function (pointer) {
+        this.acceptText.setInteractive()
+        this.acceptText.on('pointerdown', function (pointer) {
             // Check that resAllocated corresponds with specified quantities from data.resources
             if (self.verifyAllocated()) {
+                self.acceptText.setColor('#00FF00')
                 // Need to convert map TS object to send to server
-                let convMap = {};
-                self.resAllocated.forEach((val: number[], key: string) => {
-                    convMap[key] = val;
-                });
-                // Pass map of allocated resources and list of resource names to map allocated 
-                // quantities to the name of the corresponding resource
-                self.gameinstance.collabDecisionSubmit(convMap, self.resourceNames, self.involvedHeroes);
+                
+                //emit server 
+                self.gameinstance.sendAccept(self.ownHeroKind)
+                
+                self.numAccepts++
+                //console.log(self.numAccepts, self.involvedHeroes.length)
+                if(self.numAccepts == self.involvedHeroes.length){
+                    let convMap = {};
+                    self.resAllocated.forEach((val: number[], key: string) => {
+                        convMap[key] = val;
+                    });
+                    //emit end collab call
+                    // Pass map of allocated resources and list of resource names to map allocated 
+                    // quantities to the name of the corresponding resource
+                    //console.log(self.involvedHeroes)
+                    var involvedHeroKinds = new Array<HeroKind>()
+                    for(let hero of self.involvedHeroes){
+                        involvedHeroKinds.push(hero.getKind())
+                    }
+                    self.gameinstance.sendEndCollab(convMap, self.resourceNames, involvedHeroKinds)
+                }
+                //self.gameinstance.collabDecisionSubmit(convMap, self.resourceNames, self.involvedHeroes);
+                //
             } else {
                 console.log("Allocated quantities do not match those specified");
-                self.submitText.setText("Submit. Quantities must match!")
+                self.acceptText.setText("Quantities must match!")
+                self.acceptText.setColor('#d11313')
+                setTimeout(function(){
+                    self.acceptText.setText("Accept");
+                    self.acceptText.setColor('#FFFFFF')
+                }, 3000);
             }
         });
 
@@ -237,29 +296,33 @@ export class CollabWindow extends Window {
         } else if (this.textOptions != null) {
             // Not used for this milestone
         }
+
+        //add hero images
+
     }
 
     private verifyAllocated() {
-        var self = this;
-        
-        var currTotals = [];
-        currTotals.length = this.resources.size;
-        currTotals.fill(0);
-        Array.from(this.resAllocated.values()).forEach( counts => {
-            for (let i=0; i<counts.length; i++) {
-                currTotals[i] += counts[i];
+        if(this.type == 'distribute'){
+            var self = this;
+            var currTotals = [];
+            currTotals.length = this.resources.size;
+            currTotals.fill(0);
+            Array.from(this.resAllocated.values()).forEach( counts => {
+                for (let i=0; i<counts.length; i++) {
+                    currTotals[i] += counts[i];
+                }
+            });
+            console.log(currTotals);
+            var resMaxes = Array.from(this.resources.values());
+            for (let i=0; i<resMaxes.length; i++) {
+                if (resMaxes[i] != currTotals[i]) {
+                    console.log("resource", i, "count did not match");
+                    return false;
+                }
             }
-        });
-        console.log(currTotals);
-
-        var resMaxes = Array.from(this.resources.values());
-        for (let i=0; i<resMaxes.length; i++) {
-            if (resMaxes[i] != currTotals[i]) {
-                console.log("resource", i, "count did not match");
-                return false;
-            }
+            return true;
         }
-        return true;
+       
     }
     public incFunction(heroKind, resourceIndex){
         //ignoring checks for now
@@ -268,6 +331,16 @@ export class CollabWindow extends Window {
                 console.log(rt)
                 rt.incFunction()
                 this.gameinstance.sendIncResource(heroKind,resourceIndex)
+            }        
+        }
+    }
+    public decFunction(heroKind, resourceIndex){
+        //ignoring checks for now
+        for(let rt of this.resourceToggles){
+            if(rt.getResourceIndex() == resourceIndex && heroKind == rt.getHeroKind()){
+                console.log(rt)
+                rt.decFunction()
+                this.gameinstance.sendDecResource(heroKind,resourceIndex)
             }        
         }
     }

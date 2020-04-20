@@ -314,6 +314,7 @@ export class game {
     /*
     * COLLAB DECISIONS
     */
+
     //Sharing info between clients
     public sendIncResource(resourceHeroKind, resourceIndex){
         this.socket.emit('sendIncResource', resourceHeroKind, resourceIndex)
@@ -321,28 +322,40 @@ export class game {
     public incListener(callback){
         this.socket.on('receiveIncResource', callback)
     }
-    // Submitting a decision
-    public collabDecisionSubmit(resAllocated, resNames, involvedHeroes) {
-        this.socket.emit('collabDecisionSubmit', resAllocated, resNames, involvedHeroes)
+    public sendDecResource(resourceHeroKind, resourceIndex){
+        this.socket.emit('sendDecResource', resourceHeroKind, resourceIndex)
     }
-    public receiveDecisionSubmitSuccess(callback) {
-        this.socket.on('sendDecisionSubmitSuccess', callback)
+    public decListener(callback){
+        this.socket.on('receiveDecResource', callback)
+    }
+
+    //accepts
+    public sendAccept(heroKind){
+        this.socket.emit('sendAccept', heroKind)
+    }
+    public acceptListener(callback){
+        this.socket.on("receiveAccept", callback)
+    }
+    //removeAcceptListener is not implemented yet
+    // public removeAcceptListener(callback){
+    //     this.socket.on("receiveRemoveAccept", callback)
+    // } 
+
+    //ending collabs
+    public sendEndCollab(convMap, resourceNames, involvedHeroes ){
+        this.socket.emit('sendEndCollab', convMap, resourceNames, involvedHeroes )
+    }
+    public endCollabListener(callback){
+        this.socket.on('receiveEndCollab',callback)
     }
     public unsubscribeListeners() {
         //must be called once youre done using the collab decision listeners.
-        this.socket.off('sendDecisionSubmitSuccess')
-        this.socket.off('sendDecisionSubmitFailure')
-        this.socket.off('sendDecisionAccepted')
-    }
-    public receiveDecisionSubmitFailure(callback) {
-        this.socket.on('sendDecisionSubmitFailure', callback)
-    }
-    // Accepting a decision
-    public collabDecisionAccept() {
-        this.socket.emit('collabDecisionAccept')
-    }
-    public receiveDecisionAccepted(callback) {
-        this.socket.on('sendDecisionAccepted', callback)
+        this.socket.off('receiveIncResource')
+        this.socket.off('receiveDecResource')
+        this.socket.off('receiveAccept')
+        //this.socket.off('receiveRemoveAccept) this is not implemented yet
+        this.socket.off('receiveEndCollab')
+
     }
     /////////////////////////////
 
