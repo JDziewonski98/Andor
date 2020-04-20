@@ -687,6 +687,7 @@ export default class GameScene extends Phaser.Scene {
               setTimeout(() => {
                 f.setTint(0x101010);
               }, 800);
+              self.gameinstance.telescopeEndTurn();
             }
             else {
               self.gameinstance.useFog(f.name, tile.id, (tile) => {

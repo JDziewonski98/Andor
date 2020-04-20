@@ -166,6 +166,11 @@ export function game(socket, model: Game, io) {
       socket.emit("updateGameLog", "You can't do that when it is not your turn!");
       return;
     }
+    // Check if they are on a tile with an unrevealed fog
+    if (model.getFogs().has(hero.getRegion().getID())) {
+      socket.emit("updateGameLog", "You must reveal the fog before ending your turn.");
+      return;
+    }
 
     hero.resetPrinceMoves();
 
@@ -184,7 +189,7 @@ export function game(socket, model: Game, io) {
     // socket.broadcast.to(`/${model.getName()}#${nextPlayerID}`).emit("yourTurn");
 
     // Update game log
-    var msg = `${hero.getKind()} ended their turn. It is now ${nextPlayer}'s turn.`
+    var msg = `The ${hero.getKind()} ended their turn. It is now the ${nextPlayer}'s turn.`
     socket.emit("updateGameLog", msg);
     socket.broadcast.emit("updateGameLog", msg);
   })
@@ -317,16 +322,18 @@ export function game(socket, model: Game, io) {
   }
 
   socket.on("revealRunestone", function(tileID: number, stoneName: string) {
-    let success = false;
     let heroId = socket.conn.id;
     let hero = model.getHero(heroId);
-    success = model.revealRunestone(hero, tileID, stoneName);
+    let {success, usedTelescope} = model.revealRunestone(hero, tileID, stoneName);
     if (success) {
       let realStone = stoneName.slice(0, -2);
       socket.emit("updatePickupItemTile", tileID, stoneName, "smallItem")
       socket.broadcast.emit("updatePickupItemTile", tileID, stoneName, "smallItem")
       socket.emit("updateDropItemTile", tileID, realStone, "smallItem")
       socket.broadcast.emit("updateDropItemTile", tileID, realStone, "smallItem")
+      if (usedTelescope && model.getCurrPlayersTurn() == hero.getKind()) {
+        freeActionEndTurn(hero);
+      }
     }
   })
   //////////////////////////////////////////////////
@@ -405,6 +412,14 @@ export function game(socket, model: Game, io) {
       // Tell witch window to update with new numBrews
       socket.emit("updateNumBrews", model.getWitch()?.getNumBrews());
       socket.broadcast.emit("updateNumBrews", model.getWitch()?.getNumBrews());
+      // Update game log
+      var msg = `${hero.getKind()} bought a brew from the witch.`
+      socket.emit("updateGameLog", msg);
+      socket.broadcast.emit("updateGameLog", msg);
+      // End turn
+      if (model.getCurrPlayersTurn() == hero.getKind()) {
+        freeActionEndTurn(hero);
+      }
     }
   });
 
@@ -448,6 +463,15 @@ export function game(socket, model: Game, io) {
     }
   });
 
+  socket.on("telescopeEndTurn", function() {
+    var heroId = socket.conn.id;
+    let hero = model.getHero(heroId);
+    // End turn
+    if (model.getCurrPlayersTurn() == hero.getKind()) {
+      freeActionEndTurn(hero);
+    }
+  })
+
   function freeActionEndTurn(hero: Hero) {
     var nextPlayer = model.nextPlayer(false)
     hero.resetPrinceMoves();
@@ -456,7 +480,7 @@ export function game(socket, model: Game, io) {
     }
     model.setCurrPlayersTurn(nextPlayer)
     // Update game log
-    var msg = `${hero.getKind()} ended their turn. It is now ${nextPlayer}'s turn.`
+    var msg = `The ${hero.getKind()} ended their turn. It is now the ${nextPlayer}'s turn.`
     socket.emit("updateGameLog", msg);
     socket.broadcast.emit("updateGameLog", msg);
   }
@@ -690,6 +714,11 @@ export function game(socket, model: Game, io) {
 
         callback(tile);
         socket.broadcast.emit("destroyFog", tile);
+
+        // End turn
+        if (model.getCurrPlayersTurn() == hero.getKind()) {
+          freeActionEndTurn(hero);
+        }
       }
 
       // Update shields
@@ -1293,6 +1322,12 @@ export function game(socket, model: Game, io) {
       socket.emit("updateGameLog", "You can't do that when it is not your turn!");
       return;
     }
+    // Check if they are on a tile with an unrevealed fog
+    if (model.getFogs().has(hero.getRegion().getID())) {
+      socket.emit("updateGameLog", "You must reveal the fog before ending your day.");
+      return;
+    }
+
     // Reset this hero's hours and tell all clients to update their hourtracker
     var resetHoursHk = model.resetHeroHours(socket.conn.id);
     var firstEndDay = false;
