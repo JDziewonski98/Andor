@@ -31,11 +31,11 @@ export var map = [
     //     "flavorText": "Dark clouds cover the sun, filling all the good people of Andor with strange foreboding.", 
     //     "desc": "On this day no hero is allowed to use a 10th hour. Place this card above the overtime area of the time track. At the end of the day, it is removed from the game."
     // },
-        {
-            "id": 10, 
-            "flavorText": "Jugglers from the north display their art.", 
-            "desc": "Each hero can now purchase 3 willpower points in exchange for 1 gold."
-        },
+    // {
+    //     "id": 10, 
+    //     "flavorText": "Jugglers from the north display their art.", 
+    //     "desc": "Each hero can now purchase 3 willpower points in exchange for 1 gold."
+    // },
     // {
     //     "id": 11, 
     //     "flavorText": "The creatures gather their strength.", 

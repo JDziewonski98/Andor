@@ -438,16 +438,7 @@ export function game(socket, model: Game, io) {
           socket.emit("revealWitch", tile);
         } else if (fogType === Fog.EventCard) {
           if(event != null){
-            //will have to add blockable events once shields are implemented
-
-            //io.of("/" + model.getName()).emit("newEvent", event);
-            socket.broadcast.emit("newEvent", event);
-            socket.emit("newEvent", event);
-            //io.of("/" + model.getName()).emit("newEvent", event);
-            //io.of("/" + model.getName()).emit("newEvent", event);
-            //io.of("/" + model.getName()).emit("newEvent", event);
-            //io.of("/" + model.getName()).emit("newEvent", event);
-            //io.of("/" + model.getName()).emit("newEvent", event);
+            io.of("/" + model.getName()).emit("newEvent", event);
 
             //these will be blockable
             if(event.id ==  2 || event.id ==  5 || event.id ==  9 || event.id == 11 || event.id == 15 || event.id == 17 || 
@@ -473,13 +464,13 @@ export function game(socket, model: Game, io) {
                   if(herosWithStr.length > 0){
                     if(heroesWithShields.length > 0){
                       io.of("/" + model.getName()).emit('newCollab', 0, heroesWithShields);
-                    }
-                    if(model.getBlockedEvent()){
-                      model.setBlockedEvent(false)
-                    }
-                    else{
-                      io.of("/" + model.getName()).emit("newCollab", event.id, model.getHero(heroId).getRegion().getID(), herosWithStr);
-                      model.applyEvent(event)
+                      if(model.getBlockedEvent()){
+                        model.setBlockedEvent(false)
+                      }
+                      else{
+                        io.of("/" + model.getName()).emit("newCollab", event.id, herosWithStr);
+                        model.applyEvent(event)
+                      }
                     }
                   }
                   else{
@@ -1240,17 +1231,184 @@ export function game(socket, model: Game, io) {
       let event = model.drawCard()
       if(event != null){
         io.of("/" + model.getName()).emit("newEvent", event);
-            //these will be blockable
-            if(event.id ==  2 || event.id ==  5 || event.id ==  9 || event.id == 11 || event.id == 15 || event.id == 17 || 
-               event.id == 19 || event.id == 21 || event.id == 22 || event.id == 24 || event.id == 31 || event.id == 32){
-              //trigger collab decision between players. 
-              //blocked = collabCall
-              //if !blocked
-              model.applyEvent(event)
+
+        //these will be blockable
+        if(event.id ==  2 || event.id ==  5 || event.id ==  9 || event.id == 11 || event.id == 15 || event.id == 17 || 
+           event.id == 19 || event.id == 21 || event.id == 22 || event.id == 24 || event.id == 31 || event.id == 32 || event.id == 33){
+
+            var heroesWithShields = new Array<Hero>()
+            for(let [conn,hero] of model.getHeros()){
+              let largeItem = hero.getLargeItem()
+              if(largeItem == LargeItem.Shield || largeItem == LargeItem.DamagedShield){
+                heroesWithShields.push(hero)
+              }
+            }
+
+            //first must handle 33 uniquely
+            if(event.id == 33){
+              //if someone has > 1 str point
+              var herosWithStr = Array<Hero>()
+              for(let [conn,hero] of model.getHeros()){
+                if(hero.getStrength() > 1){
+                  herosWithStr.push(hero)
+                }
+              }
+              if(herosWithStr.length > 0){
+                if(heroesWithShields.length > 0){
+                  io.of("/" + model.getName()).emit('newCollab', 0, heroesWithShields);
+                  if(model.getBlockedEvent()){
+                    model.setBlockedEvent(false)
+                  }
+                  else{
+                    io.of("/" + model.getName()).emit("newCollab", event.id, herosWithStr);
+                    model.applyEvent(event)
+                  }
+                }
+              }
+              else{
+                //event is not triggered. We should probably communicate this somehow.
+              }
             }
             else{
-              model.applyEvent(event)
+              if(heroesWithShields.length > 0){
+                io.of("/" + model.getName()).emit('newCollab', 0, heroesWithShields);
+              }
+              if(model.getBlockedEvent()){
+                model.setBlockedEvent(false)
+              }
+              else{
+                if(event.id == 20){
+                  //check which heros have gold and willpower to lose. 
+                  var elligibleHeroes = Array<Hero>()
+                  for(let [conn,hero] of model.getHeros()){
+                    if(hero.getStrength() > 1){
+                      elligibleHeroes.push(hero)
+                    }
+                  }
+                }
+                model.applyEvent(event)
+              }
+              
             }
+             
+            
+          //now for the rest
+          //trigger collab decision between players. 
+          //blocked = collabCall
+          //if !blocked
+          model.applyEvent(event) 
+        }
+        else{
+          if(event.id == 1){
+            for(let [conn,hero] of model.getHeros()){
+              if(hero.getWill()>3){
+                let involvedHeroes = new Array<Hero>()
+                involvedHeroes.push(hero)
+                console.log("emmitting newCollab", event.id, involvedHeroes)
+                io.of("/" + model.getName()).emit('newCollab', event.id, involvedHeroes);
+                }
+            }
+          }
+          else if(event.id == 4){
+            for(let [conn,hero] of model.getHeros()){
+              if(model.regionBordersRiver(hero.getRegion())){
+                hero.getRegion().addItem(SmallItem.Wineskin)
+                //emit add item
+                if(hero.pickUpSmallItem(hero.getRegion().getID(), SmallItem.Wineskin)){
+                  //emit removeitem 
+                }
+              }
+            }
+          }
+          else if(event.id == 10){
+            for(let [conn,hero] of model.getHeros()){
+              let elligibleHeroes = new Array<Hero>()
+              if(hero.getStrength()>1){
+                elligibleHeroes.push(hero)
+                io.of("/" + model.getName()).emit('newCollab', event.id, elligibleHeroes);
+              }
+            }
+          }
+          else if(event.id == 23){
+            var elligibleHeroes = new Array<Hero>()
+            for(let [conn,hero] of model.getHeros()){
+              if(hero.getStrength() <6 ){
+                elligibleHeroes.push(hero)
+              }
+            }
+            if(elligibleHeroes.length > 0 && elligibleHeroes.length < 3){
+              for(let hero of elligibleHeroes){
+                hero.setStrength(1)
+              }
+            }
+            else if(elligibleHeroes.length > 2){
+              io.of("/" + model.getName()).emit('newCollab', event.id, elligibleHeroes);
+            }
+          }
+          else if(event.id == 29){
+            var count = 0
+            var lowestRank = Number.MAX_VALUE
+            var lowestHeroKind = HeroKind.None
+            for(let [conn,hero] of model.getHeros()){
+                if(hero.getRegion().getID() == 57){
+                    count++
+                    if(lowestRank > hero.getRank()){
+                        //highestHero = hero
+                        lowestRank = hero.getRank()
+                        lowestHeroKind = hero.getKind()
+                    }
+                }
+            }
+            if(count >= 1){
+                for(let [conn,hero] of model.getHeros()){
+                    if(hero.getKind() == lowestHeroKind){
+                      hero.getRegion().addItem(LargeItem.Shield)
+                      //emit add item
+                      if(hero?.pickUpLargeItem(hero.getRegion().getID(), LargeItem.Shield)){
+                        //emit removeitem 
+                      }
+                    }
+                }
+            }
+            else{
+              //drop shield on region 57
+              model.getRegions()[57].addItem(LargeItem.Shield)
+              //emit add item
+            }
+          }
+          else if(event.id == 30){
+            var count = 0
+            var lowestRank = Number.MAX_VALUE
+            var lowestHeroKind = HeroKind.None
+            for(let [conn,hero] of model.getHeros()){
+                if(hero.getRegion().getID() == 72){
+                    count++
+                    if(lowestRank > hero.getRank()){
+                        //highestHero = hero
+                        lowestRank = hero.getRank()
+                        lowestHeroKind = hero.getKind()
+                    }
+                }
+            }
+            if(count >= 1){
+                for(let [conn,hero] of model.getHeros()){
+                    if(hero.getKind() == lowestHeroKind){
+                      hero.getRegion().addItem(SmallItem.Wineskin)
+                      //emit add item
+                      if(hero?.pickUpSmallItem(hero.getRegion().getID(), SmallItem.Wineskin)){
+                        //emit removeitem 
+                      }
+                    }
+                }
+            }
+            else{
+              //drop shield on region 57
+              model.getRegions()[72].addItem(SmallItem.Wineskin)
+              //emit add item
+            }
+          }
+          model.applyEvent(event)
+        }
       }
       // Turn goes to the hero that first ended their day
       nextPlayer = model.nextPlayer(true)
