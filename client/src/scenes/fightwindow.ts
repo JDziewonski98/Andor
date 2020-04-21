@@ -101,10 +101,8 @@ export class Fight extends Window {
         var self = this
         var bg = this.add.image(0, 0, 'scrollbg').setOrigin(0.5)
         bg.tint = 0xff0000
-        // this.monstericon = this.add.image(40, 40, this.monstertexture)
         console.log(this.monstername)
         if (this.monstername == "fortress") {
-            console.log("sanity")
             this.monstericon = this.add.image(40, 60, this.monstertexture).setScale(0.6)
         } else {
             this.monstericon = this.add.image(40, 40, this.monstertexture)

@@ -192,6 +192,7 @@ export class Game {
                 helm: heroData.helm,
                 farmers: heroData.farmers,
                 freeMoves: heroData.freeMoves,
+                hasMovedThisTurn: heroData.hasMovedThisTurn,
                 region: this.regions[heroData.region.id],
                 movePrinceCtr: heroData.movePrinceCtr
             }))
