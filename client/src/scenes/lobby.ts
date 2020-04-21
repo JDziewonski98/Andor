@@ -48,12 +48,12 @@ export default class LobbyScene extends Phaser.Scene {
         // larger.
         this.scale.setGameSize(reducedWidth, reducedHeight);
 
-        this.draw()
+        this.makeMenuButtons()
 
         this.lobbyController.addNewPlayerToLobby()
     }
 
-    private draw() {
+    private makeMenuButtons() {
         // load background
         var bg = this.add.image(500, 300, 'main').setDisplaySize(1000, 600)
 
@@ -63,7 +63,7 @@ export default class LobbyScene extends Phaser.Scene {
             fontSize: "40px",
             fontStyle: "italic"
         }
-        var housetText= {
+        var housetText = {
             fontFamily: "Roboto Condensed",
             fontSize: "20px",
             fontStyle: "italic",
@@ -71,6 +71,7 @@ export default class LobbyScene extends Phaser.Scene {
         }
 
         var self = this;
+        // NEW BUTTON
         this.gameText = this.add.text(500, 300, "New", menuText).setOrigin(0.5)
         this.gameText.setShadow(0, 0, 'black', 10);
         this.gameText.setInteractive();
@@ -78,22 +79,23 @@ export default class LobbyScene extends Phaser.Scene {
             this.scene.start('Create', { controller: self.lobbyController });
         }, this);
 
+        // JOIN BUTTON
         this.gameText = this.add.text(500, 400, "Join", menuText).setOrigin(0.5)
         this.gameText.setShadow(0, 0, 'black', 10);
-
         this.gameText.setInteractive();
         this.gameText.on('pointerdown', function (pointer) {
             this.scene.start('Join', { controller: self.lobbyController });
         }, this);
 
+        // LOAD BUTTON
         this.gameText = this.add.text(500, 500, "Load", menuText).setOrigin(0.5)
         this.gameText.setShadow(0, 0, 'black', 10);
-
         this.gameText.setInteractive();
         this.gameText.on('pointerdown', function (pointer) {
             this.scene.start('Load', { controller: self.lobbyController });
         }, this);
 
+        // HEROS' DWELLING
         this.optionsIcon = this.add.image(900, 80, 'optionsicon').setInteractive().setScale(0.3);
         this.add.text(900, 133, "heroes' dwelling", housetText).setOrigin(0.5)
         this.optionsIcon.on('pointerdown', function (pointer) {

@@ -13,7 +13,7 @@ export default class ReadyScreenScene extends Phaser.Scene {
     public playbutton: GameObjects.Sprite;
     public readytext: GameObjects.Text;
     public gameController: game;
-    private chatText: GameObjects.Text;
+    private chatButton: GameObjects.Image;
     public name: string;
 
     constructor() {
@@ -34,6 +34,15 @@ export default class ReadyScreenScene extends Phaser.Scene {
         this.load.image("dwarf", "./assets/dwarfmale.png");
         this.load.image("warrior", "./assets/warriormale.png");
         this.load.image("mage", "./assets/magemale.png");
+
+        this.load.image("archerbanner", "../assets/archerbanner.png");
+        this.load.image("dwarfbanner", "./assets/dwarfbanner.png");
+        this.load.image("warriorbanner", "./assets/warriorbanner.png");
+        this.load.image("magebanner", "./assets/magebanner.png");
+
+        this.load.image("pointerhand", "./assets/pointerhand.png");
+
+        this.load.image('chaticon', './assets/chat.png')
     }
 
     create() {
@@ -54,29 +63,29 @@ export default class ReadyScreenScene extends Phaser.Scene {
             heros.forEach((h) => {
                 if (h === "archer") {
                     this.archer = this.add.image(200, 200, 'archer').setDisplaySize(heroSize.x, heroSize.y)
-                    this.add.text(176, 320, "Archer");
+                    this.add.image(200, 330, 'archerbanner').setScale(0.25)
                     this.archer.name = "archer";
                     this.attachHeroBinding(this.archer);
                 } else if (h === "dwarf") {
                     this.dwarf = this.add.image(410, 200, 'dwarf').setDisplaySize(heroSize.x, heroSize.y)
-                    this.add.text(385, 320, "Dwarf");
+                    this.add.image(410, 330, 'dwarfbanner').setScale(0.25)
                     this.dwarf.name = "dwarf";
                     this.attachHeroBinding(this.dwarf);
                 } else if (h === "warrior") {
                     this.warrior = this.add.image(620, 200, 'warrior').setDisplaySize(heroSize.x, heroSize.y)
-                    this.add.text(595, 320, "Warrior");
+                    this.add.image(620, 330, 'warriorbanner').setScale(0.25)
                     this.warrior.name = "warrior";
                     this.attachHeroBinding(this.warrior);
                 } else {
                     this.mage = this.add.image(830, 200, 'mage').setDisplaySize(heroSize.x, heroSize.y)
-                    this.add.text(805, 320, "Mage");
+                    this.add.image(830, 330, 'magebanner').setScale(0.25)
                     this.mage.name = "mage";
                     this.attachHeroBinding(this.mage);
                 }
             })
         }); // initialize the list of hero tints correctly
 
-        this.selection = this.add.sprite(200, 70, 'pointerbtn').setDisplaySize(48, 48)
+        this.selection = this.add.sprite(200, 70, 'pointerhand').setDisplaySize(55, 55)
         this.selection.angle = 90
         this.selection.setVisible(false);
         this.readytext = this.add.text(200, 450, 'Ready?', { fontFamily: '"Roboto Condensed"', fontSize: "40px", color: "#E42168" })
@@ -109,9 +118,9 @@ export default class ReadyScreenScene extends Phaser.Scene {
 
         // chat window
         WindowManager.create(this, 'chat', Chat, { controller: self.gameController });
-        this.chatText = this.add.text(800, 550, "CHAT").setOrigin(0.5)
-        this.chatText.setInteractive();
-        this.chatText.on('pointerdown', function (pointer) {
+        this.chatButton = this.add.image(775, 540, 'chaticon').setScale(0.3)
+        this.chatButton.setInteractive();
+        this.chatButton.on('pointerdown', function (pointer) {
             if (this.scene.isVisible('chat')) {
                 WindowManager.destroy(this, "chat")
             }
