@@ -261,14 +261,18 @@ export class game {
         this.socket.emit("getCurrPlayersTurn", callback);
     }
     
-    public endTurn(){
+    public endTurn() {
         // The hero that gets the next turn depends on whether the day is over for all heroes
         this.socket.emit('endTurn');
         // this.myTurn = false;
     }
 
-    public telescopeEndTurn(){
+    public telescopeEndTurn() {
         this.socket.emit('telescopeEndTurn');
+    }
+
+    public updatePassTurn(callback) {
+        this.socket.on("updatePassTurn", callback);
     }
 
     // **** DEPRECATED 04/20/20: removed turn logic from frontend ***

@@ -167,6 +167,13 @@ export default class BoardOverlay extends Phaser.Scene {
             }
             else {
                 console.log(self.gameinstance)
+                this.tweens.add({
+                    targets: this.chatButton,
+                    alpha: 0.3,
+                    duration: 350,
+                    ease: 'Power3',
+                    yoyo: true
+                });
                 WindowManager.create(this, 'chat', Chat, { controller: self.gameinstance });
             }
         }, this);
@@ -308,7 +315,13 @@ export default class BoardOverlay extends Phaser.Scene {
             //     console.log("cannot end your day when it is not your turn");
             //     return;
             // }
-
+            this.tweens.add({
+                targets: this.endDayButton,
+                alpha: 0.3,
+                duration: 350,
+                ease: 'Power3',
+                yoyo: true
+            });
             self.gameinstance.endDay(function (all: boolean) {
                 // Update this client's turn state
                 // Deprecated: removed turn logic from frontend
