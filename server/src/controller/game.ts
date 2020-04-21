@@ -76,11 +76,11 @@ export function game(socket, model: Game, io) {
       for (var regionID of adjRegions) {
         // **Based on time of day starting at 1
         var canMove = hero.getTimeOfDay() <= 7 
-        || hero.getTimeOfDay() <= 9 && hero.getWill() >= 2 && !event19 
-        || hero.getTimeOfDay() == 10 && hero.getWill() >= 2 && !event19 && !event9
+        || hero.getTimeOfDay() <= 9 && hero.getWill() >= 3 && !event19 
+        || hero.getTimeOfDay() == 10 && hero.getWill() >= 3 && !event19 && !event9
         || hero.getTimeOfDay() ==  8 && event26
-        || hero.getTimeOfDay() <=  9 && hero.getWill() >=3 && event19
-        || hero.getTimeOfDay() == 10 && hero.getWill() >=3 && event19 && !event9
+        || hero.getTimeOfDay() <=  9 && hero.getWill() >=4 && event19
+        || hero.getTimeOfDay() == 10 && hero.getWill() >=4 && event19 && !event9
         || hero.getFreeMoves() > 0
         if (regionID === id && canMove) { // successful move
           let targetRegion: Region = model.getRegions()[id];
