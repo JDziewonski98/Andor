@@ -89,7 +89,7 @@ export const dNarrator = {
 }
 
 export const dHeros = [{
-    timeOfDay: 0,
+    timeOfDay: 1,
     freeMoves: 0,
     hasMovedThisTurn: false,
     movePrinceCtr: 0,
@@ -109,7 +109,7 @@ export const dHeros = [{
     gold: 0,
     dice: [1, 2, 3]
 }, {
-    timeOfDay: 0,
+    timeOfDay: 1,
     freeMoves: 0,
     hasMovedThisTurn: false,
     movePrinceCtr: 0,
@@ -129,7 +129,7 @@ export const dHeros = [{
     gold: 0,
     dice: [2,3,4]
 },{
-    timeOfDay: 0,
+    timeOfDay: 1,
     freeMoves: 0,
     hasMovedThisTurn: false,
     movePrinceCtr: 0,
@@ -149,7 +149,7 @@ export const dHeros = [{
     gold: 0,
     dice: [3,4,5]
 },{
-    timeOfDay: 0,
+    timeOfDay: 1,
     freeMoves: 0,
     hasMovedThisTurn: false,
     movePrinceCtr: 0,

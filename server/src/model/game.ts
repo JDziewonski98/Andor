@@ -697,6 +697,7 @@ export class Game {
             console.log("ERROR: cannot find", connID, "in heroList");
             return;
         } else {
+            // **Based on time of day starting at 1
             this.heroList.get(connID)?.setTimeOfDay(1);
             return this.heroList.get(connID)?.getKind();
         }

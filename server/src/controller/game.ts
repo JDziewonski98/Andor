@@ -74,6 +74,7 @@ export function game(socket, model: Game, io) {
       var event26 = model.getActiveEvents().includes(26)
       
       for (var regionID of adjRegions) {
+        // **Based on time of day starting at 1
         var canMove = hero.getTimeOfDay() <= 7 
         || hero.getTimeOfDay() <= 9 && hero.getWill() >= 2 && !event19 
         || hero.getTimeOfDay() == 10 && hero.getWill() >= 2 && !event19 && !event9
@@ -179,6 +180,7 @@ export function game(socket, model: Game, io) {
       var event9 = model.getActiveEvents().includes(9);
       var event19 = model.getActiveEvents().includes(19);
       var event26 = model.getActiveEvents().includes(26);
+      // **Based on time of day starting at 1
       var canPass = hero.getTimeOfDay() <= 7 
         || hero.getTimeOfDay() <= 9 && hero.getWill() >= 2 && !event19 
         || hero.getTimeOfDay() == 10 && hero.getWill() >= 2 && !event19 && !event9
