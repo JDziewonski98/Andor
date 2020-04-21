@@ -1142,6 +1142,11 @@ export function game(socket, model: Game, io) {
       // Tell client to display "Not your turn!" message in FightWindow
       callback(0, false, false);
     }
+    // Can only fight if you haven't also moved that turn
+    if (hero.getHasMovedThisTurn()) {
+      socket.emit("updateGameLog", "You cannot move and fight in the same turn!");
+      return; // Todo: send a response to display error message in the fight window?
+    }
 
     let heroregion = hero.getRegion().getID()
     let monster = model.getMonsters().get(m)
