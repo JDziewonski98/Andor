@@ -91,6 +91,7 @@ export const dNarrator = {
 export const dHeros = [{
     timeOfDay: 0,
     freeMoves: 0,
+    hasMovedThisTurn: false,
     movePrinceCtr: 0,
     wineskin: false,
     largeItem: LargeItem.Empty,
@@ -110,6 +111,7 @@ export const dHeros = [{
 }, {
     timeOfDay: 0,
     freeMoves: 0,
+    hasMovedThisTurn: false,
     movePrinceCtr: 0,
     wineskin: false,
     largeItem: LargeItem.Empty,
@@ -129,6 +131,7 @@ export const dHeros = [{
 },{
     timeOfDay: 0,
     freeMoves: 0,
+    hasMovedThisTurn: false,
     movePrinceCtr: 0,
     wineskin: false,
     largeItem: LargeItem.Empty,
@@ -148,6 +151,7 @@ export const dHeros = [{
 },{
     timeOfDay: 0,
     freeMoves: 0,
+    hasMovedThisTurn: false,
     movePrinceCtr: 0,
     wineskin: false,
     largeItem: LargeItem.Empty,

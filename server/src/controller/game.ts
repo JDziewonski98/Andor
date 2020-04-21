@@ -111,6 +111,8 @@ export function game(socket, model: Game, io) {
           }
           socket.broadcast.emit("updateMoveRequest", hero.getKind(), id)
           callback(hero.getKind(), id)
+          // Update hasMovedThisTurn
+          hero.setHasMovedThisTurn(true);
         }
       }
     }
@@ -158,7 +160,6 @@ export function game(socket, model: Game, io) {
 
   socket.on("endTurn", function () {
     var nextPlayer = model.nextPlayer(false)
-
     var heroID = socket.conn.id
     let hero = model.getHero(heroID);
     // Turn validation
@@ -170,6 +171,34 @@ export function game(socket, model: Game, io) {
     if (model.getFogs().has(hero.getRegion().getID())) {
       socket.emit("updateGameLog", "You must reveal the fog before ending your turn.");
       return;
+    }
+
+    var msg = ``;
+    if (!hero.getHasMovedThisTurn()) {
+      // Check if hero has available 1 hour to pass their turn
+      var event9 = model.getActiveEvents().includes(9);
+      var event19 = model.getActiveEvents().includes(19);
+      var event26 = model.getActiveEvents().includes(26);
+      var canPass = hero.getTimeOfDay() <= 7 
+        || hero.getTimeOfDay() <= 9 && hero.getWill() >= 2 && !event19 
+        || hero.getTimeOfDay() == 10 && hero.getWill() >= 2 && !event19 && !event9
+        || hero.getTimeOfDay() ==  8 && event26
+        || hero.getTimeOfDay() <=  9 && hero.getWill() >=3 && event19
+        || hero.getTimeOfDay() == 10 && hero.getWill() >=3 && event19 && !event9
+        || hero.getFreeMoves() > 0;
+      
+      if (canPass) {
+        msg = `The ${hero.getKind()} passed their turn.`;
+        socket.emit("updatePassTurn", hero.getKind());
+        socket.broadcast.emit("updatePassTurn", hero.getKind());
+      } else {
+        msg = 'You are unable to pass your turn due to lack of hours/will.';
+        socket.emit("updateGameLog", msg);
+        return;
+      }
+    } else {
+      msg = `The ${hero.getKind()} ended their turn.`
+      hero.setHasMovedThisTurn(false);
     }
 
     hero.resetPrinceMoves();
@@ -189,7 +218,7 @@ export function game(socket, model: Game, io) {
     // socket.broadcast.to(`/${model.getName()}#${nextPlayerID}`).emit("yourTurn");
 
     // Update game log
-    var msg = `The ${hero.getKind()} ended their turn. It is now the ${nextPlayer}'s turn.`
+    msg += ` It is now the ${nextPlayer}'s turn.`
     socket.emit("updateGameLog", msg);
     socket.broadcast.emit("updateGameLog", msg);
   })
@@ -1113,6 +1142,11 @@ export function game(socket, model: Game, io) {
       // Tell client to display "Not your turn!" message in FightWindow
       callback(0, false, false);
     }
+    // Can only fight if you haven't also moved that turn
+    if (hero.getHasMovedThisTurn()) {
+      socket.emit("updateGameLog", "You cannot move and fight in the same turn!");
+      return; // Todo: send a response to display error message in the fight window?
+    }
 
     let heroregion = hero.getRegion().getID()
     let monster = model.getMonsters().get(m)
@@ -1567,6 +1601,7 @@ export function game(socket, model: Game, io) {
     // Deprecated: removed turn logic from frontend
     // socket.broadcast.to(`/${model.getName()}#${model.getConnIdFromHk(nextPlayer)}`).emit("yourTurn");
 
+    hero.setHasMovedThisTurn(false);
     // Update game log
     var msg = `${hero.getKind()} ended their day.`;
     if (newDayMsg) {

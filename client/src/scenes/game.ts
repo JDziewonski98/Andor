@@ -336,10 +336,8 @@ export default class GameScene extends Phaser.Scene {
             })
           }
         } else if (this.ctrlKey.isDown) {  //to move prince, hold ctrl key
-          // console.log("It is my turn: ", self.gameinstance.myTurn)
           self.gameinstance.movePrinceRequest(tile.id, updateMovePrinceRequest)
         } else {
-          // console.log("It is my turn: ", self.gameinstance.myTurn)
           self.gameinstance.moveRequest(tile.id, updateMoveRequest)
         }
       }, this)
@@ -358,7 +356,6 @@ export default class GameScene extends Phaser.Scene {
             y: newCoords.y,
             duration: 300,
             ease: 'Power2',
-            // completeDelay: 200,
             onComplete: function () { hero.moveTo(self.tiles[tileID]) }
           });
         }
@@ -827,6 +824,13 @@ export default class GameScene extends Phaser.Scene {
     // Listen for turn to be passed to yourself
     // Deprecated: removed turn logic from frontend
     // this.gameinstance.yourTurn()
+    this.gameinstance.updatePassTurn( heroKind => {
+      self.heroes.forEach((hero: Hero) => {
+        if (hero.getKind().toString() === heroKind) {
+          hero.hourTracker.incHour(heroKind);
+        }
+      })
+    });
 
     // Reveal the witch
     this.gameinstance.revealWitch(tileID => {
