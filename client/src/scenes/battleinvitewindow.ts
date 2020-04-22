@@ -153,7 +153,6 @@ export class BattleInvWindow extends Window {
                         Object.keys(res).forEach( resName => {
                             resMap.set(resName, res[resName]);
                         })
-                        console.log("battleRewardsPopup", resMap, resSize, involvedHeros, width, height)
                         var collabWindowData = {
                             controller: self.gameinstance,
                             isOwner: true,

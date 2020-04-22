@@ -460,7 +460,9 @@ export class Game {
         let hero = this.availableHeros.filter((hero) => hero.hk === heroType) // find hero
         if (hero.length === 1) {
             this.heroList.set(id, hero[0]);
-            this.activeHeros.push(heroType);
+            if (!this.activeHeros.includes(heroType)) {
+                this.activeHeros.push(heroType);
+            }
             // update start of game currPlayersTurn
             console.log("binding hero rank", hero[0].getRank())
             if (hero[0].getRank() < this.gameStartMinRank) {

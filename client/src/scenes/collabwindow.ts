@@ -281,7 +281,7 @@ export class CollabWindow extends Window {
                     setTimeout(function(){
                         self.acceptText.setText("Accept");
                         self.acceptText.setColor('#000000')
-                    }, 3000);
+                    }, 2000);
                 } 
             }
             

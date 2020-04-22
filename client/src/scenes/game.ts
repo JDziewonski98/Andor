@@ -180,7 +180,8 @@ export default class GameScene extends Phaser.Scene {
         wells: this.wells,
         hk: this.ownHeroType,
         clientheroobject: this.hero,
-        herb: this.herb
+        herb: this.herb,
+        initialCollabDone: data.initialCollabDone
       };
       this.overlay = new BoardOverlay(overlayData);
       this.scene.add('BoardOverlay', this.overlay, true);

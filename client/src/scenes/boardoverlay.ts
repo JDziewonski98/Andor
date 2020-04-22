@@ -21,6 +21,7 @@ export default class BoardOverlay extends Phaser.Scene {
     private endturntext;
     private clientheroobject;
     private herb;
+    private initialCollabDone;
 
     // End Day
     private endDayButton: Phaser.GameObjects.Image;
@@ -53,6 +54,7 @@ export default class BoardOverlay extends Phaser.Scene {
         this.hk = data.hk
         this.clientheroobject = data.clientheroobject
         this.herb = data.herb;
+        this.initialCollabDone = data.initialCollabDone;
     }
 
     public init() { }
@@ -66,13 +68,6 @@ export default class BoardOverlay extends Phaser.Scene {
         this.load.image('dwarficon', './assets/dwarfbtn.png')
         this.load.image('mageicon', './assets/magebtn.png')
         this.load.image('warrioricon', './assets/warriorbtn.png')
-
-        // UI Plugin
-        // this.load.scenePlugin({
-        //     key: 'rexuiplugin', 
-        //     url: 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexuiplugin.min.js', 
-        //     sceneKey: 'rexUI'
-        // });
     }
 
     private addHeroCard(type, x) {
@@ -260,7 +255,10 @@ export default class BoardOverlay extends Phaser.Scene {
         //     this.gameinstance.advanceNarrator();
         // }, this)
 
-        console.log("finished overlay create()")
+        if (this.initialCollabDone) {
+            console.log("set overlay buttons interactive")
+            this.toggleInteractive(true);
+        }
     }
 
     private updateContent(panel: ScrollablePanel, update: string) {
