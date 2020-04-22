@@ -1,5 +1,4 @@
 import { Window } from "./window";
-import { Hero } from '../objects/hero';
 import { game } from '../api/game';
 import { collabTextHeight, collabColWidth, collabRowHeight,
         collabHeaderHeight, collabFooterHeight } from '../constants'
@@ -15,7 +14,7 @@ export class CollabWindow extends Window {
     // Should know what resources are being distributed, how many of each there are
     // to distribute, what heroes are participating in the decision, and which hero
     // is the owner of the decision. Pass into constructor
-    private involvedHeroes: Hero[];
+    private involvedHeroes: HeroKind[];
     private heroAccepts: Map<string, Phaser.GameObjects.Text> = new Map();
     private isOwner: boolean;
     private resources: Map<string, number>;
@@ -107,8 +106,8 @@ export class CollabWindow extends Window {
         this.gameinstance.incListener((resourceHeroKind, resourceIndex, senderHeroKind)=>{
             console.log("entered inc listener")
             var involved = false
-            for(let hero of self.involvedHeroes){
-                if(hero.getKind() == senderHeroKind){
+            for(let hk of self.involvedHeroes){
+                if(hk == senderHeroKind){
                     involved = true
                 }
             }
@@ -130,8 +129,8 @@ export class CollabWindow extends Window {
         this.gameinstance.decListener((resourceHeroKind, resourceIndex, senderHeroKind)=>{
             console.log("entered dec listener")
             var involved = false
-            for(let hero of self.involvedHeroes){
-                if(hero.getKind() == senderHeroKind){
+            for(let hk of self.involvedHeroes){
+                if(hk == senderHeroKind){
                     involved = true
                 }
             }
@@ -153,8 +152,8 @@ export class CollabWindow extends Window {
         this.gameinstance.acceptListener((heroKind) => {
             console.log("entered accept listener")
             var involved = false
-            for(let hero of self.involvedHeroes){
-                if(hero.getKind() == heroKind){
+            for(let hk of self.involvedHeroes){
+                if(hk == heroKind){
                     involved = true
                 }
             }
@@ -232,7 +231,7 @@ export class CollabWindow extends Window {
         let spacing = 3 * (numInvolved - 1); // 6 pixels spacing between each icon
         let currX = this.width/2 - (numInvolved - 1) * 20 - spacing;
         for (let i=0; i<numInvolved; i++) {
-            let heroKind = this.involvedHeroes[i].getKind();
+            let heroKind = this.involvedHeroes[i];
             this.add.image(currX, this.height-57, heroKind).setOrigin(0.5, 0).setDisplaySize(40, 40);
             // acceptance status
             if (heroKind == this.ownHeroKind) {
@@ -268,8 +267,8 @@ export class CollabWindow extends Window {
                         // quantities to the name of the corresponding resource
                         //console.log(self.involvedHeroes)
                         var involvedHeroKinds = new Array<HeroKind>()
-                        for(let hero of self.involvedHeroes){
-                            involvedHeroKinds.push(hero.getKind())
+                        for(let hk of self.involvedHeroes){
+                            involvedHeroKinds.push(hk)
                         }
                         self.gameinstance.sendEndCollab(convMap, self.resourceNames, involvedHeroKinds)
                     }
@@ -294,7 +293,7 @@ export class CollabWindow extends Window {
 
             // initiate all allocated resources to 0 for all heroes
             for (let i=0; i<this.involvedHeroes.length; i++) {
-                let heroKindString = this.involvedHeroes[i].getKind().toString();
+                let heroKindString = this.involvedHeroes[i];
                 let initialResources = [];
                 initialResources.length = numResources;
                 initialResources.fill(0);
@@ -304,7 +303,7 @@ export class CollabWindow extends Window {
             // Populate window with resource grid
             for (let row=0; row<this.involvedHeroes.length; row++) {
                 for (let col=0; col<numResources+1; col++) {
-                    let heroKindString = this.involvedHeroes[row].getKind().toString();
+                    let heroKindString = this.involvedHeroes[row];
                     let yPos = collabHeaderHeight + row*collabRowHeight
                     // Special case for single resource distribution, just to make spacing look better
                     let heroXPos = 5;
@@ -465,7 +464,7 @@ export class CollabWindow extends Window {
 
     private resetAccepts() {
         for (let i=0; i<this.involvedHeroes.length; i++) {
-            let heroKind = this.involvedHeroes[i].getKind();
+            let heroKind = this.involvedHeroes[i];
             if (heroKind != this.ownHeroKind) {
                 this.heroAccepts.get(heroKind).setColor('#d11313');
             } else {

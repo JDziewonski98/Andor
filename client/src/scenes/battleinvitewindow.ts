@@ -2,6 +2,8 @@ import { Window } from "./window";
 import { game } from '../api/game';
 import { WindowManager } from "../utils/WindowManager";
 import { CollabWindow } from './collabwindow';
+import { collabColWidth, collabHeaderHeight, collabRowHeight, collabFooterHeight, reducedWidth, reducedHeight } from "../constants";
+import { Hero } from "../objects/hero";
 
 export class BattleInvWindow extends Window {
 
@@ -141,16 +143,30 @@ export class BattleInvWindow extends Window {
                     self.gameinstance.confirmroll(self.herokind, self.roll, self.str)
                     //maybe display results first?
                     self.gameinstance.unsubscribeBattleRewardsPopup()
-                    self.gameinstance.battleRewardsPopup(function(windowname){
+                    // Listen for end of fight rewards distribution
+                    self.gameinstance.battleRewardsPopup(function(windowname, involvedHeros, res){
+                        let resSize = Object.keys(res).length
+                        var width = resSize > 1 ? (resSize + 1) * collabColWidth : 3*collabColWidth;
+                        var height = collabHeaderHeight + involvedHeros.length * collabRowHeight + collabFooterHeight;
+                        // Convert res object into a map
+                        let resMap = new Map<string, number>();
+                        Object.keys(res).forEach( resName => {
+                            resMap.set(resName, res[resName]);
+                        })
+                        console.log("battleRewardsPopup", resMap, resSize, involvedHeros, width, height)
                         var collabWindowData = {
                             controller: self.gameinstance,
-                            isOwner: false,
-                            x: 250,
-                            y: 250,
-                            w: 200,
-                            h: 100,
+                            isOwner: true,
+                            involvedHeroes: involvedHeros,
+                            resources: resMap,
+                            x: reducedWidth / 2 - width / 2,
+                            y: reducedHeight / 2 - height / 2,
+                            w: width,
+                            h: height,
                             infight:false,
-                            overlayRef: self.overlayRef
+                            overlayRef: self.overlayRef,
+                            ownHeroKind: self.hero.getKind(),
+                            type: 'distribute'
                           }
                           WindowManager.create(self.gamescene, windowname, CollabWindow, collabWindowData);
                     })

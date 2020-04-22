@@ -3,9 +3,10 @@ import { game } from "../api/game";
 import { WindowManager } from "../utils/WindowManager";
 import { CollabWindow } from "./collabwindow"
 import {
-    reducedWidth, reducedHeight, collabColWidth, collabRowHeight
+    reducedWidth, reducedHeight, collabColWidth, collabRowHeight, collabHeaderHeight, collabFooterHeight
 } from '../constants'
 import BoardOverlay from "./boardoverlay";
+import { HeroKind } from "../objects";
 
 export class Fight extends Window {
     //  Class to display a fight window through which you can see mosnter stats and engage in a fight.
@@ -53,7 +54,7 @@ export class Fight extends Window {
     private actuallyjoinedheros: string[] = []
     private allyrolls: Map<string, number>
     private yourattack: number;
-    private heroobjectsforcollab
+    // private heroobjectsforcollab
     private firstfight = true
     private inviteresponses = 0
     private princePos;
@@ -79,7 +80,7 @@ export class Fight extends Window {
         this.princePos = data.princePos
         this.overlayRef = data.overlayRef;
         this.yourwill = this.hero.getWillPower()
-        this.heroobjectsforcollab = data.heroes
+        // this.heroobjectsforcollab = data.heroes
         this.allyrolls = new Map<string, number>();
         this.getPossibleAllies()
     }
@@ -613,36 +614,47 @@ export class Fight extends Window {
         var goldtext = this.add.text(70, 50, "Click to loot " + this.monstergold + " gold.").setInteractive()
         var willtext = this.add.text(70, 80, "Click to plunder " + this.monstergold + "  willpower.").setInteractive()
 
-        var involvedheros = []
+        var involvedheros: string[] = []
         //unfortunately we have to do this because collab window wants actual hero onjcts instad of their kind as a string
         //even thought all it needs them for is the getKind()...
-        self.heroobjectsforcollab.forEach(element => {
-            if (element.getKind() == self.hero.getKind() || self.actuallyjoinedheros.includes(element.getKind())) {
-                involvedheros.push(element)
-            }
-        });
+        // self.heroobjectsforcollab.forEach(element => {
+        //     if (element.getKind() == self.hero.getKind() || self.actuallyjoinedheros.includes(element.getKind())) {
+        //         involvedheros.push(element)
+        //     }
+        // });
+        // Finally killing this and switching to just hks
+        involvedheros.push(this.hero.getKind());
+        for (let h of this.actuallyjoinedheros) {
+            involvedheros.push(h);
+        }
 
         goldtext.on('pointerdown', function (pointer) {
-            self.gameinstance.sendCollabApproveToBattleAllies(self.monstername + 'collab')
+            self.gameinstance.sendCollabApproveToBattleAllies(
+                self.monstername + 'collab',
+                involvedheros,
+                {"gold": self.monstergold}
+            )
             var res = new Map([
                 ["gold", self.monstergold]
             ])
 
-            var width = (res.size + 1) * collabColWidth;
-            var height = (3) * collabRowHeight;
+            var width = res.size > 1 ? (res.size + 1) * collabColWidth : 3*collabColWidth;
+            var height = collabHeaderHeight + involvedheros.length * collabRowHeight + collabFooterHeight;
 
             var collabwindowdata = {
                 controller: self.gameinstance,
                 isOwner: true,
-                heroes: involvedheros,
+                involvedHeroes: involvedheros,
                 resources: res,
                 textOptions: null,
                 x: reducedWidth / 2 - width / 2,
                 y: reducedHeight / 2 - height / 2,
                 w: width,
-                h: (involvedheros.length + 2) * collabRowHeight,
+                h: height,
                 infight: true,
-                overlayRef: self.overlayRef
+                overlayRef: self.overlayRef,
+                ownHeroKind: self.hero.getKind(),
+                type: 'distribute'
             }
 
             WindowManager.create(this, self.monstername + 'collab', CollabWindow, collabwindowdata)
@@ -653,26 +665,33 @@ export class Fight extends Window {
 
 
         willtext.on('pointerdown', function (pointer) {
-            self.gameinstance.sendCollabApproveToBattleAllies(self.monstername + 'collab')
+            self.gameinstance.sendCollabApproveToBattleAllies(
+                self.monstername + 'collab',
+                involvedheros,
+                // lmao excuse this naming it's cause wp rewards are handled diff for events
+                { "Will ": self.monstergold }
+            )
             var res = new Map([
-                ["will", self.monstergold]
+                ["Will ", self.monstergold]
             ])
 
-            var width = (res.size + 1) * collabColWidth;
-            var height = (3) * collabRowHeight;
+            var width = res.size > 1 ? (res.size + 1) * collabColWidth : 3*collabColWidth;
+            var height = collabHeaderHeight + involvedheros.length * collabRowHeight + collabFooterHeight;
 
             var collabwindowdata = {
                 controller: self.gameinstance,
                 isOwner: true,
-                heroes: involvedheros,
+                involvedHeroes: involvedheros,
                 resources: res,
                 textOptions: null,
                 x: reducedWidth / 2 - width / 2,
                 y: reducedHeight / 2 - height / 2,
                 w: width,
-                h: (involvedheros.length + 2) * collabRowHeight,
+                h: height,
                 infight: true,
-                overlayRef: self.overlayRef
+                overlayRef: self.overlayRef,
+                ownHeroKind: self.hero.getKind(),
+                type: 'distribute'
             }
 
             WindowManager.create(this, self.monstername + 'collab', CollabWindow, collabwindowdata)

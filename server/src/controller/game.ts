@@ -1006,7 +1006,10 @@ export function game(socket, model: Game, io) {
               currHero.pickUpSmallItem(currHero.getRegion().getID(), SmallItem.Wineskin);
             }
           }
-          else if (resNames[i] == 'Will') {
+          else if (resNames[i] == 'Will ') { // excuse this trash, will for fight
+            currHero?.setWill(resAllocated[heroTypeString][i]);
+          }
+          else if (resNames[i] == 'Will') { //will for events
             if(resAllocated[heroTypeString][i]>0){
               if(resAllocated[heroTypeString][i] == 3){
                 currHero?.setWill(3)
@@ -1316,8 +1319,8 @@ export function game(socket, model: Game, io) {
     socket.broadcast.emit('recieveBattleInviteResponse', response, herokind)
   })
 
-  socket.on('battleCollabApprove', function (windowname) {
-    socket.broadcast.emit('battleRewardsPopup', windowname)
+  socket.on('battleCollabApprove', function (windowname, involvedHeros, res) {
+    socket.broadcast.emit('battleRewardsPopup', windowname, involvedHeros, res)
   })
 
   //TODO test this further

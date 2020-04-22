@@ -747,7 +747,7 @@ export default class GameScene extends Phaser.Scene {
     {
       controller: self.gameinstance,
       isOwner: true,
-      involvedHeroes: self.heroes,
+      involvedHeroes: self.heroes.map( h => h.getKind()),
       resources: res,
       textOptions: null,
       x: reducedWidth / 2 - width / 2,
@@ -998,21 +998,25 @@ export default class GameScene extends Phaser.Scene {
     this.gameinstance.newCollabListener((eventID, heroes) => {
       console.log("Received newCollab")
 
+      var involved = false
       var involvedHeroKinds = new Array<HeroKind>()
       for (let hero of heroes) {
         involvedHeroKinds.push(hero.hk)
-      }
-
-      var involved = false
-      var involvedHeroes = new Array<Hero>()
-      for (let hero of self.heroes) {
-        if (involvedHeroKinds.includes(hero.getKind())) {
-          involvedHeroes.push(hero)
-          if (hero.getKind() == self.ownHeroType) {
-            involved = true
-          }
+        if (hero.hk == self.ownHeroType) {
+          involved = true
         }
       }
+
+      // var involved = false
+      // var involvedHeroes = new Array<Hero>()
+      // for (let hero of self.heroes) {
+      //   if (involvedHeroKinds.includes(hero.getKind())) {
+      //     involvedHeroes.push(hero)
+      //     if (hero.getKind() == self.ownHeroType) {
+      //       involved = true
+      //     }
+      //   }
+      // }
 
       if (involved) {
         var allCollabRes = require("../utils/eventCollabResources").map;
@@ -1036,7 +1040,7 @@ export default class GameScene extends Phaser.Scene {
         {
           controller: self.gameinstance,
           isOwner: true,
-          involvedHeroes: involvedHeroes,
+          involvedHeroes: involvedHeroKinds,
           resources: res,
           textOptions: null,
           x: reducedWidth / 2 - width / 2,
