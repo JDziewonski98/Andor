@@ -399,22 +399,31 @@ export class CollabWindow extends Window {
         }
     }
     public incFunction(heroKind, resourceIndex){
-        //ignoring checks for now
+        var rToggle
+        var totalCount = 0
         for(let rt of this.resourceToggles){
-            if(rt.getResourceIndex() == resourceIndex && heroKind == rt.getHeroKind()){
-                //console.log(rt)
-                rt.incFunction()
-                this.gameinstance.sendIncResource(heroKind,resourceIndex)
-            }        
+            if(rt.getResourceIndex() == resourceIndex){
+               totalCount+=rt.getAmount()
+            }     
+            if(rt.getResourceIndex() == resourceIndex && heroKind == rt.getHeroKind() ){
+                rToggle = rt
+            }           
+        }
+        if(totalCount < this.resources.get(Array.from(this.resources.keys())[resourceIndex])){
+            rToggle.incFunction()
+            this.gameinstance.sendIncResource(heroKind,resourceIndex)
         }
     }
     public decFunction(heroKind, resourceIndex){
-        //ignoring checks for now
         for(let rt of this.resourceToggles){
             if(rt.getResourceIndex() == resourceIndex && heroKind == rt.getHeroKind()){
-                //console.log(rt)
-                rt.decFunction()
-                this.gameinstance.sendDecResource(heroKind,resourceIndex)
+                if(rt.getAmount() == 0){
+                    //do nothing
+                }
+                else{
+                    rt.decFunction()
+                    this.gameinstance.sendDecResource(heroKind,resourceIndex)
+                }
             }        
         }
     }

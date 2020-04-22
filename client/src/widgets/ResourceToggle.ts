@@ -13,12 +13,12 @@ export class ResourceToggle {
     private decButton;
 
     private collabWindow;
-    public constructor(scene, x, y, heroKind: string, resourceIndex: number, resourceName: String, maxAmount: number, allocated: Map<string, number[]>) {
+    public constructor(scene, x, y, heroKind: string, resourceIndex: number, resourceName: string, maxAmount: number, allocated: Map<string, number[]>) {
         this.heroKind = heroKind;
         this.resourceIndex = resourceIndex;
         this.maxAmount = maxAmount;
         this.allocated = allocated;
-
+        //this.resourceName = resourceName
         this.amountText = scene.add.text(x, y, this.amount);
         this.amountText.setActive(true)
         this.incButton = scene.add.sprite(x+30, y, 'pointerbtn').setDisplaySize(15, 15).setInteractive();
@@ -34,9 +34,10 @@ export class ResourceToggle {
         this.decButton.on('pointerdown', function (pointer) {
             self.decFunctionRequest()
         }, this);
+        console.log(this)
     }
     public incFunctionRequest(){
-        this.collabWindow.incFunction(this.heroKind,this.resourceIndex)
+        this.collabWindow.incFunction(this.heroKind,this.resourceIndex,this.resourceName)
     }
     public decFunctionRequest(){
         this.collabWindow.decFunction(this.heroKind,this.resourceIndex)
@@ -64,5 +65,11 @@ export class ResourceToggle {
     }
     public getHeroKind(){
         return this.heroKind
+    }
+    public getAmount(){
+        return this.amount
+    }
+    public getResourceName(){
+        return this.resourceName
     }
 }
