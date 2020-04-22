@@ -13,6 +13,7 @@ import {
   mageTile, archerTile, warriorTile, dwarfTile,
   reducedWidth, reducedHeight, htShift,
   collabTextHeight, collabColWidth, collabRowHeight,
+  collabFooterHeight, collabHeaderHeight,
   wellTile1, wellTile2, wellTile3, wellTile4,
   mOffset, enumPositionOfNarrator
 } from '../constants'
@@ -186,12 +187,6 @@ export default class GameScene extends Phaser.Scene {
 
       // Need to wait for heroes to be created before creating collab decision
       this.startingCollabDecisionSetup();
-      // Note that starting hero rank gets determined in collab setup
-      // Deprecated: removed turn logic from frontend
-      // if (this.hero.tile.id == this.startingHeroRank) {
-      //   console.log("first turn goes to hero rank", this.startingHeroRank);
-      //   this.gameinstance.setMyTurn(true);
-      // }
 
       // Add narrator: this happens here because we want initial game instructions to be
       // added on top of the collab decision
@@ -743,14 +738,10 @@ export default class GameScene extends Phaser.Scene {
     ])
 
     // Determine width of the window based on how many resources are being distributed
-    var width = (res.size + 1) * collabColWidth; // Not sure if there's a better way of getting size of ts obj
+    // Width is always at least 3*collabColWidth
+    var width = res.size > 1 ? (res.size + 1) * collabColWidth : 3*collabColWidth; // Not sure if there's a better way of getting size of ts obj
     // Determine height of the window based on number of players involved
-    var height = (self.heroes.length + 2) * collabRowHeight;
-
-    // DEPRECATED: Get hero of lowest rank, based on their starting tile
-    // var heroRanks = [];
-    // for (let hero of self.heroes) { heroRanks.push(hero.tile.id); }
-    // self.startingHeroRank = Math.min(...heroRanks);
+    var height = collabHeaderHeight + self.heroes.length * collabRowHeight + collabFooterHeight;
 
     var collabWindowData =
     {
@@ -1037,10 +1028,9 @@ export default class GameScene extends Phaser.Scene {
         }
         console.log(res)
 
-        // Determine width of the window based on how many resources are being distributed
-        var width = (res.size + 1) * collabColWidth; // Not sure if there's a better way of getting size of ts obj
+        var width = res.size > 1 ? (res.size + 1) * collabColWidth : 3*collabColWidth; // Not sure if there's a better way of getting size of ts obj
         // Determine height of the window based on number of players involved
-        var height = (self.heroes.length + 2) * collabRowHeight;
+        var height = collabHeaderHeight + self.heroes.length * collabRowHeight + collabFooterHeight;
 
         var collabWindowData =
         {
