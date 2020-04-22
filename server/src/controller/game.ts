@@ -31,6 +31,7 @@ export function game(socket, model: Game, io) {
     game['regions'] = JSON.stringify(model.getRegions());
     game['prince'] = JSON.stringify(model.getPrince());
     game['narrator'] = JSON.stringify(model.getNarrator(),["legendPosition"])
+    game['initialCollabDone'] = model.initialCollabDone;
 
     if (!data.games) {
       data['games'] = {}
@@ -1074,6 +1075,7 @@ export function game(socket, model: Game, io) {
         // console.log("Updated", heroTypeString, "gold:", currHero?.getGold(), "wineskin:", currHero?.getWineskin())
       }
     }
+    model.initialCollabDone = true;
     io.of("/" + model.getName()).emit('receiveEndCollab', involvedHeroKinds);
   })
   // increasing/decreasing resources
