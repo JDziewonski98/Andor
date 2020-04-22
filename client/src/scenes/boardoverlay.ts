@@ -77,7 +77,7 @@ export default class BoardOverlay extends Phaser.Scene {
 
     private addHeroCard(type, x) {
         var self = this;
-
+        console.log(type, typeof type)
         switch (type) {
             case "archer":
                 this.heroButtons.set(type, this.add.image(x+55, 25, 'archericon').setScale(0.25));
@@ -92,9 +92,11 @@ export default class BoardOverlay extends Phaser.Scene {
                 this.heroButtons.set(type, this.add.image(x+55, 25, 'warrioricon').setScale(0.25));
                 break;
         }
-        
+        console.log("CAN WE FIND IT*** ",this.heroButtons)
         this.heroButtons.get(type).on('pointerdown', (pointer) => {
+            console.log("CLICKING")
             this.gameinstance.getHeroAttributes(type, (herodata) => {
+                console.log(herodata)
                 const cardID = `${type}Card`;
                 if (this.scene.isVisible(cardID)) {
                     console.log(this)

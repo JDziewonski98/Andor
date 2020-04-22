@@ -185,8 +185,13 @@ export default class GameScene extends Phaser.Scene {
       this.overlay = new BoardOverlay(overlayData);
       this.scene.add('BoardOverlay', this.overlay, true);
 
-      // Need to wait for heroes to be created before creating collab decision
-      this.startingCollabDecisionSetup();
+      // prevent initial collab decision from happening again when we load game
+      if (!data.initialCollabDone) {
+        // Need to wait for heroes to be created before creating collab decision
+        this.startingCollabDecisionSetup();
+      } else {
+        this.scene.resume();
+      }
 
       // Add narrator: this happens here because we want initial game instructions to be
       // added on top of the collab decision
@@ -739,7 +744,7 @@ export default class GameScene extends Phaser.Scene {
 
     // Determine width of the window based on how many resources are being distributed
     // Width is always at least 3*collabColWidth
-    var width = res.size > 1 ? (res.size + 1) * collabColWidth : 3*collabColWidth; // Not sure if there's a better way of getting size of ts obj
+    var width = res.size > 1 ? (res.size + 1) * collabColWidth : 3 * collabColWidth; // Not sure if there's a better way of getting size of ts obj
     // Determine height of the window based on number of players involved
     var height = collabHeaderHeight + self.heroes.length * collabRowHeight + collabFooterHeight;
 
@@ -815,7 +820,7 @@ export default class GameScene extends Phaser.Scene {
     // Listen for turn to be passed to yourself
     // Deprecated: removed turn logic from frontend
     // this.gameinstance.yourTurn()
-    this.gameinstance.updatePassTurn( heroKind => {
+    this.gameinstance.updatePassTurn(heroKind => {
       self.heroes.forEach((hero: Hero) => {
         if (hero.getKind().toString() === heroKind) {
           hero.hourTracker.incHour(heroKind);
@@ -1028,7 +1033,7 @@ export default class GameScene extends Phaser.Scene {
         }
         console.log(res)
 
-        var width = res.size > 1 ? (res.size + 1) * collabColWidth : 3*collabColWidth; // Not sure if there's a better way of getting size of ts obj
+        var width = res.size > 1 ? (res.size + 1) * collabColWidth : 3 * collabColWidth; // Not sure if there's a better way of getting size of ts obj
         // Determine height of the window based on number of players involved
         var height = collabHeaderHeight + self.heroes.length * collabRowHeight + collabFooterHeight;
 

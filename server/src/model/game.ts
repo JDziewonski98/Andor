@@ -52,6 +52,8 @@ export class Game {
     private monsters: Map<string, Monster>;
     private monstersInCastle: string[];
     private endOfGame: boolean = false;
+
+    public initialCollabDone = false;
     private prince: Prince | null = null;
     private witch: Witch | null = null;
 
@@ -87,7 +89,8 @@ export class Game {
         this.currPlayersTurn = HeroKind.Dwarf;
         this.activeEvents = new Array<number>();
         this.availableHeros = new Array<Hero>();
-        this.blockedEvent = false
+        this.blockedEvent = false;
+        this.initialCollabDone = false;
         // this.narrator = new Narrator(this, 0)
     }
 
@@ -155,7 +158,8 @@ export class Game {
         monstersInCastle = [],
         endOfGameState = false,
         prince = { tile: { id: -1 } },
-        narrator = dNarrator
+        narrator = dNarrator,
+        initialCollabDone = false
     }) {
         this.currPlayersTurn = currPlayersTurn;
         this.readyplayers = 0
@@ -174,6 +178,8 @@ export class Game {
         this.narrator = new Narrator(narrator.legendPosition);
         if (prince && prince.tile && prince.tile.id !== -1)
             this.prince = new Prince(this.regions[prince.tile.id])
+
+        this.initialCollabDone = initialCollabDone;
     }
 
     private setAvailableHeros(heros) {
