@@ -659,6 +659,22 @@ export function game(socket, model: Game, io) {
                         }
                         io.of("/" + model.getName()).emit('newCollab', 27, elligibleHeroes, heroMaxes);
                       }
+                      if(model.getBlockedEvent()){
+                        model.setBlockedEvent(false)
+                      }
+                      else{
+                        let maxID = -1
+                        for(let [n,m] of model.getMonsters()){
+                          if( m.getTileID() > maxID){
+                            maxID = m.getTileID()
+                          }
+                        }
+                        for(let [n,m] of model.getMonsters()){
+                          if( m.getTileID() == maxID){
+                            //movemonster
+                          }
+                        }
+                      }
                     }
                   }
                 } 
@@ -1140,10 +1156,16 @@ export function game(socket, model: Game, io) {
             }
           }
           else if(resNames[i] == '-Gold'){
+            if(resAllocated[heroTypeString][i] > 0){
+              model.setBlockedEvent(true)
+            }
             let currGold = currHero?.getGold()
             currHero?.setGold(currGold - resAllocated[heroTypeString][i])
           }
           else if(resNames[i] == '-Will'){
+            if(resAllocated[heroTypeString][i] > 0){
+              model.setBlockedEvent(true)
+            }
             currHero?.setWill(-1*resAllocated[heroTypeString][i])
           }
         }
