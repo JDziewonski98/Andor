@@ -26,6 +26,11 @@ export var map = [
     //     "flavorText": "Poisonous vapors from the mountain are tormenting the heroes.", 
     //     "desc": "Each hero standing on a space with a number between 37 and 70 now loses 3 willpower points."
     // },
+    {
+        "id": 6, 
+        "flavorText": "The dwarf merchant Garz invites one of the heros to have a drink.", 
+        "desc": "The hero with the lowest rank gets to decide if he wants to roll one of his hero dice. If he rolls 1, 2, 3, or 4, he loses the rolled number of willpower points. If he rolls 5 or 6, he wins that number of willpower points."
+    },
     // {
     //     "id": 7, 
     //     "flavorText": "Sulfurous mists surround the heroes.", 
@@ -101,11 +106,11 @@ export var map = [
     //     "flavorText": "A storm moves across the countryside and weighs upon the mood of the heroes.",
     //     "desc": "Any hero who is not on a forest space, in the mine (71), in the tavern (72) or in the castle (space 0) loses 2 willpower points."
     // },
-    {
-        "id": 25, 
-        "flavorText": "Keeper Melkart’s generosity", 
-        "desc": "Any hero with fewer than 6 willpower points rolls a hero die and gets the rolled number of willpower points"
-    },
+    // {
+    //     "id": 25, 
+    //     "flavorText": "Keeper Melkart’s generosity", 
+    //     "desc": "Any hero with fewer than 6 willpower points rolls a hero die and gets the rolled number of willpower points"
+    // },
     // {
     //     "id": 26, 
     //     "flavorText": "On this day, the 8th hour costs no willpower points.", 

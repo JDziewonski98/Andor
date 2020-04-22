@@ -578,7 +578,7 @@ export function game(socket, model: Game, io) {
                 //first must handle 33 uniquely
                 if(event.id == 33){
                   //if someone has > 1 str point
-                  var herosWithStr = Array<Hero>()
+                  let herosWithStr = Array<Hero>()
                   for(let [conn,hero] of model.getHeros()){
                     if(hero.getStrength() > 1){
                       herosWithStr.push(hero)
@@ -609,16 +609,16 @@ export function game(socket, model: Game, io) {
                   }
                   else{
                     if(event.id == 7){
-                      var lowestRank = Number.MAX_VALUE
-                      var lowestHeroKind = HeroKind.None
+                      let lowestRank = Number.MAX_VALUE
+                      let lowestHeroKind = HeroKind.None
                       for(let [conn,hero] of model.getHeros()){
                           if(hero.getRank() < lowestRank){
                                 lowestRank = hero.getRank()
                                 lowestHeroKind = hero.getKind()
                           }
                       }
-                      var lowestHero
-                      var roll
+                      let lowestHero
+                      let roll
                       for(let [conn,hero] of model.getHeros()){
                         if(hero.getRank() == lowestRank){
                               lowestHero = hero
@@ -632,7 +632,7 @@ export function game(socket, model: Game, io) {
                     }
                     if(event.id == 20){
                       //check which heros have gold and willpower to lose. 
-                      var elligibleHeroes = Array<Hero>()
+                      let elligibleHeroes = Array<Hero>()
                       for(let [conn,hero] of model.getHeros()){
                         if(hero.getStrength() > 1){
                           elligibleHeroes.push(hero)
@@ -665,6 +665,19 @@ export function game(socket, model: Game, io) {
                   }
                 }
               }
+              else if(event.id == 6){
+                let lowestHeroRank = Number.MAX_VALUE
+                let lowestHero
+                for(let [conn,hero] of model.getHeros()){
+                 if(hero.getRank() < lowestHeroRank){
+                   lowestHeroRank = hero.getRank()
+                   lowestHero = hero
+                 }
+                }
+                let involvedHeroes = new Array<HeroKind>()
+                involvedHeroes.push(lowestHero)
+                io.of("/" + model.getName()).emit('newCollab', event.id, involvedHeroes);
+              }
               else if(event.id == 10){
                 for(let [conn,hero] of model.getHeros()){
                   let elligibleHeroes = new Array<Hero>()
@@ -675,7 +688,7 @@ export function game(socket, model: Game, io) {
                 }
               }
               else if(event.id == 23){
-                var elligibleHeroes = new Array<Hero>()
+                let elligibleHeroes = new Array<Hero>()
                 for(let [conn,hero] of model.getHeros()){
                   if(hero.getStrength() < 6){
                     elligibleHeroes.push(hero)
@@ -699,9 +712,9 @@ export function game(socket, model: Game, io) {
                 }
               }
               else if(event.id == 29){
-                var count = 0
-                var lowestRank = Number.MAX_VALUE
-                var lowestHeroKind = HeroKind.None
+                let count = 0
+                let lowestRank = Number.MAX_VALUE
+                let lowestHeroKind = HeroKind.None
                 for(let [conn,hero] of model.getHeros()){
                     if(hero.getRegion().getID() == 57){
                         count++
@@ -729,9 +742,9 @@ export function game(socket, model: Game, io) {
                 }
               }
               else if(event.id == 30){
-                var count = 0
-                var lowestRank = Number.MAX_VALUE
-                var lowestHeroKind = HeroKind.None
+                let count = 0
+                let lowestRank = Number.MAX_VALUE
+                let lowestHeroKind = HeroKind.None
                 for(let [conn,hero] of model.getHeros()){
                     if(hero.getRegion().getID() == 72){
                         count++
@@ -759,7 +772,7 @@ export function game(socket, model: Game, io) {
                 }
               }
               else if(event.id == 34){
-                var elligibleHeroes = new Array<Hero>()
+                let elligibleHeroes = new Array<Hero>()
                 for(let [conn,hero] of model.getHeros()){
                   if(hero.getStrength() > 2){
                     elligibleHeroes.push(hero)
@@ -1095,6 +1108,16 @@ export function game(socket, model: Game, io) {
           }
           else if(resNames[i] == 'Strength'){
             currHero?.setStrength(resAllocated[heroTypeString][i])
+          }
+          else if(resNames[i] == 'Roll'){
+            var roll = currHero?.eventRoll()
+            console.log(currHero?.getKind(), "rolled a", roll)
+            if(roll < 5){
+              currHero?.setWill(-1*roll)
+            }
+            else{
+              currHero?.setWill(roll)
+            }
           }
         }
         // console.log("Updated", heroTypeString, "gold:", currHero?.getGold(), "wineskin:", currHero?.getWineskin())

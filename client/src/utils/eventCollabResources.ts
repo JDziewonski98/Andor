@@ -12,6 +12,12 @@ export var map = [
     "type": "singleItemPay"
   },
   {
+    "id": 6,
+    "list": [["Roll", 1]],
+    "partySize": 0,
+    "type": "allOrNothing"
+  },
+  {
     "id": 10,
     "list": [["Will", 3]],
     "partySize": 0,
