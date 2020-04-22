@@ -42,7 +42,8 @@ export class CollabWindow extends Window {
     private numAccepts
     private type
     private resourceToggles: Array<ResourceToggle>
-
+    private heroMaxes
+    private sumNeeded: number
     public constructor(key: string, data, incFunction) {
         super(key, {x: data.x, y: data.y, width: data.w, height: data.h});
 
@@ -65,7 +66,9 @@ export class CollabWindow extends Window {
         this.resourceToggles = new Array<ResourceToggle>()
         this.numAccepts = 0
         this.type = data.type
-
+        this.heroMaxes = data.heroMaxes
+        //console.log(this.heroMaxes)
+        this.sumNeeded = data.sumNeeded
         //console.log(this.involvedHeroes)
     }
 
@@ -312,7 +315,6 @@ export class CollabWindow extends Window {
                     currTotals[i] += counts[i];
                 }
             });
-            //console.log(currTotals);
             var resMaxes = Array.from(this.resources.values());
             for (let i=0; i<resMaxes.length; i++) {
                 if (resMaxes[i] != currTotals[i]) {
@@ -332,19 +334,10 @@ export class CollabWindow extends Window {
                     currTotals[i] += counts[i];
                 }
             });
-            //console.log(currTotals);
             var total = 0
             for(let value of currTotals){
                 total += value
             }
-            
-            // var resMaxes = Array.from(this.resources.values());
-            // for (let i=0; i<resMaxes.length; i++) {
-            //     if (resMaxes[i] != currTotals[i]) {
-            //         console.log("resource", i, "count did not match");
-            //         return false;
-            //     }
-            // }
             if(total == 0 || total == 1){
                 return true
             }
@@ -367,7 +360,6 @@ export class CollabWindow extends Window {
                     
                 }
             });
-            //console.log(currTotals);
             var resMaxes = Array.from(this.resources.values());
             for (let i=0; i<resMaxes.length; i++) {
                 if (resMaxes[i] != currTotals[i]) {
@@ -387,7 +379,6 @@ export class CollabWindow extends Window {
                     currTotals[i] += counts[i];
                 }
             });
-            //console.log(currTotals);
             var resMaxes = Array.from(this.resources.values());
             for (let i=0; i<resMaxes.length; i++) {
                 if (resMaxes[i] != currTotals[i] && currTotals[i]!= 0) {
@@ -397,10 +388,35 @@ export class CollabWindow extends Window {
             }
             return true;
         }
+        else if(this.type == 'additive'){
+            var self = this;
+            var currTotals = [];
+            currTotals.length = this.resources.size;
+            currTotals.fill(0);
+            Array.from(this.resAllocated.values()).forEach( counts => {
+                for (let i=0; i<counts.length; i++) {
+                    currTotals[i] += counts[i];
+                }
+            });
+            console.log(currTotals)
+            var sum = 0
+            for (let i=0; i<currTotals.length; i++) {
+               sum +=currTotals[i]
+            }
+            console.log(this.sumNeeded, sum)
+            if(sum == this.sumNeeded){
+                return true;
+            }
+            else{
+                return false
+            }
+        }
     }
     public incFunction(heroKind, resourceIndex){
         var rToggle
         var totalCount = 0
+        var heroHasMore = true
+        var resourceHasMore = true
         for(let rt of this.resourceToggles){
             if(rt.getResourceIndex() == resourceIndex){
                totalCount+=rt.getAmount()
@@ -409,7 +425,27 @@ export class CollabWindow extends Window {
                 rToggle = rt
             }           
         }
-        if(totalCount < this.resources.get(Array.from(this.resources.keys())[resourceIndex])){
+        if(this.heroMaxes){
+            let index = 0
+            let i = 0
+            for(let hero of this.involvedHeroes){
+                if(hero.getKind() == heroKind){
+                    index = i
+                }
+                i++
+            }
+            heroHasMore = totalCount < this.heroMaxes[index][resourceIndex]
+        }
+        if(this.type == "additive"){
+            let sum = 0
+            for(let rt of this.resourceToggles) {
+                sum += rt.getAmount()
+            }
+            if(sum >= this.sumNeeded){
+                resourceHasMore = false
+            }
+        }
+        if(totalCount < this.resources.get(Array.from(this.resources.keys())[resourceIndex]) && heroHasMore && resourceHasMore){
             rToggle.incFunction()
             this.gameinstance.sendIncResource(heroKind,resourceIndex)
         }

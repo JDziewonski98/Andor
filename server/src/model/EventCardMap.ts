@@ -26,11 +26,11 @@ export var map = [
     //     "flavorText": "Poisonous vapors from the mountain are tormenting the heroes.", 
     //     "desc": "Each hero standing on a space with a number between 37 and 70 now loses 3 willpower points."
     // },
-    {
-        "id": 6, 
-        "flavorText": "The dwarf merchant Garz invites one of the heros to have a drink.", 
-        "desc": "The hero with the lowest rank gets to decide if he wants to roll one of his hero dice. If he rolls 1, 2, 3, or 4, he loses the rolled number of willpower points. If he rolls 5 or 6, he wins that number of willpower points."
-    },
+    // {
+    //     "id": 6, 
+    //     "flavorText": "The dwarf merchant Garz invites one of the heros to have a drink.", 
+    //     "desc": "The hero with the lowest rank gets to decide if he wants to roll one of his hero dice. If he rolls 1, 2, 3, or 4, he loses the rolled number of willpower points. If he rolls 5 or 6, he wins that number of willpower points."
+    // },
     // {
     //     "id": 7, 
     //     "flavorText": "Sulfurous mists surround the heroes.", 
@@ -116,6 +116,11 @@ export var map = [
     //     "flavorText": "On this day, the 8th hour costs no willpower points.", 
     //     "desc": "Place this card above the overtime area of the time track. At the end of the day, it is removed from the game."
     // },
+    {
+        "id": 27, 
+        "flavorText": "The creatures are possessed with blind fury.", 
+        "desc": "The creature standing on the space with the highest number will now move one space along the arrow. The group can prevent that by paying gold and/or willpower points:\nFor 2 heroes, 2 gold/willpower points\nFor 3 heroes, 3 gold/willpower points\nFor 4 heroes, 4 gold/willpower points"
+    },
     // {
     //     "id": 28,
     //     "flavorText": "A beautifully clear, starry night gives the heroes confidence.", 

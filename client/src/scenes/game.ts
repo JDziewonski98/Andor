@@ -1004,7 +1004,7 @@ export default class GameScene extends Phaser.Scene {
     this.gameinstance.newEventListener((event: EventCard) => {
       this.applyEvent(event)
     })
-    this.gameinstance.newCollabListener((eventID, heroes) => {
+    this.gameinstance.newCollabListener((eventID, heroes, heroMaxes) => {
       console.log("Received newCollab")
 
       var involvedHeroKinds = new Array<HeroKind>()
@@ -1027,9 +1027,11 @@ export default class GameScene extends Phaser.Scene {
         var allCollabRes = require("../utils/eventCollabResources").map;
         var res = new Map<String, Number>()
         var type
+        var sumNeeded
         for (let element of allCollabRes) {
           if (element.id == eventID && (involvedHeroKinds.length == element.partySize || element.partySize == 0)) {
             type = element.type
+            sumNeeded = element.sumNeeded
             for (let [name, number] of element.list) {
               res.set(name, number)
             }
@@ -1056,7 +1058,9 @@ export default class GameScene extends Phaser.Scene {
           infight: false,
           overlayRef: self.overlay,
           ownHeroKind: this.ownHeroType,
-          type: type
+          type: type,
+          heroMaxes: heroMaxes,
+          sumNeeded: sumNeeded
         };
 
         WindowManager.create(this, 'collab', CollabWindow, collabWindowData);

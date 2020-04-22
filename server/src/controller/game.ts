@@ -565,13 +565,13 @@ export function game(socket, model: Game, io) {
 
             //these will be blockable
             if(event.id ==  2 || event.id ==  5 || event.id ==  7 || event.id ==  9 || event.id == 11 || event.id == 15 || event.id == 17 || 
-               event.id == 19 || event.id == 21 || event.id == 22 || event.id == 24 || event.id == 31 || event.id == 32 || event.id == 33){
-
-                var heroesWithShields = new Array<Hero>()
+               event.id == 19 || event.id == 21 || event.id == 22 || event.id == 24 || event.id == 27 || event.id == 31 || event.id == 32 || event.id == 33){
+                let heroesWithShields = new Array<Hero>()
                 for(let [conn,hero] of model.getHeros()){
                   let largeItem = hero.getLargeItem()
                   if(largeItem == LargeItem.Shield || largeItem == LargeItem.DamagedShield){
                     heroesWithShields.push(hero)
+                    //console.log("Hero has shield:", hero.getKind())
                   }
                 }
 
@@ -602,6 +602,7 @@ export function game(socket, model: Game, io) {
                 }
                 else{
                   if(heroesWithShields.length > 0){
+                    //console.log("Heroes with shields:", heroesWithShields)
                     io.of("/" + model.getName()).emit('newCollab', 0, heroesWithShields);
                   }
                   if(model.getBlockedEvent()){
@@ -639,6 +640,25 @@ export function game(socket, model: Game, io) {
                         }
                       }
                       model.applyEvent(event)
+                    }
+                    if(event.id == 27){
+                      //check which heros have gold and willpower to lose. 
+                      let elligibleHeroes = Array<Hero>()
+                      let totalCount = 0
+                      for(let [conn,hero] of model.getHeros()){
+                        if(hero.getGold() > 1 || hero.getWill() > 1){
+                          elligibleHeroes.push(hero)
+                          totalCount += hero.getGold() + hero.getWill()
+                        }
+                      }
+                      console.log(elligibleHeroes, totalCount, model.getHeros().size)
+                      let heroMaxes = new Array()
+                      if(totalCount >= model.getHeros().size){
+                        for(let hero of elligibleHeroes){
+                          heroMaxes.push([hero.getGold(),hero.getWill()])
+                        }
+                        io.of("/" + model.getName()).emit('newCollab', 27, elligibleHeroes, heroMaxes);
+                      }
                     }
                   }
                 } 
@@ -1118,6 +1138,13 @@ export function game(socket, model: Game, io) {
             else{
               currHero?.setWill(roll)
             }
+          }
+          else if(resNames[i] == '-Gold'){
+            let currGold = currHero?.getGold()
+            currHero?.setGold(currGold - resAllocated[heroTypeString][i])
+          }
+          else if(resNames[i] == '-Will'){
+            currHero?.setWill(-1*resAllocated[heroTypeString][i])
           }
         }
         // console.log("Updated", heroTypeString, "gold:", currHero?.getGold(), "wineskin:", currHero?.getWineskin())
