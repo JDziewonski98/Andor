@@ -677,7 +677,7 @@ export function game(socket, model: Game, io) {
               else if(event.id == 23){
                 var elligibleHeroes = new Array<Hero>()
                 for(let [conn,hero] of model.getHeros()){
-                  if(hero.getStrength() <6 ){
+                  if(hero.getStrength() < 6){
                     elligibleHeroes.push(hero)
                   }
                 }
@@ -688,6 +688,14 @@ export function game(socket, model: Game, io) {
                 }
                 else if(elligibleHeroes.length > 2){
                   io.of("/" + model.getName()).emit('newCollab', event.id, elligibleHeroes);
+                }
+              }
+              else if(event.id == 25){
+                for(let [conn,hero] of model.getHeros()){
+                  if(hero.getWill() < 6){
+                    let roll = hero.eventRoll()
+                    hero.setWill(roll)
+                  }
                 }
               }
               else if(event.id == 29){
