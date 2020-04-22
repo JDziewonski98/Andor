@@ -564,7 +564,7 @@ export function game(socket, model: Game, io) {
             io.of("/" + model.getName()).emit("newEvent", event);
 
             //these will be blockable
-            if(event.id ==  2 || event.id ==  5 || event.id ==  7 || event.id ==  9 || event.id == 11 || event.id == 15 || event.id == 17 || 
+            if(event.id ==  2 || event.id ==  5 || event.id ==  7 || event.id ==  9 || event.id == 11 || event.id == 15 || event.id == 17 || event.id == 18 || 
                event.id == 19 || event.id == 21 || event.id == 22 || event.id == 24 || event.id == 27 || event.id == 31 || event.id == 32 || event.id == 33){
                 let heroesWithShields = new Array<Hero>()
                 for(let [conn,hero] of model.getHeros()){
@@ -631,7 +631,41 @@ export function game(socket, model: Game, io) {
                         hero.setWill(-1*roll)
                       }
                     }
-                    if(event.id == 20){
+                    else if(event.id == 18){
+                      //check which heros willpower to lose. 
+                      let elligibleHeroes = Array<Hero>()
+                      let totalCount = 0
+                      for(let [conn,hero] of model.getHeros()){
+                        if(hero.getWill() > 1){
+                          elligibleHeroes.push(hero)
+                          totalCount += hero.getWill()
+                        }
+                      }
+                      let heroMaxes = new Array()
+                      if(totalCount >= 2* model.getHeros().size -2 ){
+                        // for(let hero of elligibleHeroes){
+                        //   heroMaxes.push([hero.getGold(),hero.getWill()])
+                        // }
+                        io.of("/" + model.getName()).emit('newCollab', 18, elligibleHeroes);
+                      }
+                      if(model.getBlockedEvent()){
+                        model.setBlockedEvent(false)
+                      }
+                      else{
+                        let minID = 100
+                        for(let [n,m] of model.getMonsters()){
+                          if( m.getTileID() < minID){
+                            minID = m.getTileID()
+                          }
+                        }
+                        for(let [n,m] of model.getMonsters()){
+                          if( m.getTileID() == minID){
+                            //movemonster
+                          }
+                        }
+                      }
+                    }
+                    else if(event.id == 20){
                       //check which heros have gold and willpower to lose. 
                       let elligibleHeroes = Array<Hero>()
                       for(let [conn,hero] of model.getHeros()){
@@ -641,7 +675,7 @@ export function game(socket, model: Game, io) {
                       }
                       model.applyEvent(event)
                     }
-                    if(event.id == 27){
+                    else if(event.id == 27){
                       //check which heros have gold and willpower to lose. 
                       let elligibleHeroes = Array<Hero>()
                       let totalCount = 0
@@ -651,7 +685,6 @@ export function game(socket, model: Game, io) {
                           totalCount += hero.getGold() + hero.getWill()
                         }
                       }
-                      console.log(elligibleHeroes, totalCount, model.getHeros().size)
                       let heroMaxes = new Array()
                       if(totalCount >= model.getHeros().size){
                         for(let hero of elligibleHeroes){

@@ -411,6 +411,25 @@ export class CollabWindow extends Window {
                 return false
             }
         }
+        if(this.type == 'optionalDistribution'){
+            var self = this;
+            var currTotals = [];
+            currTotals.length = this.resources.size;
+            currTotals.fill(0);
+            Array.from(this.resAllocated.values()).forEach( counts => {
+                for (let i=0; i<counts.length; i++) {
+                    currTotals[i] += counts[i];
+                }
+            });
+            var resMaxes = Array.from(this.resources.values());
+            for (let i=0; i<resMaxes.length; i++) {
+                if (resMaxes[i] != currTotals[i] && currTotals[i] != 0) {
+                    console.log("resource", i, "count did not match");
+                    return false;
+                }
+            }
+            return true;
+        }
     }
     public incFunction(heroKind, resourceIndex){
         var rToggle

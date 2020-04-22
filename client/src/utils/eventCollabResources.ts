@@ -24,6 +24,24 @@ export var map = [
     "type": "allOrNothing"
   },
   {
+    "id": 18,
+    "list": [["-Will", 2],],
+    "partySize": 2,
+    "type": "optionalDistribution",
+  },
+  {
+    "id": 18,
+    "list": [["-Will", 4],],
+    "partySize": 3,
+    "type": "optionalDistribution",
+  },
+  {
+    "id": 18,
+    "list": [["-Will", 6],],
+    "partySize": 4,
+    "type": "optionalDistribution",
+  },
+  {
     "id": 23,
     "list": [["Strength", 2]],
     "partySize": 0,
