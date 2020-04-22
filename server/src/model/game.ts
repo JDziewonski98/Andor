@@ -1046,16 +1046,17 @@ export class Game {
                 }
             }
             if(count >= 1){
+                //give highestHero strength point
                 for(let [conn,hero] of this.heroList){
                     if(hero.getKind() == highestHeroKind){
                         hero.setStrength(1)
                     }
                 }
-                //give highestHero strength point
             }
             else{
+                //add to active events until someone activates it
                 this.activeEvents.push(event.id)
-                //drop strength on region 57
+        
             }
         }
         else if(event.id == 5){
@@ -1065,6 +1066,9 @@ export class Game {
                     hero.setWill(-3)
                 }
             }
+        }
+        else if(event.id == 7){
+            //handled on server controller
         }
         else if(event.id == 9){
             this.activeEvents.push(9)
@@ -1119,6 +1123,7 @@ export class Game {
             var count = 0
             //var highestHero = new Hero(HeroKind.None, this.regions[0])
             var highestRank = Number.MIN_VALUE
+            var highestHeroKind = HeroKind.None
             for(let [conn,hero] of this.heroList){
                 let reg = hero.getRegion().getID()
                 if(reg == 22 || reg == 23 || reg == 24 || reg == 25){
@@ -1130,7 +1135,12 @@ export class Game {
                 }
             }
             if(count >= 2){
-                //highestHero.setWill(-4)
+                //give highestHero strength point
+                for(let [conn,hero] of this.heroList){
+                    if(hero.getKind() == highestHeroKind){
+                        hero.setStrength(1)
+                    }
+                }
             }
             else{
                 this.activeEvents.push(21)

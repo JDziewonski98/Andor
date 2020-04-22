@@ -564,7 +564,7 @@ export function game(socket, model: Game, io) {
             io.of("/" + model.getName()).emit("newEvent", event);
 
             //these will be blockable
-            if(event.id ==  2 || event.id ==  5 || event.id ==  9 || event.id == 11 || event.id == 15 || event.id == 17 || 
+            if(event.id ==  2 || event.id ==  5 || event.id ==  7 || event.id ==  9 || event.id == 11 || event.id == 15 || event.id == 17 || 
                event.id == 19 || event.id == 21 || event.id == 22 || event.id == 24 || event.id == 31 || event.id == 32 || event.id == 33){
 
                 var heroesWithShields = new Array<Hero>()
@@ -597,7 +597,7 @@ export function game(socket, model: Game, io) {
                     }
                   }
                   else{
-                    //event is not triggered. We should probably communicate this somehow.
+                    //event 33 is not triggered. We should probably communicate this somehow.
                   }
                 }
                 else{
@@ -608,6 +608,28 @@ export function game(socket, model: Game, io) {
                     model.setBlockedEvent(false)
                   }
                   else{
+                    if(event.id == 7){
+                      var lowestRank = Number.MAX_VALUE
+                      var lowestHeroKind = HeroKind.None
+                      for(let [conn,hero] of model.getHeros()){
+                          if(hero.getRank() < lowestRank){
+                                lowestRank = hero.getRank()
+                                lowestHeroKind = hero.getKind()
+                          }
+                      }
+                      var lowestHero
+                      var roll
+                      for(let [conn,hero] of model.getHeros()){
+                        if(hero.getRank() == lowestRank){
+                              lowestHero = hero
+                        }
+                      }
+                      roll = lowestHero.eventRoll()
+                      console.log(lowestHeroKind, "rolled a", roll)
+                      for(let [conn,hero] of model.getHeros()){
+                        hero.setWill(-1*roll)
+                      }
+                    }
                     if(event.id == 20){
                       //check which heros have gold and willpower to lose. 
                       var elligibleHeroes = Array<Hero>()
@@ -616,11 +638,10 @@ export function game(socket, model: Game, io) {
                           elligibleHeroes.push(hero)
                         }
                       }
+                      model.applyEvent(event)
                     }
-                    model.applyEvent(event)
                   }
-                }
-              model.applyEvent(event) 
+                } 
             }
             else{
               if(event.id == 1){

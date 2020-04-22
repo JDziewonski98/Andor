@@ -26,6 +26,11 @@ export var map = [
     //     "flavorText": "Poisonous vapors from the mountain are tormenting the heroes.", 
     //     "desc": "Each hero standing on a space with a number between 37 and 70 now loses 3 willpower points."
     // },
+    {
+        "id": 7, 
+        "flavorText": "Sulfurous mists surround the heroes.", 
+        "desc": "The hero with the lowest rank rolls one of his hero dice. The group loses the rolled number of willpower points."
+    },
     // {
     //     "id": 9, 
     //     "flavorText": "Dark clouds cover the sun, filling all the good people of Andor with strange foreboding.", 
@@ -131,9 +136,9 @@ export var map = [
     //     "flavorText": "Their adventure is wearing down the heroes.", 
     //     "desc": "One of the heroes immediately loses 1 strength point. You can decide as a group which hero that will be. If no hero has more than 1 strength point, nothing happens."
     // },
-    {
-        "id": 34, 
-        "flavorText": "The dwarf merchant Garz meets one of the heroes and offers him a trade.", 
-        "desc": "One of the heroes can now purchase 10 willpower points in exchange for 2 strength points. You can decide as a group which hero that will be."
-    }
+    // {
+    //     "id": 34, 
+    //     "flavorText": "The dwarf merchant Garz meets one of the heroes and offers him a trade.", 
+    //     "desc": "One of the heroes can now purchase 10 willpower points in exchange for 2 strength points. You can decide as a group which hero that will be."
+    // }
 ]

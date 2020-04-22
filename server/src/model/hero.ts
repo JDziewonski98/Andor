@@ -393,7 +393,12 @@ export class Hero {
             return {rolls:rolls, strength:this.strength, alldice:rolls}
         }
     }
-
+    public eventRoll(){
+        var dicefaces = [1, 2, 3, 4, 5, 6]
+        var roll
+        roll = dicefaces[Math.floor(Math.random() * dicefaces.length)]
+        return roll
+    }
     private initializeResources() {
         this.will = 7;
         this.strength = 1;
