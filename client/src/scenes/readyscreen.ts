@@ -27,22 +27,22 @@ export default class ReadyScreenScene extends Phaser.Scene {
     }
 
     public preload() {
-        this.load.html('readyform', './assets/readyscreen.html')
-        this.load.html('readytable', './assets/readytable.html')
+        this.load.html('readyform', './assets/templates/readyscreen.html')
+        this.load.html('readytable', './assets/templates/readytable.html')
 
-        this.load.image("archer", "../assets/archermale.png");
-        this.load.image("dwarf", "./assets/dwarfmale.png");
-        this.load.image("warrior", "./assets/warriormale.png");
-        this.load.image("mage", "./assets/magemale.png");
+        this.load.image("archer", "../assets/pregame-components/archermale.png");
+        this.load.image("dwarf", "./assets/pregame-components/dwarfmale.png");
+        this.load.image("warrior", "./assets/pregame-components/warriormale.png");
+        this.load.image("mage", "./assets/pregame-components/magemale.png");
 
-        this.load.image("archerbanner", "../assets/archerbanner.png");
-        this.load.image("dwarfbanner", "./assets/dwarfbanner.png");
-        this.load.image("warriorbanner", "./assets/warriorbanner.png");
-        this.load.image("magebanner", "./assets/magebanner.png");
+        this.load.image("archerbanner", "../assets/pregame-components/archerbanner.png");
+        this.load.image("dwarfbanner", "./assets/pregame-components/dwarfbanner.png");
+        this.load.image("warriorbanner", "./assets/pregame-components/warriorbanner.png");
+        this.load.image("magebanner", "./assets/pregame-components/magebanner.png");
 
-        this.load.image("pointerhand", "./assets/pointerhand.png");
+        this.load.image("pointerhand", "./assets/pregame-components/pointerhand.png");
 
-        this.load.image('chaticon', './assets/chat.png')
+        this.load.image('chaticon', './assets/pregame-components/chat.png')
     }
 
     create() {
