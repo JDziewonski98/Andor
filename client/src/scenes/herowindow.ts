@@ -369,8 +369,5 @@ export class HeroWindow extends Window {
         this.gameinstance.disconnectUpdatePickupItemHero();
         this.gameinstance.disconnectReceiveUseWineskin();
         this.gameinstance.unsubscribeKillHeroFarmers();
-
-        // Remove pointerdown events
-        this.goldDrop.removeAllListeners('pointerdown')
     }
 }

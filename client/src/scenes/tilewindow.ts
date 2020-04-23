@@ -236,9 +236,5 @@ export class TileWindow extends Window {
         this.gameController.disconnectUpdatePickupGoldTile()
         this.gameController.disconnectUpdateDropItemTile();
         this.gameController.disconnectUpdatePickupItemTile();
-
-        // event listeners
-        this.goldButton.removeAllListeners('pointerdown');
-        this.clearWindow();
     }
 }

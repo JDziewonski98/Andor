@@ -72,7 +72,6 @@ export default class BoardOverlay extends Phaser.Scene {
 
     private addHeroCard(type, x) {
         var self = this;
-        console.log(type, typeof type)
         switch (type) {
             case "archer":
                 this.heroButtons.set(type, this.add.image(x+55, 25, 'archericon').setScale(0.25));
@@ -87,20 +86,14 @@ export default class BoardOverlay extends Phaser.Scene {
                 this.heroButtons.set(type, this.add.image(x+55, 25, 'warrioricon').setScale(0.25));
                 break;
         }
-        console.log("CAN WE FIND IT*** ",this.heroButtons)
-        console.log(this.heroButtons.get(type));
         this.heroButtons.get(type).on('pointerdown', (pointer) => {
-            console.log("CLICKING")
             this.gameinstance.getHeroAttributes(type, (herodata) => {
-                console.log(herodata)
                 const cardID = `${type}Card`;
                 if (this.scene.isVisible(cardID)) {
-                    console.log(this)
                     var thescene = WindowManager.get(this, cardID)
                     thescene.disconnectListeners()
                     WindowManager.destroy(this, cardID);
                 } else {
-                    console.log('in board overlay:xxxxxxxxxxxxxxx', this.clientheroobject)
                     WindowManager.create(this, cardID, HeroWindow,
                         {
                             controller: this.gameinstance,
@@ -145,12 +138,10 @@ export default class BoardOverlay extends Phaser.Scene {
         this.chatButton = this.add.image(775, 565, 'chaticon').setScale(0.3)
         this.chatButton.setInteractive();
         this.chatButton.on('pointerdown', function (pointer) {
-            console.log(this.scene, ' in overlay')
             if (this.scene.isVisible('chat')) {
                 WindowManager.destroy(this, 'chat');
             }
             else {
-                console.log(self.gameinstance)
                 this.tweens.add({
                     targets: this.chatButton,
                     alpha: 0.3,
@@ -244,7 +235,6 @@ export default class BoardOverlay extends Phaser.Scene {
 
 
         this.gameinstance.getHeros((heros) => {
-            console.log("sanity check getHeros", heros)
             heros.forEach(type => {
                 if (type === "mage") {
                     this.addHeroCard(type, 445);
@@ -258,7 +248,6 @@ export default class BoardOverlay extends Phaser.Scene {
             });
 
             if (this.initialCollabDone) {
-                console.log("set overlay buttons interactive")
                 this.toggleInteractive(true);
             }
         })
@@ -344,7 +333,6 @@ export default class BoardOverlay extends Phaser.Scene {
 
         self.gameinstance.receiveUpdatedMonsters(moveMonstersOnMap);
         function moveMonstersOnMap(updatedMonsters) {
-            console.log("Received updated monsters from server");
             self.moveMonstersEndDay(updatedMonsters);
         }
 
@@ -355,7 +343,6 @@ export default class BoardOverlay extends Phaser.Scene {
 
         self.gameinstance.fillWells(replenishWellsClient);
         function replenishWellsClient(replenished: number[]) {
-            console.log("well tile ids to replenish:", replenished);
             for (let id of replenished) {
                 self.wells.get("" + id).fillWell();
             }
@@ -436,16 +423,12 @@ export default class BoardOverlay extends Phaser.Scene {
 
     public toggleInteractive(interactive: boolean) {
         if (interactive) {
-            console.log("entered toggleInteractive")
             this.endTurnButton.setInteractive();
             this.endDayButton.setInteractive();
-            console.log("heroButtons sanity check", this.heroButtons);
             this.heroButtons.forEach(function (button) {
-                console.log("setting hero button interactive", button)
                 button.setInteractive();
             })
         } else {
-            console.log(this.endTurnButton)
             this.endTurnButton.disableInteractive();
             this.endDayButton.disableInteractive();
             this.heroButtons.forEach(function (button) {

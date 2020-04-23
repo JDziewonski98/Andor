@@ -465,7 +465,7 @@ export class Game {
             }
             // update start of game currPlayersTurn
             console.log("binding hero rank", hero[0].getRank())
-            if (hero[0].getRank() < this.gameStartMinRank) {
+            if (!this.initialCollabDone && hero[0].getRank() < this.gameStartMinRank) {
                 this.gameStartMinRank = hero[0].getRank();
                 this.currPlayersTurn = heroType;
                 console.log("currplayersturn updated to", heroType, hero[0].getRank());
