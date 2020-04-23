@@ -88,6 +88,7 @@ export default class BoardOverlay extends Phaser.Scene {
                 break;
         }
         console.log("CAN WE FIND IT*** ",this.heroButtons)
+        console.log(this.heroButtons.get(type));
         this.heroButtons.get(type).on('pointerdown', (pointer) => {
             console.log("CLICKING")
             this.gameinstance.getHeroAttributes(type, (herodata) => {
@@ -131,20 +132,6 @@ export default class BoardOverlay extends Phaser.Scene {
             backgroundColor: '#f00',
             "text-transform": "uppercase"
         }
-
-        this.gameinstance.getHeros((heros) => {
-            heros.forEach(type => {
-                if (type === "mage") {
-                    this.addHeroCard(type, 445);
-                } else if (type === "archer") {
-                    this.addHeroCard(type, 330);
-                } else if (type === "warrior") {
-                    this.addHeroCard(type, 215);
-                } else if (type === "dwarf") {
-                    this.addHeroCard(type, 100);
-                }
-            });
-        })
 
         //Options
         var optionsIcon = this.add.image(55, 40, 'optionsicon').setInteractive();
@@ -255,10 +242,26 @@ export default class BoardOverlay extends Phaser.Scene {
         //     this.gameinstance.advanceNarrator();
         // }, this)
 
-        if (this.initialCollabDone) {
-            console.log("set overlay buttons interactive")
-            this.toggleInteractive(true);
-        }
+
+        this.gameinstance.getHeros((heros) => {
+            console.log("sanity check getHeros", heros)
+            heros.forEach(type => {
+                if (type === "mage") {
+                    this.addHeroCard(type, 445);
+                } else if (type === "archer") {
+                    this.addHeroCard(type, 330);
+                } else if (type === "warrior") {
+                    this.addHeroCard(type, 215);
+                } else if (type === "dwarf") {
+                    this.addHeroCard(type, 100);
+                }
+            });
+
+            if (this.initialCollabDone) {
+                console.log("set overlay buttons interactive")
+                this.toggleInteractive(true);
+            }
+        })
     }
 
     private updateContent(panel: ScrollablePanel, update: string) {
@@ -433,9 +436,12 @@ export default class BoardOverlay extends Phaser.Scene {
 
     public toggleInteractive(interactive: boolean) {
         if (interactive) {
+            console.log("entered toggleInteractive")
             this.endTurnButton.setInteractive();
             this.endDayButton.setInteractive();
+            console.log("heroButtons sanity check", this.heroButtons);
             this.heroButtons.forEach(function (button) {
+                console.log("setting hero button interactive", button)
                 button.setInteractive();
             })
         } else {

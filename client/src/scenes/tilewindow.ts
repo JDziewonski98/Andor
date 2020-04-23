@@ -239,5 +239,6 @@ export class TileWindow extends Window {
 
         // event listeners
         this.goldButton.removeAllListeners('pointerdown');
+        this.clearWindow();
     }
 }
