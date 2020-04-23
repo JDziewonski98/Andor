@@ -1,7 +1,7 @@
 import { Farmer, Hero, HourTracker, Monster, HeroKind, Well, Tile, Narrator, EventCard } from '../objects';
 import { game } from '../api';
 import {
-  WindowManager, StoryWindow, CollabWindow, MerchantWindow, DeathWindow, Fight,
+  WindowManager, StoryWindow, CollabWindow, MerchantWindow, DeathWindow, Fight, EventWindow,
   BattleInvWindow, GameOverWindow, TradeWindow, ShieldWindow, WitchWindow, ContinueFightWindow
 } from "./windows";
 import { RietburgCastle } from './rietburgcastle';
@@ -215,9 +215,9 @@ export default class GameScene extends Phaser.Scene {
     // this.gameinstance.addMonster((type, tile, id) => {
     //   this.addMonster(tile, type, id);
     // })
-    this.gameinstance.newEventListener((event: EventCard) => {
-      this.applyEvent(event)
-    })
+    // this.gameinstance.newEventListener((event: EventCard) => {
+    //   this.applyEvent(event)
+    // })
 
 
   }
@@ -719,7 +719,14 @@ export default class GameScene extends Phaser.Scene {
     if (event.id == 2) {
       //wind accross screen or something like that
     }
-    this.addEventCard(event)
+    // TODO EVENTS: trigger any UI additions
+    WindowManager.create(this, `eventWindow${event.id}`, EventWindow, {
+      x: reducedWidth / 2,
+      y: reducedHeight / 2,
+      id: event.id,
+      flavorText: event.flavorText,
+      descText: event.desc
+    })
   }
 
   private addEventCard(event: EventCard) {
@@ -763,7 +770,8 @@ export default class GameScene extends Phaser.Scene {
       infight: false,
       overlayRef: self.overlay,
       ownHeroKind: this.ownHeroType,
-      type: 'distribute'
+      type: 'distribute',
+      initialSleep: true
     };
 
     WindowManager.create(this, 'collab', CollabWindow, collabWindowData);
@@ -1056,7 +1064,8 @@ export default class GameScene extends Phaser.Scene {
           infight: false,
           overlayRef: self.overlay,
           ownHeroKind: this.ownHeroType,
-          type: type
+          type: type,
+          initialSleep: true
         };
 
         WindowManager.create(this, 'collab', CollabWindow, collabWindowData);

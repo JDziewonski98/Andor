@@ -35,19 +35,16 @@ export class StoryWindow extends Window {
     protected initialize() {
         var self = this
         var bg = this.add.image(0, 0, 'scrollbg').setOrigin(0.5);
-        this.add.text(10, 10, storyCardTexts[this.id], storyCardStyleText);
+        var storyText = this.add.text(10, 10, storyCardTexts[this.id], storyCardStyleText);
         // Extra text for runestones legend
+        var extraText;
         if (this.id == 6) {
-            this.add.text(10, 130, `The locations of the stones have been discovered:\n${this.runestoneLocs}`, storyCardStyleText);
+            extraText = this.add.text(10, 130, `The locations of the stones have been discovered:\n${this.runestoneLocs}`, storyCardStyleText);
         }
 
         this.okButton = this.add.image(this.width-35, this.height-35, 'okay');
         this.okButton.setInteractive().setDisplaySize(30, 30).setOrigin(0);
 
-        if (this.id == 0) {
-            // Pause the collab scene for the initial story
-            self.scene.sleep('collab');
-        }
         // Start of game story and instructions, IDs 0, 1 and 2
         let continueCards = [0, 1, 3, 4]
         if (continueCards.includes(this.id)) {
@@ -72,5 +69,14 @@ export class StoryWindow extends Window {
                 this.scene.remove(this.key)
             }, this);
         }
+
+        // Animate the "scene" in. Can't target the scene but can add everything to a container
+        let storyContainer = this.add.container(0, 0, [bg, storyText, this.okButton]);
+        storyContainer.alpha = 0;
+        this.tweens.add({
+            targets: storyContainer,
+            duration: 500,
+            alpha: 1
+        })
     }
 }

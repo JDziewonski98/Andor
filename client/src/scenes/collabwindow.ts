@@ -40,6 +40,7 @@ export class CollabWindow extends Window {
     private ownHeroKind: HeroKind
     private numAccepts
     private type
+    private initialSleep = false;
     private resourceToggles: Array<ResourceToggle>
 
     public constructor(key: string, data, incFunction) {
@@ -64,6 +65,7 @@ export class CollabWindow extends Window {
         this.resourceToggles = new Array<ResourceToggle>()
         this.numAccepts = 0
         this.type = data.type
+        this.initialSleep = data.initialSleep
 
         //console.log(this.involvedHeroes)
     }
@@ -71,6 +73,10 @@ export class CollabWindow extends Window {
     protected initialize() {
         var self = this
 
+        if (this.initialSleep) {
+            console.log('immediately sleep some collabs')
+            this.scene.sleep(this.name);
+        }
         // Initialize lists of resource names and max values
         if (this.resources) {
             this.resources.forEach( (max, name) => {
