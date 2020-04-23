@@ -479,7 +479,18 @@ export class Fight extends Window {
         }
         this.exitbutton = this.add.text(300, 10, 'X', style).setInteractive()
         this.exitbutton.on('pointerdown', function (pointer) {
-            if (self.alliedheros.length == 0 || self.firstfight == true){
+            if (self.firstfight == true) {
+                //close without ending turn
+                self.overlayRef.toggleInteractive(true);
+                try{
+                    self.scene.resume("Game") 
+                }
+                catch {
+                    console.log('its fine')
+                }
+                self.scene.remove(this.windowname)
+            }
+            else if (self.alliedheros.length == 0 ){
                 console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxxx')
                 self.endTurnStuff()
             }
