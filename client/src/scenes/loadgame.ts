@@ -11,7 +11,7 @@ export default class LoadGameScene extends Phaser.Scene {
     }
 
     public preload() {
-        this.load.html('loadgame_form', './assets/loadgame_form.html');
+        this.load.html('loadgame_form', './assets/templates/loadgame_form.html');
     }
 
     public create() {
