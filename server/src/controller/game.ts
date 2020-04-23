@@ -1,4 +1,4 @@
-import { Game, HeroKind, Region, Hero, Monster, Fog, MonsterKind } from '../model';
+import { Game, HeroKind, Region, Hero, Monster, Fog, MonsterKind, Farmer } from '../model';
 import { SmallItem } from '../model/SmallItem';
 import { LargeItem } from '../model/LargeItem';
 
@@ -230,13 +230,22 @@ export function game(socket, model: Game, io) {
     var region: Region;
     let heroId = socket.conn.id;
     let hero = model.getHero(heroId);
+    console.log(model.getFarmers())
     if (hero !== undefined) {
       // if the hero's tile is not the same as the farmer's tile, return
       if (hero.getRegion().getID() != tileID) return;
       let success = hero.pickupFarmer();
-      // console.log("pickup farmer", region)
 
       if (success) {
+        model.getFarmers().forEach((farmer) => {
+          if(farmer.getTileID() === tileID){
+            var index = model.getFarmers().indexOf(farmer)
+            if(index > -1){
+              model.getFarmers().splice(index, 1)
+            }
+          }
+        })
+        console.log(model.getFarmers())
         socket.broadcast.emit("destroyFarmer", hero.getRegion().getID());
         callback();
       }
@@ -256,6 +265,9 @@ export function game(socket, model: Game, io) {
         //Farmer dropped on reitburg
         if (result[1] === 0) {
           model.getCastle().incShields();
+        }
+        else{
+          model.getFarmers().push(new Farmer(result[0], result[1]))
         }
         io.of("/" + model.getName()).emit("addFarmer", result[1], result[0])
         callback(result[1]);
