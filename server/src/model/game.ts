@@ -367,7 +367,7 @@ export class Game {
         // indexing between regions array and region IDs
         regions.forEach(t => {
             // on top of setting t.something, also set amount of gold on each tile to 0
-            this.regions.push(new Region(t.id, t.xcoord, t.ycoord, 0, t.nextRegionId, t.adjRegionsIds, t.hasWell, t.hasMerchant))
+            this.regions.push(new Region(t.id, t.xcoord, t.ycoord, t.gold, t.nextRegionId, t.adjRegionsIds, t.hasWell, t.hasMerchant))
         })
     }
 

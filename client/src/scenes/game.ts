@@ -163,7 +163,7 @@ export default class GameScene extends Phaser.Scene {
       })
 
       data.heroList.forEach(hero => {
-        this.addHero(hero[1].hk, hero[1].region.id, hero[1].hk);
+        this.addHero(hero[1].hk, hero[1].region.id, hero[1].hk, hero[1].timeOfDay-1);
       })
 
       this.hourTrackerSetup();
@@ -489,9 +489,9 @@ export default class GameScene extends Phaser.Scene {
   }
 
 
-  private addHero(type: HeroKind, tileNumber: number, texture: string) {
+  private addHero(type: HeroKind, tileNumber: number, texture: string, hour: number) {
     const tile: Tile = this.tiles[tileNumber]
-    let hero: Hero = new Hero(this, tile, texture, type).setDisplaySize(40, 40);
+    let hero: Hero = new Hero(this, tile, texture, type, hour).setDisplaySize(40, 40);
     this.heroes.push(hero);
     // tile.hero = hero;
     this.add.existing(hero);
@@ -798,28 +798,33 @@ export default class GameScene extends Phaser.Scene {
       heroSprites.set(h.getKind(), sprite);
       switch (h.getKind()) {
         case HeroKind.Archer:
-          sprite.x = htx - 20 - htShift
+          sprite.x = htx - 20
           sprite.y = hty - 20
           break
         case HeroKind.Dwarf:
-          sprite.x = htx + 20 - htShift
+          sprite.x = htx + 20
           sprite.y = hty - 20
           break
         case HeroKind.Mage:
-          sprite.x = htx - 20 - htShift
+          sprite.x = htx - 20
           sprite.y = hty + 20
           break
         case HeroKind.Warrior:
-          sprite.x = htx + 20 - htShift
+          sprite.x = htx + 20
           sprite.y = hty + 20
           break
+      }
+      if (h.getHour() > 0) {
+        sprite.x += h.getHour()*htShift
+      } else {
+        sprite.x -= htShift
       }
     }
     this.hourTracker = new HourTracker(this, htx, hty, heroSprites);
 
     // we're not actually adding the hourTracker, we're adding it's internal sprite
-    this.hourTracker.depth = 5;
-    this.hourTracker.depth = 0;
+    // this.hourTracker.depth = 5;
+    // this.hourTracker.depth = 0;
     for (var h of this.heroes) {
       h.hourTracker = this.hourTracker;
     }
