@@ -30,11 +30,6 @@ export default class ReadyScreenScene extends Phaser.Scene {
         this.load.html('readyform', './assets/templates/readyscreen.html')
         this.load.html('readytable', './assets/templates/readytable.html')
 
-        this.load.image("archer", "../assets/pregame-components/archermale.png");
-        this.load.image("dwarf", "./assets/pregame-components/dwarfmale.png");
-        this.load.image("warrior", "./assets/pregame-components/warriormale.png");
-        this.load.image("mage", "./assets/pregame-components/magemale.png");
-
         this.load.image("archerbanner", "../assets/pregame-components/archerbanner.png");
         this.load.image("dwarfbanner", "./assets/pregame-components/dwarfbanner.png");
         this.load.image("warriorbanner", "./assets/pregame-components/warriorbanner.png");
