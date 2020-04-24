@@ -49,7 +49,8 @@ export function lobby(socket, model: Lobby, io) {
         endOfGameState: gameData.endOfGameState,
         prince: JSON.parse(gameData.prince),
         narrator: JSON.parse(gameData.narrator),
-        initialCollabDone: gameData.initialCollabDone
+        initialCollabDone: gameData.initialCollabDone,
+        runestoneCardPos: gameData.runestoneCardPos
       })
       callback();
     }

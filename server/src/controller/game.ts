@@ -32,6 +32,7 @@ export function game(socket, model: Game, io) {
     game['prince'] = JSON.stringify(model.getPrince());
     game['narrator'] = JSON.stringify(model.getNarrator(),["legendPosition"])
     game['initialCollabDone'] = model.initialCollabDone;
+    game['runestoneCardPos'] = model.runestoneCardPos;
 
     if (!data.games) {
       data['games'] = {}
@@ -302,9 +303,9 @@ export function game(socket, model: Game, io) {
   })
 
   socket.on("placeRuneStoneLegend", function() {
-    let runestonePos = model.getNarrator().setRunestoneLegendPos();
+    let runestonePos = model.setRunestoneLegendPos();
     let narratorPos = model.getNarrator().advance();
-
+    // console.log('server emits runestonePos', runestonePos)
     socket.emit("updateNarrator", narratorPos, runestonePos)
     socket.broadcast.emit("updateNarrator", narratorPos, runestonePos)
   })

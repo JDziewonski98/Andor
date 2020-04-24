@@ -53,7 +53,8 @@ export class Game {
     private monstersInCastle: string[];
     private endOfGame: boolean = false;
 
-    public initialCollabDone = false;
+    public initialCollabDone: boolean = false;
+    public runestoneCardPos: number = -1;
     private prince: Prince | null = null;
     private witch: Witch | null = null;
 
@@ -91,6 +92,7 @@ export class Game {
         this.availableHeros = new Array<Hero>();
         this.blockedEvent = false;
         this.initialCollabDone = false;
+        this.runestoneCardPos = -1;
         // this.narrator = new Narrator(this, 0)
     }
 
@@ -159,7 +161,8 @@ export class Game {
         endOfGameState = false,
         prince = { tile: { id: -1 } },
         narrator = dNarrator,
-        initialCollabDone = false
+        initialCollabDone = false,
+        runestoneCardPos = -1,
     }) {
         this.currPlayersTurn = currPlayersTurn;
         this.readyplayers = 0
@@ -180,6 +183,7 @@ export class Game {
             this.prince = new Prince(this.regions[prince.tile.id])
 
         this.initialCollabDone = initialCollabDone;
+        this.runestoneCardPos = runestoneCardPos;
     }
 
     private setAvailableHeros(heros) {
@@ -745,6 +749,12 @@ export class Game {
         }
 
         return newMonsters;
+    }
+
+    public setRunestoneLegendPos() : number {
+        this.runestoneCardPos = this.narrator.setRunestoneLegendPos();
+        // console.log('server set runestone card on', this.runestoneCardPos)
+        return this.runestoneCardPos;
     }
 
     // sets positions of the runestones and adds them to the regions

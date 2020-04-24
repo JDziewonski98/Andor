@@ -197,8 +197,8 @@ export default class GameScene extends Phaser.Scene {
       // Add narrator: this happens here because we want initial game instructions to be
       // added on top of the collab decision
       this.gameStartHeroPosition = data.startGamePos;
-      console.log("gameStartHeroPos", this.gameStartHeroPosition);
-      this.addNarrator();
+      // console.log("gameStartHeroPos", this.gameStartHeroPosition);
+      this.addNarrator(data.runestoneCardPos);
       // Listens for all updates triggered by narrator advancing
       this.receiveNarratorEvents();
     })
@@ -533,7 +533,7 @@ export default class GameScene extends Phaser.Scene {
   }
 
   // Add the narrator pawn to the game board
-  private addNarrator() {
+  private addNarrator(runestoneCardPos: number) {
     var self = this;
 
     this.gameinstance.getNarratorPosition(function (pos: number) {
@@ -549,6 +549,7 @@ export default class GameScene extends Phaser.Scene {
         // This is the only "narrator event" that gets directly triggered from the client
         // because it doesn't happen on a monster kill or end of day
         if (self.gameStartHeroPosition == self.heroes.length) {
+          // console.log('client emits placeRunestoneLegend')
           self.gameinstance.placeRuneStoneLegend();
         }
       }
@@ -557,6 +558,10 @@ export default class GameScene extends Phaser.Scene {
       console.log("creating narrator at position", pos);
       self.narrator = new Narrator(self, pos, "pawn", self.gameinstance).setScale(0.5);
       self.add.existing(self.narrator);
+
+      // Place runestone legend card
+      console.log("placing runestone card at position", runestoneCardPos);
+      self.placeRunestoneCard(runestoneCardPos);
     })
   }
 
@@ -571,6 +576,7 @@ export default class GameScene extends Phaser.Scene {
       switch (pos) {
         case 0: // Initial storytelling is done, rune legend card placed, narrator at A
           // TODO NARRATOR: update rune card UI and position
+          console.log('place runestone card on', runestonePos)
           self.placeRunestoneCard(runestonePos);
           break;
         case self.narrator.getRunestonePos():
@@ -592,10 +598,11 @@ export default class GameScene extends Phaser.Scene {
   }
 
   private placeRunestoneCard(runestonePos: number) {
-    let yPos = (6100 - (runestonePos * 455)) * scaleFactor + borderWidth
+    if (runestonePos == -1) return;
 
+    let yPos = (6100 - (runestonePos * 455)) * scaleFactor + borderWidth
     // place the runestone card marker on the legend track
-    this.add.image(2450, yPos, 'eventcard').setAlpha(0.5);
+    this.add.image(2450, yPos, 'eventcard').setAlpha(0.7);
     this.narrator.setRunestonePos(runestonePos);
   }
 
