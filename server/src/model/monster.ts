@@ -89,7 +89,6 @@ export class Monster {
     public getName() : string {
         return this.name;
     }
-
     public rollDice() {
         var attack = 0;
 

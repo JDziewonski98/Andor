@@ -25,19 +25,19 @@ export var map = [
   },
   {
     "id": 18,
-    "list": [["-Will", 2],],
+    "list": [["Will  ", 2],],
     "partySize": 2,
     "type": "optionalDistribution",
   },
   {
     "id": 18,
-    "list": [["-Will", 4],],
+    "list": [["Will  ", 4],],
     "partySize": 3,
     "type": "optionalDistribution",
   },
   {
     "id": 18,
-    "list": [["-Will", 6],],
+    "list": [["Will  ", 6],],
     "partySize": 4,
     "type": "optionalDistribution",
   },

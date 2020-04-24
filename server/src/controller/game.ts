@@ -626,13 +626,13 @@ export function game(socket, model: Game, io) {
                         }
                       }
                       roll = lowestHero.eventRoll()
-                      console.log(lowestHeroKind, "rolled a", roll)
+                      //console.log(lowestHeroKind, "rolled a", roll)
                       for(let [conn,hero] of model.getHeros()){
                         hero.setWill(-1*roll)
                       }
                     }
                     else if(event.id == 18){
-                      //check which heros willpower to lose. 
+                      //check which heros have willpower to lose. 
                       let elligibleHeroes = Array<Hero>()
                       let totalCount = 0
                       for(let [conn,hero] of model.getHeros()){
@@ -641,29 +641,41 @@ export function game(socket, model: Game, io) {
                           totalCount += hero.getWill()
                         }
                       }
-                      let heroMaxes = new Array()
-                      if(totalCount >= 2* model.getHeros().size -2 ){
-                        // for(let hero of elligibleHeroes){
-                        //   heroMaxes.push([hero.getGold(),hero.getWill()])
-                        // }
+                      if(totalCount >= (2 * model.getHeros().size) -2 ){
+                        console.log("1")
                         io.of("/" + model.getName()).emit('newCollab', 18, elligibleHeroes);
-                      }
-                      if(model.getBlockedEvent()){
-                        model.setBlockedEvent(false)
                       }
                       else{
                         let minID = 100
                         for(let [n,m] of model.getMonsters()){
+                          console.log(m.getTileID())
                           if( m.getTileID() < minID){
                             minID = m.getTileID()
                           }
                         }
+                        //let currM
+                        var shieldsLeft
+                        var nextM
+                        let convMonsters = {};
+                        console.log(minID)
                         for(let [n,m] of model.getMonsters()){
                           if( m.getTileID() == minID){
-                            //movemonster
+                            let {shieldsRemaining, regionsCurrM } = model.moveMonster(m)
+                            shieldsLeft = shieldsRemaining
+                            convMonsters[m.name] = m.getTileID();
+                            console.log(convMonsters)
+                            // Evaluate end of game state - currently only handles end of game due to loss of shields\
+                            if (model.getEndOfGameState()) {
+                              io.of("/" + model.getName()).emit('sendUpdatedMonsters', convMonsters);
+                              io.of("/" + model.getName()).emit('updateShields', shieldsRemaining)
+                              io.of("/" + model.getName()).emit('endGame');
+                            }
                           }
                         }
+                        io.of("/" + model.getName()).emit('sendUpdatedMonsters', convMonsters);
+                        io.of("/" + model.getName()).emit('updateShields', shieldsLeft);
                       }
+
                     }
                     else if(event.id == 20){
                       //check which heros have gold and willpower to lose. 
@@ -718,7 +730,7 @@ export function game(socket, model: Game, io) {
                   if(hero.getWill()>3){
                     let involvedHeroes = new Array<Hero>()
                     involvedHeroes.push(hero)
-                    console.log("emmitting newCollab", event.id, involvedHeroes)
+                    //console.log("emmitting newCollab", event.id, involvedHeroes)
                     io.of("/" + model.getName()).emit('newCollab', event.id, involvedHeroes);
                     }
                 }
@@ -1101,6 +1113,10 @@ export function game(socket, model: Game, io) {
     console.log("Recieved sendEndCollab")
     // Success: distribute accordingly
     let modelHeros = model.getHeros();
+    let event18 = false
+    let moveLowMonster = true
+    let event27 = false
+    let moveHighMonster = true
     for (let hero of modelHeros.values()) {
       let heroTypeString = hero.getKind().toString();
       // if the hero was involved in the collab decision, update their resources
@@ -1195,15 +1211,67 @@ export function game(socket, model: Game, io) {
             let currGold = currHero?.getGold()
             currHero?.setGold(currGold - resAllocated[heroTypeString][i])
           }
-          else if(resNames[i] == '-Will'){
+          // else if(resNames[i] == '-Will'){
+          //   if(resAllocated[heroTypeString][i] > 0){
+          //     model.setBlockedEvent(true)
+          //   }
+          //   currHero?.setWill(-1*resAllocated[heroTypeString][i])
+
+          // }
+          else if(resNames[i] == 'Will  '){
+            event18 = true
             if(resAllocated[heroTypeString][i] > 0){
-              model.setBlockedEvent(true)
+              moveLowMonster = false
             }
             currHero?.setWill(-1*resAllocated[heroTypeString][i])
+            
+          }
+          else if(resNames[i] == ' Will '){
+            event27 = true
+            if(resAllocated[heroTypeString][i] > 0){
+              moveHighMonster = false
+            }
+            currHero?.setWill(-1*resAllocated[heroTypeString][i])
+            
           }
         }
+        
+        
         // console.log("Updated", heroTypeString, "gold:", currHero?.getGold(), "wineskin:", currHero?.getWineskin())
       }
+    }
+    if(moveLowMonster && event18){
+      let minID = 100
+      for(let [n,m] of model.getMonsters()){
+        console.log(m.getTileID())
+        if( m.getTileID() < minID){
+          minID = m.getTileID()
+        }
+      }
+      //let currM
+      var shieldsLeft
+      var nextM
+      let convMonsters = {};
+      console.log(minID)
+      for(let [n,m] of model.getMonsters()){
+        if( m.getTileID() == minID){
+          let {shieldsRemaining, regionsCurrM } = model.moveMonster(m)
+          shieldsLeft = shieldsRemaining
+          convMonsters[m.name] = m.getTileID();
+          console.log(convMonsters)
+          // Evaluate end of game state - currently only handles end of game due to loss of shields\
+          if (model.getEndOfGameState()) {
+            io.of("/" + model.getName()).emit('sendUpdatedMonsters', convMonsters);
+            io.of("/" + model.getName()).emit('updateShields', shieldsRemaining)
+            io.of("/" + model.getName()).emit('endGame');
+          }
+        }
+      }
+      io.of("/" + model.getName()).emit('sendUpdatedMonsters', convMonsters);
+      io.of("/" + model.getName()).emit('updateShields', shieldsLeft);
+    }
+    if(moveHighMonster && event27){
+      //moveHighest monster
     }
     io.of("/" + model.getName()).emit('receiveEndCollab', involvedHeroKinds);
   })
@@ -1758,11 +1826,7 @@ export function game(socket, model: Game, io) {
       killFarmersOnTile(m.getTileID());
       killFarmersOfHeroes(m.getTileID(), null);
     }
-    socket.broadcast.emit('sendUpdatedMonsters', convMonsters);
-    socket.emit('sendUpdatedMonsters', convMonsters);
-
-    socket.broadcast.emit('updateShields', shieldsRemaining);
-    socket.emit('updateShields', shieldsRemaining);
+    
 
     // Evaluate end of game state - currently only handles end of game due to loss of shields
     if (model.getEndOfGameState()) {
