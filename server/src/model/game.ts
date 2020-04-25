@@ -608,14 +608,9 @@ export class Game {
     public moveMonster(m){
         var startReg = m.getTileID();
         var nextRegID = this.regions[startReg].getNextRegionId();
+        var nextFreeRegID = nextRegID
         var shieldsRemaining
-        //var currM
-        // console.log(this.regions[nextRegID])
-        // if(nextRegID != 0){
-        //     var currM = this.regions[nextRegID].getMonster()
-        // }
-        var regionsCurrM = this.regions[nextRegID].getMonster()
-        //else()
+        var nextRegionsM = this.regions[nextRegID].getMonster()
         //if monster enters castle, update shields, evaluate end of game
         if (nextRegID == 0) {
             // Monster is going to enter the castle
@@ -625,10 +620,16 @@ export class Game {
             this.regions[startReg].setMonster(null);
             // self.monsters.delete(m.name);
         }
+        else{
+            while(nextRegionsM){
+                nextFreeRegID = nextRegionsM.getTileID()
+                nextRegionsM = this.regions[nextFreeRegID].getMonster()
+            }
+        }
          // Update the two tiles and the monster
-         this.regions[nextRegID].setMonster(m);
+         this.regions[nextFreeRegID].setMonster(m);
          this.regions[startReg].setMonster(null);
-         m.setTileID(nextRegID);
+         m.setTileID(nextFreeRegID);
          if (this.castle.getShields() <= 0) {
              this.endOfGame = true;
          }
@@ -636,7 +637,7 @@ export class Game {
              this.killFarmersOnTile(nextRegID)
              this.killFarmersOfHeroes(nextRegID, null)
          }
-         return {shieldsRemaining, regionsCurrM};
+         return shieldsRemaining;
     }
     // Returns number of shields remaining
     public moveMonsters() : number {

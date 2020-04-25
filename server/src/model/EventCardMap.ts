@@ -76,11 +76,11 @@ export var map = [
     //     "flavorText": "Heavy weather moves across the land.", 
     //     "desc": "Each hero with more than 12 willpower points immediately reduces his point total to 12."
     // },
-    {
-        "id": 18, 
-        "flavorText": "A wild gor storms forth.", 
-        "desc": "The gor on the space with the lowest number now moves one space in the direction of the arrow. The group can prevent that by paying willpower points:\nFor 2 heroes, 2 willpower points\n,For 3 heroes, 4 willpower points\nFor 4 heroes, 6 willpower points"
-    },
+    // {
+    //     "id": 18, 
+    //     "flavorText": "A wild gor storms forth.", 
+    //     "desc": "The gor on the space with the lowest number now moves one space in the direction of the arrow. The group can prevent that by paying willpower points:\nFor 2 heroes, 2 willpower points\n,For 3 heroes, 4 willpower points\nFor 4 heroes, 6 willpower points"
+    // },
     // {
     //     "id": 19, 
     //     "flavorText": "An exhausting day", 
@@ -121,11 +121,11 @@ export var map = [
     //     "flavorText": "On this day, the 8th hour costs no willpower points.", 
     //     "desc": "Place this card above the overtime area of the time track. At the end of the day, it is removed from the game."
     // },
-    // {
-    //     "id": 27, 
-    //     "flavorText": "The creatures are possessed with blind fury.", 
-    //     "desc": "The creature standing on the space with the highest number will now move one space along the arrow. The group can prevent that by paying gold and/or willpower points:\nFor 2 heroes, 2 gold/willpower points\nFor 3 heroes, 3 gold/willpower points\nFor 4 heroes, 4 gold/willpower points"
-    // },
+    {
+        "id": 27, 
+        "flavorText": "The creatures are possessed with blind fury.", 
+        "desc": "The creature standing on the space with the highest number will now move one space along the arrow. The group can prevent that by paying gold and/or willpower points:\nFor 2 heroes, 2 gold/willpower points\nFor 3 heroes, 3 gold/willpower points\nFor 4 heroes, 4 gold/willpower points"
+    },
     // {
     //     "id": 28,
     //     "flavorText": "A beautifully clear, starry night gives the heroes confidence.", 

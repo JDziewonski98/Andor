@@ -49,23 +49,23 @@ export var map = [
   },
   {
     "id": 27,
-    "list": [["-Gold", 2],["-Will",2]],
+    "list": [["Gold", 2],[" Will ",2]],
     "partySize": 2,
-    "type": "additive",
+    "type": "optionalDistribution",
     "sumNeeded": 2
   },
   {
     "id": 27,
-    "list": [["-Gold", 3],["-Will",3]],
+    "list": [["Gold", 3],[" Will ",3]],
     "partySize": 3,
-    "type": "additive",
+    "type": "optionalDistribution",
     "sumNeeded": 3
   },
   {
     "id": 27,
-    "list": [["-Gold", 4],["-Will",4]],
+    "list": [["Gold", 4],[" Will ",4]],
     "partySize": 4,
-    "type": "additive",
+    "type": "optionalDistribution",
     "sumNeeded": 4
   },
   {
