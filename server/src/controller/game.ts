@@ -1854,8 +1854,10 @@ export function game(socket, model: Game, io) {
       killFarmersOnTile(m.getTileID());
       killFarmersOfHeroes(m.getTileID(), null);
     }
-    
 
+    io.of("/" + model.getName()).emit('sendUpdatedMonsters', convMonsters);
+    io.of("/" + model.getName()).emit('updateShields', shieldsRemaining)
+    
     // Evaluate end of game state - currently only handles end of game due to loss of shields
     if (model.getEndOfGameState()) {
       socket.emit('endGame');
