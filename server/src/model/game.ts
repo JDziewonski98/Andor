@@ -367,7 +367,7 @@ export class Game {
         // indexing between regions array and region IDs
         regions.forEach(t => {
             this.regions.push(
-                new Region(t.id, t.xcoord, t.ycoord, t.gold, t.nextRegionId, t.adjRegionsIds, t.hasWell, t.wellUsed, t.hasMerchant)
+                new Region(t.id, t.xcoord, t.ycoord, t.gold, t.nextRegionId, t.adjRegionsIds, t.hasWell, t.wellUsed, t.hasMerchant, t.items)
             )
         })
     }
