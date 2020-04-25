@@ -68,6 +68,7 @@ export default class BoardOverlay extends Phaser.Scene {
         this.load.image('dwarficon', './assets/overlay-components/dwarfbtn.png')
         this.load.image('mageicon', './assets/overlay-components/magebtn.png')
         this.load.image('warrioricon', './assets/overlay-components/warriorbtn.png')
+        this.load.image("saveicon", "./assets/overlay-components/save.png")
     }
 
     private addHeroCard(type, x) {
@@ -133,6 +134,15 @@ export default class BoardOverlay extends Phaser.Scene {
             this.scene.bringToTop('Options')
             this.scene.wake('Options')
         }, this);
+
+
+         // save btn
+         var savebtn = this.add.image(920, 40, 'saveicon').setInteractive().setScale(0.22);
+         savebtn.on('pointerdown', (pointer) => {
+             console.log("manual saving")
+             this.gameinstance.save()
+         }, this);
+
 
         // chat window
         this.chatButton = this.add.image(775, 565, 'chaticon').setScale(0.3)
