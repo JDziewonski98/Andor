@@ -11,7 +11,10 @@ export const dFarmers = [{
     tileID: 36
 }]
 
-export const dRegions = require("./tilemap").map;
+export const dRegions = require("./tilemap").map.map((val) => {
+	val['items'] = new Map();
+    return val
+});
 
 const { MonsterKind } = require("./MonsterKind");
 export const dMonsters = [{
