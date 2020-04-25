@@ -22,7 +22,7 @@ export class Region {
     // private helms: number = 0;
     // private smallItems: Map<SmallItem, number> = new Map();
 
-    public items: Map<string, number>;
+    public items!: Map<string, number>;
     
     constructor(id: number, x: number, y: number, gold:number, nextRegion: number, adjRegions: Array<number>, hasWell: boolean = false, wellUsed: boolean = false, hasMerchant: boolean = false, items: Map<string, number> = new Map()) {
         this.xcoord = x;
@@ -35,7 +35,14 @@ export class Region {
         this.adjRegionsIds = adjRegions;
         this.farmers = new Array();
         this.gold = gold;
-        this.items = items || new Map();
+        console.log("items constructor", items, typeof items)
+        
+        this.items = new Map();
+        items.forEach((val, key) => {
+            this.items.set(key, val)
+        })
+        // this.items = items || new Map();
+        // console.log(this.items, typeof this.items)
     }
 
     public setGold(amount: number) {
@@ -123,6 +130,7 @@ export class Region {
     }
 
     public removeItem(itemName: string) {
+        console.log(typeof this.items, this.items, itemName)
         let quantity = this.items.get(itemName)
         if (quantity != undefined && quantity > 1) {
             this.items.set(itemName, quantity - 1);
