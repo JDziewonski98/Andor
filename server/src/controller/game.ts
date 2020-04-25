@@ -29,7 +29,7 @@ export function game(socket, model: Game, io) {
     game['currPlayersTurn'] = model.currPlayersTurn;
     game['activeHeros'] = JSON.stringify(model.getActiveHeros());
     game['regions'] = JSON.stringify(model.getRegions(), (key, value) =>
-      value instanceof Map ? mapToJson(value) : value
+      key === 'items' ? mapToJson(value) : value
     );
     game['prince'] = JSON.stringify(model.getPrince());
     game['narrator'] = JSON.stringify(model.getNarrator(), ["legendPosition"])
@@ -49,15 +49,7 @@ export function game(socket, model: Game, io) {
     const maps = ["monsters", "players", "heroList", "fogs"]
     let tempModel = {};
     Object.keys(model).forEach((key) => {
-      if (key === 'regions') {
-        tempModel[key] = model.getRegions().map(region => {
-          // casting to any is fine to avoid the error for the line below and pcq we're only doing that for stupid socket.
-          let tempRegion: any = region
-          tempRegion["items"] = Array.from(region.items)
-          return tempRegion
-        })
-      }
-      else if (maps.includes(key)) { // convert maps to arrays so that socket can pass them.
+      if (maps.includes(key)) { // convert maps to arrays so that socket can pass them.
         tempModel[key] = Array.from(model[key]);
       } else
         tempModel[key] = model[key];
