@@ -29,7 +29,7 @@ export class Chat extends Window {
 
 
     public preload() {
-        this.load.html('chatform', './assets/chat.html');
+        this.load.html('chatform', './assets/templates/chat.html');
     }
 
     protected initialize() {

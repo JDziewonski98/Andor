@@ -30,6 +30,8 @@ export const mageTile = 34;
 export const collabTextHeight = 12;
 export const collabRowHeight = 50;
 export const collabColWidth = 70;
+export const collabHeaderHeight = 75;
+export const collabFooterHeight = 60;
 
 // Well tile IDs
 export const wellTile1 = 5;

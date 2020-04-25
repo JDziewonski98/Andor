@@ -21,6 +21,7 @@ export default class BoardOverlay extends Phaser.Scene {
     private endturntext;
     private clientheroobject;
     private herb;
+    private initialCollabDone;
 
     // End Day
     private endDayButton: Phaser.GameObjects.Image;
@@ -53,31 +54,25 @@ export default class BoardOverlay extends Phaser.Scene {
         this.hk = data.hk
         this.clientheroobject = data.clientheroobject
         this.herb = data.herb;
+        this.initialCollabDone = data.initialCollabDone;
     }
 
     public init() { }
 
     public preload() {
-        this.load.image('hourbar', './assets/hours.PNG')
-        this.load.image('endturnicon', './assets/endturn.png')
-        this.load.image('enddayicon', './assets/endday.png')
-        this.load.image('chaticon', './assets/chat.png')
-        this.load.image('archericon', './assets/archerbtn.png')
-        this.load.image('dwarficon', './assets/dwarfbtn.png')
-        this.load.image('mageicon', './assets/magebtn.png')
-        this.load.image('warrioricon', './assets/warriorbtn.png')
-
-        // UI Plugin
-        // this.load.scenePlugin({
-        //     key: 'rexuiplugin', 
-        //     url: 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexuiplugin.min.js', 
-        //     sceneKey: 'rexUI'
-        // });
+        this.load.image('hourbar', './assets/board-major/hours.PNG')
+        this.load.image('endturnicon', './assets/overlay-components/endturn.png')
+        this.load.image('enddayicon', './assets/overlay-components/endday.png')
+        this.load.image('chaticon', './assets/overlay-components/chat.png')
+        this.load.image('archericon', './assets/overlay-components/archerbtn.png')
+        this.load.image('dwarficon', './assets/overlay-components/dwarfbtn.png')
+        this.load.image('mageicon', './assets/overlay-components/magebtn.png')
+        this.load.image('warrioricon', './assets/overlay-components/warriorbtn.png')
+        this.load.image("saveicon", "./assets/overlay-components/save.png")
     }
 
     private addHeroCard(type, x) {
         var self = this;
-
         switch (type) {
             case "archer":
                 this.heroButtons.set(type, this.add.image(x+55, 25, 'archericon').setScale(0.25));
@@ -92,17 +87,14 @@ export default class BoardOverlay extends Phaser.Scene {
                 this.heroButtons.set(type, this.add.image(x+55, 25, 'warrioricon').setScale(0.25));
                 break;
         }
-        
         this.heroButtons.get(type).on('pointerdown', (pointer) => {
             this.gameinstance.getHeroAttributes(type, (herodata) => {
                 const cardID = `${type}Card`;
                 if (this.scene.isVisible(cardID)) {
-                    console.log(this)
                     var thescene = WindowManager.get(this, cardID)
                     thescene.disconnectListeners()
                     WindowManager.destroy(this, cardID);
                 } else {
-                    console.log('in board overlay:xxxxxxxxxxxxxxx', this.clientheroobject)
                     WindowManager.create(this, cardID, HeroWindow,
                         {
                             controller: this.gameinstance,
@@ -135,20 +127,6 @@ export default class BoardOverlay extends Phaser.Scene {
             "text-transform": "uppercase"
         }
 
-        this.gameinstance.getHeros((heros) => {
-            heros.forEach(type => {
-                if (type === "mage") {
-                    this.addHeroCard(type, 445);
-                } else if (type === "archer") {
-                    this.addHeroCard(type, 330);
-                } else if (type === "warrior") {
-                    this.addHeroCard(type, 215);
-                } else if (type === "dwarf") {
-                    this.addHeroCard(type, 100);
-                }
-            });
-        })
-
         //Options
         var optionsIcon = this.add.image(55, 40, 'optionsicon').setInteractive();
         optionsIcon.setScale(0.2)
@@ -157,16 +135,23 @@ export default class BoardOverlay extends Phaser.Scene {
             this.scene.wake('Options')
         }, this);
 
+
+         // save btn
+         var savebtn = this.add.image(920, 40, 'saveicon').setInteractive().setScale(0.22);
+         savebtn.on('pointerdown', (pointer) => {
+             console.log("manual saving")
+             this.gameinstance.save()
+         }, this);
+
+
         // chat window
         this.chatButton = this.add.image(775, 565, 'chaticon').setScale(0.3)
         this.chatButton.setInteractive();
         this.chatButton.on('pointerdown', function (pointer) {
-            console.log(this.scene, ' in overlay')
             if (this.scene.isVisible('chat')) {
                 WindowManager.destroy(this, 'chat');
             }
             else {
-                console.log(self.gameinstance)
                 this.tweens.add({
                     targets: this.chatButton,
                     alpha: 0.3,
@@ -258,7 +243,24 @@ export default class BoardOverlay extends Phaser.Scene {
         //     this.gameinstance.advanceNarrator();
         // }, this)
 
-        console.log("finished overlay create()")
+
+        this.gameinstance.getHeros((heros) => {
+            heros.forEach(type => {
+                if (type === "mage") {
+                    this.addHeroCard(type, 445);
+                } else if (type === "archer") {
+                    this.addHeroCard(type, 330);
+                } else if (type === "warrior") {
+                    this.addHeroCard(type, 215);
+                } else if (type === "dwarf") {
+                    this.addHeroCard(type, 100);
+                }
+            });
+
+            if (this.initialCollabDone) {
+                this.toggleInteractive(true);
+            }
+        })
     }
 
     private updateContent(panel: ScrollablePanel, update: string) {
@@ -294,8 +296,8 @@ export default class BoardOverlay extends Phaser.Scene {
     
     // Game log content
     // TODO: save up to n messages in the log, clear previous messages.
-    private content = 
-    `View in game updates here:\n > The legend begins.`;
+    private content = this.initialCollabDone ? 
+        `View in game updates here:\n > The legend begins.` : `View in game updates here:\n > Game loaded.`;
 
     private endDaySetup() {
         var self = this;
@@ -341,7 +343,6 @@ export default class BoardOverlay extends Phaser.Scene {
 
         self.gameinstance.receiveUpdatedMonsters(moveMonstersOnMap);
         function moveMonstersOnMap(updatedMonsters) {
-            console.log("Received updated monsters from server");
             self.moveMonstersEndDay(updatedMonsters);
         }
 
@@ -352,7 +353,6 @@ export default class BoardOverlay extends Phaser.Scene {
 
         self.gameinstance.fillWells(replenishWellsClient);
         function replenishWellsClient(replenished: number[]) {
-            console.log("well tile ids to replenish:", replenished);
             for (let id of replenished) {
                 self.wells.get("" + id).fillWell();
             }
@@ -439,7 +439,6 @@ export default class BoardOverlay extends Phaser.Scene {
                 button.setInteractive();
             })
         } else {
-            console.log(this.endTurnButton)
             this.endTurnButton.disableInteractive();
             this.endDayButton.disableInteractive();
             this.heroButtons.forEach(function (button) {

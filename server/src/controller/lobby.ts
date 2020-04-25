@@ -35,7 +35,9 @@ export function lobby(socket, model: Lobby, io) {
 
       g.initialize({
         currPlayersTurn: gameData.currPlayersTurn,
-        regions: JSON.parse(gameData.regions),
+        regions: JSON.parse(gameData.regions, (key, value) =>
+          key === 'items' ? jsonToMap(value) : value
+        ),
         heros: JSON.parse(gameData.heros),
         farmers: JSON.parse(gameData.farmers),
         monsters: JSON.parse(gameData.monsters),
@@ -48,7 +50,9 @@ export function lobby(socket, model: Lobby, io) {
         monstersInCastle: JSON.parse(gameData.monstersInCastle),
         endOfGameState: gameData.endOfGameState,
         prince: JSON.parse(gameData.prince),
-        narrator: JSON.parse(gameData.narrator)
+        narrator: JSON.parse(gameData.narrator),
+        initialCollabDone: gameData.initialCollabDone,
+        runestoneCardPos: gameData.runestoneCardPos
       })
       callback();
     }

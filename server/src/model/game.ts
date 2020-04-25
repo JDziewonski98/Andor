@@ -52,6 +52,9 @@ export class Game {
     private monsters: Map<string, Monster>;
     private monstersInCastle: string[];
     private endOfGame: boolean = false;
+
+    public initialCollabDone: boolean = false;
+    public runestoneCardPos: number = -1;
     private prince: Prince | null = null;
     private witch: Witch | null = null;
 
@@ -87,7 +90,9 @@ export class Game {
         this.currPlayersTurn = HeroKind.Dwarf;
         this.activeEvents = new Array<number>();
         this.availableHeros = new Array<Hero>();
-        this.blockedEvent = false
+        this.blockedEvent = false;
+        this.initialCollabDone = false;
+        this.runestoneCardPos = -1;
         // this.narrator = new Narrator(this, 0)
     }
 
@@ -155,7 +160,9 @@ export class Game {
         monstersInCastle = [],
         endOfGameState = false,
         prince = { tile: { id: -1 } },
-        narrator = dNarrator
+        narrator = dNarrator,
+        initialCollabDone = false,
+        runestoneCardPos = -1,
     }) {
         this.currPlayersTurn = currPlayersTurn;
         this.readyplayers = 0
@@ -174,6 +181,9 @@ export class Game {
         this.narrator = new Narrator(narrator.legendPosition);
         if (prince && prince.tile && prince.tile.id !== -1)
             this.prince = new Prince(this.regions[prince.tile.id])
+
+        this.initialCollabDone = initialCollabDone;
+        this.runestoneCardPos = runestoneCardPos;
     }
 
     private setAvailableHeros(heros) {
@@ -356,8 +366,9 @@ export class Game {
         // Note that regions 73-79 and 83 are unused, but created anyways to preserve direct
         // indexing between regions array and region IDs
         regions.forEach(t => {
-            // on top of setting t.something, also set amount of gold on each tile to 0
-            this.regions.push(new Region(t.id, t.xcoord, t.ycoord, 0, t.nextRegionId, t.adjRegionsIds, t.hasWell, t.hasMerchant))
+            this.regions.push(
+                new Region(t.id, t.xcoord, t.ycoord, t.gold, t.nextRegionId, t.adjRegionsIds, t.hasWell, t.wellUsed, t.hasMerchant, t.items)
+            )
         })
     }
 
@@ -454,10 +465,12 @@ export class Game {
         let hero = this.availableHeros.filter((hero) => hero.hk === heroType) // find hero
         if (hero.length === 1) {
             this.heroList.set(id, hero[0]);
-            this.activeHeros.push(heroType);
+            if (!this.activeHeros.includes(heroType)) {
+                this.activeHeros.push(heroType);
+            }
             // update start of game currPlayersTurn
             console.log("binding hero rank", hero[0].getRank())
-            if (hero[0].getRank() < this.gameStartMinRank) {
+            if (!this.initialCollabDone && hero[0].getRank() < this.gameStartMinRank) {
                 this.gameStartMinRank = hero[0].getRank();
                 this.currPlayersTurn = heroType;
                 console.log("currplayersturn updated to", heroType, hero[0].getRank());
@@ -771,6 +784,12 @@ export class Game {
         }
 
         return newMonsters;
+    }
+
+    public setRunestoneLegendPos() : number {
+        this.runestoneCardPos = this.narrator.setRunestoneLegendPos();
+        // console.log('server set runestone card on', this.runestoneCardPos)
+        return this.runestoneCardPos;
     }
 
     // sets positions of the runestones and adds them to the regions

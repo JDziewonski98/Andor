@@ -6,10 +6,15 @@ export class Well extends Phaser.GameObjects.Image {
     private gameController: game;
     private used: boolean = false;
 
-    constructor(scene: Phaser.Scene, x: number, y: number, texture: string, tile: Tile, gameController: game) {
+    constructor(scene: Phaser.Scene, x: number, y: number, texture: string, tile: Tile, gameController: game, used: boolean) {
         super(scene, x, y, texture);
         this.tile = tile;
         this.gameController = gameController;
+        this.used = used;
+
+        if (this.used) {
+            this.setTint(0x404040);
+        }
 
         this.setInteractive();
         var self = this;

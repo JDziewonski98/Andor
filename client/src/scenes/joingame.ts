@@ -11,7 +11,7 @@ export default class JoinGameScene extends Phaser.Scene {
 
     //HTML
     public preload() {
-        this.load.html('joinscreen', './assets/joinscreen.html');
+        this.load.html('joinscreen', './assets/templates/joinscreen.html');
     }
 
     public init(data){

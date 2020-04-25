@@ -22,23 +22,30 @@ export default class LobbyScene extends Phaser.Scene {
 
     public preload() {
         // Load all game assets in first scene
-        this.load.image('desert', './assets/fantasydesert.jpg')
-        this.load.image('mountains', './assets/mountains_bg.jpg')
-        this.load.image('andordude', './assets/andordude.jpg')
-        this.load.image('gameboard', './assets/Andor_Board.jpg')
+        this.load.image('desert', './assets/pregame-components/fantasydesert.jpg')
+        this.load.image('mountains', './assets/pregame-components/mountains_bg.jpg')
+        this.load.image('andordude', './assets/pregame-components/andordude.jpg')
+        this.load.image('main', './assets/pregame-components/mainscreen.png')
+        this.load.image('goback', './assets/pregame-components/wizard-goes-back.png')
+        this.load.image('entergame', './assets/pregame-components/enter.png')
+        this.load.image('fantasyhome', './assets/pregame-components/fantasyhome.jpg')
+
+        this.load.image('gameboard', './assets/board-major/Andor_Board.jpg')
         this.load.image('pointerbtn', './assets/Pass.png')
-        this.load.image('playbutton', './assets/Play.png')
-        this.load.image('warriormale', './assets/warriormale.png')
-        this.load.image('magemale', './assets/magemale.png')
-        this.load.image('dwarfmale', './assets/dwarfmale.png')
-        this.load.image('archermale', './assets/archermale.png')
-        this.load.image('fantasyhome', './assets/fantasyhome.jpg')
-        this.load.image('optionsicon', './assets/haus.png')
+        // this.load.image('playbutton', './assets/Play.png')
+
+        this.load.image("archermale", "../assets/pregame-components/archermale.png");
+        this.load.image("dwarfmale", "./assets/pregame-components/dwarfmale.png");
+        this.load.image("warriormale", "./assets/pregame-components/warriormale.png");
+        this.load.image("magemale", "./assets/pregame-components/magemale.png");
+        this.load.image("archer", "../assets/pregame-components/archermale.png");
+        this.load.image("dwarf", "./assets/pregame-components/dwarfmale.png");
+        this.load.image("warrior", "./assets/pregame-components/warriormale.png");
+        this.load.image("mage", "./assets/pregame-components/magemale.png");
+
+        this.load.image('optionsicon', './assets/options-menu/haus.png')
         this.load.image('scrollbg', './assets/windowbg.jpg')
         this.load.image('trademenubg', './assets/menubackground.png')
-        this.load.image('main', './assets/mainscreen.png')
-        this.load.image('goback', './assets/wizard-goes-back.png')
-        this.load.image('entergame', './assets/enter.png')
     }
 
     public create() {

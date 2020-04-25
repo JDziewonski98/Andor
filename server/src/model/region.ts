@@ -22,23 +22,22 @@ export class Region {
     // private helms: number = 0;
     // private smallItems: Map<SmallItem, number> = new Map();
 
-    private items: Map<string, number> = new Map();
+    public items: Map<string, number> = new Map();
     
-    constructor(id: number, x: number, y: number, gold:number, nextRegion: number, adjRegions: Array<number>, hasWell: boolean = false, hasMerchant: boolean = false) {
+    constructor(id: number, x: number, y: number, gold:number, nextRegion: number, adjRegions: Array<number>, hasWell: boolean = false, wellUsed: boolean = false, hasMerchant: boolean = false, items = new Map()) {
         this.xcoord = x;
         this.ycoord = y;
         this.id = id;
         this.hasWell = hasWell;
+        this.wellUsed = wellUsed;
         this.hasMerchant = hasMerchant;
         this.nextRegionId = nextRegion;
         this.adjRegionsIds = adjRegions;
         this.farmers = new Array();
-        this.gold = gold
+        this.gold = gold;
+        
+        this.items = items;
     }
-
-    // public removeHero() {
-    //     currHero = null;
-    // }
 
     public setGold(amount: number) {
         this.gold = amount;
@@ -125,6 +124,9 @@ export class Region {
     }
 
     public removeItem(itemName: string) {
+        // this.items.set('wineskin', 4);
+        if(!this.items.has(itemName)) return;
+
         let quantity = this.items.get(itemName)
         if (quantity != undefined && quantity > 1) {
             this.items.set(itemName, quantity - 1);

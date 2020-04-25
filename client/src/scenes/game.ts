@@ -1,7 +1,7 @@
 import { Farmer, Hero, HourTracker, Monster, HeroKind, Well, Tile, Narrator, EventCard } from '../objects';
 import { game } from '../api';
 import {
-  WindowManager, StoryWindow, CollabWindow, MerchantWindow, DeathWindow, Fight,
+  WindowManager, StoryWindow, CollabWindow, MerchantWindow, DeathWindow, Fight, EventWindow,
   BattleInvWindow, GameOverWindow, TradeWindow, ShieldWindow, WitchWindow, ContinueFightWindow
 } from "./windows";
 import { RietburgCastle } from './rietburgcastle';
@@ -13,6 +13,7 @@ import {
   mageTile, archerTile, warriorTile, dwarfTile,
   reducedWidth, reducedHeight, htShift,
   collabTextHeight, collabColWidth, collabRowHeight,
+  collabFooterHeight, collabHeaderHeight,
   wellTile1, wellTile2, wellTile3, wellTile4,
   mOffset, enumPositionOfNarrator
 } from '../constants'
@@ -82,56 +83,56 @@ export default class GameScene extends Phaser.Scene {
   }
 
   public preload() {
-    this.load.image("gor", "../assets/gor.PNG")
-    this.load.image("skral", "../assets/skral.PNG")
-    this.load.image("wardrak", "../assets/wardrak.PNG")
-    this.load.image("fortress", "../assets/fortress.png")
-    this.load.image("farmer", "../assets/farmer.png");
-    this.load.multiatlas('tiles', './assets/tilesheet.json', 'assets')
-    this.load.image("well", "../assets/well.png");
-    this.load.image("merchant-trade", "../assets/merchant-trade.png")
+    this.load.image("gor", "../assets/all-creatures/gor.PNG")
+    this.load.image("skral", "../assets/all-creatures/skral.PNG")
+    this.load.image("wardrak", "../assets/all-creatures/wardrak.PNG")
+    this.load.image("fortress", "../assets/all-creatures/fortress.png")
 
-    this.load.image("WillPower2", "../assets/will2.png");
-    this.load.image("WillPower3", "../assets/will3.png");
-    this.load.image("Gold", "../assets/gold.png");
-    this.load.image("EventCard", "../assets/event.png");
-    this.load.image("Gor", "../assets/gorfog.png");
-    this.load.image("WitchFog", "../assets/witchfog.png");
-    this.load.image("WineskinFog", "../assets/wineskinfog.png");
-    this.load.image("eventcard", "../assets/eventcard.png");
+    this.load.image("well", "../assets/board-minor/well.png");
+    this.load.image("merchant-trade", "../assets/board-minor/merchant-trade.png");
+    this.load.image("farmer", "../assets/board-minor/farmer.png");
+    this.load.image("witch", "../assets/board-minor/witch.png");
+    this.load.image("pawn", "../assets/board-minor/pawn.png");
+    this.load.image('dshield', './assets/board-minor/disabled_cracked_shield.png')
+    this.load.multiatlas('tiles', './assets/tilesheet.json', 'assets');
 
-    this.load.image("witch", "../assets/witch.png");
-
-    this.load.image("item_border", "../assets/border.png"); // uses hex 4b2504
-    this.load.image("hero_border", "../assets/big_border.png");
+    this.load.image("WillPower2", "../assets/fog-tokens/will2.png");
+    this.load.image("WillPower3", "../assets/fog-tokens/will3.png");
+    this.load.image("Gold", "../assets/fog-tokens/gold.png");
+    this.load.image("EventCard", "../assets/fog-tokens/event.png");
+    this.load.image("Gor", "../assets/fog-tokens/gorfog.png");
+    this.load.image("WitchFog", "../assets/fog-tokens/witchfog.png");
+    this.load.image("WineskinFog", "../assets/fog-tokens/wineskinfog.png");
+    this.load.image("eventcard", "../assets/fog-tokens/eventcard.png");
+    this.load.image("Strength", "../assets/fog-tokens/strength.png");
 
     //items
     // this.load.image("Brew", "../assets/brew.png");
     // this.load.image("Wineskin", "../assets/wineskin.png");
-    this.load.image("brew", "../assets/brew.png");
-    this.load.image("wineskin", "../assets/wineskin.png");
-    this.load.image("bow", "../assets/bow.PNG");
-    this.load.image("falcon", "../assets/falcon.PNG");
-    this.load.image("helm", "../assets/helm.PNG");
+    // this.load.image("shield", "../assets/shield.PNG")
     this.load.image("menubackground", "../assets/menubackground.png");
-    this.load.image("blue_runestone", "../assets/runestone_b.PNG");
-    this.load.image("green_runestone", "../assets/runestone_g.PNG");
-    this.load.image("yellow_runestone", "../assets/runestone_y.PNG");
-    this.load.image("blue_runestone_h", "../assets/runestone_b_hidden.png");
-    this.load.image("green_runestone_h", "../assets/runestone_g_hidden.png");
-    this.load.image("yellow_runestone_h", "../assets/runestone_y_hidden.png");
-    this.load.image("prince", "../assets/prince.png");
-    this.load.image("telescope", "../assets/telescope.PNG");
-    this.load.image("half_wineskin", "../assets/half_wineskin.jpg")
-    this.load.image("half_brew", "../assets/half_brew.jpg")
-    this.load.image("gold", "../assets/gold.png")
-    this.load.image("herb", "../assets/herb.png");
-    this.load.image("shield", "../assets/shield.PNG")
+    this.load.image("blue_runestone", "../assets/stones/runestone_b.PNG");
+    this.load.image("green_runestone", "../assets/stones/runestone_g.PNG");
+    this.load.image("yellow_runestone", "../assets/stones/runestone_y.PNG");
+    this.load.image("blue_runestone_h", "../assets/stones/runestone_b_hidden.png");
+    this.load.image("green_runestone_h", "../assets/stones/runestone_g_hidden.png");
+    this.load.image("yellow_runestone_h", "../assets/stones/runestone_y_hidden.png");
 
-    this.load.image("Strength", "../assets/strength.png");
-    this.load.image("pawn", "../assets/pawn.png");
-    this.load.image('dshield', './assets/disabled_cracked_shield.png')
+    this.load.image("brew", "../assets/items/brew.png");
+    this.load.image("wineskin", "../assets/items/wineskin.png");
+    this.load.image("bow", "../assets/items/bow.PNG");
+    this.load.image("falcon", "../assets/items/falcon.PNG");
+    this.load.image("helm", "../assets/items/helm.PNG");
+    this.load.image("telescope", "../assets/items/telescope.PNG");
+    this.load.image("half_wineskin", "../assets/items/half_wineskin.jpg")
+    this.load.image("half_brew", "../assets/items/half_brew.jpg")
+    this.load.image("herb", "../assets/items/herb.png");
+    this.load.image("prince", "../assets/board-minor/prince.png");
+    this.load.image("gold", "../assets/fog-tokens/gold.png")
+
     this.load.image('okay', './assets/ok.png')
+    this.load.image("item_border", "../assets/border.png"); // uses hex 4b2504
+    this.load.image("hero_border", "../assets/big_border.png");
   }
 
   public create() {
@@ -162,7 +163,7 @@ export default class GameScene extends Phaser.Scene {
       })
 
       data.heroList.forEach(hero => {
-        this.addHero(hero[1].hk, hero[1].region.id, hero[1].hk);
+        this.addHero(hero[1].hk, hero[1].region.id, hero[1].hk, hero[1].timeOfDay-1);
       })
 
       this.hourTrackerSetup();
@@ -179,25 +180,25 @@ export default class GameScene extends Phaser.Scene {
         wells: this.wells,
         hk: this.ownHeroType,
         clientheroobject: this.hero,
-        herb: this.herb
+        herb: this.herb,
+        initialCollabDone: data.initialCollabDone
       };
       this.overlay = new BoardOverlay(overlayData);
       this.scene.add('BoardOverlay', this.overlay, true);
 
-      // Need to wait for heroes to be created before creating collab decision
-      this.startingCollabDecisionSetup();
-      // Note that starting hero rank gets determined in collab setup
-      // Deprecated: removed turn logic from frontend
-      // if (this.hero.tile.id == this.startingHeroRank) {
-      //   console.log("first turn goes to hero rank", this.startingHeroRank);
-      //   this.gameinstance.setMyTurn(true);
-      // }
+      // prevent initial collab decision from happening again when we load game
+      if (!data.initialCollabDone) {
+        // Need to wait for heroes to be created before creating collab decision
+        this.startingCollabDecisionSetup();
+      } else {
+        this.scene.resume();
+      }
 
       // Add narrator: this happens here because we want initial game instructions to be
       // added on top of the collab decision
       this.gameStartHeroPosition = data.startGamePos;
-      console.log("gameStartHeroPos", this.gameStartHeroPosition);
-      this.addNarrator();
+      // console.log("gameStartHeroPos", this.gameStartHeroPosition);
+      this.addNarrator(data.runestoneCardPos);
       // Listens for all updates triggered by narrator advancing
       this.receiveNarratorEvents();
     })
@@ -214,9 +215,9 @@ export default class GameScene extends Phaser.Scene {
     // this.gameinstance.addMonster((type, tile, id) => {
     //   this.addMonster(tile, type, id);
     // })
-    this.gameinstance.newEventListener((event: EventCard) => {
-      this.applyEvent(event)
-    })
+    // this.gameinstance.newEventListener((event: EventCard) => {
+    //   this.applyEvent(event)
+    // })
 
 
   }
@@ -272,16 +273,16 @@ export default class GameScene extends Phaser.Scene {
         // coordinates taken from previous version, adding wells to allocated wells positions
         switch (t.id) {
           case 5:
-            this.addWell(209, 2244, t.id as number);
+            this.addWell(209, 2244, t.id as number, t.wellUsed);
             break;
           case 35:
-            this.addWell(1353, 4873, t.id as number);
+            this.addWell(1353, 4873, t.id as number, t.wellUsed);
             break;
           case 45:
-            this.addWell(7073, 3333, t.id as number);
+            this.addWell(7073, 3333, t.id as number, t.wellUsed);
             break;
           case 55:
-            this.addWell(5962, 770, t.id as number);
+            this.addWell(5962, 770, t.id as number, t.wellUsed);
             break;
         }
 
@@ -488,9 +489,9 @@ export default class GameScene extends Phaser.Scene {
   }
 
 
-  private addHero(type: HeroKind, tileNumber: number, texture: string) {
+  private addHero(type: HeroKind, tileNumber: number, texture: string, hour: number) {
     const tile: Tile = this.tiles[tileNumber]
-    let hero: Hero = new Hero(this, tile, texture, type).setDisplaySize(40, 40);
+    let hero: Hero = new Hero(this, tile, texture, type, hour).setDisplaySize(40, 40);
     this.heroes.push(hero);
     // tile.hero = hero;
     this.add.existing(hero);
@@ -499,10 +500,10 @@ export default class GameScene extends Phaser.Scene {
     }
   }
 
-  private addWell(x, y, tileNumber: number) {
+  private addWell(x, y, tileNumber: number, used: boolean) {
     const tile: Tile = this.tiles[tileNumber];
     const newWell = new Well(this, x * scaleFactor + borderWidth,
-      y * scaleFactor + borderWidth, "well", tile, this.gameinstance).setDisplaySize(48, 54);
+      y * scaleFactor + borderWidth, "well", tile, this.gameinstance, used).setDisplaySize(48, 54);
     this.add.existing(newWell);
     this.wells.set("" + newWell.getTileID(), newWell);
   }
@@ -532,7 +533,7 @@ export default class GameScene extends Phaser.Scene {
   }
 
   // Add the narrator pawn to the game board
-  private addNarrator() {
+  private addNarrator(runestoneCardPos: number) {
     var self = this;
 
     this.gameinstance.getNarratorPosition(function (pos: number) {
@@ -548,6 +549,7 @@ export default class GameScene extends Phaser.Scene {
         // This is the only "narrator event" that gets directly triggered from the client
         // because it doesn't happen on a monster kill or end of day
         if (self.gameStartHeroPosition == self.heroes.length) {
+          // console.log('client emits placeRunestoneLegend')
           self.gameinstance.placeRuneStoneLegend();
         }
       }
@@ -556,6 +558,10 @@ export default class GameScene extends Phaser.Scene {
       console.log("creating narrator at position", pos);
       self.narrator = new Narrator(self, pos, "pawn", self.gameinstance).setScale(0.5);
       self.add.existing(self.narrator);
+
+      // Place runestone legend card
+      console.log("placing runestone card at position", runestoneCardPos);
+      self.placeRunestoneCard(runestoneCardPos);
     })
   }
 
@@ -570,6 +576,7 @@ export default class GameScene extends Phaser.Scene {
       switch (pos) {
         case 0: // Initial storytelling is done, rune legend card placed, narrator at A
           // TODO NARRATOR: update rune card UI and position
+          console.log('place runestone card on', runestonePos)
           self.placeRunestoneCard(runestonePos);
           break;
         case self.narrator.getRunestonePos():
@@ -591,10 +598,11 @@ export default class GameScene extends Phaser.Scene {
   }
 
   private placeRunestoneCard(runestonePos: number) {
-    let yPos = (6100 - (runestonePos * 455)) * scaleFactor + borderWidth
+    if (runestonePos == -1) return;
 
+    let yPos = (6100 - (runestonePos * 455)) * scaleFactor + borderWidth
     // place the runestone card marker on the legend track
-    this.add.image(2450, yPos, 'eventcard').setAlpha(0.5);
+    this.add.image(2450, yPos, 'eventcard').setAlpha(0.7);
     this.narrator.setRunestonePos(runestonePos);
   }
 
@@ -718,7 +726,14 @@ export default class GameScene extends Phaser.Scene {
     if (event.id == 2) {
       //wind accross screen or something like that
     }
-    this.addEventCard(event)
+    // TODO EVENTS: trigger any UI additions
+    WindowManager.create(this, `eventWindow${event.id}`, EventWindow, {
+      x: reducedWidth / 2,
+      y: reducedHeight / 2,
+      id: event.id,
+      flavorText: event.flavorText,
+      descText: event.desc
+    })
   }
 
   private addEventCard(event: EventCard) {
@@ -743,20 +758,16 @@ export default class GameScene extends Phaser.Scene {
     ])
 
     // Determine width of the window based on how many resources are being distributed
-    var width = (res.size + 1) * collabColWidth; // Not sure if there's a better way of getting size of ts obj
+    // Width is always at least 3*collabColWidth
+    var width = res.size > 1 ? (res.size + 1) * collabColWidth : 3 * collabColWidth; // Not sure if there's a better way of getting size of ts obj
     // Determine height of the window based on number of players involved
-    var height = (self.heroes.length + 2) * collabRowHeight;
-
-    // DEPRECATED: Get hero of lowest rank, based on their starting tile
-    // var heroRanks = [];
-    // for (let hero of self.heroes) { heroRanks.push(hero.tile.id); }
-    // self.startingHeroRank = Math.min(...heroRanks);
+    var height = collabHeaderHeight + self.heroes.length * collabRowHeight + collabFooterHeight;
 
     var collabWindowData =
     {
       controller: self.gameinstance,
       isOwner: true,
-      involvedHeroes: self.heroes,
+      involvedHeroes: self.heroes.map(h => h.getKind()),
       resources: res,
       textOptions: null,
       x: reducedWidth / 2 - width / 2,
@@ -766,7 +777,8 @@ export default class GameScene extends Phaser.Scene {
       infight: false,
       overlayRef: self.overlay,
       ownHeroKind: this.ownHeroType,
-      type: 'distribute'
+      type: 'distribute',
+      initialSleep: true
     };
 
     WindowManager.create(this, 'collab', CollabWindow, collabWindowData);
@@ -786,28 +798,33 @@ export default class GameScene extends Phaser.Scene {
       heroSprites.set(h.getKind(), sprite);
       switch (h.getKind()) {
         case HeroKind.Archer:
-          sprite.x = htx - 20 - htShift
+          sprite.x = htx - 20
           sprite.y = hty - 20
           break
         case HeroKind.Dwarf:
-          sprite.x = htx + 20 - htShift
+          sprite.x = htx + 20
           sprite.y = hty - 20
           break
         case HeroKind.Mage:
-          sprite.x = htx - 20 - htShift
+          sprite.x = htx - 20
           sprite.y = hty + 20
           break
         case HeroKind.Warrior:
-          sprite.x = htx + 20 - htShift
+          sprite.x = htx + 20
           sprite.y = hty + 20
           break
+      }
+      if (h.getHour() > 0) {
+        sprite.x += h.getHour()*htShift
+      } else {
+        sprite.x -= htShift
       }
     }
     this.hourTracker = new HourTracker(this, htx, hty, heroSprites);
 
     // we're not actually adding the hourTracker, we're adding it's internal sprite
-    this.hourTracker.depth = 5;
-    this.hourTracker.depth = 0;
+    // this.hourTracker.depth = 5;
+    // this.hourTracker.depth = 0;
     for (var h of this.heroes) {
       h.hourTracker = this.hourTracker;
     }
@@ -824,7 +841,7 @@ export default class GameScene extends Phaser.Scene {
     // Listen for turn to be passed to yourself
     // Deprecated: removed turn logic from frontend
     // this.gameinstance.yourTurn()
-    this.gameinstance.updatePassTurn( heroKind => {
+    this.gameinstance.updatePassTurn(heroKind => {
       self.heroes.forEach((hero: Hero) => {
         if (hero.getKind().toString() === heroKind) {
           hero.hourTracker.incHour(heroKind);
@@ -1007,21 +1024,25 @@ export default class GameScene extends Phaser.Scene {
     this.gameinstance.newCollabListener((eventID, heroes, heroMaxes) => {
       console.log("Received newCollab")
 
+      var involved = false
       var involvedHeroKinds = new Array<HeroKind>()
       for (let hero of heroes) {
         involvedHeroKinds.push(hero.hk)
-      }
-
-      var involved = false
-      var involvedHeroes = new Array<Hero>()
-      for (let hero of self.heroes) {
-        if (involvedHeroKinds.includes(hero.getKind())) {
-          involvedHeroes.push(hero)
-          if (hero.getKind() == self.ownHeroType) {
-            involved = true
-          }
+        if (hero.hk == self.ownHeroType) {
+          involved = true
         }
       }
+
+      // var involved = false
+      // var involvedHeroes = new Array<Hero>()
+      // for (let hero of self.heroes) {
+      //   if (involvedHeroKinds.includes(hero.getKind())) {
+      //     involvedHeroes.push(hero)
+      //     if (hero.getKind() == self.ownHeroType) {
+      //       involved = true
+      //     }
+      //   }
+      // }
 
       if (involved) {
         var allCollabRes = require("../utils/eventCollabResources").map;
@@ -1039,16 +1060,15 @@ export default class GameScene extends Phaser.Scene {
         }
         console.log(res)
 
-        // Determine width of the window based on how many resources are being distributed
-        var width = (res.size + 1) * collabColWidth; // Not sure if there's a better way of getting size of ts obj
+        var width = res.size > 1 ? (res.size + 1) * collabColWidth : 3 * collabColWidth; // Not sure if there's a better way of getting size of ts obj
         // Determine height of the window based on number of players involved
-        var height = (self.heroes.length + 2) * collabRowHeight;
+        var height = collabHeaderHeight + self.heroes.length * collabRowHeight + collabFooterHeight;
 
         var collabWindowData =
         {
           controller: self.gameinstance,
           isOwner: true,
-          involvedHeroes: involvedHeroes,
+          involvedHeroes: involvedHeroKinds,
           resources: res,
           textOptions: null,
           x: reducedWidth / 2 - width / 2,
@@ -1060,7 +1080,8 @@ export default class GameScene extends Phaser.Scene {
           ownHeroKind: this.ownHeroType,
           type: type,
           heroMaxes: heroMaxes,
-          sumNeeded: sumNeeded
+          sumNeeded: sumNeeded,
+          initialSleep: true
         };
 
         WindowManager.create(this, 'collab', CollabWindow, collabWindowData);

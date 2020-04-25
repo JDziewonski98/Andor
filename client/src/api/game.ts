@@ -460,8 +460,8 @@ export class game {
         this.socket.on('recieveBattleInviteResponse', callback)
     }
     
-    public sendCollabApproveToBattleAllies(windowname) {
-        this.socket.emit('battleCollabApprove', windowname)
+    public sendCollabApproveToBattleAllies(windowname, involvedHeros, res) {
+        this.socket.emit('battleCollabApprove', windowname, involvedHeros, res)
     }
 
     public battleRewardsPopup(callback) {

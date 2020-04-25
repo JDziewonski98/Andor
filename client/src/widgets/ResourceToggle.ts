@@ -1,5 +1,3 @@
-import { game } from '../api/game';
-import { Hero } from '../objects/hero'
 export class ResourceToggle {
     private heroKind: string;
     private resourceIndex: number;

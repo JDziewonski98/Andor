@@ -5,6 +5,8 @@ export var map = [
             11, 7, 5, 4, 1, 2, 6
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": -1,
         "hasMerchant": false,
         "xcoord": 1180,
@@ -17,6 +19,8 @@ export var map = [
             0, 2, 3, 4
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 0,
         "hasMerchant": false,
         "xcoord": 1480,
@@ -28,6 +32,8 @@ export var map = [
             0, 1, 3, 14, 6
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 0,
         "hasMerchant": false,
         "xcoord": 1928,
@@ -39,6 +45,8 @@ export var map = [
             1, 2, 14, 10, 19, 20, 4
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 1,
         "hasMerchant": false,
         "xcoord": 1752,
@@ -50,6 +58,8 @@ export var map = [
             0, 1, 3, 20, 21, 5
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 0,
         "hasMerchant": false,
         "xcoord": 904,
@@ -61,6 +71,8 @@ export var map = [
             0, 4, 21
         ],
         "hasWell": true,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 0,
         "hasMerchant": false,
         "xcoord": 528,
@@ -72,6 +84,8 @@ export var map = [
             0, 11, 13, 17, 14, 2
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 0,
         "hasMerchant": false,
         "xcoord": 2805,
@@ -83,6 +97,8 @@ export var map = [
             15, 9, 8, 0, 11
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 0,
         "hasMerchant": false,
         "xcoord": 1243,
@@ -94,6 +110,8 @@ export var map = [
             7, 9, 11
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 7,
         "hasMerchant": false,
         "xcoord": 2010,
@@ -105,6 +123,8 @@ export var map = [
             15, 7, 8
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 7,
         "hasMerchant": false,
         "xcoord": 1500,
@@ -116,6 +136,8 @@ export var map = [
             3, 14, 19, 18
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 3,
         "hasMerchant": false,
         "xcoord": 2000,
@@ -127,6 +149,8 @@ export var map = [
             0, 7, 8, 12, 6, 13
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 0,
         "hasMerchant": false,
         "xcoord": 2464,
@@ -138,6 +162,8 @@ export var map = [
             11, 13
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 11,
         "hasMerchant": false,
         "xcoord": 3080,
@@ -149,6 +175,8 @@ export var map = [
             12, 11, 6, 17, 16
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 6,
         "hasMerchant": false,
         "xcoord": 3740,
@@ -160,6 +188,8 @@ export var map = [
             2, 3, 6, 10, 17, 18
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 2,
         "hasMerchant": false,
         "xcoord": 2486,
@@ -171,6 +201,8 @@ export var map = [
             9, 7
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 7,
         "hasMerchant": false,
         "xcoord": 808,
@@ -182,6 +214,8 @@ export var map = [
             13, 17, 36, 32, 38, 48
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 13,
         "hasMerchant": false,
         "xcoord": 4290,
@@ -193,6 +227,8 @@ export var map = [
             16, 13, 6, 14, 18, 36
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 6,
         "hasMerchant": false,
         "xcoord": 3234,
@@ -204,6 +240,8 @@ export var map = [
             10, 14, 17, 19, 72, 36, 28
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 14,
         "hasMerchant": true,
         "xcoord": 2664,
@@ -215,6 +253,8 @@ export var map = [
             3, 10, 20, 22, 23, 72, 18
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 3,
         "hasMerchant": false,
         "xcoord": 1472,
@@ -226,6 +266,8 @@ export var map = [
             3, 4, 21, 22, 19
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 3,
         "hasMerchant": false,
         "xcoord": 957,
@@ -237,6 +279,8 @@ export var map = [
             4, 5, 20, 22, 24
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 4,
         "hasMerchant": false,
         "xcoord": 319,
@@ -248,6 +292,8 @@ export var map = [
             19, 20, 21, 23, 24
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 19,
         "hasMerchant": false,
         "xcoord": 888,
@@ -259,6 +305,8 @@ export var map = [
             19, 22, 24, 25, 31, 34, 35, 72
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 19,
         "hasMerchant": false,
         "xcoord": 1280,
@@ -270,6 +318,8 @@ export var map = [
             21, 22, 23, 25
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 21,
         "hasMerchant": false,
         "xcoord": 248,
@@ -282,6 +332,8 @@ export var map = [
             23, 24, 31, 27, 26
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 24,
         "hasMerchant": false,
         "xcoord": 296,
@@ -293,6 +345,8 @@ export var map = [
             25, 27
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 25,
         "hasMerchant": false,
         "xcoord": 224,
@@ -304,6 +358,8 @@ export var map = [
             25, 26, 31
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 25,
         "hasMerchant": false,
         "xcoord": 600,
@@ -315,6 +371,8 @@ export var map = [
             36, 38, 18, 29, 72
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 18,
         "hasMerchant": false,
         "xcoord": 3480,
@@ -326,6 +384,8 @@ export var map = [
             28, 72, 34, 30
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 28,
         "hasMerchant": false,
         "xcoord": 2608,
@@ -337,6 +397,8 @@ export var map = [
             29, 34, 33, 35
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 29,
         "hasMerchant": false,
         "xcoord": 2400,
@@ -348,6 +410,8 @@ export var map = [
             27, 25, 23, 35, 33
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 23,
         "hasMerchant": false,
         "xcoord": 1056,
@@ -359,6 +423,8 @@ export var map = [
             16, 38
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 16,
         "hasMerchant": false,
         "xcoord": 4983,
@@ -370,6 +436,8 @@ export var map = [
             30, 35, 31
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 30,
         "hasMerchant": false,
         "xcoord": 1632,
@@ -381,6 +449,8 @@ export var map = [
             72, 23, 35, 30, 29
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 23,
         "hasMerchant": false,
         "xcoord": 1864,
@@ -392,6 +462,8 @@ export var map = [
             34, 23, 31, 33, 30
         ],
         "hasWell": true,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 23,
         "hasMerchant": false,
         "xcoord": 1296,
@@ -403,6 +475,8 @@ export var map = [
             16, 17, 18, 28, 38
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 16,
         "hasMerchant": false,
         "xcoord": 3696,
@@ -414,6 +488,8 @@ export var map = [
             41
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 41,
         "hasMerchant": false,
         "xcoord": 2512,
@@ -425,6 +501,8 @@ export var map = [
             32, 16, 36, 28, 39
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 16,
         "hasMerchant": false,
         "xcoord": 4504,
@@ -436,6 +514,8 @@ export var map = [
             42, 40, 38, 43
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 38,
         "hasMerchant": false,
         "xcoord": 5313,
@@ -447,6 +527,8 @@ export var map = [
             41, 39
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 39,
         "hasMerchant": false,
         "xcoord": 4323,
@@ -458,6 +540,8 @@ export var map = [
             37, 40
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 39,
         "hasMerchant": false,
         "xcoord": 3696,
@@ -469,6 +553,8 @@ export var map = [
             43, 44, 39
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 39,
         "hasMerchant": false,
         "xcoord": 5742,
@@ -480,6 +566,8 @@ export var map = [
             39, 42, 44, 45, 71
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 39,
         "hasMerchant": false,
         "xcoord": 6468,
@@ -491,6 +579,8 @@ export var map = [
             42, 43, 45, 46
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 42,
         "hasMerchant": false,
         "xcoord": 5929,
@@ -502,6 +592,8 @@ export var map = [
             46, 44, 43, 65, 64
         ],
         "hasWell": true,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 43,
         "hasMerchant": false,
         "xcoord": 6960,
@@ -513,6 +605,8 @@ export var map = [
             64, 45, 44, 47
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 44,
         "hasMerchant": false,
         "xcoord": 6006,
@@ -524,6 +618,8 @@ export var map = [
             48, 53, 54, 56, 46
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 46,
         "hasMerchant": false,
         "xcoord": 5907,
@@ -535,6 +631,8 @@ export var map = [
             49, 50, 51, 53, 47, 16
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 16,
         "hasMerchant": false,
         "xcoord": 5335,
@@ -546,6 +644,8 @@ export var map = [
             50, 48
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 48,
         "hasMerchant": false,
         "xcoord": 3927,
@@ -557,6 +657,8 @@ export var map = [
             48, 49, 51, 52
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 48,
         "hasMerchant": false,
         "xcoord": 4730,
@@ -568,6 +670,8 @@ export var map = [
             55, 52, 50, 48, 53
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 48,
         "hasMerchant": false,
         "xcoord": 5600,
@@ -579,6 +683,8 @@ export var map = [
             55, 51, 50
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 50,
         "hasMerchant": false,
         "xcoord": 5232,
@@ -590,6 +696,8 @@ export var map = [
             54, 51, 47, 48, 55
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 47,
         "hasMerchant": false,
         "xcoord": 5920,
@@ -601,6 +709,8 @@ export var map = [
             55, 53, 47, 56, 57
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 47,
         "hasMerchant": false,
         "xcoord": 6523,
@@ -612,6 +722,8 @@ export var map = [
             52, 51, 54, 57, 53
         ],
         "hasWell": true,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 51,
         "hasMerchant": false,
         "xcoord": 6464,
@@ -623,6 +735,8 @@ export var map = [
             47, 54, 57, 63
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 47,
         "hasMerchant": false,
         "xcoord": 6985,
@@ -634,6 +748,8 @@ export var map = [
             55, 54, 56, 63, 58, 59
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 54,
         "hasMerchant": true,
         "xcoord": 7337,
@@ -645,6 +761,8 @@ export var map = [
             62, 60, 59, 57, 63
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 57,
         "hasMerchant": false,
         "xcoord": 8558,
@@ -656,6 +774,8 @@ export var map = [
             60, 58, 57
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 57,
         "hasMerchant": false,
         "xcoord": 8288,
@@ -667,6 +787,8 @@ export var map = [
             58, 59, 62
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 59,
         "hasMerchant": false,
         "xcoord": 8960,
@@ -678,6 +800,8 @@ export var map = [
             62, 58, 63, 64
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 58,
         "hasMerchant": false,
         "xcoord": 8844,
@@ -689,6 +813,8 @@ export var map = [
             60, 58, 61
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 58,
         "hasMerchant": false,
         "xcoord": 9176,
@@ -700,6 +826,8 @@ export var map = [
             61, 58, 57, 56, 64
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 56,
         "hasMerchant": false,
         "xcoord": 7887,
@@ -711,6 +839,8 @@ export var map = [
             63, 61, 65, 45, 46
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 45,
         "hasMerchant": false,
         "xcoord": 7062,
@@ -722,6 +852,8 @@ export var map = [
             64, 45, 66
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 45,
         "hasMerchant": false,
         "xcoord": 7880,
@@ -733,6 +865,8 @@ export var map = [
             65, 67
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 65,
         "hasMerchant": false,
         "xcoord": 8437,
@@ -744,6 +878,8 @@ export var map = [
             66, 68
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 66,
         "hasMerchant": false,
         "xcoord": 8352,
@@ -755,6 +891,8 @@ export var map = [
             69, 67
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 67,
         "hasMerchant": false,
         "xcoord": 8144,
@@ -766,6 +904,8 @@ export var map = [
             70, 68
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 68,
         "hasMerchant": false,
         "xcoord": 7680,
@@ -777,6 +917,8 @@ export var map = [
             81, 69
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 69,
         "hasMerchant": false,
         "xcoord": 7664,
@@ -788,6 +930,8 @@ export var map = [
             43
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 43,
         "hasMerchant": true,
         "xcoord": 7088,
@@ -799,6 +943,8 @@ export var map = [
             18, 19, 23, 34, 29, 28
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 18,
         "hasMerchant": false,
         "xcoord": 2072,
@@ -809,6 +955,8 @@ export var map = [
         "id": 73,
         "adjRegionsIds": [],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": -1,
         "hasMerchant": false
     },
@@ -816,6 +964,8 @@ export var map = [
         "id": 74,
         "adjRegionsIds": [],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": -1,
         "hasMerchant": false
     },
@@ -823,6 +973,8 @@ export var map = [
         "id": 75,
         "adjRegionsIds": [],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": -1,
         "hasMerchant": false
     },
@@ -830,6 +982,8 @@ export var map = [
         "id": 76,
         "adjRegionsIds": [],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": -1,
         "hasMerchant": false
     },
@@ -837,6 +991,8 @@ export var map = [
         "id": 77,
         "adjRegionsIds": [],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": -1,
         "hasMerchant": false
     },
@@ -844,6 +1000,8 @@ export var map = [
         "id": 78,
         "adjRegionsIds": [],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": -1,
         "hasMerchant": false
     },
@@ -851,6 +1009,8 @@ export var map = [
         "id": 79,
         "adjRegionsIds": [],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": -1,
         "hasMerchant": false
     },
@@ -859,6 +1019,8 @@ export var map = [
         "id": 80,
         "adjRegionsIds": [],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": -1,
         "hasMerchant": false
     },
@@ -868,6 +1030,8 @@ export var map = [
             70, 82
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 70,
         "hasMerchant": false,
         "xcoord": 7672,
@@ -879,6 +1043,8 @@ export var map = [
             84, 81
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 81,
         "hasMerchant": false,
         "xcoord": 7008,
@@ -889,6 +1055,8 @@ export var map = [
         "id": 83,
         "adjRegionsIds": [],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": -1,
         "hasMerchant": false
     },
@@ -898,6 +1066,8 @@ export var map = [
             82
         ],
         "hasWell": false,
+        "wellUsed": false,
+        "gold": 0,
         "nextRegionId": 82,
         "hasMerchant": false,
         "xcoord": 6568,

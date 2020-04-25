@@ -14,7 +14,7 @@ export class Hero extends Phaser.GameObjects.Sprite {
     // private gold: number;
     private heroKind: HeroKind
 
-    constructor(scene, tile: Tile, texture: string, kind: HeroKind) {
+    constructor(scene, tile: Tile, texture: string, kind: HeroKind, hour: number) {
         super(scene, tile.x, tile.y, texture);
         // this.farmers = new Array();
         switch (kind) {
@@ -33,7 +33,7 @@ export class Hero extends Phaser.GameObjects.Sprite {
         }
         this.tile = tile;
         this.hourTracker = null;
-        this.hour = 1;
+        this.hour = hour;
         this.heroKind = kind;
         this.initializeResources();
     }
