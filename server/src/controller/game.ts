@@ -497,7 +497,7 @@ export function game(socket, model: Game, io) {
         // TODO WELL: update hero windows
 
         // Update game log
-        var msg = `${hero.getKind()} drank from a well.`
+        var msg = `The ${hero.getKind()} drank from a well.`
         socket.emit("updateGameLog", msg);
         socket.broadcast.emit("updateGameLog", msg);
         // End turn

@@ -273,16 +273,16 @@ export default class GameScene extends Phaser.Scene {
         // coordinates taken from previous version, adding wells to allocated wells positions
         switch (t.id) {
           case 5:
-            this.addWell(209, 2244, t.id as number);
+            this.addWell(209, 2244, t.id as number, t.wellUsed);
             break;
           case 35:
-            this.addWell(1353, 4873, t.id as number);
+            this.addWell(1353, 4873, t.id as number, t.wellUsed);
             break;
           case 45:
-            this.addWell(7073, 3333, t.id as number);
+            this.addWell(7073, 3333, t.id as number, t.wellUsed);
             break;
           case 55:
-            this.addWell(5962, 770, t.id as number);
+            this.addWell(5962, 770, t.id as number, t.wellUsed);
             break;
         }
 
@@ -500,10 +500,10 @@ export default class GameScene extends Phaser.Scene {
     }
   }
 
-  private addWell(x, y, tileNumber: number) {
+  private addWell(x, y, tileNumber: number, used: boolean) {
     const tile: Tile = this.tiles[tileNumber];
     const newWell = new Well(this, x * scaleFactor + borderWidth,
-      y * scaleFactor + borderWidth, "well", tile, this.gameinstance).setDisplaySize(48, 54);
+      y * scaleFactor + borderWidth, "well", tile, this.gameinstance, used).setDisplaySize(48, 54);
     this.add.existing(newWell);
     this.wells.set("" + newWell.getTileID(), newWell);
   }

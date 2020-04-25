@@ -24,11 +24,12 @@ export class Region {
 
     private items: Map<string, number> = new Map();
     
-    constructor(id: number, x: number, y: number, gold:number, nextRegion: number, adjRegions: Array<number>, hasWell: boolean = false, hasMerchant: boolean = false) {
+    constructor(id: number, x: number, y: number, gold:number, nextRegion: number, adjRegions: Array<number>, hasWell: boolean = false, wellUsed: boolean = false, hasMerchant: boolean = false) {
         this.xcoord = x;
         this.ycoord = y;
         this.id = id;
         this.hasWell = hasWell;
+        this.wellUsed = wellUsed;
         this.hasMerchant = hasMerchant;
         this.nextRegionId = nextRegion;
         this.adjRegionsIds = adjRegions;
