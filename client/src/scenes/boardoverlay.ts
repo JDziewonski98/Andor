@@ -234,14 +234,15 @@ export default class BoardOverlay extends Phaser.Scene {
       
         // Listen for updates to log from server
         this.gameinstance.updateGameLog(function(update: string) {
+            console.log("game log update:", update, "||")
             self.updateContent(panel, update);
         })
 
         // TODO: REMOVE LATER, FOR TESTING NARRATOR ONLY
-        // var advance = this.add.text(400, 560, "ADVANCE NARRATOR", style2).setInteractive()
-        // advance.on('pointerdown', function (pointer) {
-        //     this.gameinstance.advanceNarrator();
-        // }, this)
+        var advance = this.add.text(400, 560, "ADVANCE NARRATOR", style2).setInteractive()
+        advance.on('pointerdown', function (pointer) {
+            this.gameinstance.advanceNarrator();
+        }, this)
 
 
         this.gameinstance.getHeros((heros) => {

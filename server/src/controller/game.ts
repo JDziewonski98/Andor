@@ -1,4 +1,4 @@
-import { Game, HeroKind, Region, Hero, Monster, Fog, MonsterKind, Farmer } from '../model';
+import { Game, HeroKind, Region, Hero, Monster, Fog, MonsterKind, Farmer, enumPositionOfNarrator } from '../model';
 import { SmallItem } from '../model/SmallItem';
 import { LargeItem } from '../model/LargeItem';
 
@@ -285,6 +285,10 @@ export function game(socket, model: Game, io) {
       socket.emit("destroyFarmer", tileID);
       socket.broadcast.emit("destroyFarmer", tileID);
     }
+    if (numKilled > 0) {
+      let msg = `The farmers on region ${tileID} were killed by a monster.`
+      io.of("/" + model.getName()).emit('updateGameLog', msg);
+    }
   }
 
   function killFarmersOfHeroes(tileID: number, hero: Hero | null) {
@@ -293,6 +297,8 @@ export function game(socket, model: Game, io) {
       console.log("killed farmers of", hk);
       socket.emit("killHeroFarmers", hk);
       socket.broadcast.emit("killHeroFarmers", hk);
+      let msg = `The farmers being guided by the ${hk} were killed by a monster.`
+      io.of("/" + model.getName()).emit('updateGameLog', msg);
     })
   }
 
@@ -310,6 +316,13 @@ export function game(socket, model: Game, io) {
     // console.log('server emits runestonePos', runestonePos)
     socket.emit("updateNarrator", narratorPos, runestonePos)
     socket.broadcast.emit("updateNarrator", narratorPos, runestonePos)
+
+    // TODO acui: issue with this not being received by client, I suspect because overlay isn't fully
+    // initialized at this point.
+    // let narratorLetter = enumPositionOfNarrator[(runestonePos)];
+    // let msg = `The rune stone legend card has been placed on space ${narratorLetter} of the Legend Track.`
+    // console.log(msg);
+    // io.of("/" + model.getName()).emit('updateGameLog', msg);
   })
 
   // TODO: FOR TESTING ONLY, REMOVE AFTER
@@ -333,6 +346,10 @@ export function game(socket, model: Game, io) {
         socket.emit("addMonster", m.getType(), m.getTileID(), m.getName());
         socket.broadcast.emit("addMonster", m.getType(), m.getTileID(), m.getName());
       }
+      if (narratorPos == 2) {
+        let msg = `The stronghold has been found on region ${newMonsters[0].getTileID()}.`
+        io.of("/" + model.getName()).emit('updateGameLog', msg);
+      }
     }
     // Update shields
     var shieldsRemaining = model.getCastle().getShields();
@@ -354,6 +371,9 @@ export function game(socket, model: Game, io) {
       // Emit the tile locations of the runestones to all clients
       socket.emit("updateNarrator", narratorPos, -1, tileIDs)
       socket.broadcast.emit("updateNarrator", narratorPos, -1, tileIDs)
+      // Update game log
+      let msg = `The locations of the rune stones have been discovered: ${tileIDs}`
+      io.of("/" + model.getName()).emit('updateGameLog', msg);
     }
     else if (narratorPos === 13) {
       console.log("narrator controller at N")
@@ -575,6 +595,8 @@ export function game(socket, model: Game, io) {
           // Inform clients of position of witch
           socket.broadcast.emit("revealWitch", tile);
           socket.emit("revealWitch", tile);
+          let msg = `The Gor carrying the medicinal herb has appeared on region ${newTile}.`
+          io.of("/" + model.getName()).emit('updateGameLog', msg);
         } else if (fogType === Fog.EventCard) {
           if (event != null) {
             if(event.id != 16){

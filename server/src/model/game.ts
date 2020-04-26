@@ -300,14 +300,14 @@ export class Game {
         let heroes: HeroKind[] = [];
         let tile = this.regions[tileID];
         if (hero != null) { // check is for a specific hero moving to new space
-            if (tile.getMonster() != null) {
+            if (tile.getMonster() != null && hero.getFarmers().length > 0) {
                 hero.removeAllFarmers();
                 heroes.push(hero.getKind());
             }
         } else { // check is for all heroes on tile that a monster is now on
             if (tile.getMonster() != null) {
                 this.heroList.forEach(hero => {
-                    if (hero.getRegion() === tile) {
+                    if (hero.getRegion() === tile && hero.getFarmers().length > 0) {
                         hero.removeAllFarmers();
                         heroes.push(hero.getKind());
                     }
