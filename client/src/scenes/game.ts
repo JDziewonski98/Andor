@@ -794,7 +794,8 @@ export default class GameScene extends Phaser.Scene {
       overlayRef: self.overlay,
       ownHeroKind: this.ownHeroType,
       type: 'distribute',
-      initialSleep: true
+      initialSleep: true,
+      eventID: 0
     };
 
     WindowManager.create(this, 'collab', CollabWindow, collabWindowData);
@@ -981,6 +982,7 @@ export default class GameScene extends Phaser.Scene {
 
     // FARMERS
     this.gameinstance.destroyFarmer(function (tileid) {
+      console.log("Entered destroyfarmer listener")
       let pickedFarmer: Farmer = self.tiles[tileid].farmers.pop();
       pickedFarmer.destroy()
     });
@@ -1098,7 +1100,8 @@ export default class GameScene extends Phaser.Scene {
           type: type,
           heroMaxes: heroMaxes,
           sumNeeded: sumNeeded,
-          initialSleep: true
+          initialSleep: true,
+          eventID: eventID,
         };
 
         WindowManager.create(this, 'collab', CollabWindow, collabWindowData);
