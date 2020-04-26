@@ -1171,7 +1171,7 @@ export class Game {
             this.activeEvents.push(event.id)
         }
         else if(event.id == 20){
-            //do nothing
+            //handled on server controller
         }
         else if(event.id == 21){
             var count = 0

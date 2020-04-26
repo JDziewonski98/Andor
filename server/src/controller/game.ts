@@ -577,7 +577,10 @@ export function game(socket, model: Game, io) {
           socket.emit("revealWitch", tile);
         } else if (fogType === Fog.EventCard) {
           if (event != null) {
-            io.of("/" + model.getName()).emit("newEvent", event);
+            if(event.id != 16){
+              io.of("/" + model.getName()).emit("newEvent", event);
+            }
+           
 
             //these will be blockable
             if(event.id ==  2 || event.id ==  5 || event.id ==  7 || event.id ==  9 || event.id == 11 || event.id == 15 || event.id == 17 || event.id == 18 || 
@@ -828,6 +831,22 @@ export function game(socket, model: Game, io) {
                     io.of("/" + model.getName()).emit('newCollab', event.id, elligibleHeroes);
                   }
                 }
+              }
+              else if(event.id == 16){
+                let highestHeroRank = Number.MIN_VALUE
+                let highestHero
+                for(let [conn,hero] of model.getHeros()){
+                 if(hero.getRank() > highestHeroRank){
+                   highestHeroRank = hero.getRank()
+                   highestHero = hero
+                 }
+                }
+                let elligibleHeroes = new Array<Hero>()
+                elligibleHeroes.push(highestHero)
+                let newEvent = model.getEventDeck()[0]
+                io.of("/" + model.getName()).emit("newEvent", newEvent);
+                io.of("/" + model.getName()).emit("newEvent", event);
+                io.of("/" + model.getName()).emit('newCollab', event.id, elligibleHeroes);
               }
               else if(event.id == 23){
                 let elligibleHeroes = new Array<Hero>()
@@ -1312,6 +1331,11 @@ export function game(socket, model: Game, io) {
             let currGold = currHero?.getGold()
             currHero?.setGold(currGold - resAllocated[heroTypeString][i])
           }
+          else if(resNames[i] == "Keep"){
+            if(resAllocated[heroTypeString][i] == 1){
+              model.setBlockedEvent(true)
+            }
+          }
         }
         
         
@@ -1319,12 +1343,26 @@ export function game(socket, model: Game, io) {
         // console.log("Updated", heroTypeString, "gold:", currHero?.getGold(), "wineskin:", currHero?.getWineskin())
       }
     }
-    console.log(eventID, eventID == 20, model.getBlockedEvent())
-    if(eventID == 20 && !model.getBlockedEvent()){
-      let index = Math.floor(Math.random() * model.getFarmers().length)
-      let tileID = model.getFarmers()[index].getTileID()
-      io.of("/" + model.getName()).emit("destroyFarmer", tileID);
-      model.getFarmers().splice(index, 1)
+    if(eventID == 16){
+      if(model.getBlockedEvent()){
+        model.setBlockedEvent(false)
+      }
+      else{
+        //removes card they saw from deck
+        model.drawCard()
+      }
+    }
+    //console.log(eventID, eventID == 20, model.getBlockedEvent())
+    if(eventID == 20){
+      if(model.getBlockedEvent()){
+        model.setBlockedEvent(false)
+      }
+      else{
+        let index = Math.floor(Math.random() * model.getFarmers().length)
+        let tileID = model.getFarmers()[index].getTileID()
+        io.of("/" + model.getName()).emit("destroyFarmer", tileID);
+        model.getFarmers().splice(index, 1)
+      }
     }
     if(moveLowMonster && event18){
       let minID = 100

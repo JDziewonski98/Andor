@@ -71,11 +71,16 @@ export var map = [
     //     "flavorText": "Rampaging creatures despoil the well in the south of Andor.", 
     //     "desc": "The well token on space 35 is removed from the game."
     // },
-    // {
-    //     "id": 17, 
-    //     "flavorText": "Heavy weather moves across the land.", 
-    //     "desc": "Each hero with more than 12 willpower points immediately reduces his point total to 12."
-    // },
+    {
+        "id": 16, 
+        "flavorText": "Royal falcons fly high above the land, keeping watch.", 
+        "desc": "The hero with the highest rank is allowed to take a look at the top card on the event card deck. Then he gets to decide whether to remove the card from the game or place it back on the deck."
+    },
+    {
+        "id": 17, 
+        "flavorText": "Heavy weather moves across the land.", 
+        "desc": "Each hero with more than 12 willpower points immediately reduces his point total to 12."
+    },
     // {
     //     "id": 18, 
     //     "flavorText": "A wild gor storms forth.", 
@@ -86,16 +91,16 @@ export var map = [
     //     "flavorText": "An exhausting day", 
     //     "desc": "On this day, the 9th and 10th hours will each cost 3 willpower points instead of 2. Place this card above the overtime area of the time track. At the end of the day, it is removed from the game."
     // // },
-    {
-        "id": 20, 
-        "flavorText": "A farmer falls ill", 
-        "desc": "One farmer token on the game board that has not yet been taken to the castle must be removed from the game. The group can prevent that by paying gold and/or willpower points: \nFor 2 heroes, 2 gold/willpower points \nFor 3 heroes, 3 gold/willpower points. \nFor 4 heroes, 4 gold/willpower points"
-    },
     // {
-    //     "id": 21, 
-    //     "flavorText": "A mysterious terror lurks in the southern woods.", 
-    //     "desc": "A hero who enters space 22, 23, 24, or 25 or is already standing there will immediately lose 4 willpower points. If more than one hero is standing there, the one with the highest rank loses the points. Place this card next to space 24 until it is triggered. Then it is removed from the game. "
+    //     "id": 20, 
+    //     "flavorText": "A farmer falls ill", 
+    //     "desc": "One farmer token on the game board that has not yet been taken to the castle must be removed from the game. The group can prevent that by paying gold and/or willpower points: \nFor 2 heroes, 2 gold/willpower points \nFor 3 heroes, 3 gold/willpower points. \nFor 4 heroes, 4 gold/willpower points"
     // },
+    {
+        "id": 21, 
+        "flavorText": "A mysterious terror lurks in the southern woods.", 
+        "desc": "A hero who enters space 22, 23, 24, or 25 or is already standing there will immediately lose 4 willpower points. If more than one hero is standing there, the one with the highest rank loses the points. Place this card next to space 24 until it is triggered. Then it is removed from the game. "
+    },
     // {
     //     "id": 22, 
     //     "flavorText": "Rampaging creatures despoil the well at the foot of the mountains.", 

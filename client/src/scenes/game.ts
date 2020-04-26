@@ -48,7 +48,7 @@ export default class GameScene extends Phaser.Scene {
   private event: EventCard
   private activeEvents: Array<EventCard>
   private mockText;
-
+  private eventBeingDisplayed
   private cameraKeys;
   private cameraScrollSpeed = 15;
   private minZoom = 0.4;
@@ -62,7 +62,6 @@ export default class GameScene extends Phaser.Scene {
 
   private shiftKey;
   private ctrlKey;
-
   constructor() {
     super({ key: 'Game' });
     this.heroes = Array<Hero>();
@@ -73,6 +72,7 @@ export default class GameScene extends Phaser.Scene {
     this.monsters = new Array<Monster>();
     this.monsterNameMap = new Map();
     this.castle = new RietburgCastle();
+    this.eventBeingDisplayed = false
   }
 
   public init(data) {
@@ -738,20 +738,35 @@ export default class GameScene extends Phaser.Scene {
 
   //for specific events which need to apply a unique ui effect, or something of that nature
   private applyEvent(event: EventCard) {
+    var self = this
     console.log("Applying event")
     if (event.id == 2) {
       //wind accross screen or something like that
     }
     // TODO EVENTS: trigger any UI additions
-    WindowManager.create(this, `eventWindow${event.id}`, EventWindow, {
-      x: reducedWidth / 2,
-      y: reducedHeight / 2,
-      id: event.id,
-      flavorText: event.flavorText,
-      descText: event.desc
-    })
+    console.log(this.eventBeingDisplayed)
+    if(this.eventBeingDisplayed){
+      // while(this.eventBeingDisplayed){
+      //   //do nothing
+      //   setTimeout(function(){ }, 2000);
+      // }
+    }
+    console.log("created eventWindow")
+      WindowManager.create(this, `eventWindow${event.id}`, EventWindow, {
+        x: reducedWidth / 2,
+        y: reducedHeight / 2,
+        id: event.id,
+        flavorText: event.flavorText,
+        descText: event.desc,
+      },)
+      this.eventBeingDisplayed = true 
   }
-
+  private setEventBeingDisplayed(b){
+    this.eventBeingDisplayed = b
+  }
+  private getEventBeingDisplayed(){
+    return this.eventBeingDisplayed
+  }
   private addEventCard(event: EventCard) {
     var newEvent = new EventCard(this, event.id, event.flavorText, event.desc)
 

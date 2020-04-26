@@ -24,6 +24,12 @@ export var map = [
     "type": "allOrNothing"
   },
   {
+    "id": 16,
+    "list": [["Keep", 1],],
+    "partySize": 0,
+    "type": "allOrNothing",
+  },
+  {
     "id": 18,
     "list": [["Will  ", 2],],
     "partySize": 2,
