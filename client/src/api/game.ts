@@ -374,6 +374,17 @@ export class game {
         this.socket.off('receiveEndCollab')
 
     }
+
+
+    ////
+    //Removing wells from game
+    public removeWell(callback){
+        this.socket.on('removeWell', callback)
+    }
+
+
+
+
     /////////////////////////////
 
     /*

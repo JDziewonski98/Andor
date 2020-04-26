@@ -655,6 +655,10 @@ export function game(socket, model: Game, io) {
                         hero.setWill(-1*roll)
                       }
                     }
+                    else if(event.id == 15){
+                      io.of("/" + model.getName()).emit('removeWell', "35");
+                      model.applyEvent(event)
+                    }
                     else if(event.id == 18){
                       //check which heros have willpower to lose. 
                       let elligibleHeroes = Array<Hero>()
@@ -709,6 +713,10 @@ export function game(socket, model: Game, io) {
                           elligibleHeroes.push(hero)
                         }
                       }
+                      model.applyEvent(event)
+                    }
+                    else if(event.id == 22){
+                      io.of("/" + model.getName()).emit('removeWell', "45");
                       model.applyEvent(event)
                     }
                     else if(event.id == 27){
@@ -1351,6 +1359,7 @@ export function game(socket, model: Game, io) {
       io.of("/" + model.getName()).emit('sendUpdatedMonsters', convMonsters);
       io.of("/" + model.getName()).emit('updateShields', shieldsLeft);
     }
+    model.initialCollabDone = true
     io.of("/" + model.getName()).emit('receiveEndCollab', involvedHeroKinds);
   })
   // increasing/decreasing resources

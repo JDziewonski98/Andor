@@ -524,14 +524,11 @@ export class CollabWindow extends Window {
                     //do nothing
                 }
                 else{
+                    //reset accepts, decrement, emit
+                    this.resetAccepts();
                     rt.decFunction()
                     this.gameinstance.sendDecResource(heroKind,resourceIndex)
                 }
-                //console.log(rt)
-                // Reset hero accepts
-                this.resetAccepts();
-                rt.decFunction()
-                this.gameinstance.sendDecResource(heroKind,resourceIndex)
             }        
         }
     }

@@ -66,11 +66,11 @@ export var map = [
     //     "flavorText": "A fragment of a very old sculpture has been found. Not all of the heroes are able to appreciate that kind of handiwork.", 
     //     "desc": "The dwarf and the warrior immediately get 3 willpower points each."
     // },
-    // {
-    //     "id": 15, 
-    //     "flavorText": "Rampaging creatures despoil the well in the south of Andor.", 
-    //     "desc": "The well token on space 35 is removed from the game."
-    // },
+    {
+        "id": 15, 
+        "flavorText": "Rampaging creatures despoil the well in the south of Andor.", 
+        "desc": "The well token on space 35 is removed from the game."
+    },
     // {
     //     "id": 17, 
     //     "flavorText": "Heavy weather moves across the land.", 
@@ -121,11 +121,11 @@ export var map = [
     //     "flavorText": "On this day, the 8th hour costs no willpower points.", 
     //     "desc": "Place this card above the overtime area of the time track. At the end of the day, it is removed from the game."
     // },
-    {
-        "id": 27, 
-        "flavorText": "The creatures are possessed with blind fury.", 
-        "desc": "The creature standing on the space with the highest number will now move one space along the arrow. The group can prevent that by paying gold and/or willpower points:\nFor 2 heroes, 2 gold/willpower points\nFor 3 heroes, 3 gold/willpower points\nFor 4 heroes, 4 gold/willpower points"
-    },
+    // {
+    //     "id": 27, 
+    //     "flavorText": "The creatures are possessed with blind fury.", 
+    //     "desc": "The creature standing on the space with the highest number will now move one space along the arrow. The group can prevent that by paying gold and/or willpower points:\nFor 2 heroes, 2 gold/willpower points\nFor 3 heroes, 3 gold/willpower points\nFor 4 heroes, 4 gold/willpower points"
+    // },
     // {
     //     "id": 28,
     //     "flavorText": "A beautifully clear, starry night gives the heroes confidence.", 
