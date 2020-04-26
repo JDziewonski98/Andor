@@ -72,6 +72,9 @@ export class StoryWindow extends Window {
 
         // Animate the "scene" in. Can't target the scene but can add everything to a container
         let storyContainer = this.add.container(0, 0, [bg, storyText, this.okButton]);
+        if (extraText) {
+            storyContainer.add(extraText);
+        }
         storyContainer.alpha = 0;
         this.tweens.add({
             targets: storyContainer,
