@@ -44,6 +44,7 @@ export class CollabWindow extends Window {
     private resourceToggles: Array<ResourceToggle>
     private heroMaxes
     private sumNeeded: number
+    private eventID
     public constructor(key: string, data, incFunction) {
         super(key, {x: data.x, y: data.y, width: data.w, height: data.h});
 
@@ -70,7 +71,7 @@ export class CollabWindow extends Window {
         //console.log(this.heroMaxes)
         this.sumNeeded = data.sumNeeded
         this.initialSleep = data.initialSleep
-
+        this.eventID = data.eventID
         //console.log(this.involvedHeroes)
     }
 
@@ -280,7 +281,7 @@ export class CollabWindow extends Window {
                         for(let hk of self.involvedHeroes){
                             involvedHeroKinds.push(hk)
                         }
-                        self.gameinstance.sendEndCollab(convMap, self.resourceNames, involvedHeroKinds)
+                        self.gameinstance.sendEndCollab(convMap, self.resourceNames, involvedHeroKinds, self.eventID)
                     }
                     //self.gameinstance.collabDecisionSubmit(convMap, self.resourceNames, self.involvedHeroes);
                     //
@@ -524,14 +525,11 @@ export class CollabWindow extends Window {
                     //do nothing
                 }
                 else{
+                    //reset accepts, decrement, emit
+                    this.resetAccepts();
                     rt.decFunction()
                     this.gameinstance.sendDecResource(heroKind,resourceIndex)
                 }
-                //console.log(rt)
-                // Reset hero accepts
-                this.resetAccepts();
-                rt.decFunction()
-                this.gameinstance.sendDecResource(heroKind,resourceIndex)
             }        
         }
     }

@@ -18,6 +18,7 @@ export class EventWindow extends Window {
         this.x = data.x - this.w/2;
         this.flavorText = data.flavorText;
         this.descText = data.descText;
+        
     }
 
     protected initialize() {
@@ -56,11 +57,17 @@ export class EventWindow extends Window {
         this.okButton = this.add.image(this.w - 35, bg.displayHeight - 35, 'okay');
         this.okButton.setInteractive().setDisplaySize(30, 30).setOrigin(0);
         this.okButton.on('pointerdown', function (pointer) {
-            if (this.scene.get('collab')) {
+            if(this.id == 16){
+                this.scene.remove(this.key)
+            }
+            else if (this.scene.get('collab')) {
                 this.scene.bringToTop('collab')
                 this.scene.wake('collab')
+                this.scene.remove(this.key)
             }
-            this.scene.remove(this.key)
+            else{
+                this.scene.remove(this.key)
+            }
         }, this);
 
         // Animate the "scene" in. Can't target the scene but can add everything to a container

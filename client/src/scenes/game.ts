@@ -1,4 +1,4 @@
-import { Farmer, Hero, HourTracker, Monster, HeroKind, Well, Tile, Narrator, EventCard } from '../objects';
+import { Farmer, Hero, HourTracker, Monster, HeroKind, BrokenWell, Well, Tile, Narrator, EventCard } from '../objects';
 import { game } from '../api';
 import {
   WindowManager, StoryWindow, CollabWindow, MerchantWindow, DeathWindow, Fight, EventWindow,
@@ -48,7 +48,7 @@ export default class GameScene extends Phaser.Scene {
   private event: EventCard
   private activeEvents: Array<EventCard>
   private mockText;
-
+  private eventBeingDisplayed
   private cameraKeys;
   private cameraScrollSpeed = 15;
   private minZoom = 0.4;
@@ -62,7 +62,6 @@ export default class GameScene extends Phaser.Scene {
 
   private shiftKey;
   private ctrlKey;
-
   constructor() {
     super({ key: 'Game' });
     this.heroes = Array<Hero>();
@@ -73,6 +72,7 @@ export default class GameScene extends Phaser.Scene {
     this.monsters = new Array<Monster>();
     this.monsterNameMap = new Map();
     this.castle = new RietburgCastle();
+    this.eventBeingDisplayed = false
   }
 
   public init(data) {
@@ -88,7 +88,8 @@ export default class GameScene extends Phaser.Scene {
     this.load.image("wardrak", "../assets/all-creatures/wardrak.PNG")
     this.load.image("fortress", "../assets/all-creatures/fortress.png")
 
-    this.load.image("well", "../assets/board-minor/well.png");
+    this.load.image("functional_well", "../assets/board-minor/functional_well.png");
+    this.load.image("broken_well", "../assets/board-minor/broken_well.png");
     this.load.image("merchant-trade", "../assets/board-minor/merchant-trade.png");
     this.load.image("farmer", "../assets/board-minor/farmer.png");
     this.load.image("witch", "../assets/board-minor/witch.png");
@@ -269,23 +270,31 @@ export default class GameScene extends Phaser.Scene {
       tile.setInteractive();
       this.add.existing(tile);
 
-      if (t.hasWell) {
+      
         // coordinates taken from previous version, adding wells to allocated wells positions
-        switch (t.id) {
-          case 5:
-            this.addWell(209, 2244, t.id as number, t.wellUsed);
-            break;
-          case 35:
-            this.addWell(1353, 4873, t.id as number, t.wellUsed);
-            break;
-          case 45:
-            this.addWell(7073, 3333, t.id as number, t.wellUsed);
-            break;
-          case 55:
-            this.addWell(5962, 770, t.id as number, t.wellUsed);
-            break;
-        }
-
+      switch (t.id) {
+        case 5:
+          this.addFunctionalWell(209, 2244, t.id as number, t.wellUsed);
+          break;
+        case 35:
+          if(t.hasWell){
+            this.addFunctionalWell(1353, 4873, t.id as number, t.wellUsed);
+          }
+          else{
+            this.addBrokenWell(1353, 4873, t.id as number);
+          }
+          break;
+        case 45:
+          if(t.hasWell){
+            this.addFunctionalWell(7073, 3333, t.id as number, t.wellUsed);
+          }
+          else{
+            this.addBrokenWell(7073, 3333, t.id as number);
+          }
+          break;
+        case 55:
+          this.addFunctionalWell(5962, 770, t.id as number, t.wellUsed);
+          break;
         // this approach adds well on top of the trees
         // this.addWell(t.x, t.y, t.id as number);
       }
@@ -500,12 +509,19 @@ export default class GameScene extends Phaser.Scene {
     }
   }
 
-  private addWell(x, y, tileNumber: number, used: boolean) {
+  private addFunctionalWell(x, y, tileNumber: number, used: boolean) {
     const tile: Tile = this.tiles[tileNumber];
     const newWell = new Well(this, x * scaleFactor + borderWidth,
-      y * scaleFactor + borderWidth, "well", tile, this.gameinstance, used).setDisplaySize(48, 54);
+      y * scaleFactor + borderWidth, "functional_well", tile, this.gameinstance, used).setDisplaySize(48, 54);
     this.add.existing(newWell);
     this.wells.set("" + newWell.getTileID(), newWell);
+  }
+  private addBrokenWell(x, y, tileNumber: number) {
+    const tile: Tile = this.tiles[tileNumber];
+    const newWell = new BrokenWell(this, x * scaleFactor + borderWidth,
+      y * scaleFactor + borderWidth, "broken_well", tile, this.gameinstance).setDisplaySize(48, 54);
+    this.add.existing(newWell);
+    //this.wells.set("" + newWell.getTileID(), newWell);
   }
 
   private addMerchant(x, y, tileNumber: number) {
@@ -722,20 +738,35 @@ export default class GameScene extends Phaser.Scene {
 
   //for specific events which need to apply a unique ui effect, or something of that nature
   private applyEvent(event: EventCard) {
+    var self = this
     console.log("Applying event")
     if (event.id == 2) {
       //wind accross screen or something like that
     }
     // TODO EVENTS: trigger any UI additions
-    WindowManager.create(this, `eventWindow${event.id}`, EventWindow, {
-      x: reducedWidth / 2,
-      y: reducedHeight / 2,
-      id: event.id,
-      flavorText: event.flavorText,
-      descText: event.desc
-    })
+    console.log(this.eventBeingDisplayed)
+    if(this.eventBeingDisplayed){
+      // while(this.eventBeingDisplayed){
+      //   //do nothing
+      //   setTimeout(function(){ }, 2000);
+      // }
+    }
+    console.log("created eventWindow")
+      WindowManager.create(this, `eventWindow${event.id}`, EventWindow, {
+        x: reducedWidth / 2,
+        y: reducedHeight / 2,
+        id: event.id,
+        flavorText: event.flavorText,
+        descText: event.desc,
+      },)
+      this.eventBeingDisplayed = true 
   }
-
+  private setEventBeingDisplayed(b){
+    this.eventBeingDisplayed = b
+  }
+  private getEventBeingDisplayed(){
+    return this.eventBeingDisplayed
+  }
   private addEventCard(event: EventCard) {
     var newEvent = new EventCard(this, event.id, event.flavorText, event.desc)
 
@@ -778,7 +809,8 @@ export default class GameScene extends Phaser.Scene {
       overlayRef: self.overlay,
       ownHeroKind: this.ownHeroType,
       type: 'distribute',
-      initialSleep: true
+      initialSleep: true,
+      eventID: 0
     };
 
     WindowManager.create(this, 'collab', CollabWindow, collabWindowData);
@@ -965,6 +997,7 @@ export default class GameScene extends Phaser.Scene {
 
     // FARMERS
     this.gameinstance.destroyFarmer(function (tileid) {
+      console.log("Entered destroyfarmer listener")
       let pickedFarmer: Farmer = self.tiles[tileid].farmers.pop();
       pickedFarmer.destroy()
     });
@@ -1016,6 +1049,18 @@ export default class GameScene extends Phaser.Scene {
       this.scene.pause();
     })
 
+    //Destorying Well
+    this.gameinstance.removeWell(function (tileID){
+      let well: Well = self.wells.get(tileID)
+      well.destroy()
+      self.wells.delete(tileID)
+      if(tileID == '35'){
+        self.addBrokenWell(1353, 4873, tileID as number);
+      }
+      else if(tileID == '45'){
+        self.addBrokenWell(7073, 3333, tileID as number);
+      }
+    })
 
     //EVENTS
     this.gameinstance.newEventListener((event: EventCard) => {
@@ -1032,17 +1077,6 @@ export default class GameScene extends Phaser.Scene {
           involved = true
         }
       }
-
-      // var involved = false
-      // var involvedHeroes = new Array<Hero>()
-      // for (let hero of self.heroes) {
-      //   if (involvedHeroKinds.includes(hero.getKind())) {
-      //     involvedHeroes.push(hero)
-      //     if (hero.getKind() == self.ownHeroType) {
-      //       involved = true
-      //     }
-      //   }
-      // }
 
       if (involved) {
         var allCollabRes = require("../utils/eventCollabResources").map;
@@ -1081,7 +1115,8 @@ export default class GameScene extends Phaser.Scene {
           type: type,
           heroMaxes: heroMaxes,
           sumNeeded: sumNeeded,
-          initialSleep: true
+          initialSleep: true,
+          eventID: eventID,
         };
 
         WindowManager.create(this, 'collab', CollabWindow, collabWindowData);

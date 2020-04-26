@@ -24,6 +24,12 @@ export var map = [
     "type": "allOrNothing"
   },
   {
+    "id": 16,
+    "list": [["Keep", 1],],
+    "partySize": 0,
+    "type": "allOrNothing",
+  },
+  {
     "id": 18,
     "list": [["Will  ", 2],],
     "partySize": 2,
@@ -42,6 +48,27 @@ export var map = [
     "type": "optionalDistribution",
   },
   {
+    "id": 20,
+    "list": [["Gold", 2],[" Will ",2]],
+    "partySize": 2,
+    "type": "optionalDistribution",
+    "sumNeeded": 2
+  },
+  {
+    "id": 20,
+    "list": [["Gold", 3],[" Will ",3]],
+    "partySize": 3,
+    "type": "optionalDistribution",
+    "sumNeeded": 3
+  },
+  {
+    "id": 20,
+    "list": [["Gold", 4],[" Will ",4]],
+    "partySize": 4,
+    "type": "optionalDistribution",
+    "sumNeeded": 4
+  },
+  {
     "id": 23,
     "list": [["Strength", 2]],
     "partySize": 0,
@@ -49,23 +76,23 @@ export var map = [
   },
   {
     "id": 27,
-    "list": [["-Gold", 2],["-Will",2]],
+    "list": [["Gold", 2],[" Will ",2]],
     "partySize": 2,
-    "type": "additive",
+    "type": "optionalDistribution",
     "sumNeeded": 2
   },
   {
     "id": 27,
-    "list": [["-Gold", 3],["-Will",3]],
+    "list": [["Gold", 3],[" Will ",3]],
     "partySize": 3,
-    "type": "additive",
+    "type": "optionalDistribution",
     "sumNeeded": 3
   },
   {
     "id": 27,
-    "list": [["-Gold", 4],["-Will",4]],
+    "list": [["Gold", 4],[" Will ",4]],
     "partySize": 4,
-    "type": "additive",
+    "type": "optionalDistribution",
     "sumNeeded": 4
   },
   {

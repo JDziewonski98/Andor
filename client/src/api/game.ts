@@ -359,8 +359,8 @@ export class game {
     // } 
 
     //ending collabs
-    public sendEndCollab(convMap, resourceNames, involvedHeroes ){
-        this.socket.emit('sendEndCollab', convMap, resourceNames, involvedHeroes )
+    public sendEndCollab(convMap, resourceNames, involvedHeroes, eventID){
+        this.socket.emit('sendEndCollab', convMap, resourceNames, involvedHeroes, eventID)
     }
     public endCollabListener(callback){
         this.socket.on('receiveEndCollab',callback)
@@ -374,6 +374,17 @@ export class game {
         this.socket.off('receiveEndCollab')
 
     }
+
+
+    ////
+    //Removing wells from game
+    public removeWell(callback){
+        this.socket.on('removeWell', callback)
+    }
+
+
+
+
     /////////////////////////////
 
     /*
