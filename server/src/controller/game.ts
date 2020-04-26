@@ -860,6 +860,10 @@ export function game(socket, model: Game, io) {
                 involvedHeroes.push(lowestHero)
                 io.of("/" + model.getName()).emit('newCollab', event.id, involvedHeroes);
               }
+              else if(event.id == 8){
+                model.getRegions()[9].setHasMerchant(true)
+                io.of("/" + model.getName()).emit('addCoastalTrader');
+              }
               else if(event.id == 10){
                 for(let [conn,hero] of model.getHeros()){
                   let elligibleHeroes = new Array<Hero>()
@@ -1477,6 +1481,18 @@ export function game(socket, model: Game, io) {
     }
     model.initialCollabDone = true
     io.of("/" + model.getName()).emit('receiveEndCollab', involvedHeroKinds);
+  })
+
+  //buying from coastalTrader
+  socket.on("buyFromCoastalTrader", function(){
+    var hero = model.getHero(socket.conn.id)
+    if(hero.getGold()>=2){
+      var currGold = hero.getGold()
+      hero.setGold(currGold-2)
+      hero.setStrength(2)
+      io.of("/" + model.getName()).emit('removeCoastalTrader');
+      model.getRegions()[9].setHasMerchant(false)
+    }
   })
   // increasing/decreasing resources
   socket.on('sendIncResource', function (resourceHeroKind, resourceIndex) {

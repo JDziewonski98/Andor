@@ -73,6 +73,9 @@ export class Region {
     public getMerchant(){
         return this.hasMerchant;
     }
+    public setHasMerchant(b){
+        this.hasMerchant = b
+    }
 
     // public addWineskin(w: Wineskin) {
     //     this.wineskins.push(w);

@@ -2,7 +2,7 @@ import { Farmer, Hero, HourTracker, Monster, HeroKind, BrokenWell, Well, Tile, N
 import { game } from '../api';
 import {
   WindowManager, StoryWindow, CollabWindow, MerchantWindow, DeathWindow, Fight, EventWindow,
-  BattleInvWindow, GameOverWindow, TradeWindow, ShieldWindow, WitchWindow, ContinueFightWindow
+  BattleInvWindow, GameOverWindow, TradeWindow, ShieldWindow, WitchWindow, ContinueFightWindow, CoastalMerchantWindow
 } from "./windows";
 import { RietburgCastle } from './rietburgcastle';
 import BoardOverlay from './boardoverlay';
@@ -59,7 +59,7 @@ export default class GameScene extends Phaser.Scene {
   private turntext;
 
   private overlay: BoardOverlay;
-
+  private tempMerchant
   private shiftKey;
   private ctrlKey;
   constructor() {
@@ -301,6 +301,9 @@ export default class GameScene extends Phaser.Scene {
 
       if (t.hasMerchant) {
         switch (t.id) {
+          case 9:
+            this.addCoastalTraderToScene()
+            break;
           case 18:
             this.addMerchant(3060, 3680, t.id as number);
             break;
@@ -1061,7 +1064,33 @@ export default class GameScene extends Phaser.Scene {
         self.addBrokenWell(7073, 3333, tileID as number);
       }
     })
-
+    var self = this
+    this.gameinstance.addCoastalTrader(function(){
+      //console.log("entered addCoastalTrader listener")
+      let tempMerchant = self.add.image(self.tiles[9].x + 50, self.tiles[9].y - 5, "merchant-trade");
+      tempMerchant.setInteractive().setScale(0.75);
+      tempMerchant.on('pointerdown', function (pointer) {
+        if (self.hero.tile.id == 9) {
+          if (self.scene.isVisible('temp_merchant')) {
+            WindowManager.destroy(self, 'temp_merchant');
+          } else {
+            WindowManager.create(self, 'temp_merchant', CoastalMerchantWindow, { controller: self.gameinstance,
+              x: pointer.x + 20,
+              y: pointer.y,
+              w: 400,
+              h: 200, });
+            let window = WindowManager.get(self, 'temp_merchant')
+          }
+        }
+      }, self);
+      self.tempMerchant = tempMerchant
+      self.add.existing(self.tempMerchant);
+      
+    })
+    this.gameinstance.removeCoastalTrader(function(){
+      self.tempMerchant.destroy()
+      self.tempMerchant = null
+    })
     //EVENTS
     this.gameinstance.newEventListener((event: EventCard) => {
       this.applyEvent(event)
@@ -1125,7 +1154,28 @@ export default class GameScene extends Phaser.Scene {
       }
     })
   }
-
+  public addCoastalTraderToScene(){
+    var self = this
+    //console.log("entered addCoastalTrader listener")
+    let tempMerchant = self.add.image(self.tiles[9].x + 50, self.tiles[9].y - 5, "merchant-trade");
+    tempMerchant.setInteractive().setScale(0.75);
+    tempMerchant.on('pointerdown', function (pointer) {
+      if (self.hero.tile.id == 9) {
+        if (self.scene.isVisible('temp_merchant')) {
+          WindowManager.destroy(self, 'temp_merchant');
+        } else {
+          WindowManager.create(self, 'temp_merchant', CoastalMerchantWindow, { controller: self.gameinstance,
+            x: pointer.x + 20,
+            y: pointer.y,
+            w: 400,
+            h: 200, });
+          let window = WindowManager.get(self, 'temp_merchant')
+        }
+      }
+    }, self);
+    self.tempMerchant = tempMerchant
+    self.add.existing(self.tempMerchant);
+  }
   public update() {
     var camera = this.cameras.main;
 

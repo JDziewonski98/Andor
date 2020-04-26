@@ -382,8 +382,17 @@ export class game {
         this.socket.on('removeWell', callback)
     }
 
-
-
+    ////
+    //Add temporary merchant to tile 9
+    public addCoastalTrader(callback){
+        this.socket.on('addCoastalTrader', callback)
+    }
+    public removeCoastalTrader(callback){
+        this.socket.on('removeCoastalTrader', callback)
+    }
+    public buyFromCoastalTrader(){
+        this.socket.emit("buyFromCoastalTrader")
+    }
 
     /////////////////////////////
 
