@@ -193,7 +193,7 @@ export function game(socket, model: Game, io) {
         || hero.getTimeOfDay() == 10 && hero.getWill() >= 3 && event19 && !event9
         || hero.getFreeMoves() > 0;
 
-      if (canPass) {
+      if (canPass) { // TODO ACUI: also need to check if they fought this turn
         msg = `The ${hero.getKind()} passed their turn.`;
         socket.emit("updatePassTurn", hero.getKind());
         socket.broadcast.emit("updatePassTurn", hero.getKind());
@@ -713,9 +713,17 @@ export function game(socket, model: Game, io) {
                         console.log(minID)
                         for(let [n,m] of model.getMonsters()){
                           if( m.getTileID() == minID){
+                            let oldNumShields = model.getCastle().getShields();
                             let shieldsRemaining = model.moveMonster(m)
                             shieldsLeft = shieldsRemaining
                             convMonsters[m.name] = m.getTileID();
+
+                            if (oldNumShields > shieldsRemaining) {
+                              let msg = oldNumShields - 1 > shieldsRemaining ? 
+                                `Monsters have reached the castle! Shields were lost defending against them.` :
+                                `A monster has reached the castle! A shield was lost defending against it.`
+                              io.of("/" + model.getName()).emit('updateGameLog', msg);
+                            }
                             //console.log(convMonsters)
                             // Evaluate end of game state - currently only handles end of game due to loss of shields\
                             if (model.getEndOfGameState()) {
@@ -791,10 +799,17 @@ export function game(socket, model: Game, io) {
                         //console.log(maxID)
                         for(let [n,m] of model.getMonsters()){
                           if( m.getTileID() == maxID){
+                            let oldNumShields = model.getCastle().getShields();
                             let shieldsRemaining = model.moveMonster(m)
                             shieldsLeft = shieldsRemaining
                             convMonsters[m.name] = m.getTileID();
                             console.log(convMonsters)
+                            if (oldNumShields > shieldsRemaining) {
+                              let msg = oldNumShields - 1 > shieldsRemaining ? 
+                                `Monsters have reached the castle! Shields were lost defending against them.` :
+                                `A monster has reached the castle! A shield was lost defending against it.`
+                              io.of("/" + model.getName()).emit('updateGameLog', msg);
+                            }
                             // Evaluate end of game state - currently only handles end of game due to loss of shields\
                             if (model.getEndOfGameState()) {
                               io.of("/" + model.getName()).emit('sendUpdatedMonsters', convMonsters);
@@ -1401,10 +1416,17 @@ export function game(socket, model: Game, io) {
       console.log(minID)
       for(let [n,m] of model.getMonsters()){
         if( m.getTileID() == minID){
+          let oldNumShields = model.getCastle().getShields();
           let shieldsRemaining = model.moveMonster(m)
           shieldsLeft = shieldsRemaining
           convMonsters[m.name] = m.getTileID();
           console.log(convMonsters)
+          if (oldNumShields > shieldsRemaining) {
+            let msg = oldNumShields - 1 > shieldsRemaining ? 
+              `Monsters have reached the castle! Shields were lost defending against them.` :
+              `A monster has reached the castle! A shield was lost defending against it.`
+            io.of("/" + model.getName()).emit('updateGameLog', msg);
+          }
           // Evaluate end of game state - currently only handles end of game due to loss of shields\
           if (model.getEndOfGameState()) {
             io.of("/" + model.getName()).emit('sendUpdatedMonsters', convMonsters);
@@ -1431,10 +1453,17 @@ export function game(socket, model: Game, io) {
       //console.log(maxID)
       for(let [n,m] of model.getMonsters()){
         if( m.getTileID() == maxID){
+          let oldNumShields = model.getCastle().getShields();
           let shieldsRemaining = model.moveMonster(m)
           shieldsLeft = shieldsRemaining
           convMonsters[m.name] = m.getTileID();
           console.log(convMonsters)
+          if (oldNumShields > shieldsRemaining) {
+            let msg = oldNumShields - 1 > shieldsRemaining ? 
+              `Monsters have reached the castle! Shields were lost defending against them.` :
+              `A monster has reached the castle! A shield was lost defending against it.`
+            io.of("/" + model.getName()).emit('updateGameLog', msg);
+          }
           // Evaluate end of game state - currently only handles end of game due to loss of shields\
           if (model.getEndOfGameState()) {
             io.of("/" + model.getName()).emit('sendUpdatedMonsters', convMonsters);
@@ -1981,17 +2010,24 @@ export function game(socket, model: Game, io) {
 
     hero.setHasMovedThisTurn(false);
     // Update game log
-    var msg = `${hero.getKind()} ended their day.`;
+    var msg = `The ${hero.getKind()} ended their day.`;
     if (newDayMsg) {
       msg += '\n\tA new day begins.'
     }
-    msg += ` It is now ${nextPlayer}'s turn.`
+    msg += ` It is now the ${nextPlayer}'s turn.`
     socket.emit("updateGameLog", msg);
     socket.broadcast.emit("updateGameLog", msg);
   })
 
   socket.on('moveMonstersEndDay', function () {
+    let oldNumShields = model.getCastle().getShields();
     var shieldsRemaining = model.moveMonsters();
+    if (oldNumShields > shieldsRemaining) {
+      let msg = oldNumShields - 1 > shieldsRemaining ? 
+        `Monsters have reached the castle! Shields were lost defending against them.` :
+        `A monster has reached the castle! A shield was lost defending against it.`
+      io.of("/" + model.getName()).emit('updateGameLog', msg);
+    }
     // Convert monsters Map into passable object
     let convMonsters = {};
     for (let m of Array.from(model.getMonsters().values())) {

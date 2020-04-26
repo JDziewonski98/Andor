@@ -9,10 +9,10 @@ export class EventWindow extends Window {
     private flavorText;
     private descText;
     private w = 300;
-    private h = 200;
+    private h = 250;
 
     public constructor(key: string, data) {
-        super(key, { x: data.x - 150, y: data.y - 100, width: 300, height: 200 });
+        super(key, { x: data.x - 150, y: data.y - 125, width: 300, height: 250 });
         this.key = key;
         this.id = data.id;
         this.x = data.x - this.w/2;
