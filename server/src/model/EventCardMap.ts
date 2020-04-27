@@ -158,7 +158,7 @@ export var map = [
     // },
     // {
     //     "id": 32,
-    //     "flavorText": "A sleepless night awaits the heros.", 
+    //     "flavorText": "A sleepless night awaits the heroes.", 
     //     "desc": "Every hero whose time marker is presently in the sunrise box loses 2 willpower points."
     // // },
     // {

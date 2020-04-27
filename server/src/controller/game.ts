@@ -1897,6 +1897,8 @@ export function game(socket, model: Game, io) {
                 }
                 else if(event.id == 15){
                   io.of("/" + model.getName()).emit('removeWell', "35");
+                  let msg = `Monsters have destroyed the well at tile 35. It is broken beyond repair and can no longer be used.`
+                  io.of("/" + model.getName()).emit('updateGameLog', msg);
                   model.applyEvent(event)
                 }
                 else if(event.id == 18){
@@ -1980,6 +1982,8 @@ export function game(socket, model: Game, io) {
                 }
                 else if(event.id == 22){
                   io.of("/" + model.getName()).emit('removeWell', "45");
+                  let msg = `Monsters have destroyed the well at tile 45. It is broken beyond repair and can no longer be used.`
+                  io.of("/" + model.getName()).emit('updateGameLog', msg);
                   model.applyEvent(event)
                 }
                 else if(event.id == 27){
@@ -2002,7 +2006,7 @@ export function game(socket, model: Game, io) {
                   else{
                     let maxID = -1
                     for(let [n,m] of model.getMonsters()){
-                      console.log(m.getTileID())
+                      //console.log(m.getTileID())
                       if( m.getTileID() > maxID){
                         maxID = m.getTileID()
                       }
