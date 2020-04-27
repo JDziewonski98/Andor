@@ -51,7 +51,8 @@ export class Hero {
             will: this.will, 
             farmers: this.farmers.length, 
             largeItem: this.largeItem, 
-            currtileid:this.region.getID()
+            currtileid:this.region.getID(),
+            timeofday: this.timeOfDay
         };
         return data;
     }
