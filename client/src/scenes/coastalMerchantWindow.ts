@@ -15,7 +15,7 @@ export class CoastalMerchantWindow extends Window {
     protected initialize() { 
         console.log('initializing tempmerchant window')
         this.add.image(0, 0, 'scrollbg');
-        this.add.text(5, 5, `The trade ships\n offer 2 strength\n for 2 gold`, { fontSize: 12, backgroundColor: '#f00' });
+        this.add.text(5, 5, ` The trade ships\n offer 2 strength\n for 2 gold`, { fontSize: 12, backgroundColor: '#f00' });
 
         var self = this;
 
