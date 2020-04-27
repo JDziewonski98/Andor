@@ -616,6 +616,13 @@ export class Fight extends Window {
       });
     });
 
+    self.gameinstance.getHeroAttributes(self.hero.getKind(), function(data) {
+      if (data.timeofday >= 10) {
+        console.log('youre out of hours, cant fight')
+        self.fighttext.disableInteractive();
+      }
+    })
+
     let style = {
       fontFamily: '"Roboto Condensed"',
       fontSize: "30px",
