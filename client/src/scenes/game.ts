@@ -1077,8 +1077,8 @@ export default class GameScene extends Phaser.Scene {
             WindowManager.create(self, 'temp_merchant', CoastalMerchantWindow, { controller: self.gameinstance,
               x: pointer.x + 20,
               y: pointer.y,
-              w: 400,
-              h: 200, });
+              w: 150,
+              h: 150, });
             let window = WindowManager.get(self, 'temp_merchant')
           }
         }
@@ -1170,8 +1170,8 @@ export default class GameScene extends Phaser.Scene {
           WindowManager.create(self, 'temp_merchant', CoastalMerchantWindow, { controller: self.gameinstance,
             x: pointer.x + 20,
             y: pointer.y,
-            w: 400,
-            h: 200, });
+            w: 150,
+            h: 150, });
           let window = WindowManager.get(self, 'temp_merchant')
         }
       }

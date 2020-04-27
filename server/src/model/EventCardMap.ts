@@ -1,11 +1,11 @@
 //{"id": , "flavorText": "", "desc": ""},
 
 export var map = [
-    {
-        "id": 1, 
-        "flavorText": "The dwarf merchant Garz makes an offer.", 
-        "desc": "Each hero may now purchase any article from the equipment board (except the witch’s brew) in exchange for 3 willpower points."
-    },
+    // {
+    //     "id": 1, 
+    //     "flavorText": "The dwarf merchant Garz makes an offer.", 
+    //     "desc": "Each hero may now purchase any article from the equipment board (except the witch’s brew) in exchange for 3 willpower points."
+    // },
     // {
     //     "id": 2, 
     //     "flavorText": "A biting wind blows across the coast from the sea.", 
@@ -36,11 +36,11 @@ export var map = [
     //     "flavorText": "Sulfurous mists surround the heroes.", 
     //     "desc": "The hero with the lowest rank rolls one of his hero dice. The group loses the rolled number of willpower points."
     // },
-    // {
-    //     "id": 8, 
-    //     "flavorText": "Trading ships reach the coast of Andor.", 
-    //     "desc": "A hero who enters space 9 or is already standing there can buy 2 strength points there for just 2 gold. Place this card on space 9 until a hero has made the purchase. Then remove it from the game."
-    // },
+    {
+        "id": 8, 
+        "flavorText": "Trading ships reach the coast of Andor.", 
+        "desc": "A hero who enters space 9 or is already standing there can buy 2 strength points there for just 2 gold. Once a purchase has been made, the traders will leave Andor."
+    },
     // {
     //     "id": 9, 
     //     "flavorText": "Dark clouds cover the sun, filling all the good people of Andor with strange foreboding.", 
