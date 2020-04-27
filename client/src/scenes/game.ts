@@ -1112,6 +1112,7 @@ export default class GameScene extends Phaser.Scene {
         var res = new Map<String, Number>()
         var type
         var sumNeeded
+        var desc
         for (let element of allCollabRes) {
           if (element.id == eventID && (involvedHeroKinds.length == element.partySize || element.partySize == 0)) {
             type = element.type
@@ -1119,6 +1120,7 @@ export default class GameScene extends Phaser.Scene {
             for (let [name, number] of element.list) {
               res.set(name, number)
             }
+            desc = element.desc
           }
         }
         console.log(res)
@@ -1146,6 +1148,7 @@ export default class GameScene extends Phaser.Scene {
           sumNeeded: sumNeeded,
           initialSleep: true,
           eventID: eventID,
+          desc: desc
         };
 
         WindowManager.create(this, 'collab', CollabWindow, collabWindowData);

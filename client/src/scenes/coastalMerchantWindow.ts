@@ -15,12 +15,13 @@ export class CoastalMerchantWindow extends Window {
     protected initialize() { 
         console.log('initializing tempmerchant window')
         this.add.image(0, 0, 'scrollbg');
-        this.add.text(5, 5, `The trade ships\o offer strength:`, { fontSize: 12, backgroundColor: '#f00' });
+        this.add.text(5, 5, `The trade ships\o offer 2 strength for 2 gold`, { fontSize: 12, backgroundColor: '#f00' });
 
         var self = this;
 
-        // Strength icon
+        // Strength icons
         this.add.image(5, 35, 'Strength').setDisplaySize(30, 30).setOrigin(0);
+        this.add.image(40, 35, 'Strength').setDisplaySize(30, 30).setOrigin(0);
         self.buyStrengthButton = self.add.text(5, 90, "Buy", { fontSize: 12, backgroundColor: '#f00' });
         self.buyStrengthButton.setInteractive();
         self.buyStrengthButton.on("pointerdown", function(pointer) {

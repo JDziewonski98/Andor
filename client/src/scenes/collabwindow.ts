@@ -45,6 +45,7 @@ export class CollabWindow extends Window {
     private heroMaxes
     private sumNeeded: number
     private eventID
+    private desc
     public constructor(key: string, data, incFunction) {
         super(key, {x: data.x, y: data.y, width: data.w, height: data.h});
 
@@ -72,6 +73,7 @@ export class CollabWindow extends Window {
         this.sumNeeded = data.sumNeeded
         this.initialSleep = data.initialSleep
         this.eventID = data.eventID
+        this.desc = data.desc
         //console.log(this.involvedHeroes)
     }
 
@@ -225,16 +227,28 @@ export class CollabWindow extends Window {
             wordWrap: { width: this.width-10, useAdvancedWrap: true }
         }
 
-        let titleText = `Collaborative Decision:\nDistribute `
-        let numRes = this.resourceNames.length;
-        for (let i = 0; i < numRes; i++) {
-            titleText += `${this.resourceMaxes[i]} ${this.resourceNames[i]} `;
-            if (i == numRes - 2) {
-                titleText += 'and ';
-            } else if (i < numRes - 2) {
-                titleText += ', ';
+        if(this.involvedHeroes.length == 1){
+            var titleText = `Individual Decision:\n `
+        }
+        else{
+            var titleText = `Collaborative Decision:\n `
+        }
+        if(this.desc){
+            titleText+=this.desc
+        }
+        else{
+            titleText+="Distribute "
+            let numRes = this.resourceNames.length;
+            for (let i = 0; i < numRes; i++) {
+                titleText += `${this.resourceMaxes[i]} ${this.resourceNames[i]} `;
+                if (i == numRes - 2) {
+                    titleText += 'and ';
+                } else if (i < numRes - 2) {
+                    titleText += ', ';
+                }
             }
         }
+        
         this.add.text(this.width/2, 5, titleText, titleStyle).setOrigin(0.5, 0);
 
         // Bottom hero icons and acceptance statuses
