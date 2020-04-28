@@ -99,15 +99,28 @@ export function game(socket, model: Game, io) {
       let targetRegion: Region = model.getRegions()[id];
       // Check if the move kills any carried farmers
       killFarmersOfHeroes(id, hero);
+      let freeMoves = hero.getFreeMoves()
       //if event 26 is active and it is your 8th hour, move freely
       if (hero.getTimeOfDay() == 8 && event26) {
         hero.freeMoveTo(targetRegion)
+        if(freeMoves == 0){
+          console.log("A")
+          io.of("/" + model.getName()).emit('receiveUpdateHeroTracker', hero.getKind());
+        }
       }
       else if ((hero.getTimeOfDay() == 9 || (hero.getTimeOfDay() == 10 && !event9)) && event19) {
         hero.exhaustingMoveTo(targetRegion)
+        if(freeMoves == 0){
+          console.log("B")
+          io.of("/" + model.getName()).emit('receiveUpdateHeroTracker', hero.getKind());
+        }
       }
       else {
         hero.moveTo(targetRegion)
+        if(freeMoves == 0){
+          console.log("C")
+          io.of("/" + model.getName()).emit('receiveUpdateHeroTracker', hero.getKind());
+        }
       }
       if (model.dangerousRegion(targetRegion)) {
         hero.setWill(-4)

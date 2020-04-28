@@ -27,4 +27,7 @@ lobbynsp.on("connection", function (socket){
 // console.log(require('os').networkInterfaces()['en0'][1]['address'])
 
 // for windows users
-// console.log(require('os').networkInterfaces()['eth0'][1]['address'])
+//console.log(require('os').networkInterfaces())
+require('dns').lookup(require('os').hostname(), function (err, add, fam) {
+	console.log('addr: '+add);
+  })
