@@ -1836,7 +1836,10 @@ export function game(socket, model: Game, io) {
   })
 
   socket.on('battleCollabApprove', function (windowname, involvedHeros, res) {
-    socket.broadcast.emit('battleRewardsPopup', windowname, involvedHeros, res)
+    var heroids = model.getIDsByHeroname(involvedHeros)
+    for (let playerid of heroids) {
+      socket.broadcast.to(`/${model.getName()}#${playerid}`).emit('battleRewardsPopup', windowname, involvedHeros, res)
+    }
   })
 
   //TODO test this further
