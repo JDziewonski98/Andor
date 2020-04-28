@@ -298,7 +298,7 @@ export default class BoardOverlay extends Phaser.Scene {
     // Game log content
     // TODO: save up to n messages in the log, clear previous messages.
     private content = this.initialCollabDone ? 
-        `View in game updates here:\n > The legend begins.` : `View in game updates here:\n > Game loaded.`;
+        `View in game updates here:\n > Game loaded.` : `View in game updates here:\n > The legend begins.`;
 
     private endDaySetup() {
         var self = this;

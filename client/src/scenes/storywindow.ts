@@ -8,6 +8,7 @@ export class StoryWindow extends Window {
     private id;
     private okButton: Phaser.GameObjects.Image;
     private runestoneLocs;
+    private gameController;
 
     private x;
     private y;
@@ -30,6 +31,9 @@ export class StoryWindow extends Window {
         this.width = storyCardWidths[data.id];
         this.height = storyCardHeights[data.id];
         this.runestoneLocs = data.locs;
+        if (data.gameController) {
+            this.gameController = data.gameController;
+        }
     }
 
     protected initialize() {
@@ -53,17 +57,19 @@ export class StoryWindow extends Window {
                 WindowManager.create(self, `story${this.id+1}`, StoryWindow, {
                     x: this.x + storyCardWidths[this.id]/2,
                     y: this.y + storyCardHeights[this.id]/2,
-                    id: this.id+1
+                    id: this.id+1,
+                    gameController: this.gameController
                 })
                 this.scene.remove(this.key)
             }, this);
         } else if (this.id == 2) {
+            // Legend A5: determine placement of the Rune Stones Legend
+            this.gameController.logRunestoneLegendPos();
             this.okButton.on('pointerdown', function (pointer) {
                 this.scene.bringToTop('collab')
                 this.scene.wake('collab')
                 this.scene.remove(this.key)
             }, this);
-            // Legend A5: determine placement of the Rune Stones Legend
         } else {
             this.okButton.on('pointerdown', function (pointer) {
                 this.scene.remove(this.key)

@@ -562,7 +562,8 @@ export default class GameScene extends Phaser.Scene {
         WindowManager.create(self, `story0`, StoryWindow, {
           x: reducedWidth / 2,
           y: reducedHeight / 2,
-          id: 0
+          id: 0,
+          gameController: self.gameinstance
         })
 
         // Last hero to enter the game triggers placement of the runestone legend

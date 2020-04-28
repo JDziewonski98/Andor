@@ -356,6 +356,14 @@ export function game(socket, model: Game, io) {
     // io.of("/" + model.getName()).emit('updateGameLog', msg);
   })
 
+  socket.on("logRunestoneLegendPos", () => {
+    let runestonePos = model.getNarrator().getRunestoneLegendPos();
+    let narratorLetter = enumPositionOfNarrator[(runestonePos)];
+    let msg = `The rune stone legend card has been placed on space ${narratorLetter} of the Legend Track.`
+    console.log(msg);
+    socket.emit('updateGameLog', msg);
+  })
+
   // TODO: FOR TESTING ONLY, REMOVE AFTER
   socket.on("advanceNarrator", function () {
     advanceNarrator();
