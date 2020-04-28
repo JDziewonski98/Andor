@@ -48,7 +48,7 @@ export class Hero extends Phaser.GameObjects.Sprite {
         this.x = newCoords.x;
         this.y = newCoords.y;
         this.tile = newTile
-        //this.hourTracker.incHour(this.heroKind)
+        this.hourTracker.incHour(this.heroKind)
     }
 
     public getPosOnTile(t: Tile) {

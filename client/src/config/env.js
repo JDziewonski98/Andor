@@ -7,6 +7,5 @@
 */
 
 module.exports = {
-    //BASE_API: "http://192.168.0.129:3000"
     BASE_API: "http://localhost:3000"
 }

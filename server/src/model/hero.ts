@@ -461,9 +461,7 @@ export class Hero {
                 if (index_w > -1) {
                     // Remove wineskin item and replace with half_wineskin
                     this.smallItems.splice(index_w, 1);
-                    console.log(this.freeMoves)
                     this.freeMoves++
-                    console.log(this.freeMoves)
                     this.pickUpSmallItem(this.region.getID(), SmallItem.HalfWineskin)
                     console.log(this.hk, "has", this.getItemDict());
                 }
@@ -473,9 +471,7 @@ export class Hero {
                 let index_hw = this.smallItems.indexOf(SmallItem.HalfWineskin);
                 if (index_hw > -1) {
                     this.smallItems.splice(index_hw, 1);
-                    console.log(this.freeMoves)
                     this.freeMoves++
-                    console.log(this.freeMoves)
                     console.log(this.hk, "has", this.getItemDict());
                 }
                 break;
