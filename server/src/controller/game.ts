@@ -59,7 +59,11 @@ export function game(socket, model: Game, io) {
     model.gameStartHeroPosition += 1;
     callback(tempModel)
   })
-
+  socket.on('enterGame', function(){
+    model.updatePlayersInGame(1)
+    console.log("received enterGame. now ", model.getPlayersInGame(), " in game")
+    
+  })
   socket.on("moveRequest", function (id, callback) {
     id = +id // turning Id from string to number
     var heroID = socket.conn.id
@@ -1600,10 +1604,15 @@ export function game(socket, model: Game, io) {
   })
   // increasing/decreasing resources
   socket.on('sendIncResource', function (resourceHeroKind, resourceIndex) {
-    io.of("/" + model.getName()).emit('receiveIncResource', resourceHeroKind, resourceIndex, model.getHero(socket.conn.id).getKind());
+    if(model.getPlayersInGame() == model.getNumOfDesiredPlayers()){
+      io.of("/" + model.getName()).emit('receiveIncResource', resourceHeroKind, resourceIndex, model.getHero(socket.conn.id).getKind());
+    }
+    
   })
   socket.on('sendDecResource', function (resourceHeroKind, resourceIndex) {
-    io.of("/" + model.getName()).emit('receiveDecResource', resourceHeroKind, resourceIndex, model.getHero(socket.conn.id).getKind());
+    if(model.getPlayersInGame() == model.getNumOfDesiredPlayers()){
+      io.of("/" + model.getName()).emit('receiveDecResource', resourceHeroKind, resourceIndex, model.getHero(socket.conn.id).getKind());
+    }
   })
   // Accepting a collab
   socket.on('sendAccept', function (heroKind) {

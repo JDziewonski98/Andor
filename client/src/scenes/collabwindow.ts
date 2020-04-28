@@ -46,7 +46,7 @@ export class CollabWindow extends Window {
     private sumNeeded: number
     private eventID
     private desc
-    public constructor(key: string, data, incFunction) {
+    public constructor(key: string, data) {
         super(key, {x: data.x, y: data.y, width: data.w, height: data.h});
 
         this.gameinstance = data.controller;
@@ -124,9 +124,9 @@ export class CollabWindow extends Window {
                     involved = true
                 }
             }
-            if(self.ownHeroKind == senderHeroKind){
-                involved = false
-            }
+            // if(self.ownHeroKind == senderHeroKind){
+            //     involved = false
+            // }
             if(involved){
                 this.resetAccepts();
                 for(let rt of this.resourceToggles){
@@ -147,9 +147,9 @@ export class CollabWindow extends Window {
                     involved = true
                 }
             }
-            if(self.ownHeroKind == senderHeroKind){
-                involved = false
-            }
+            // if(self.ownHeroKind == senderHeroKind){
+            //     involved = false
+            // }
             if(involved){
                 this.resetAccepts();
                 for(let rt of this.resourceToggles){
@@ -527,7 +527,7 @@ export class CollabWindow extends Window {
                 // Reset hero accepts
                 this.resetAccepts();
                 this.numAccepts = 0;
-                rToggle.incFunction()
+                //rToggle.incFunction()
                 this.gameinstance.sendIncResource(heroKind,resourceIndex)  
         }
     }
@@ -541,7 +541,7 @@ export class CollabWindow extends Window {
                 else{
                     //reset accepts, decrement, emit
                     this.resetAccepts();
-                    rt.decFunction()
+                    //rt.decFunction()
                     this.gameinstance.sendDecResource(heroKind,resourceIndex)
                 }
             }        
