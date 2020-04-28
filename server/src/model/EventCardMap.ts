@@ -1,11 +1,11 @@
 //{"id": , "flavorText": "", "desc": ""},
 
 export var map = [
-    {
-        "id": 1, 
-        "flavorText": "The dwarf merchant Garz makes an offer.", 
-        "desc": "Each hero may now purchase any article from the equipment board (except the witch’s brew) in exchange for 3 willpower points."
-    },
+    // {
+    //     "id": 1, 
+    //     "flavorText": "The dwarf merchant Garz makes an offer.", 
+    //     "desc": "Each hero may now purchase any article from the equipment board (except the witch’s brew) in exchange for 3 willpower points."
+    // },
     // {
     //     "id": 2, 
     //     "flavorText": "A biting wind blows across the coast from the sea.", 
@@ -76,16 +76,16 @@ export var map = [
     //     "flavorText": "Rampaging creatures despoil the well in the south of Andor.", 
     //     "desc": "The well token on space 35 is removed from the game."
     // },
-    // {
-    //     "id": 16, 
-    //     "flavorText": "Royal falcons fly high above the land, keeping watch.", 
-    //     "desc": "The hero with the highest rank is allowed to take a look at the top card on the event card deck. Then he gets to decide whether to remove the card from the game or place it back on the deck."
-    // },
-    // {
-    //     "id": 17, 
-    //     "flavorText": "Heavy weather moves across the land.", 
-    //     "desc": "Each hero with more than 12 willpower points immediately reduces his point total to 12."
-    // },
+    {
+        "id": 16, 
+        "flavorText": "Royal falcons fly high above the land, keeping watch.", 
+        "desc": "The hero with the highest rank is allowed to take a look at the top card on the event card deck. Then he gets to decide whether to remove the card from the game or place it back on the deck."
+    },
+    {
+        "id": 17, 
+        "flavorText": "Heavy weather moves across the land.", 
+        "desc": "Each hero with more than 12 willpower points immediately reduces his point total to 12."
+    },
     // {
     //     "id": 18, 
     //     "flavorText": "A wild gor storms forth.", 

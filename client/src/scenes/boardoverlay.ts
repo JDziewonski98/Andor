@@ -137,7 +137,7 @@ export default class BoardOverlay extends Phaser.Scene {
 
 
          // save btn
-         var savebtn = this.add.image(920, 40, 'saveicon').setInteractive().setScale(0.22);
+         var savebtn = this.add.image(920, 25, 'saveicon').setInteractive().setScale(0.25);
          savebtn.on('pointerdown', (pointer) => {
              console.log("manual saving")
              this.gameinstance.save()
@@ -239,10 +239,10 @@ export default class BoardOverlay extends Phaser.Scene {
         })
 
         // TODO: REMOVE LATER, FOR TESTING NARRATOR ONLY
-        var advance = this.add.text(400, 560, "ADVANCE NARRATOR", style2).setInteractive()
-        advance.on('pointerdown', function (pointer) {
-            this.gameinstance.advanceNarrator();
-        }, this)
+        // var advance = this.add.text(400, 560, "ADVANCE NARRATOR", style2).setInteractive()
+        // advance.on('pointerdown', function (pointer) {
+        //     this.gameinstance.advanceNarrator();
+        // }, this)
 
 
         this.gameinstance.getHeros((heros) => {

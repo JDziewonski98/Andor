@@ -474,7 +474,6 @@ export class Fight extends Window {
                   console.log("349999999999999999999999", ally);
                   self.gameinstance.getHeroItems(ally, function (itemdict) {
                     console.log(
-                      "351111111111111111111111111111",
                       ally,
                       itemdict
                     );
@@ -507,9 +506,6 @@ export class Fight extends Window {
                         self.shieldinteractivecheckcnt ==
                         self.actuallyjoinedheros.length
                       ) {
-                        console.log(
-                          "here. not gD!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-                        );
                         self.shieldinteractivecheckcnt = 0;
                         self.fighttext.setInteractive();
                       }
@@ -534,11 +530,9 @@ export class Fight extends Window {
                   });
                 }
                 if (self.actuallyjoinedheros.length == 0) {
-                  console.log("not gdasda!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                   self.fighttext.setInteractive();
                 }
                 /*
-                 *todo:
                  *set a listener for responses from the shield
                  *if its a yes response, just increment response cnt
                  *if its a no reponse, increment response cnt, and check for death using get attributes.
@@ -547,9 +541,6 @@ export class Fight extends Window {
                  *remember to unsubscribe this listener upon close of the window
                  * */
                 self.gameinstance.receiveShieldResp(function (herotype, resp) {
-                  console.log(
-                    "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ"
-                  );
                   self.shieldresponsecnt++;
                   if (resp == "no") {
                     //check for death
@@ -608,6 +599,11 @@ export class Fight extends Window {
                 "Not all allied heroes\nhave confirmed their roll.\n Click again."
               );
             }
+            self.gameinstance.getHeroAttributes(self.hero.getKind(), function(data) {
+              if (data.timeofday >= 10) {
+                self.fighttext.disableInteractive()
+              }
+            })
           });
         } else {
           console.log("case3");
@@ -615,6 +611,15 @@ export class Fight extends Window {
         }
       });
     });
+
+    self.gameinstance.getHeroAttributes(self.hero.getKind(), function(data) {
+      if (data.timeofday >= 11) {
+        console.log(data)
+        console.log('youre out of hours, cant fight')
+        self.fighttext.setText("Out Of Hours!")
+        self.fighttext.disableInteractive();
+      }
+    })
 
     let style = {
       fontFamily: '"Roboto Condensed"',
@@ -685,6 +690,13 @@ export class Fight extends Window {
       if (response == "yes") {
         console.log("yes " + herokind);
         self.actuallyjoinedheros.push(herokind);
+      }
+      else {
+        var index = self.alliedheros.indexOf(herokind)
+        if (index > -1) {
+          self.alliedheros.splice(index, 1);
+          self.inviteresponses--;
+        }
       }
     });
   }
@@ -900,6 +912,7 @@ export class Fight extends Window {
       self.overlayRef.toggleInteractive(true);
       self.scene.resume("Game");
       self.scene.remove(self.windowname);
+      self.gameinstance.endTurn()
       // Deprecated: removed turn logic from frontend
       // if (self.gameinstance.getTurn()) {
       //     self.gameinstance.endTurn();

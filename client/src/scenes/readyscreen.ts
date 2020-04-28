@@ -2,6 +2,7 @@ import { game } from "../api";
 import { WindowManager } from "../utils/WindowManager";
 import { Chat } from './chatwindow';
 import { GameObjects } from "phaser";
+import { reducedWidth } from "../constants";
 
 export default class ReadyScreenScene extends Phaser.Scene {
     public archer: GameObjects.Image;
@@ -84,6 +85,20 @@ export default class ReadyScreenScene extends Phaser.Scene {
         this.selection.angle = 90
         this.selection.setVisible(false);
         this.readytext = this.add.text(200, 450, 'Ready?', { fontFamily: '"Roboto Condensed"', fontSize: "40px", color: "#E42168" })
+
+        var textStyle = {
+            fontSize: "27px",
+            color: '#00DBFF',
+            shadow: {
+                offsetX: 2,
+                offsetY: 2,
+                color: '#000',
+                blur: 2,
+                stroke: true,
+                fill: true
+            }
+        }
+        this.add.text(reducedWidth/2, 410, 'Choose the hero you wish to play.', textStyle).setOrigin(0.5);
 
         // back button
         var gobackbtn = this.add.sprite(80, 475, 'goback').setInteractive().setScale(0.5)

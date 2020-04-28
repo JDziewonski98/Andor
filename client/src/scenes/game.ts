@@ -204,10 +204,11 @@ export default class GameScene extends Phaser.Scene {
       this.receiveNarratorEvents();
     })
 
-    setInterval(() => {
-      console.log("********* SAVING GAME");
-      this.gameinstance.save();
-    }, 10000);
+    // Auto-saving, disabled now so save your games manually
+    // setInterval(() => {
+    //   console.log("********* SAVING GAME");
+    //   this.gameinstance.save();
+    // }, 10000);
     // this.addMerchants();
 
     //Event Card adding at start of game
@@ -755,14 +756,14 @@ export default class GameScene extends Phaser.Scene {
       // }
     }
     console.log("created eventWindow")
-      WindowManager.create(this, `eventWindow${event.id}`, EventWindow, {
-        x: reducedWidth / 2,
-        y: reducedHeight / 2,
-        id: event.id,
-        flavorText: event.flavorText,
-        descText: event.desc,
-      },)
-      this.eventBeingDisplayed = true 
+    WindowManager.create(this, `eventWindow${event.id}`, EventWindow, {
+      x: reducedWidth / 2,
+      y: reducedHeight / 2,
+      id: event.id,
+      flavorText: event.flavorText,
+      descText: event.desc,
+    },)
+    this.eventBeingDisplayed = true 
   }
   private setEventBeingDisplayed(b){
     this.eventBeingDisplayed = b
@@ -1077,8 +1078,8 @@ export default class GameScene extends Phaser.Scene {
             WindowManager.create(self, 'temp_merchant', CoastalMerchantWindow, { controller: self.gameinstance,
               x: pointer.x + 20,
               y: pointer.y,
-              w: 400,
-              h: 200, });
+              w: 150,
+              h: 150, });
             let window = WindowManager.get(self, 'temp_merchant')
           }
         }
@@ -1170,8 +1171,8 @@ export default class GameScene extends Phaser.Scene {
           WindowManager.create(self, 'temp_merchant', CoastalMerchantWindow, { controller: self.gameinstance,
             x: pointer.x + 20,
             y: pointer.y,
-            w: 400,
-            h: 200, });
+            w: 150,
+            h: 150, });
           let window = WindowManager.get(self, 'temp_merchant')
         }
       }
