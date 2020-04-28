@@ -99,15 +99,28 @@ export function game(socket, model: Game, io) {
       let targetRegion: Region = model.getRegions()[id];
       // Check if the move kills any carried farmers
       killFarmersOfHeroes(id, hero);
+      let freeMoves = hero.getFreeMoves()
       //if event 26 is active and it is your 8th hour, move freely
       if (hero.getTimeOfDay() == 8 && event26) {
         hero.freeMoveTo(targetRegion)
+        if(freeMoves == 0){
+          console.log("A")
+          io.of("/" + model.getName()).emit('receiveUpdateHeroTracker', hero.getKind());
+        }
       }
       else if ((hero.getTimeOfDay() == 9 || (hero.getTimeOfDay() == 10 && !event9)) && event19) {
         hero.exhaustingMoveTo(targetRegion)
+        if(freeMoves == 0){
+          console.log("B")
+          io.of("/" + model.getName()).emit('receiveUpdateHeroTracker', hero.getKind());
+        }
       }
       else {
         hero.moveTo(targetRegion)
+        if(freeMoves == 0){
+          console.log("C")
+          io.of("/" + model.getName()).emit('receiveUpdateHeroTracker', hero.getKind());
+        }
       }
       if (model.dangerousRegion(targetRegion)) {
         hero.setWill(-4)
@@ -477,7 +490,7 @@ export function game(socket, model: Game, io) {
       callback();
       // Using a merchant ends your turn
       // Update game log
-      var msg = `The ${hero.getKind()} bought something from a merchant.`
+      var msg = `The ${hero.getKind()} bought one ${item} from a merchant.`
       socket.emit("updateGameLog", msg);
       socket.broadcast.emit("updateGameLog", msg);
       // End turn
@@ -2546,6 +2559,7 @@ export function game(socket, model: Game, io) {
     switch (str) {
       case "falcon": return LargeItem.Falcon
       case "shield": return LargeItem.Shield
+      case "damaged_shield": return LargeItem.DamagedShield
       case "bow": return LargeItem.Bow
       case "None": return LargeItem.Empty
       default:
