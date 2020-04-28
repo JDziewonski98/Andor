@@ -99,7 +99,7 @@ behind the high walls of Rietburg Castle`,
 
 // A4, story1
 `At first sunlight, the heroes receive a message: 
-Old King Brandmur's willposwr seems to have weakened with the 
+Old King Brandmur's willpower seems to have weakened with the 
 passage of time. But there is said to be a herb growing in 
 the mountain passes that can revive a person's life.
 
@@ -209,6 +209,7 @@ Tips for next time:
   get the entire reward in gold.
   Then just one hero has to het to the merchant`
 ]
+
 export const storyCardStyleText = {
     fontSize: 12,
     color: '#000000'
