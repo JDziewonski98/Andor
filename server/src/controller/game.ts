@@ -564,6 +564,9 @@ export function game(socket, model: Game, io) {
   socket.on("telescopeEndTurn", function () {
     var heroId = socket.conn.id;
     let hero = model.getHero(heroId);
+    hero.setHasFoughtThisTurn(false)
+    hero.setHasMovedThisTurn(false)
+    console.log(hero.getHasFoughtThisTurn(), hero.getHasMovedThisTurn(), 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
     // End turn
     if (model.getCurrPlayersTurn() == hero.getKind()) {
       freeActionEndTurn(hero);
@@ -1024,6 +1027,8 @@ export function game(socket, model: Game, io) {
 
         // End turn
         if (model.getCurrPlayersTurn() == hero.getKind()) {
+          hero.setHasFoughtThisTurn(false)
+          hero.setHasMovedThisTurn(false)
           freeActionEndTurn(hero);
         }
       }
@@ -1668,9 +1673,14 @@ export function game(socket, model: Game, io) {
       if (heroTypeString == thehero) {
         hero.setWill(-damage)
         if (hero.getWill() < 1) {
+          console.log('killing xxx', heroTypeString,'xxx')
           //hero death. remove them from all battles please.
           hero.setStrength(-1);
           hero.resetWill()
+          var deadheroid = model.getIDsByHeroname([heroTypeString])
+          for (let playerid of deadheroid) {
+            socket.broadcast.to(`/${model.getName()}#${playerid}`).emit("receiveDeathNotice")
+          }
           if (callback != null) {
             callback()
           }
@@ -1720,7 +1730,7 @@ export function game(socket, model: Game, io) {
     model.getHeros().forEach((hero, key) => {
       if (hero.hk === HeroKind.Mage) {
         hero = model.getHero(key);
-        if (hero !== undefined && hero.getTimeOfDay() < 10) {
+        if (hero !== undefined && hero.getTimeOfDay() < 11) {
           magetile = hero.getRegion().getID();
           if (hero.getLargeItem() == 'bow') {
             magebow = true

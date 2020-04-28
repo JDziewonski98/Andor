@@ -905,6 +905,7 @@ export class Fight extends Window {
       self.overlayRef.toggleInteractive(true);
       self.scene.resume("Game");
       self.scene.remove(self.windowname);
+      self.gameinstance.endTurn()
       // Deprecated: removed turn logic from frontend
       // if (self.gameinstance.getTurn()) {
       //     self.gameinstance.endTurn();
