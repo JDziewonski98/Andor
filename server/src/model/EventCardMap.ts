@@ -36,11 +36,11 @@ export var map = [
     //     "flavorText": "Sulfurous mists surround the heroes.", 
     //     "desc": "The hero with the lowest rank rolls one of his hero dice. The group loses the rolled number of willpower points."
     // },
-    {
-        "id": 8, 
-        "flavorText": "Trading ships reach the coast of Andor.", 
-        "desc": "A hero who enters space 9 or is already standing there can buy 2 strength points there for just 2 gold. Once a purchase has been made, the traders will leave Andor."
-    },
+    // {
+    //     "id": 8, 
+    //     "flavorText": "Trading ships reach the coast of Andor.", 
+    //     "desc": "A hero who enters space 9 or is already standing there can buy 2 strength points there for just 2 gold. Place this card on space 9 until a hero has made the purchase. Then remove it from the game."
+    // },
     // {
     //     "id": 9, 
     //     "flavorText": "Dark clouds cover the sun, filling all the good people of Andor with strange foreboding.", 
@@ -76,16 +76,16 @@ export var map = [
     //     "flavorText": "Rampaging creatures despoil the well in the south of Andor.", 
     //     "desc": "The well token on space 35 is removed from the game."
     // },
-    // {
-    //     "id": 16, 
-    //     "flavorText": "Royal falcons fly high above the land, keeping watch.", 
-    //     "desc": "The hero with the highest rank is allowed to take a look at the top card on the event card deck. Then he gets to decide whether to remove the card from the game or place it back on the deck."
-    // },
-    // {
-    //     "id": 17, 
-    //     "flavorText": "Heavy weather moves across the land.", 
-    //     "desc": "Each hero with more than 12 willpower points immediately reduces his point total to 12."
-    // },
+    {
+        "id": 16, 
+        "flavorText": "Royal falcons fly high above the land, keeping watch.", 
+        "desc": "The hero with the highest rank is allowed to take a look at the top card on the event card deck. Then he gets to decide whether to remove the card from the game or place it back on the deck."
+    },
+    {
+        "id": 17, 
+        "flavorText": "Heavy weather moves across the land.", 
+        "desc": "Each hero with more than 12 willpower points immediately reduces his point total to 12."
+    },
     // {
     //     "id": 18, 
     //     "flavorText": "A wild gor storms forth.", 

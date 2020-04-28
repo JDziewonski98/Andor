@@ -755,14 +755,14 @@ export default class GameScene extends Phaser.Scene {
       // }
     }
     console.log("created eventWindow")
-      WindowManager.create(this, `eventWindow${event.id}`, EventWindow, {
-        x: reducedWidth / 2,
-        y: reducedHeight / 2,
-        id: event.id,
-        flavorText: event.flavorText,
-        descText: event.desc,
-      },)
-      this.eventBeingDisplayed = true 
+    WindowManager.create(this, `eventWindow${event.id}`, EventWindow, {
+      x: reducedWidth / 2,
+      y: reducedHeight / 2,
+      id: event.id,
+      flavorText: event.flavorText,
+      descText: event.desc,
+    },)
+    this.eventBeingDisplayed = true 
   }
   private setEventBeingDisplayed(b){
     this.eventBeingDisplayed = b

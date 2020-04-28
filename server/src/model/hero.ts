@@ -17,6 +17,7 @@ export class Hero {
     private freeMoves:number;
     private movePrinceCtr;
     private hasMovedThisTurn: boolean = false; // Used for checking turn passing
+    private hasFoughtThisTurn: boolean = false; // Used for checking turn passing
 
     //items
     private wineskin: boolean;
@@ -24,7 +25,7 @@ export class Hero {
     private helm: boolean;
     private smallItems: SmallItem[];
 
-    constructor({ timeOfDay, wineskin, largeItem, helm, smallItems, hk, rank, region, farmers, will, strength, gold, dice, freeMoves, hasMovedThisTurn, movePrinceCtr}) {
+    constructor({ timeOfDay, wineskin, largeItem, helm, smallItems, hk, rank, region, farmers, will, strength, gold, dice, freeMoves, hasMovedThisTurn, hasFoughtThisTurn, movePrinceCtr}) {
         this.hk = hk;
         this.rank = rank;
         this.gold = gold;
@@ -40,6 +41,7 @@ export class Hero {
         this.farmers = farmers;
         this.freeMoves = freeMoves;
         this.hasMovedThisTurn = hasMovedThisTurn;
+        this.hasFoughtThisTurn = hasFoughtThisTurn;
         this.movePrinceCtr = movePrinceCtr;
     }
 
@@ -148,6 +150,14 @@ export class Hero {
 
     public getHasMovedThisTurn() : boolean {
         return this.hasMovedThisTurn;
+    }
+
+    public setHasFoughtThisTurn(hasFought: boolean) {
+        this.hasFoughtThisTurn = hasFought;
+    }
+
+    public getHasFoughtThisTurn() : boolean {
+        return this.hasFoughtThisTurn;
     }
 
     public setRegion(r: Region) {

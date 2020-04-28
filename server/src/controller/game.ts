@@ -69,57 +69,72 @@ export function game(socket, model: Game, io) {
       socket.emit("updateGameLog", "You cannot move when it is not your turn!");
       return;
     }
+    if (hero == undefined) {
+      return;
+    }
 
-    if (hero !== undefined) {
-      var currRegion: Region = hero.getRegion()
-      var adjRegions: Array<number> = currRegion.getAdjRegionsIds()
-      var event9 = model.getActiveEvents().includes(9)
-      var event19 = model.getActiveEvents().includes(19)
-      var event26 = model.getActiveEvents().includes(26)
+    var currRegion: Region = hero.getRegion()
+    var adjRegions: Array<number> = currRegion.getAdjRegionsIds()
+    if (!adjRegions.includes(id)) {
+      // Not a valid region to move to
+      let msg = "You can only move to adjacent regions."
+      io.of("/" + model.getName()).emit('updateGameLog', msg);
+      return;
+    }
 
-      for (var regionID of adjRegions) {
-        // **Based on time of day starting at 1
-        var canMove = hero.getTimeOfDay() <= 7
-          || hero.getTimeOfDay() <= 9 && hero.getWill() >= 3 && !event19
-          || hero.getTimeOfDay() == 10 && hero.getWill() >= 3 && !event19 && !event9
-          || hero.getTimeOfDay() == 8 && event26
-          || hero.getTimeOfDay() <= 9 && hero.getWill() >= 4 && event19
-          || hero.getTimeOfDay() == 10 && hero.getWill() >= 4 && event19 && !event9
-          || hero.getFreeMoves() > 0
-        if (regionID === id && canMove) { // successful move
-          let targetRegion: Region = model.getRegions()[id];
-          // Check if the move kills any carried farmers
-          killFarmersOfHeroes(id, hero);
-          //if event 26 is active and it is your 8th hour, move freely
-          if (hero.getTimeOfDay() == 8 && event26) {
-            hero.freeMoveTo(targetRegion)
-          }
-          else if ((hero.getTimeOfDay() == 9 || (hero.getTimeOfDay() == 10 && !event9)) && event19) {
-            hero.exhaustingMoveTo(targetRegion)
-          }
-          else {
-            hero.moveTo(targetRegion)
-          }
-          if (model.dangerousRegion(targetRegion)) {
-            hero.setWill(-4)
-            let index = model.getActiveEvents().indexOf(21);
-            if (index > -1) {
-              model.getActiveEvents().splice(index, 1);
-            }
-          }
-          if (model.strengthRegion(targetRegion)) {
-            hero.setStrength(1)
-            let index = model.getActiveEvents().indexOf(3);
-            if (index > -1) {
-              model.getActiveEvents().splice(index, 1);
-            }
-          }
-          socket.broadcast.emit("updateMoveRequest", hero.getKind(), id)
-          callback(hero.getKind(), id)
-          // Update hasMovedThisTurn
-          hero.setHasMovedThisTurn(true);
+    // Determine if hero can move to adj region based on their hour, wp and active events
+    var event9 = model.getActiveEvents().includes(9)
+    var event19 = model.getActiveEvents().includes(19)
+    var event26 = model.getActiveEvents().includes(26)
+    var canMove = hero.getTimeOfDay() <= 7
+    || hero.getTimeOfDay() <= 9 && hero.getWill() >= 3 && !event19
+    || hero.getTimeOfDay() == 10 && hero.getWill() >= 3 && !event19 && !event9
+    || hero.getTimeOfDay() == 8 && event26
+    || hero.getTimeOfDay() <= 9 && hero.getWill() >= 4 && event19
+    || hero.getTimeOfDay() == 10 && hero.getWill() >= 4 && event19 && !event9
+    || hero.getFreeMoves() > 0;
+
+    if (canMove) {
+      // successful move
+      let targetRegion: Region = model.getRegions()[id];
+      // Check if the move kills any carried farmers
+      killFarmersOfHeroes(id, hero);
+      //if event 26 is active and it is your 8th hour, move freely
+      if (hero.getTimeOfDay() == 8 && event26) {
+        hero.freeMoveTo(targetRegion)
+      }
+      else if ((hero.getTimeOfDay() == 9 || (hero.getTimeOfDay() == 10 && !event9)) && event19) {
+        hero.exhaustingMoveTo(targetRegion)
+      }
+      else {
+        hero.moveTo(targetRegion)
+      }
+      if (model.dangerousRegion(targetRegion)) {
+        hero.setWill(-4)
+        let index = model.getActiveEvents().indexOf(21);
+        if (index > -1) {
+          model.getActiveEvents().splice(index, 1);
         }
       }
+      if (model.strengthRegion(targetRegion)) {
+        hero.setStrength(1)
+        let index = model.getActiveEvents().indexOf(3);
+        if (index > -1) {
+          model.getActiveEvents().splice(index, 1);
+        }
+      }
+      socket.broadcast.emit("updateMoveRequest", hero.getKind(), id)
+      callback(hero.getKind(), id)
+
+      hero.setHasMovedThisTurn(true);
+    } else { // Log error message for why you could not move
+      let msg;
+      if (hero.getTimeOfDay() == 10 && event9) { // event disallows use of 10th hour
+        msg = 'Event 9 is active: you cannot use the 10th hour on this day.'
+      } else {
+        msg = "You don't have enough willpower to use an extra hour."
+      }
+      io.of("/" + model.getName()).emit('updateGameLog', msg);
     }
   });
 
@@ -135,23 +150,38 @@ export function game(socket, model: Game, io) {
 
     console.log(hero.getNumPrinceMoves());
 
-    if (hero !== undefined) {
-      if (model.getPrince() == null) return;
-      var currPrinceRegion: Region = model.getPrince()!.getRegion();
-      var adjPrinceRegions: Array<number> = currPrinceRegion.getAdjRegionsIds()
+    if (hero == undefined || model.getPrince() == null) return;
 
-      for (var regionID of adjPrinceRegions) {
-        var timeLeft = hero.getTimeOfDay() <= 7 || (hero.getTimeOfDay() <= 10 && hero.getWill() >= 2)
-        if (regionID === id && timeLeft) { // successful move
-          let targetRegion: Region = model.getRegions()[id];
+    var currPrinceRegion: Region = model.getPrince()!.getRegion();
+    var adjPrinceRegions: Array<number> = currPrinceRegion.getAdjRegionsIds()
+    if (!adjPrinceRegions.includes(id)) return;
 
-          model.getPrince()!.moveTo(targetRegion);
-          hero.movePrince();
+    var event9 = model.getActiveEvents().includes(9)
+    var event19 = model.getActiveEvents().includes(19)
+    var event26 = model.getActiveEvents().includes(26)
+    var canMove = hero.getTimeOfDay() <= 7
+      || hero.getTimeOfDay() <= 9 && hero.getWill() >= 3 && !event19
+      || hero.getTimeOfDay() == 10 && hero.getWill() >= 3 && !event19 && !event9
+      || hero.getTimeOfDay() == 8 && event26
+      || hero.getTimeOfDay() <= 9 && hero.getWill() >= 4 && event19
+      || hero.getTimeOfDay() == 10 && hero.getWill() >= 4 && event19 && !event9
+      || hero.getFreeMoves() > 0;
+    if (canMove) { // successful move
+      let targetRegion: Region = model.getRegions()[id];
 
-          socket.broadcast.emit("updateMovePrinceRequest", hero.getKind(), id, hero.getNumPrinceMoves())
-          callback(hero.getKind(), id, hero.getNumPrinceMoves())
-        }
+      model.getPrince()!.moveTo(targetRegion);
+      hero.movePrince();
+
+      socket.broadcast.emit("updateMovePrinceRequest", hero.getKind(), id, hero.getNumPrinceMoves())
+      callback(hero.getKind(), id, hero.getNumPrinceMoves())
+    } else { // Log error message for why you could not move the prince
+      let msg;
+      if (hero.getTimeOfDay() == 10 && event9) { // event disallows use of 10th hour
+        msg = 'Event 9 is active: you cannot use the 10th hour on this day.'
+      } else {
+        msg = "You don't have enough willpower to use an extra hour."
       }
+      io.of("/" + model.getName()).emit('updateGameLog', msg);
     }
   });
 
@@ -179,7 +209,7 @@ export function game(socket, model: Game, io) {
     }
 
     var msg = ``;
-    if (!hero.getHasMovedThisTurn()) {
+    if (!hero.getHasMovedThisTurn() && !hero.getHasFoughtThisTurn()) {
       // Check if hero has available 1 hour to pass their turn
       var event9 = model.getActiveEvents().includes(9);
       var event19 = model.getActiveEvents().includes(19);
@@ -205,6 +235,7 @@ export function game(socket, model: Game, io) {
     } else {
       msg = `The ${hero.getKind()} ended their turn.`
       hero.setHasMovedThisTurn(false);
+      hero.setHasFoughtThisTurn(false);
     }
 
     hero.resetPrinceMoves();
@@ -446,7 +477,7 @@ export function game(socket, model: Game, io) {
       callback();
       // Using a merchant ends your turn
       // Update game log
-      var msg = `${hero.getKind()} bought something from a merchant.`
+      var msg = `The ${hero.getKind()} bought something from a merchant.`
       socket.emit("updateGameLog", msg);
       socket.broadcast.emit("updateGameLog", msg);
       // End turn
@@ -480,7 +511,7 @@ export function game(socket, model: Game, io) {
       socket.emit("updateNumBrews", model.getWitch()?.getNumBrews());
       socket.broadcast.emit("updateNumBrews", model.getWitch()?.getNumBrews());
       // Update game log
-      var msg = `${hero.getKind()} bought a brew from the witch.`
+      var msg = `The ${hero.getKind()} bought a brew from the witch.`
       socket.emit("updateGameLog", msg);
       socket.broadcast.emit("updateGameLog", msg);
       // End turn
@@ -599,9 +630,13 @@ export function game(socket, model: Game, io) {
           io.of("/" + model.getName()).emit('updateGameLog', msg);
         } else if (fogType === Fog.EventCard) {
           if (event != null) {
+            let msg = `The ${hero.getKind()} revealed a fog and triggered an event!`
+            io.of("/" + model.getName()).emit("updateGameLog", msg);
+
             if(event.id != 16){
               io.of("/" + model.getName()).emit("newEvent", event);
             }
+        
             //these will be blockable
             if(event.id ==  2 || event.id ==  5 || event.id ==  7 || event.id ==  9 || event.id == 11 || event.id == 15 || event.id == 17 || event.id == 18 || 
                event.id == 19 || event.id == 20 || event.id == 21 || event.id == 22 || event.id == 24 || event.id == 27 || event.id == 31 || event.id == 32 || event.id == 33){
@@ -1557,6 +1592,8 @@ export function game(socket, model: Game, io) {
     var hero = model.getHero(heroId)
     var roll = hero.roll(bow)
     hero.incrementHour()
+    // TODO ACUI: this should only be set for the initiating hero of a fight?? confirm with jacek
+    hero.setHasFoughtThisTurn(true);
     callback(roll)
   })
 
