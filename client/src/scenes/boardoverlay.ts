@@ -41,6 +41,7 @@ export default class BoardOverlay extends Phaser.Scene {
     private COLOR_PRIMARY = 0xD9B382;
     private COLOR_LIGHT = 0x7b5e57;
     private COLOR_DARK = 0x4B2504;
+    private content; // game log content
 
     constructor(data) {
         super({
@@ -55,6 +56,8 @@ export default class BoardOverlay extends Phaser.Scene {
         this.clientheroobject = data.clientheroobject
         this.herb = data.herb;
         this.initialCollabDone = data.initialCollabDone;
+        this.content = this.initialCollabDone ? 
+        `View in game updates here:\n > Game loaded.` : `View in game updates here:\n > The legend begins.`;
     }
 
     public init() { }
@@ -299,11 +302,6 @@ export default class BoardOverlay extends Phaser.Scene {
         panel.layout();
         return panel;
     }
-    
-    // Game log content
-    // TODO: save up to n messages in the log, clear previous messages.
-    private content = this.initialCollabDone ? 
-        `View in game updates here:\n > Game loaded.` : `View in game updates here:\n > The legend begins.`;
 
     private endDaySetup() {
         var self = this;
