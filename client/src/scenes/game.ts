@@ -110,7 +110,6 @@ export default class GameScene extends Phaser.Scene {
     //items
     // this.load.image("Brew", "../assets/brew.png");
     // this.load.image("Wineskin", "../assets/wineskin.png");
-    // this.load.image("shield", "../assets/shield.PNG")
     this.load.image("menubackground", "../assets/menubackground.png");
     this.load.image("blue_runestone", "../assets/stones/runestone_b.PNG");
     this.load.image("green_runestone", "../assets/stones/runestone_g.PNG");
@@ -128,6 +127,8 @@ export default class GameScene extends Phaser.Scene {
     this.load.image("half_wineskin", "../assets/items/half_wineskin.jpg")
     this.load.image("half_brew", "../assets/items/half_brew.jpg")
     this.load.image("herb", "../assets/items/herb.png");
+    this.load.image("shield", "../assets/items/shield.png")
+
     this.load.image("prince", "../assets/board-minor/prince.png");
     this.load.image("gold", "../assets/fog-tokens/gold.png")
 
