@@ -477,7 +477,7 @@ export function game(socket, model: Game, io) {
       callback();
       // Using a merchant ends your turn
       // Update game log
-      var msg = `The ${hero.getKind()} bought something from a merchant.`
+      var msg = `The ${hero.getKind()} bought one ${item} from a merchant.`
       socket.emit("updateGameLog", msg);
       socket.broadcast.emit("updateGameLog", msg);
       // End turn
@@ -2543,6 +2543,7 @@ export function game(socket, model: Game, io) {
     switch (str) {
       case "falcon": return LargeItem.Falcon
       case "shield": return LargeItem.Shield
+      case "damaged_shield": return LargeItem.DamagedShield
       case "bow": return LargeItem.Bow
       case "None": return LargeItem.Empty
       default:

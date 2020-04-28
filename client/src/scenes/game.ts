@@ -110,7 +110,6 @@ export default class GameScene extends Phaser.Scene {
     //items
     // this.load.image("Brew", "../assets/brew.png");
     // this.load.image("Wineskin", "../assets/wineskin.png");
-    // this.load.image("shield", "../assets/shield.PNG")
     this.load.image("menubackground", "../assets/menubackground.png");
     this.load.image("blue_runestone", "../assets/stones/runestone_b.PNG");
     this.load.image("green_runestone", "../assets/stones/runestone_g.PNG");
@@ -128,6 +127,8 @@ export default class GameScene extends Phaser.Scene {
     this.load.image("half_wineskin", "../assets/items/half_wineskin.jpg")
     this.load.image("half_brew", "../assets/items/half_brew.jpg")
     this.load.image("herb", "../assets/items/herb.png");
+    this.load.image("shield", "../assets/items/shield.png")
+
     this.load.image("prince", "../assets/board-minor/prince.png");
     this.load.image("gold", "../assets/fog-tokens/gold.png")
 
@@ -390,12 +391,12 @@ export default class GameScene extends Phaser.Scene {
   }
 
   private addShieldsToRietburg(numShields) {
-    let s1 = this.add.sprite(85, 188, 'dshield').setDisplaySize(65, 81)
-    let s2 = this.add.sprite(153, 188, 'dshield').setDisplaySize(65, 81)
-    let s3 = this.add.sprite(218, 188, 'dshield').setDisplaySize(65, 81)
-    let s4 = this.add.sprite(85, 310, 'dshield').setDisplaySize(65, 81)
-    let s5 = this.add.sprite(153, 310, 'dshield').setDisplaySize(65, 81)
-    let s6 = this.add.sprite(85, 430, 'dshield').setDisplaySize(65, 81)
+    let s1 = this.add.sprite(95, 188, 'dshield').setDisplaySize(65, 81)
+    let s2 = this.add.sprite(163, 188, 'dshield').setDisplaySize(65, 81)
+    let s3 = this.add.sprite(228, 188, 'dshield').setDisplaySize(65, 81)
+    let s4 = this.add.sprite(95, 310, 'dshield').setDisplaySize(65, 81)
+    let s5 = this.add.sprite(163, 310, 'dshield').setDisplaySize(65, 81)
+    let s6 = this.add.sprite(95, 430, 'dshield').setDisplaySize(65, 81)
 
     this.castle.shields.push(s1)
     this.castle.shields.push(s2)
