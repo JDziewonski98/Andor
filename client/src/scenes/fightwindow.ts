@@ -690,6 +690,7 @@ export class Fight extends Window {
       if (response == "yes") {
         console.log("yes " + herokind);
         self.actuallyjoinedheros.push(herokind);
+        console.log('currently joined heros:', self.actuallyjoinedheros)
       }
       else {
         var index = self.alliedheros.indexOf(herokind)
@@ -697,6 +698,7 @@ export class Fight extends Window {
           self.alliedheros.splice(index, 1);
           self.inviteresponses--;
         }
+        console.log('currently joined heros:', self.actuallyjoinedheros)
       }
     });
   }
@@ -799,6 +801,7 @@ export class Fight extends Window {
     for (let h of this.actuallyjoinedheros) {
       involvedheros.push(h);
     }
+    console.log(involvedheros)
 
     goldtext.on(
       "pointerdown",
