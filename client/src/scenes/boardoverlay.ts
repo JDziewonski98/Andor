@@ -199,7 +199,7 @@ export default class BoardOverlay extends Phaser.Scene {
         var panelThumb = new RoundRectangle(this, 0, 0, 0, 0, 8, this.COLOR_LIGHT);
 
         var panelConfig = {
-            x: 170,
+            x: 215,
             y: 545,
             width: 300,
             height: 70,
@@ -237,6 +237,11 @@ export default class BoardOverlay extends Phaser.Scene {
             console.log("game log update:", update, "||")
             self.updateContent(panel, update);
         })
+        // x: 170,
+        //     y: 545,
+        // Indicator of the hero you are playing
+        let heroTexture = this.clientheroobject.getKind();
+        this.add.image(10, 512, heroTexture).setScale(0.16).setOrigin(0);
 
         // TODO: REMOVE LATER, FOR TESTING NARRATOR ONLY
         // var advance = this.add.text(400, 560, "ADVANCE NARRATOR", style2).setInteractive()

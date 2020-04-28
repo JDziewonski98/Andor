@@ -347,20 +347,12 @@ export function game(socket, model: Game, io) {
     // console.log('server emits runestonePos', runestonePos)
     socket.emit("updateNarrator", narratorPos, runestonePos)
     socket.broadcast.emit("updateNarrator", narratorPos, runestonePos)
-
-    // TODO acui: issue with this not being received by client, I suspect because overlay isn't fully
-    // initialized at this point.
-    // let narratorLetter = enumPositionOfNarrator[(runestonePos)];
-    // let msg = `The rune stone legend card has been placed on space ${narratorLetter} of the Legend Track.`
-    // console.log(msg);
-    // io.of("/" + model.getName()).emit('updateGameLog', msg);
   })
 
   socket.on("logRunestoneLegendPos", () => {
     let runestonePos = model.getNarrator().getRunestoneLegendPos();
     let narratorLetter = enumPositionOfNarrator[(runestonePos)];
     let msg = `The rune stone legend card has been placed on space ${narratorLetter} of the Legend Track.`
-    console.log(msg);
     socket.emit('updateGameLog', msg);
   })
 

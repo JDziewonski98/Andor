@@ -6,7 +6,7 @@ export var reducedWidth = 1000;
 export var reducedHeight = 600;
 
 // Gameboard jpg size
-export var borderWidth = 40;
+export var borderWidth = 60;
 export var expandedWidth = 9861*scaleFactor;
 export var fullWidth = expandedWidth+borderWidth*2;
 export var expandedHeight = 6476*scaleFactor;
