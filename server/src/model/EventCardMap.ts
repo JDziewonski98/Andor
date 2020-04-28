@@ -1,11 +1,11 @@
 //{"id": , "flavorText": "", "desc": ""},
 
 export var map = [
-    // {
-    //     "id": 1, 
-    //     "flavorText": "The dwarf merchant Garz makes an offer.", 
-    //     "desc": "Each hero may now purchase any article from the equipment board (except the witch’s brew) in exchange for 3 willpower points."
-    // },
+    {
+        "id": 1, 
+        "flavorText": "The dwarf merchant Garz makes an offer.", 
+        "desc": "Each hero may now purchase any article from the equipment board (except the witch’s brew) in exchange for 3 willpower points."
+    },
     // {
     //     "id": 2, 
     //     "flavorText": "A biting wind blows across the coast from the sea.", 
@@ -14,7 +14,7 @@ export var map = [
     // {
     //     "id": 3, 
     //     "flavorText": "Wisdom from the Tree of Songs", 
-    //     "desc": "A hero who enters the Tree of Songs space or is already standing there gets 1 strength point. If more than one hero is standing there, the one with the highest rank gets the strength point. Now place this card on space 57 until a hero has gotten the strength point. Then remove it from the game."
+    //     "desc": "A hero who enters the Tree of Songs space or is already standing there gets 1 strength point. If more than one hero is standing there, the one with the highest rank gets the strength point. Once a hero has claimed the strength point, the effect is removed."
     // },
     // {
     //     "id": 4, 
@@ -44,7 +44,7 @@ export var map = [
     // {
     //     "id": 9, 
     //     "flavorText": "Dark clouds cover the sun, filling all the good people of Andor with strange foreboding.", 
-    //     "desc": "On this day no hero is allowed to use a 10th hour. Place this card above the overtime area of the time track. At the end of the day, it is removed from the game."
+    //     "desc": "On this day no hero is allowed to use a 10th hour. At the end of the day, the effect is removed."
     // },
     // {
     //     "id": 10, 
@@ -54,7 +54,7 @@ export var map = [
     // {
     //     "id": 11, 
     //     "flavorText": "The creatures gather their strength.", 
-    //     "desc": "On this day, each creature has 1 extra strength point. Place this card next to the creature display. At the end of the day, it is removed from the game. "
+    //     "desc": "On this day, each creature has 1 extra strength point. At the end of the day, the effect is removed."
     // },
     // {
     //     "id": 12, 
@@ -76,16 +76,16 @@ export var map = [
     //     "flavorText": "Rampaging creatures despoil the well in the south of Andor.", 
     //     "desc": "The well token on space 35 is removed from the game."
     // },
-    {
-        "id": 16, 
-        "flavorText": "Royal falcons fly high above the land, keeping watch.", 
-        "desc": "The hero with the highest rank is allowed to take a look at the top card on the event card deck. Then he gets to decide whether to remove the card from the game or place it back on the deck."
-    },
-    {
-        "id": 17, 
-        "flavorText": "Heavy weather moves across the land.", 
-        "desc": "Each hero with more than 12 willpower points immediately reduces his point total to 12."
-    },
+    // {
+    //     "id": 16, 
+    //     "flavorText": "Royal falcons fly high above the land, keeping watch.", 
+    //     "desc": "The hero with the highest rank is allowed to take a look at the top card on the event card deck. Then he gets to decide whether to remove the card from the game or place it back on the deck."
+    // },
+    // {
+    //     "id": 17, 
+    //     "flavorText": "Heavy weather moves across the land.", 
+    //     "desc": "Each hero with more than 12 willpower points immediately reduces his point total to 12."
+    // },
     // {
     //     "id": 18, 
     //     "flavorText": "A wild gor storms forth.", 
@@ -94,7 +94,7 @@ export var map = [
     // {
     //     "id": 19, 
     //     "flavorText": "An exhausting day", 
-    //     "desc": "On this day, the 9th and 10th hours will each cost 3 willpower points instead of 2. Place this card above the overtime area of the time track. At the end of the day, it is removed from the game."
+    //     "desc": "On this day, the 9th and 10th hours will each cost 3 willpower points instead of 2. At the end of the day, the effect is removed."
     // // },
     // {
     //     "id": 20, 
@@ -104,7 +104,7 @@ export var map = [
     // {
     //     "id": 21, 
     //     "flavorText": "A mysterious terror lurks in the southern woods.", 
-    //     "desc": "A hero who enters space 22, 23, 24, or 25 or is already standing there will immediately lose 4 willpower points. If more than one hero is standing there, the one with the highest rank loses the points. Place this card next to space 24 until it is triggered. Then it is removed from the game. "
+    //     "desc": "A hero who enters space 22, 23, 24, or 25 or is already standing there will immediately lose 4 willpower points. If more than one hero is standing there, the one with the highest rank loses the points. Once this effect is triggered, it will be removed from the game. "
     // },
     // {
     //     "id": 22, 
@@ -129,7 +129,7 @@ export var map = [
     // {
     //     "id": 26, 
     //     "flavorText": "On this day, the 8th hour costs no willpower points.", 
-    //     "desc": "Place this card above the overtime area of the time track. At the end of the day, it is removed from the game."
+    //     "desc": "At the end of the day, the effect is removed."
     // },
     // {
     //     "id": 27, 
