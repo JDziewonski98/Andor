@@ -633,13 +633,11 @@ export function game(socket, model: Game, io) {
           io.of("/" + model.getName()).emit('updateGameLog', msg);
         } else if (fogType === Fog.EventCard) {
           if (event != null) {
-            let msg = `The ${hero.getKind()} revealed a fog and triggered an event!`
-            io.of("/" + model.getName()).emit("updateGameLog", msg);
-
             if(event.id != 16){
+              let msg = event.flavorText
+              io.of("/" + model.getName()).emit("updateGameLog", msg);
               io.of("/" + model.getName()).emit("newEvent", event);
             }
-        
             //these will be blockable
             if(event.id ==  2 || event.id ==  5 || event.id ==  7 || event.id ==  9 || event.id == 11 || event.id == 15 || event.id == 17 || event.id == 18 || 
                event.id == 19 || event.id == 20 || event.id == 21 || event.id == 22 || event.id == 24 || event.id == 27 || event.id == 31 || event.id == 32 || event.id == 33){
@@ -709,6 +707,8 @@ export function game(socket, model: Game, io) {
                         }
                       }
                       roll = lowestHero.eventRoll()
+                      let msg = `The ` + lowestHero?.getKind() + ` rolled a ` + roll
+                      io.of("/" + model.getName()).emit('updateGameLog', msg);
                       //console.log(lowestHeroKind, "rolled a", roll)
                       for(let [conn,hero] of model.getHeros()){
                         hero.setWill(-1*roll)
@@ -716,6 +716,8 @@ export function game(socket, model: Game, io) {
                     }
                     else if(event.id == 15){
                       io.of("/" + model.getName()).emit('removeWell', "35");
+                      let msg = `Monsters have destroyed the well at tile 35. It is broken beyond repair and can no longer be used.`
+                      io.of("/" + model.getName()).emit('updateGameLog', msg);
                       model.applyEvent(event)
                     }
                     else if(event.id == 18){
@@ -751,7 +753,7 @@ export function game(socket, model: Game, io) {
                             let shieldsRemaining = model.moveMonster(m)
                             shieldsLeft = shieldsRemaining
                             convMonsters[m.name] = m.getTileID();
-
+    
                             if (oldNumShields > shieldsRemaining) {
                               let msg = oldNumShields - 1 > shieldsRemaining ? 
                                 `Monsters have reached the castle! Shields were lost defending against them.` :
@@ -770,7 +772,7 @@ export function game(socket, model: Game, io) {
                         io.of("/" + model.getName()).emit('sendUpdatedMonsters', convMonsters);
                         io.of("/" + model.getName()).emit('updateShields', shieldsLeft);
                       }
-
+    
                     }
                     else if(event.id == 20){
                       //check which heros have gold and willpower to lose. 
@@ -793,12 +795,16 @@ export function game(socket, model: Game, io) {
                         let index = Math.floor(Math.random() * model.getFarmers().length)
                         let tileID = model.getFarmers()[index].getTileID()
                         io.of("/" + model.getName()).emit("destroyFarmer", tileID);
+                        let msg = `The farmer at tile ` + index + ` has been removed from the game.`
+                        io.of("/" + model.getName()).emit('updateGameLog', msg);
                         model.getFarmers().splice(index, 1)
                         //don't need to all model.applyEvent(event) because its all handled on server controller
                       }
                     }
                     else if(event.id == 22){
                       io.of("/" + model.getName()).emit('removeWell', "45");
+                      let msg = `Monsters have destroyed the well at tile 45. It is broken beyond repair and can no longer be used.`
+                      io.of("/" + model.getName()).emit('updateGameLog', msg);
                       model.applyEvent(event)
                     }
                     else if(event.id == 27){
@@ -821,7 +827,7 @@ export function game(socket, model: Game, io) {
                       else{
                         let maxID = -1
                         for(let [n,m] of model.getMonsters()){
-                          console.log(m.getTileID())
+                          //console.log(m.getTileID())
                           if( m.getTileID() > maxID){
                             maxID = m.getTileID()
                           }
@@ -878,6 +884,10 @@ export function game(socket, model: Game, io) {
                     if (hero.pickUpSmallItem(hero.getRegion().getID(), SmallItem.Wineskin)) {
                       //emit removeitem 
                     }
+                    else{
+                      let msg = `The ` + hero.getKind() + `'s inventory is full, so their wineskin has been dropped to their tile, tile `+ hero.getRegion().getID() 
+                      io.of("/" + model.getName()).emit('updateGameLog', msg);
+                    }
                   }
                 }
               }
@@ -920,6 +930,8 @@ export function game(socket, model: Game, io) {
                 elligibleHeroes.push(highestHero)
                 let newEvent = model.getEventDeck()[0]
                 io.of("/" + model.getName()).emit("newEvent", newEvent);
+                let msg = event.flavorText
+                io.of("/" + model.getName()).emit("updateGameLog", msg);
                 io.of("/" + model.getName()).emit("newEvent", event);
                 io.of("/" + model.getName()).emit('newCollab', event.id, elligibleHeroes);
               }
@@ -943,6 +955,8 @@ export function game(socket, model: Game, io) {
                 for(let [conn,hero] of model.getHeros()){
                   if(hero.getWill() < 6){
                     let roll = hero.eventRoll()
+                    let msg = `The ` + hero.getKind() + ` rolled a ` + roll
+                    io.of("/" + model.getName()).emit('updateGameLog', msg);
                     hero.setWill(roll)
                   }
                 }
@@ -969,6 +983,10 @@ export function game(socket, model: Game, io) {
                       if (hero?.pickUpLargeItem(hero.getRegion().getID(), LargeItem.Shield)) {
                         //emit removeitem 
                       }
+                      else{
+                        let msg = `The ` + hero.getKind() + `'s inventory is full, so their shield has been dropped to their tile, tile `+ hero.getRegion().getID() 
+                        io.of("/" + model.getName()).emit('updateGameLog', msg);
+                      }
                     }
                   }
                 }
@@ -976,6 +994,8 @@ export function game(socket, model: Game, io) {
                   //drop shield on region 57
                   model.getRegions()[57].addItem(LargeItem.Shield)
                   //emit add item
+                  let msg = `A shield has been dropped to tile 57` 
+                  io.of("/" + model.getName()).emit('updateGameLog', msg);
                 }
               }
               else if(event.id == 30){
@@ -999,13 +1019,19 @@ export function game(socket, model: Game, io) {
                       if (hero?.pickUpSmallItem(hero.getRegion().getID(), SmallItem.Wineskin)) {
                         //emit removeitem 
                       }
+                      else{
+                        let msg = `The ` + hero.getKind() + `'s inventory is full, so their wineskin has been dropped to their tile, tile `+ hero.getRegion().getID() 
+                        io.of("/" + model.getName()).emit('updateGameLog', msg);
+                      }
                     }
                   }
                 }
                 else {
-                  //drop shield on region 57
+                  //drop wineskin on region 57
                   model.getRegions()[72].addItem(SmallItem.Wineskin)
                   //emit add item
+                  let msg = `A wineskin has been dropped to tile 72` 
+                  io.of("/" + model.getName()).emit('updateGameLog', msg);
                 }
               }
               else if(event.id == 34){
@@ -1297,21 +1323,25 @@ export function game(socket, model: Game, io) {
           }
           else if (resNames[i] == 'Will') { //will for events
             if (resAllocated[heroTypeString][i] > 0) {
-              if(eventID = 10){
+              if(eventID == 10){
                 if (resAllocated[heroTypeString][i] == 3) {
                   currHero?.setWill(3)
                   currHero?.updateGold(-1)
                 }
               }
-              else if(eventID = 18){
+              else if(eventID == 18){
                   model.setBlockedEvent(true)
                   currHero?.setWill(-1*resAllocated[heroTypeString][i])
+              }
+              else if(eventID == 20){
+                model.setBlockedEvent(true)
+                currHero?.setWill(-1*resAllocated[heroTypeString][i])
               }
               else if(eventID == 27){
                   model.setBlockedEvent(true)
                   currHero?.setWill(-1*resAllocated[heroTypeString][i])
               }
-              else if(eventID = 34){
+              else if(eventID == 34){
                   currHero?.setWill(10)
                   currHero?.setStrength(-2)
               }
@@ -1325,6 +1355,10 @@ export function game(socket, model: Game, io) {
               if (currHero?.pickUpLargeItem(currHero.getRegion().getID(), LargeItem.Shield)) {
                 //emit removeitem 
               }
+              else{
+                let msg = `The ` + currHero?.getKind() + `'s inventory is full, so their shield has been dropped to their tile, tile `+ currHero?.getRegion().getID() 
+                io.of("/" + model.getName()).emit('updateGameLog', msg);
+              }
             }
           }
           else if (resNames[i] == 'Wineskin') {
@@ -1334,6 +1368,10 @@ export function game(socket, model: Game, io) {
               //emit add item
               if (currHero.pickUpSmallItem(currHero.getRegion().getID(), SmallItem.Wineskin)) {
                 //emit removeitem 
+              }
+              else{
+                let msg = `The ` + currHero?.getKind() + `'s inventory is full, so their wineskin has been dropped to their tile, tile `+ currHero?.getRegion().getID() 
+                io.of("/" + model.getName()).emit('updateGameLog', msg);
               }
             }
           }
@@ -1345,6 +1383,10 @@ export function game(socket, model: Game, io) {
               if (currHero?.pickUpLargeItem(currHero.getRegion().getID(), LargeItem.Falcon)) {
                 //emit removeitem 
               }
+              else{
+                let msg = `The ` + currHero?.getKind() + `'s inventory is full, so their falcon has been dropped to their tile, tile `+ currHero?.getRegion().getID() 
+                io.of("/" + model.getName()).emit('updateGameLog', msg);
+              }
             }
           }
           else if (resNames[i] == 'Helm') {
@@ -1354,6 +1396,10 @@ export function game(socket, model: Game, io) {
               //emit add item
               if (currHero.pickUpHelm(currHero.getRegion().getID())) {
                 //emit removeitem 
+              }
+              else{
+                let msg = `The ` + currHero?.getKind() + `'s inventory is full, so their helm has been dropped to their tile, tile `+ currHero?.getRegion().getID() 
+                io.of("/" + model.getName()).emit('updateGameLog', msg);
               }
             }
           }
@@ -1368,7 +1414,8 @@ export function game(socket, model: Game, io) {
           }
           else if(resNames[i] == 'Roll'){
             var roll = currHero?.eventRoll()
-            //console.log(currHero?.getKind(), "rolled a", roll)
+            let msg = `The ` + currHero?.getKind() + ` rolled a ` + roll
+            io.of("/" + model.getName()).emit('updateGameLog', msg);
             if(roll < 5){
               currHero?.setWill(-1*roll)
             }
@@ -1376,44 +1423,37 @@ export function game(socket, model: Game, io) {
               currHero?.setWill(roll)
             }
           }
-          else if(resNames[i] == '-Gold'){
+          else if(resNames[i] == 'Gold'){
             if(resAllocated[heroTypeString][i] > 0){
               model.setBlockedEvent(true)
+              let currGold = currHero?.getGold()
+              currHero?.setGold(currGold - resAllocated[heroTypeString][i])
             }
-            let currGold = currHero?.getGold()
-            currHero?.setGold(currGold - resAllocated[heroTypeString][i])
           }
-          // else if(resNames[i] == '-Will'){
-          //   if(resAllocated[heroTypeString][i] > 0){
-          //     model.setBlockedEvent(true)
-          //   }
-          //   currHero?.setWill(-1*resAllocated[heroTypeString][i])
-
+          // else if(resNames[i] == 'Will  '){
+          //   event18 = true
+            
+            
           // }
-          else if(resNames[i] == 'Will  '){
-            event18 = true
+          // else if(resNames[i] == ' Will '){
+          //   if(eventID == 27){
+          //     if(resAllocated[heroTypeString][i] > 0){
+          //       model.setBlockedEvent(true)
+          //       currHero?.setWill(-1*resAllocated[heroTypeString][i])
+          //     }
+          //   }
             
             
-          }
-          else if(resNames[i] == ' Will '){
-            if(eventID == 27){
-              if(resAllocated[heroTypeString][i] > 0){
-                model.setBlockedEvent(true)
-                currHero?.setWill(-1*resAllocated[heroTypeString][i])
-              }
-            }
-            
-            
-          }
-          else if(resNames[i] == 'Gold'){
-            if(eventID == 27){
-              if(resAllocated[heroTypeString][i] > 0){
-                model.setBlockedEvent(true)
-                let currGold = currHero?.getGold()
-                currHero?.setGold(currGold - resAllocated[heroTypeString][i])
-              }
-            }
-          }
+          // }
+          // else if(resNames[i] == 'Gold'){
+          //   if(eventID == 27){
+          //     if(resAllocated[heroTypeString][i] > 0){
+          //       model.setBlockedEvent(true)
+          //       let currGold = currHero?.getGold()
+          //       currHero?.setGold(currGold - resAllocated[heroTypeString][i])
+          //     }
+          //   }
+          // }
           else if(resNames[i] == "Keep"){
             if(resAllocated[heroTypeString][i] == 1){
               model.setBlockedEvent(true)
@@ -1435,19 +1475,8 @@ export function game(socket, model: Game, io) {
         model.drawCard()
       }
     }
-    //console.log(eventID, eventID == 20, model.getBlockedEvent())
-    if(eventID == 20){
-      if(model.getBlockedEvent()){
-        model.setBlockedEvent(false)
-      }
-      else{
-        let index = Math.floor(Math.random() * model.getFarmers().length)
-        let tileID = model.getFarmers()[index].getTileID()
-        io.of("/" + model.getName()).emit("destroyFarmer", tileID);
-        model.getFarmers().splice(index, 1)
-      }
-    }
-    if(eventID == 18){
+    
+    else if(eventID == 18){
       if(model.getBlockedEvent()){
         model.setBlockedEvent(false)
       }
@@ -1486,6 +1515,19 @@ export function game(socket, model: Game, io) {
         }
         io.of("/" + model.getName()).emit('sendUpdatedMonsters', convMonsters);
         io.of("/" + model.getName()).emit('updateShields', shieldsLeft);
+      }
+    }
+    else if(eventID == 20){
+      if(model.getBlockedEvent()){
+        model.setBlockedEvent(false)
+      }
+      else{
+        let index = Math.floor(Math.random() * model.getFarmers().length)
+        let tileID = model.getFarmers()[index].getTileID()
+        io.of("/" + model.getName()).emit("destroyFarmer", tileID);
+        let msg = `The farmer at tile ` + index + ` has been removed from the game.`
+        io.of("/" + model.getName()).emit('updateGameLog', msg);
+        model.getFarmers().splice(index, 1)
       }
     }
     if(eventID == 27){
@@ -1866,6 +1908,8 @@ export function game(socket, model: Game, io) {
       let event = model.drawCard()
       if (event != null) {
         if(event.id != 16){
+          let msg = event.flavorText
+          io.of("/" + model.getName()).emit("updateGameLog", msg);
           io.of("/" + model.getName()).emit("newEvent", event);
         }
         //these will be blockable
@@ -1937,6 +1981,8 @@ export function game(socket, model: Game, io) {
                     }
                   }
                   roll = lowestHero.eventRoll()
+                  let msg = `The ` + lowestHero?.getKind() + ` rolled a ` + roll
+                  io.of("/" + model.getName()).emit('updateGameLog', msg);
                   //console.log(lowestHeroKind, "rolled a", roll)
                   for(let [conn,hero] of model.getHeros()){
                     hero.setWill(-1*roll)
@@ -1944,6 +1990,8 @@ export function game(socket, model: Game, io) {
                 }
                 else if(event.id == 15){
                   io.of("/" + model.getName()).emit('removeWell', "35");
+                  let msg = `Monsters have destroyed the well at tile 35. It is broken beyond repair and can no longer be used.`
+                  io.of("/" + model.getName()).emit('updateGameLog', msg);
                   model.applyEvent(event)
                 }
                 else if(event.id == 18){
@@ -2021,12 +2069,16 @@ export function game(socket, model: Game, io) {
                     let index = Math.floor(Math.random() * model.getFarmers().length)
                     let tileID = model.getFarmers()[index].getTileID()
                     io.of("/" + model.getName()).emit("destroyFarmer", tileID);
+                    let msg = `The farmer at tile ` + index + ` has been removed from the game.`
+                    io.of("/" + model.getName()).emit('updateGameLog', msg);
                     model.getFarmers().splice(index, 1)
                     //don't need to all model.applyEvent(event) because its all handled on server controller
                   }
                 }
                 else if(event.id == 22){
                   io.of("/" + model.getName()).emit('removeWell', "45");
+                  let msg = `Monsters have destroyed the well at tile 45. It is broken beyond repair and can no longer be used.`
+                  io.of("/" + model.getName()).emit('updateGameLog', msg);
                   model.applyEvent(event)
                 }
                 else if(event.id == 27){
@@ -2049,7 +2101,7 @@ export function game(socket, model: Game, io) {
                   else{
                     let maxID = -1
                     for(let [n,m] of model.getMonsters()){
-                      console.log(m.getTileID())
+                      //console.log(m.getTileID())
                       if( m.getTileID() > maxID){
                         maxID = m.getTileID()
                       }
@@ -2106,6 +2158,10 @@ export function game(socket, model: Game, io) {
                 if (hero.pickUpSmallItem(hero.getRegion().getID(), SmallItem.Wineskin)) {
                   //emit removeitem 
                 }
+                else{
+                  let msg = `The ` + hero.getKind() + `'s inventory is full, so their wineskin has been dropped to their tile, tile `+ hero.getRegion().getID() 
+                  io.of("/" + model.getName()).emit('updateGameLog', msg);
+                }
               }
             }
           }
@@ -2148,6 +2204,8 @@ export function game(socket, model: Game, io) {
             elligibleHeroes.push(highestHero)
             let newEvent = model.getEventDeck()[0]
             io.of("/" + model.getName()).emit("newEvent", newEvent);
+            let msg = event.flavorText
+            io.of("/" + model.getName()).emit("updateGameLog", msg);
             io.of("/" + model.getName()).emit("newEvent", event);
             io.of("/" + model.getName()).emit('newCollab', event.id, elligibleHeroes);
           }
@@ -2171,6 +2229,8 @@ export function game(socket, model: Game, io) {
             for(let [conn,hero] of model.getHeros()){
               if(hero.getWill() < 6){
                 let roll = hero.eventRoll()
+                let msg = `The ` + hero.getKind() + ` rolled a ` + roll
+                io.of("/" + model.getName()).emit('updateGameLog', msg);
                 hero.setWill(roll)
               }
             }
@@ -2197,6 +2257,10 @@ export function game(socket, model: Game, io) {
                   if (hero?.pickUpLargeItem(hero.getRegion().getID(), LargeItem.Shield)) {
                     //emit removeitem 
                   }
+                  else{
+                    let msg = `The ` + hero.getKind() + `'s inventory is full, so their shield has been dropped to their tile, tile `+ hero.getRegion().getID() 
+                    io.of("/" + model.getName()).emit('updateGameLog', msg);
+                  }
                 }
               }
             }
@@ -2204,6 +2268,8 @@ export function game(socket, model: Game, io) {
               //drop shield on region 57
               model.getRegions()[57].addItem(LargeItem.Shield)
               //emit add item
+              let msg = `A shield has been dropped to tile 57` 
+              io.of("/" + model.getName()).emit('updateGameLog', msg);
             }
           }
           else if(event.id == 30){
@@ -2227,13 +2293,19 @@ export function game(socket, model: Game, io) {
                   if (hero?.pickUpSmallItem(hero.getRegion().getID(), SmallItem.Wineskin)) {
                     //emit removeitem 
                   }
+                  else{
+                    let msg = `The ` + hero.getKind() + `'s inventory is full, so their wineskin has been dropped to their tile, tile `+ hero.getRegion().getID() 
+                    io.of("/" + model.getName()).emit('updateGameLog', msg);
+                  }
                 }
               }
             }
             else {
-              //drop shield on region 57
+              //drop wineskin on region 57
               model.getRegions()[72].addItem(SmallItem.Wineskin)
               //emit add item
+              let msg = `A wineskin has been dropped to tile 72` 
+              io.of("/" + model.getName()).emit('updateGameLog', msg);
             }
           }
           else if(event.id == 34){
