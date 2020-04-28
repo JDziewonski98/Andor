@@ -204,10 +204,11 @@ export default class GameScene extends Phaser.Scene {
       this.receiveNarratorEvents();
     })
 
-    setInterval(() => {
-      console.log("********* SAVING GAME");
-      this.gameinstance.save();
-    }, 10000);
+    // Auto-saving, disabled now so save your games manually
+    // setInterval(() => {
+    //   console.log("********* SAVING GAME");
+    //   this.gameinstance.save();
+    // }, 10000);
     // this.addMerchants();
 
     //Event Card adding at start of game
