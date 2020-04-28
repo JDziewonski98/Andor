@@ -13,7 +13,7 @@ export default class LoadGameScene extends Phaser.Scene {
     }
 
     public preload() {
-
+        this.load.image("submit", "../assets/pregame-components/loadsubmitbutton.png")
     }
 
     public create() {
@@ -33,13 +33,13 @@ export default class LoadGameScene extends Phaser.Scene {
             }
         }
 
-        var title = this.add.text(reducedWidth/2, reducedHeight/2-60, 'Enter the name of the game to load:', textStyle).setOrigin(0.5);
+        var title = this.add.text(reducedWidth/2, reducedHeight/2-75, 'Enter the name of the game to load:', textStyle).setOrigin(0.5);
 
         // Rex plugin edittext
-        var nameErrorBg = new RoundRectangle(this, reducedWidth/2, reducedHeight/2, 410, 70, 2, 0xff0000);
+        var nameErrorBg = new RoundRectangle(this, reducedWidth/2, reducedHeight/2-15, 410, 70, 2, 0xff0000);
         this.add.existing(nameErrorBg);
         nameErrorBg.alpha = 0;
-        var nameText = new BBCodeText(this, reducedWidth/2, reducedHeight/2, 'load_legend', {
+        var nameText = new BBCodeText(this, reducedWidth/2, reducedHeight/2-15, 'load_legend', {
             color: '#00DBFF',
             fontSize: '35px',
             fixedWidth: 400,
@@ -54,7 +54,7 @@ export default class LoadGameScene extends Phaser.Scene {
             editNameText.open();
         })
 
-        var submitButton = this.add.text(reducedWidth/2, reducedHeight/2+60, 'Submit', textStyle).setOrigin(0.5);
+        var submitButton = this.add.image(reducedWidth/2, reducedHeight/2+55, 'submit').setOrigin(0.5).setScale(0.3);
         this.add.existing(submitButton);
         submitButton.setInteractive().on('pointerdown', () => {
             let gameName = nameText.text;

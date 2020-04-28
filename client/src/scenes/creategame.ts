@@ -17,7 +17,7 @@ export default class CreateGameScene extends Phaser.Scene {
     }
 
     public preload() {
-
+        this.load.image("createsubmit", "../assets/pregame-components/createsubmitbutton.png")
     }
 
     public create() {
@@ -35,13 +35,13 @@ export default class CreateGameScene extends Phaser.Scene {
             }
         }
 
-        var title = this.add.text(reducedWidth/2, reducedHeight/2-100, 'Choose a name for your game:', textStyle).setOrigin(0.5);
+        var title = this.add.text(reducedWidth/2, reducedHeight/2-130, 'Choose a name for your game:', textStyle).setOrigin(0.5);
 
         // Rex plugin edittext
-        var nameErrorBg = new RoundRectangle(this, reducedWidth/2, reducedHeight/2-50, 410, 70, 2, 0xff0000);
+        var nameErrorBg = new RoundRectangle(this, reducedWidth/2, reducedHeight/2-80, 410, 70, 2, 0xff0000);
         this.add.existing(nameErrorBg);
         nameErrorBg.alpha = 0;
-        var nameText = new BBCodeText(this, reducedWidth/2, reducedHeight/2-50, 'my_legend', {
+        var nameText = new BBCodeText(this, reducedWidth/2, reducedHeight/2-80, 'my_legend', {
             color: 'yellow',
             fontSize: '35px',
             fixedWidth: 400,
@@ -56,19 +56,19 @@ export default class CreateGameScene extends Phaser.Scene {
             editNameText.open();
         })
 
-        var subtitle = this.add.text(reducedWidth/2, reducedHeight/2+40, 'Choose the number of players:', textStyle).setOrigin(0.5);
+        var subtitle = this.add.text(reducedWidth/2, reducedHeight/2+10, 'Choose the number of players:', textStyle).setOrigin(0.5);
 
-        var panel3bg = new RoundRectangle(this, reducedWidth/2, reducedHeight/2+90, 66, 66, 10, 0xffff00);
-        var panel2bg = new RoundRectangle(this, reducedWidth/2-85, reducedHeight/2+90, 66, 66, 10, 0xffff00);
-        var panel4bg = new RoundRectangle(this, reducedWidth/2+85, reducedHeight/2+90, 66, 66, 10, 0xffff00);
+        var panel3bg = new RoundRectangle(this, reducedWidth/2, reducedHeight/2+60, 66, 66, 10, 0xffff00);
+        var panel2bg = new RoundRectangle(this, reducedWidth/2-85, reducedHeight/2+60, 66, 66, 10, 0xffff00);
+        var panel4bg = new RoundRectangle(this, reducedWidth/2+85, reducedHeight/2+60, 66, 66, 10, 0xffff00);
         panel3bg.visible = false;
         panel4bg.visible = false;
         this.add.existing(panel2bg);
         this.add.existing(panel3bg);
         this.add.existing(panel4bg);
-        var panel3 = new RoundRectangle(this, reducedWidth/2, reducedHeight/2+90, 60, 60, 10, 0x333333);
-        var panel2 = new RoundRectangle(this, reducedWidth/2-85, reducedHeight/2+90, 60, 60, 10, 0x333333);
-        var panel4 = new RoundRectangle(this, reducedWidth/2+85, reducedHeight/2+90, 60, 60, 10, 0x333333);
+        var panel3 = new RoundRectangle(this, reducedWidth/2, reducedHeight/2+60, 60, 60, 10, 0x333333);
+        var panel2 = new RoundRectangle(this, reducedWidth/2-85, reducedHeight/2+60, 60, 60, 10, 0x333333);
+        var panel4 = new RoundRectangle(this, reducedWidth/2+85, reducedHeight/2+60, 60, 60, 10, 0x333333);
         this.add.existing(panel2);
         this.add.existing(panel3);
         this.add.existing(panel4);
@@ -86,9 +86,9 @@ export default class CreateGameScene extends Phaser.Scene {
             color: 'yellow',
             fontSize: '30px'
         }
-        var button3 = this.add.text(reducedWidth/2, reducedHeight/2+90, '3', numTextStyle).setOrigin(0.5);
-        var button2 = this.add.text(reducedWidth/2-85, reducedHeight/2+90, '2', numTextStyle).setOrigin(0.5);
-        var button4 = this.add.text(reducedWidth/2+85, reducedHeight/2+90, '4', numTextStyle).setOrigin(0.5);
+        var button3 = this.add.text(reducedWidth/2, reducedHeight/2+60, '3', numTextStyle).setOrigin(0.5);
+        var button2 = this.add.text(reducedWidth/2-85, reducedHeight/2+60, '2', numTextStyle).setOrigin(0.5);
+        var button4 = this.add.text(reducedWidth/2+85, reducedHeight/2+60, '4', numTextStyle).setOrigin(0.5);
         button2.setInteractive().on('pointerdown', () => {
             buttonToggle(2);
         })
@@ -121,7 +121,7 @@ export default class CreateGameScene extends Phaser.Scene {
             }
         }
 
-        var submitButton = this.add.text(reducedWidth/2, reducedHeight/2+160, 'Submit', textStyle).setOrigin(0.5);
+        var submitButton = this.add.image(reducedWidth/2, reducedHeight/2+150, 'createsubmit').setOrigin(0.5).setScale(0.4);
         this.add.existing(submitButton);
         submitButton.setInteractive().on('pointerdown', () => {
             // create game
