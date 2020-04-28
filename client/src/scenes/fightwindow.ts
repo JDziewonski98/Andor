@@ -691,6 +691,13 @@ export class Fight extends Window {
         console.log("yes " + herokind);
         self.actuallyjoinedheros.push(herokind);
       }
+      else {
+        var index = self.alliedheros.indexOf(herokind)
+        if (index > -1) {
+          self.alliedheros.splice(index, 1);
+          self.inviteresponses--;
+        }
+      }
     });
   }
 
