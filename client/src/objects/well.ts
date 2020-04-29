@@ -16,7 +16,7 @@ export class Well extends Phaser.GameObjects.Image {
             this.setTint(0x404040);
         }
 
-        this.setInteractive();
+        this.setInteractive({useHandCursor: true})
         var self = this;
 
         this.on("pointerdown", function (pointer) {

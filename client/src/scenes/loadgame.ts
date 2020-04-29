@@ -56,7 +56,7 @@ export default class LoadGameScene extends Phaser.Scene {
 
         var submitButton = this.add.image(reducedWidth/2, reducedHeight/2+55, 'submit').setOrigin(0.5).setScale(0.3);
         this.add.existing(submitButton);
-        submitButton.setInteractive().on('pointerdown', () => {
+        submitButton.setInteractive({useHandCursor: true}).on('pointerdown', () => {
             let gameName = nameText.text;
             if (gameName == '') { // name cannot be empty string
                 nameText.setText('Invalid');
@@ -75,7 +75,7 @@ export default class LoadGameScene extends Phaser.Scene {
             self.scene.start('Ready', {name: gameName});
         })
 
-        var gobackbtn = this.add.sprite(80, 475, 'goback').setInteractive().setScale(0.5)
+        var gobackbtn = this.add.sprite(80, 475, 'goback').setInteractive({useHandCursor: true}).setScale(0.5)
         gobackbtn.on('pointerdown', function (pointer) {
             this.scene.start('Lobby');
         }, this);

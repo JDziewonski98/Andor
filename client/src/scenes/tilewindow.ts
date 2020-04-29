@@ -108,7 +108,7 @@ export class TileWindow extends Window {
         this.gameController.getTileGold(this.tileID, function(goldAmount: number) {
             self.goldQuantity = goldAmount;
             self.goldButton = self.add.text(58, 23, ""+self.goldQuantity, { fontSize: 10, backgroundColor: '#f00' });
-            self.goldButton.setInteractive();
+            self.goldButton.setInteractive({useHandCursor: true})
             self.goldButton.on("pointerdown", function(pointer) {
                 self.gameController.pickupGold(self.tileID)
             }, this)
@@ -128,7 +128,7 @@ export class TileWindow extends Window {
             var icon = this.add.image(this.currX, 25, key).setDisplaySize(30, 30).setOrigin(0);
             let buttonX = this.currX + 28;
             var iconButton = this.add.text(buttonX, 23, ""+value, { fontSize: 10, backgroundColor: '#f00' });
-            iconButton.setInteractive();
+            iconButton.setInteractive({useHandCursor: true})
             iconButton.on('pointerdown', function(pointer) {
                 self.gameController.pickupItem(self.tileID, key, self.getItemTypeFromName(key));
             })
@@ -144,7 +144,7 @@ export class TileWindow extends Window {
             }
             for (let i = 0; i < value; i++) {
                 var icon = this.add.image(this.currX, 25, key).setDisplaySize(30, 30).setOrigin(0);
-                icon.setInteractive();
+                icon.setInteractive({useHandCursor: true})
                 // Request to server to reveal the runestone (key) on tile tileID
                 icon.on('pointerdown', function() {
                     self.gameController.revealRunestone(self.tileID, key);
