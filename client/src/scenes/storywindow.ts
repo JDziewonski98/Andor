@@ -54,7 +54,7 @@ export class StoryWindow extends Window {
         }
 
         this.okButton = this.add.image(this.width-35, this.height-35, 'okay');
-        this.okButton.setInteractive().setDisplaySize(30, 30).setOrigin(0);
+        this.okButton.setInteractive({useHandCursor: true}).setDisplaySize(30, 30).setOrigin(0);
 
         // Start of game story and instructions, IDs 0, 1 and 2
         let continueCards = [0, 1, 3, 4]

@@ -12,7 +12,7 @@ export class Merchant extends Phaser.GameObjects.Image {
         this.tile = tile;
         this.gameController = gameController;
 
-        this.setInteractive();
+        this.setInteractive({useHandCursor: true})
     }
 
     public getTileID() {

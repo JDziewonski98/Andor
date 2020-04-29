@@ -123,7 +123,7 @@ export default class CreateGameScene extends Phaser.Scene {
 
         var submitButton = this.add.image(reducedWidth/2, reducedHeight/2+150, 'createsubmit').setOrigin(0.5).setScale(0.4);
         this.add.existing(submitButton);
-        submitButton.setInteractive().on('pointerdown', () => {
+        submitButton.setInteractive({useHandCursor: true}).on('pointerdown', () => {
             // create game
             let gameName = nameText.text;
             if (gameName == '') { // name cannot be empty string
@@ -145,7 +145,7 @@ export default class CreateGameScene extends Phaser.Scene {
         })
 
         var self = this;
-        var gobackbtn = this.add.sprite(80, 475, 'goback').setInteractive().setScale(0.5)
+        var gobackbtn = this.add.sprite(80, 475, 'goback').setInteractive({useHandCursor: true}).setScale(0.5)
         gobackbtn.on('pointerdown', function (pointer) {
             this.scene.start('Lobby');
         }, this);
