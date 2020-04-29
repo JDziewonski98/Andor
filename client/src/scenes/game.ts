@@ -128,6 +128,7 @@ export default class GameScene extends Phaser.Scene {
     this.load.image("half_brew", "../assets/items/half_brew.jpg")
     this.load.image("herb", "../assets/items/herb.png");
     this.load.image("shield", "../assets/items/shield.png")
+    this.load.image("damaged_shield", "../assets/items/brokenshield.PNG")
 
     this.load.image("prince", "../assets/board-minor/prince.png");
     this.load.image("gold", "../assets/fog-tokens/gold.png")
@@ -391,12 +392,12 @@ export default class GameScene extends Phaser.Scene {
   }
 
   private addShieldsToRietburg(numShields) {
-    let s1 = this.add.sprite(85, 188, 'dshield').setDisplaySize(65, 81)
-    let s2 = this.add.sprite(153, 188, 'dshield').setDisplaySize(65, 81)
-    let s3 = this.add.sprite(218, 188, 'dshield').setDisplaySize(65, 81)
-    let s4 = this.add.sprite(85, 310, 'dshield').setDisplaySize(65, 81)
-    let s5 = this.add.sprite(153, 310, 'dshield').setDisplaySize(65, 81)
-    let s6 = this.add.sprite(85, 430, 'dshield').setDisplaySize(65, 81)
+    let s1 = this.add.sprite(95, 188, 'dshield').setDisplaySize(65, 81)
+    let s2 = this.add.sprite(163, 188, 'dshield').setDisplaySize(65, 81)
+    let s3 = this.add.sprite(228, 188, 'dshield').setDisplaySize(65, 81)
+    let s4 = this.add.sprite(95, 310, 'dshield').setDisplaySize(65, 81)
+    let s5 = this.add.sprite(163, 310, 'dshield').setDisplaySize(65, 81)
+    let s6 = this.add.sprite(95, 430, 'dshield').setDisplaySize(65, 81)
 
     this.castle.shields.push(s1)
     this.castle.shields.push(s2)
@@ -564,13 +565,14 @@ export default class GameScene extends Phaser.Scene {
           x: reducedWidth / 2,
           y: reducedHeight / 2,
           id: 0,
-          gameController: self.gameinstance
+          gameController: self.gameinstance,
+          firstNarrAdvance: (self.gameStartHeroPosition == self.heroes.length)
         })
 
-        // Last hero to enter the game triggers placement of the runestone legend
+        // First hero to enter the game triggers placement of the runestone legend
         // This is the only "narrator event" that gets directly triggered from the client
         // because it doesn't happen on a monster kill or end of day
-        if (self.gameStartHeroPosition == self.heroes.length) {
+        if (self.gameStartHeroPosition == 1) {
           // console.log('client emits placeRunestoneLegend')
           self.gameinstance.placeRuneStoneLegend();
         }
@@ -582,8 +584,8 @@ export default class GameScene extends Phaser.Scene {
       self.add.existing(self.narrator);
 
       // Place runestone legend card
-      console.log("placing runestone card at position", runestoneCardPos);
-      self.placeRunestoneCard(runestoneCardPos);
+      // console.log("placing runestone card at position", runestoneCardPos);
+      // self.placeRunestoneCard(runestoneCardPos);
     })
   }
 

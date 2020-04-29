@@ -46,7 +46,7 @@ export class CollabWindow extends Window {
     private sumNeeded: number
     private eventID
     private desc
-    public constructor(key: string, data, incFunction) {
+    public constructor(key: string, data) {
         super(key, {x: data.x, y: data.y, width: data.w, height: data.h});
 
         this.gameinstance = data.controller;
@@ -124,9 +124,9 @@ export class CollabWindow extends Window {
                     involved = true
                 }
             }
-            if(self.ownHeroKind == senderHeroKind){
-                involved = false
-            }
+            // if(self.ownHeroKind == senderHeroKind){
+            //     involved = false
+            // }
             if(involved){
                 this.resetAccepts();
                 for(let rt of this.resourceToggles){
@@ -147,9 +147,9 @@ export class CollabWindow extends Window {
                     involved = true
                 }
             }
-            if(self.ownHeroKind == senderHeroKind){
-                involved = false
-            }
+            // if(self.ownHeroKind == senderHeroKind){
+            //     involved = false
+            // }
             if(involved){
                 this.resetAccepts();
                 for(let rt of this.resourceToggles){
@@ -161,19 +161,41 @@ export class CollabWindow extends Window {
                 } 
             }
         })
-
+        
+        
         this.gameinstance.acceptListener((heroKind) => {
+            let smallTextStyle = {
+                color: '#d11313',
+                fontSize: collabTextHeight - 2
+            }
+            let numInvolved = self.involvedHeroes.length;
+            let spacing = 3 * (numInvolved - 1); // 6 pixels spacing between each icon
+            let currX = self.width/2 - (numInvolved - 1) * 20 - spacing;
             console.log("entered accept listener")
             var involved = false
             for(let hk of self.involvedHeroes){
                 if(hk == heroKind){
                     involved = true
+                    //console.log(involved)
                 }
             }
             if(self.ownHeroKind == heroKind){
                 involved = false
+                //console.log(involved)
             }
+            //console.log(involved)
             if(involved){
+                self.heroAccepts.get(heroKind).destroy();
+                self.heroAccepts.delete(heroKind)
+                for(let hk of this.involvedHeroes){
+                    if(hk != heroKind){
+                        currX += 46
+                    }
+                    else{
+                        break
+                    }
+                }
+                self.heroAccepts.set(heroKind, this.add.text(currX, this.height-16, 'Accept', smallTextStyle).setOrigin(0.5, 0))
                 self.heroAccepts.get(heroKind).setColor('#037d50');
                 self.numAccepts++
             }
@@ -527,7 +549,7 @@ export class CollabWindow extends Window {
                 // Reset hero accepts
                 this.resetAccepts();
                 this.numAccepts = 0;
-                rToggle.incFunction()
+                //rToggle.incFunction()
                 this.gameinstance.sendIncResource(heroKind,resourceIndex)  
         }
     }
@@ -541,7 +563,7 @@ export class CollabWindow extends Window {
                 else{
                     //reset accepts, decrement, emit
                     this.resetAccepts();
-                    rt.decFunction()
+                    //rt.decFunction()
                     this.gameinstance.sendDecResource(heroKind,resourceIndex)
                 }
             }        
@@ -549,13 +571,22 @@ export class CollabWindow extends Window {
     }
 
     private resetAccepts() {
+        // let smallTextStyle = {
+        //     color: '#d11313',
+        //     fontSize: collabTextHeight - 2
+        // }
+        // let numInvolved = this.involvedHeroes.length;
+        // let spacing = 3 * (numInvolved - 1); // 6 pixels spacing between each icon
+        // let currX = this.width/2 - (numInvolved - 1) * 20 - spacing;
+        
         for (let i=0; i<this.involvedHeroes.length; i++) {
             let heroKind = this.involvedHeroes[i];
             if (heroKind != this.ownHeroKind) {
                 this.heroAccepts.get(heroKind).setColor('#d11313');
             } else {
-                this.heroAccepts.get(heroKind).setColor('#000000');
+                 this.heroAccepts.get(heroKind).setColor('#000000');
             }
+            //currX += 46
         }
         this.numAccepts = 0;
         this.hasAccepted = false;
