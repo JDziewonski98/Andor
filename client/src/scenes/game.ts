@@ -564,13 +564,14 @@ export default class GameScene extends Phaser.Scene {
           x: reducedWidth / 2,
           y: reducedHeight / 2,
           id: 0,
-          gameController: self.gameinstance
+          gameController: self.gameinstance,
+          firstNarrAdvance: (self.gameStartHeroPosition == self.heroes.length)
         })
 
-        // Last hero to enter the game triggers placement of the runestone legend
+        // First hero to enter the game triggers placement of the runestone legend
         // This is the only "narrator event" that gets directly triggered from the client
         // because it doesn't happen on a monster kill or end of day
-        if (self.gameStartHeroPosition == self.heroes.length) {
+        if (self.gameStartHeroPosition == 1) {
           // console.log('client emits placeRunestoneLegend')
           self.gameinstance.placeRuneStoneLegend();
         }
