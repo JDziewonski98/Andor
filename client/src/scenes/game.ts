@@ -477,10 +477,18 @@ export default class GameScene extends Phaser.Scene {
         WindowManager.destroy(this, monster.name);
       }
       else {
+        var princetile = -69
+        try {
+          princetile = this.prince.tile.id
+        }
+        catch {
+          princetile = -69
+        }
         WindowManager.create(this, monster.name, Fight, {
           controller: this.gameinstance,
           hero: this.hero, monster: monster, heroes: this.heroes,
-          overlayRef: this.overlay
+          overlayRef: this.overlay,
+          princePos: princetile
         });
         this.scene.pause()
       }
@@ -971,11 +979,18 @@ export default class GameScene extends Phaser.Scene {
         WindowManager.destroy(self, monster.name);
       }
       else {
+        var princetile = -69
+        try {
+          princetile = self.prince.tile.id
+        }
+        catch {
+          princetile = -69
+        }
         WindowManager.create(self, monster.name, Fight, {
           controller: self.gameinstance,
           hero: self.hero, monster: monster, heroes: self.heroes,
           overlayRef: self.overlay,
-          princePos: self.prince.tile.id
+          princePos: princetile
         });
         self.scene.pause()
       }
