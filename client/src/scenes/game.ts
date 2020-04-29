@@ -171,6 +171,18 @@ export default class GameScene extends Phaser.Scene {
 
       this.hourTrackerSetup();
 
+      if (data.prince) {
+        this.addPrince(data.prince.tile.id);
+      } else {
+        console.log('no prince saved')
+      }
+
+      if (data.witch) {
+        this.addWitch(data.witch.tileID);
+      } else {
+        console.log('no witch saved')
+      }
+
       this.setUpListeners();
 
       // Add overlay to game
@@ -252,12 +264,12 @@ export default class GameScene extends Phaser.Scene {
     // Set keys for scrolling
     // Set keys for scrolling and zooming
     this.cameraKeys = this.input.keyboard.addKeys({
-      up: 'w',
-      down: 's',
-      left: 'a',
-      right: 'd',
-      zoomIn: 'q',
-      zoomOut: 'e'
+      up: 'up',
+      down: 'down',
+      left: 'left',
+      right: 'right',
+      zoomIn: 'plus',
+      zoomOut: 'minus'
     });
   }
 
@@ -392,12 +404,14 @@ export default class GameScene extends Phaser.Scene {
   }
 
   private addShieldsToRietburg(numShields) {
-    let s1 = this.add.sprite(95, 188, 'dshield').setDisplaySize(65, 81)
-    let s2 = this.add.sprite(163, 188, 'dshield').setDisplaySize(65, 81)
-    let s3 = this.add.sprite(228, 188, 'dshield').setDisplaySize(65, 81)
-    let s4 = this.add.sprite(95, 310, 'dshield').setDisplaySize(65, 81)
-    let s5 = this.add.sprite(163, 310, 'dshield').setDisplaySize(65, 81)
-    let s6 = this.add.sprite(95, 430, 'dshield').setDisplaySize(65, 81)
+    var overlayoffsetsX = 10;
+    var overlayoffsetsY = 20;
+    let s1 = this.add.sprite(95+overlayoffsetsX, 188+overlayoffsetsY, 'dshield').setDisplaySize(65, 81)
+    let s2 = this.add.sprite(163+overlayoffsetsX, 188+overlayoffsetsY, 'dshield').setDisplaySize(65, 81)
+    let s3 = this.add.sprite(228+overlayoffsetsX, 188+overlayoffsetsY, 'dshield').setDisplaySize(65, 81)
+    let s4 = this.add.sprite(95+overlayoffsetsX, 310+overlayoffsetsY, 'dshield').setDisplaySize(65, 81)
+    let s5 = this.add.sprite(163+overlayoffsetsX, 310+overlayoffsetsY, 'dshield').setDisplaySize(65, 81)
+    let s6 = this.add.sprite(95+overlayoffsetsX, 430+overlayoffsetsY, 'dshield').setDisplaySize(65, 81)
 
     this.castle.shields.push(s1)
     this.castle.shields.push(s2)
@@ -592,8 +606,10 @@ export default class GameScene extends Phaser.Scene {
       self.add.existing(self.narrator);
 
       // Place runestone legend card
-      // console.log("placing runestone card at position", runestoneCardPos);
-      // self.placeRunestoneCard(runestoneCardPos);
+      if (runestoneCardPos != -1) {
+        console.log("placing runestone card at position", runestoneCardPos);
+        self.placeRunestoneCard(runestoneCardPos);
+      }
     })
   }
 
@@ -654,13 +670,39 @@ export default class GameScene extends Phaser.Scene {
     console.log("client narratorC")
     // Place farmer and prince, these are hardcoded for now
     this.addFarmer(2, 28);
-
-    this.prince = new Prince(this, this.tiles[72], 'prince').setScale(.15);
-    this.add.existing(this.prince);
+    this.addPrince();
+    
     WindowManager.create(this, `story3`, StoryWindow, {
       x: reducedWidth / 2,
       y: reducedHeight / 2,
       id: 3
+    })
+  }
+
+  private addPrince(tileID: number = 72) {
+    this.prince = new Prince(this, this.tiles[tileID], 'prince').setScale(.15);
+    this.add.existing(this.prince);
+  }
+
+  private addWitch(tileID: number) {
+    // Place the witch on tileID
+    var self = this
+    var witch = this.add.image(this.tiles[tileID].x + 50, this.tiles[tileID].y - 5, "witch");
+    witch.setInteractive({useHandCursor: true}).setScale(0.75);
+    witch.on('pointerdown', (pointer) => {
+      if (self.scene.isVisible("witchwindow")) {
+        var thescene = WindowManager.get(self, "witchwindow")
+        thescene.disconnectListeners()
+        WindowManager.destroy(this, "witchwindow");
+      } else {
+        WindowManager.create(self, `witchwindow`, WitchWindow, {
+          controller: self.gameinstance,
+          x: pointer.x + 20,
+          y: pointer.y,
+          w: 105,
+          h: 70,
+        })
+      }
     })
   }
 
@@ -692,7 +734,8 @@ export default class GameScene extends Phaser.Scene {
         id: 10
       })
     }
-
+    self.scene.pause();
+    self.overlay.toggleInteractive(false);
   }
 
   private addFog(fogs) {
@@ -721,9 +764,9 @@ export default class GameScene extends Phaser.Scene {
             if (itemdict['smallItems'].includes('telescope') && flag) {
               console.log('using telescope.')
               f.clearTint();
-              setTimeout(() => {
-                f.setTint(0x101010);
-              }, 800);
+              // setTimeout(() => {
+              //   f.setTint(0x101010);
+              // }, 800);
               self.gameinstance.telescopeEndTurn();
             }
             else {
@@ -905,24 +948,7 @@ export default class GameScene extends Phaser.Scene {
         y: reducedHeight / 2,
         id: 8
       })
-      // Place the witch on tileID
-      var witch = this.add.image(this.tiles[tileID].x + 50, this.tiles[tileID].y - 5, "witch");
-      witch.setInteractive({useHandCursor: true}).setScale(0.75);
-      witch.on('pointerdown', (pointer) => {
-        if (self.scene.isVisible("witchwindow")) {
-          var thescene = WindowManager.get(self, "witchwindow")
-          thescene.disconnectListeners()
-          WindowManager.destroy(this, "witchwindow");
-        } else {
-          WindowManager.create(self, `witchwindow`, WitchWindow, {
-            controller: self.gameinstance,
-            x: pointer.x + 20,
-            y: pointer.y,
-            w: 105,
-            h: 70,
-          })
-        }
-      })
+      self.addWitch(tileID);
     })
 
     // Reveal the herb
@@ -1045,18 +1071,22 @@ export default class GameScene extends Phaser.Scene {
 
     // Listen for end of game state
     this.gameinstance.receiveEndOfGame(function () {
-      let windowData = {
-        controller: self.gameinstance,
-        x: reducedWidth / 2 - 200,
-        y: reducedHeight / 2 - 100,
-        w: 400,
-        h: 200,
-      }
-      // Display end of game window
-      WindowManager.create(self, 'gameover', GameOverWindow, windowData);
-      // Freeze main game while collab window is active
+      // let windowData = {
+      //   controller: self.gameinstance,
+      //   x: reducedWidth / 2 - 200,
+      //   y: reducedHeight / 2 - 100,
+      //   w: 400,
+      //   h: 200,
+      // }
+      // // Display end of game window
+      // WindowManager.create(self, 'gameover', GameOverWindow, windowData);
+      WindowManager.create(self, `story10`, StoryWindow, {
+        x: reducedWidth / 2,
+        y: reducedHeight / 2,
+        id: 10
+      })
       self.scene.pause();
-
+      self.overlay.toggleInteractive(false);
     });
 
     this.gameinstance.receiveUpdateHeroTracker(function (hero) {

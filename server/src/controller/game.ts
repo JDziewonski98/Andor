@@ -32,6 +32,7 @@ export function game(socket, model: Game, io) {
       key === 'items' ? mapToJson(value) : value
     );
     game['prince'] = JSON.stringify(model.getPrince());
+    game['witch'] = JSON.stringify(model.getWitch());
     game['narrator'] = JSON.stringify(model.getNarrator(), ["legendPosition"])
     game['initialCollabDone'] = model.initialCollabDone;
     game['runestoneCardPos'] = model.runestoneCardPos;
@@ -441,8 +442,8 @@ export function game(socket, model: Game, io) {
       console.log("narrator controller at N")
       let win = model.narratorN(); // check win conditions
       console.log("server game controller win=model.narratorN(): ", win);
-      socket.emit("updateNarrator", narratorPos, win);
-      socket.broadcast.emit("updateNarrator", narratorPos, win);
+      socket.emit("updateNarrator", narratorPos, -1, [], win);
+      socket.broadcast.emit("updateNarrator", narratorPos, -1, [], win);
     }
     else {
       socket.emit("updateNarrator", narratorPos)
@@ -1822,6 +1823,13 @@ export function game(socket, model: Game, io) {
       socket.emit("removeHerb");
       socket.broadcast.emit("removeHerb");
     }
+    if (monstername == "fortress") {
+      // Immediately advance narrator to N and evaluate end of game conditions
+      let win = model.narratorN();
+      console.log("server game controller win=model.narratorN(): ", win);
+      socket.emit("updateNarrator", 13,  -1, [], win);
+      socket.broadcast.emit("updateNarrator", 13,  -1, [], win);
+    }
     advanceNarrator();
   })
 
@@ -2751,7 +2759,9 @@ export function game(socket, model: Game, io) {
   socket.on('validateTrade', function (hero1, hero2, hero1receives, hero2receives, callback) {
     var hero1ref: Hero
     var hero2ref: Hero
+    console.log('tradeheros:', hero1, hero2)
     model.getHeros().forEach((hero, key) => {
+      console.log(hero.getKind())
       if (hero.getKind() == hero1) {
         hero1ref = hero
       }
@@ -2760,20 +2770,21 @@ export function game(socket, model: Game, io) {
       }
     })
 
-    if (hero1receives['helm'] != 'None' && hero2receives['helm'] == 'None' && hero1ref!.getItemDict['helm'] != 'false') {
+    if (hero1receives['helm'] != 'None' && hero2receives['helm'] == 'None' && hero1ref!.getItemDict()['helm'] != 'false') {
       console.log('xxxxxxxxxxxxxxxxxxxxxx1')
       callback('fail')
     }
-    if (hero2receives['helm'] != 'None' && hero1receives['helm'] == 'None' && hero2ref!.getItemDict['helm'] != 'false') {
+    if (hero2receives['helm'] != 'None' && hero1receives['helm'] == 'None' && hero2ref!.getItemDict()['helm'] != 'false') {
+      console.log(hero2receives['helm'], hero1receives['helm'], hero2ref!.getItemDict()['helm'])
       console.log('xxxxxxxxxxxxxxxxxxxxxx2')
       callback('fail')
     }
 
-    if (hero1receives['largeItem'] != 'None' && hero2receives['largeItem'] == 'None' && hero1ref!.getItemDict['largeItem'] != 'empty') {
+    if (hero1receives['largeItem'] != 'None' && hero2receives['largeItem'] == 'None' && hero1ref!.getItemDict()['largeItem'] != 'empty') {
       console.log('xxxxxxxxxxxxxxxxxxxxxx3')
       callback('fail')
     }
-    if (hero2receives['helm'] != 'None' && hero1receives['helm'] == 'None' && hero2ref!.getItemDict['helm'] != 'empty') {
+    if (hero2receives['largeItem'] != 'None' && hero1receives['largeItem'] == 'None' && hero2ref!.getItemDict()['largeItem'] != 'empty') {
       console.log('xxxxxxxxxxxxxxxxxxxxxx4')
       callback('fail')
     }
