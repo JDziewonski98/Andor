@@ -310,10 +310,10 @@ export default class GameScene extends Phaser.Scene {
             this.addMerchant(3060, 3680, t.id as number);
             break;
           case 57:
-            this.addMerchant(7337, 968, t.id as number);
+            this.addMerchant(7708, 1340, t.id as number);
             break;
           case 71:
-            this.addMerchant(7088, 4360, t.id as number);
+            this.addMerchant(7426, 4320, t.id as number);
             break;
         }
       }
