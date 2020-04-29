@@ -27,7 +27,7 @@ export class GameOverWindow extends Window {
         this.add.text(20, 50, "Game Over: You lost :\(", textStyle);
         this.leaveGameText = this.add.text(20, 150, "Return to Lobby", buttonTextStyle);
 
-        this.leaveGameText.setInteractive();
+        this.leaveGameText.setInteractive({useHandCursor: true});
         this.leaveGameText.on('pointerdown', function (pointer) {
             console.log("Leave game pointerdown")
         }, this);

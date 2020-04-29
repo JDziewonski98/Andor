@@ -290,7 +290,7 @@ export class CollabWindow extends Window {
             currX += 46;
         }
         
-        this.acceptText.setInteractive()
+        this.acceptText.setInteractive({useHandCursor: true});
         this.acceptText.on('pointerdown', function (pointer) {
             if(!self.hasAccepted){
                // Check that resAllocated corresponds with specified quantities from data.resources

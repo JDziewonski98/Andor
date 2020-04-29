@@ -137,13 +137,13 @@ export class HeroWindow extends Window {
 
         var self = this
         if (this.clienthero == this.windowhero){
-            this.goldDrop.setInteractive()
-            this.farmerDrop.setInteractive()
-            this.largeItemDrop.setInteractive()
-            this.helmDrop.setInteractive()
-            this.smallItem1Drop.setInteractive()
-            this.smallItem2Drop.setInteractive()
-            this.smallItem3Drop.setInteractive()
+            this.goldDrop.setInteractive({useHandCursor: true})
+            this.farmerDrop.setInteractive({useHandCursor: true})
+            this.largeItemDrop.setInteractive({useHandCursor: true})
+            this.helmDrop.setInteractive({useHandCursor: true})
+            this.smallItem1Drop.setInteractive({useHandCursor: true})
+            this.smallItem2Drop.setInteractive({useHandCursor: true})
+            this.smallItem3Drop.setInteractive({useHandCursor: true})
         }
         
         // Drop farmer button
@@ -251,7 +251,7 @@ export class HeroWindow extends Window {
         console.log('ids:xxxxxxxxxxx', this.windowherotile, this.clientherotile)
         this.gameinstance.getHeroItems(this.clienthero, function(dict) {
             if (self.clienthero != self.windowhero && (self.windowherotile == self.clientherotile ) || self.clienthero != self.windowhero && dict['largeItem'] == 'falcon') {
-                self.add.text(320,20, 'TRADE',{color: "#4944A4"}).setInteractive().on('pointerdown', function(pointer) {
+                self.add.text(320,20, 'TRADE',{color: "#4944A4"}).setInteractive({useHandCursor: true}).on('pointerdown', function(pointer) {
                     self.gameinstance.sendTradeInvite(self.clienthero, self.windowhero)
                     WindowManager.create(self, 'tradewindow', TradeWindow, {gameinstance:self.gameinstance, hosthero:self.clienthero, inviteehero:self.windowhero, parentkey:self.key, clienthero:self.clienthero})
                 }, self)
@@ -264,7 +264,7 @@ export class HeroWindow extends Window {
         var self = this
 
         function defineOnclick(itemIcon:Phaser.GameObjects.Image, itemtype, slot) {
-            itemIcon.setInteractive()
+            itemIcon.setInteractive({useHandCursor: true})
             switch(itemtype) {
                 case 'wineskin':
                     itemIcon.on('pointerdown', function(pointer) {

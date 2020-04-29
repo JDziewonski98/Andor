@@ -140,7 +140,7 @@ export default class BoardOverlay extends Phaser.Scene {
 
 
          // save btn
-         var savebtn = this.add.image(920, 25, 'saveicon').setInteractive().setScale(0.25);
+         var savebtn = this.add.image(920, 25, 'saveicon').setInteractive({useHandCursor: true}).setScale(0.25);
          savebtn.on('pointerdown', (pointer) => {
              console.log("manual saving")
              this.gameinstance.save()
@@ -149,7 +149,7 @@ export default class BoardOverlay extends Phaser.Scene {
 
         // chat window
         this.chatButton = this.add.image(775, 565, 'chaticon').setScale(0.3)
-        this.chatButton.setInteractive();
+        this.chatButton.setInteractive({useHandCursor: true});
         this.chatButton.on('pointerdown', function (pointer) {
             if (this.scene.isVisible('chat')) {
                 WindowManager.destroy(this, 'chat');
@@ -437,10 +437,10 @@ export default class BoardOverlay extends Phaser.Scene {
 
     public toggleInteractive(interactive: boolean) {
         if (interactive) {
-            this.endTurnButton.setInteractive();
-            this.endDayButton.setInteractive();
+            this.endTurnButton.setInteractive({useHandCursor: true});
+            this.endDayButton.setInteractive({useHandCursor: true});
             this.heroButtons.forEach(function (button) {
-                button.setInteractive();
+                button.setInteractive({useHandCursor: true});
             })
         } else {
             this.endTurnButton.disableInteractive();

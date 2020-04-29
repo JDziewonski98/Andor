@@ -19,12 +19,12 @@ export class ContinueFightWindow extends Window {
 
         this.add.text(50,20,"Want to continue the fight as leader?")
 
-        var yestext = this.add.text(50,50, 'yes').setInteractive()
+        var yestext = this.add.text(50,50, 'yes').setInteractive({useHandCursor: true})
         yestext.on('pointerdown', function(pointer) {
             self.gameinstance.sendContinueFight('yes', self.hero.getKind())
             self.scene.remove(self.windowname)
         })
-        var notext = this.add.text(50,100, 'no').setInteractive()
+        var notext = this.add.text(50,100, 'no').setInteractive({useHandCursor: true})
         notext.on('pointerdown', function(pointer) {
             self.gameinstance.sendContinueFight('no', self.hero.getKind())
             self.scene.remove(self.windowname)
