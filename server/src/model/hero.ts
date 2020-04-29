@@ -284,8 +284,10 @@ export class Hero {
         if(r_farmers.length < 2 && this.farmers.length > 0){
             var farmer = this.farmers.pop()!;
             // farmer.carriedBy = undefined;
-            farmer.setTileID(this.region.getID());
-            this.region.getFarmers().push(farmer);
+            if(this.region.getID() != 0){
+                farmer.setTileID(this.region.getID());
+                this.region.getFarmers().push(farmer);
+            }
             result.push(farmer.getFarmerID())
             result.push(this.region.getID())
             return result;
