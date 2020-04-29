@@ -374,12 +374,13 @@ export class Hero {
             rollamt = this.dice[2]
         }
         if (this.smallItems.includes(SmallItem.BlueRunestone) && this.smallItems.includes(SmallItem.YellowRunestone) && this.smallItems.includes(SmallItem.GreenRunestone)) {
-            returnedtext = '1 Black die, ' + (rollamt - 1) + ' red dice.'
+            returnedtext = 'You have 1 Black die, ' + (rollamt - 1) + ' red dice.'
         }
         else {
             returnedtext = rollamt + ' red dice.'
         }
-        return returnedtext;
+        var dicesplit = this.dice[0] + ' below 7 will, ' + this.dice[1] + ' below 14 will, ' + this.dice[2] + ' above 14 will.'
+        return returnedtext + ' ' + dicesplit;
     }
 
     public roll(usingBow = false) {

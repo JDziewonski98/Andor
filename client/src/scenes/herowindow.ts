@@ -120,7 +120,7 @@ export class HeroWindow extends Window {
         })
 
         this.add.text(20, 305, heroCardInfo[`${this.windowhero}Ability`], { color: '#4B2504', fontSize: 12 })
-        this.add.text(20, 385, this.dice, { color: '#4B2504',})
+        this.add.text(10, 385, this.dice, { color: 'red', fontSize: 12})
         bg.setInteractive()
         this.input.setDraggable(bg)
         //This drag is pretty f'd up.
