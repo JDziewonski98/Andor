@@ -721,9 +721,9 @@ export default class GameScene extends Phaser.Scene {
             if (itemdict['smallItems'].includes('telescope') && flag) {
               console.log('using telescope.')
               f.clearTint();
-              setTimeout(() => {
-                f.setTint(0x101010);
-              }, 800);
+              // setTimeout(() => {
+              //   f.setTint(0x101010);
+              // }, 800);
               self.gameinstance.telescopeEndTurn();
             }
             else {
