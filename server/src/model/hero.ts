@@ -54,7 +54,8 @@ export class Hero {
             farmers: this.farmers.length, 
             largeItem: this.largeItem, 
             currtileid:this.region.getID(),
-            timeofday: this.timeOfDay
+            timeofday: this.timeOfDay,
+            dice: this.getDice()
         };
         return data;
     }
@@ -358,6 +359,28 @@ export class Hero {
 
     public incrementHour() {
         this.timeOfDay++
+    }
+
+    public getDice() {
+        var rollamt;
+        var returnedtext = '';
+        if (this.will < 7) {
+            rollamt = this.dice[0]
+        }
+        else if (this.will < 14) {
+            rollamt = this.dice[1]
+        }
+        else {
+            rollamt = this.dice[2]
+        }
+        if (this.smallItems.includes(SmallItem.BlueRunestone) && this.smallItems.includes(SmallItem.YellowRunestone) && this.smallItems.includes(SmallItem.GreenRunestone)) {
+            returnedtext = 'You have 1 Black die, ' + (rollamt - 1) + ' red dice.'
+        }
+        else {
+            returnedtext = rollamt + ' red dice.'
+        }
+        var dicesplit = this.dice[0] + ' below 7 will, ' + this.dice[1] + ' below 14 will, ' + this.dice[2] + ' above 14 will.'
+        return returnedtext + ' ' + dicesplit;
     }
 
     public roll(usingBow = false) {
