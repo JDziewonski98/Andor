@@ -1925,12 +1925,13 @@ export function game(socket, model: Game, io) {
       console.log(heroTypeString, 'herotypestring')
       console.log(thehero, 'thehero')
       if (heroTypeString == thehero) {
+        let currWill = hero.getWill()
         hero.setWill(-damage)
-        if (hero.getWill() < 1) {
+        if (currWill - damage < 1) {
           console.log('killing xxx', heroTypeString,'xxx')
           //hero death. remove them from all battles please.
-          hero.setStrength(-1);
-          hero.resetWill()
+          //hero.setStrength(-1);
+         // hero.resetWill()
           var deadheroid = model.getIDsByHeroname([heroTypeString])
           for (let playerid of deadheroid) {
             socket.broadcast.to(`/${model.getName()}#${playerid}`).emit("receiveDeathNotice")
