@@ -752,7 +752,7 @@ export function game(socket, model: Game, io) {
                 }
                 if(herosWithStr.length > 0){
                   if(heroesWithShields.length > 0){
-                    io.of("/" + model.getName()).emit('newCollab', 0, heroesWithShields, event.id);
+                    io.of("/" + model.getName()).emit('newCollab', 0, heroesWithShields, null, event.id);
                     // if(model.getBlockedEvent()){
                     //   model.setBlockedEvent(false)
                     // }
@@ -769,7 +769,8 @@ export function game(socket, model: Game, io) {
               else{
                 if(heroesWithShields.length > 0){
                   //console.log("Heroes with shields:", heroesWithShields)
-                  io.of("/" + model.getName()).emit('newCollab', 0, heroesWithShields, event.id);
+                  console.log("shield collab", heroesWithShields, event.id)
+                  io.of("/" + model.getName()).emit('newCollab', 0, heroesWithShields, null, event.id);
                   // if (model.getBlockedEvent()) {
                   //   model.setBlockedEvent(false)
                   // }
@@ -1556,7 +1557,8 @@ export function game(socket, model: Game, io) {
         // console.log("Updated", heroTypeString, "gold:", currHero?.getGold(), "wineskin:", currHero?.getWineskin())
       }
     }
-    if(eventID== 7){
+    if(eventID == 7){
+      console.log("make it?", eventID)
       if(model.getBlockedEvent()){
         model.setBlockedEvent(false)
       }
@@ -1579,7 +1581,7 @@ export function game(socket, model: Game, io) {
         roll = lowestHero.eventRoll()
         let msg = `The ` + lowestHero?.getKind() + ` rolled a ` + roll
         io.of("/" + model.getName()).emit('updateGameLog', msg);
-        //console.log(lowestHeroKind, "rolled a", roll)
+        console.log(lowestHeroKind, "rolled a", roll)
         for(let [conn,hero] of model.getHeros()){
           hero.setWill(-1*roll)
         }

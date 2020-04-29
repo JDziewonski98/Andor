@@ -318,6 +318,11 @@ export class Hero {
 
     public setWill(willValueToChange: number) {
         this.will += willValueToChange
+        if(this.will < 1){
+            this.will = 3
+            if(this.strength !=1)
+            this.setStrength(-1)
+        }
     }
 
     public setStrength(strengthChange: number) {

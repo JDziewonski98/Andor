@@ -1147,7 +1147,7 @@ export default class GameScene extends Phaser.Scene {
     })
     this.gameinstance.newCollabListener((eventID, heroes, heroMaxes, eventToBeBlockedID) => {
       console.log("Received newCollab")
-      //console.log(eventID, heroes, heroMaxes, eventToBeBlockedID)
+      console.log(eventID, heroes, heroMaxes, eventToBeBlockedID)
       var involved = false
       var involvedHeroKinds = new Array<HeroKind>()
       for (let hero of heroes) {
@@ -1173,7 +1173,7 @@ export default class GameScene extends Phaser.Scene {
             desc = element.desc
           }
         }
-        console.log(res)
+        //console.log(res)
 
         var width = res.size > 1 ? (res.size + 1) * collabColWidth : 3 * collabColWidth; // Not sure if there's a better way of getting size of ts obj
         // Determine height of the window based on number of players involved

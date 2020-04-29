@@ -4,7 +4,7 @@ export var map = [
     "list": [["Use Shield", 1]],
     "partySize": 0,
     "type": "singleItemPay",
-    "desc": "You may consume one use of a shield to block this event or do nothing"
+    "desc": "You may use a shield to block this event or do nothing"
   },
   {
     "id": 1,
