@@ -13,7 +13,7 @@ export default class JoinGameScene extends Phaser.Scene {
     }
 
     public preload() {
-
+        this.load.image("joinsubmit", "../assets/pregame-components/joinsubmitbutton.png")
     }
 
     public init(data){
@@ -88,8 +88,8 @@ export default class JoinGameScene extends Phaser.Scene {
             })
         }
 
-        var submitButton = this.add.text(660, 370, 'Submit', textStyle);
-        submitButton.setInteractive().on('pointerdown', () => {
+        var submitButton = this.add.image(660, 371, 'joinsubmit').setOrigin(0.5).setScale(0.3);
+        submitButton.setInteractive({useHandCursor: true}).on('pointerdown', () => {
             if (self.gameChoice !== '') {
                 self.lobbyController.addPlayerToGame(self.gameChoice, null);
                 self.scene.start('Ready', {name: self.gameChoice})
