@@ -271,21 +271,37 @@ export class Game {
         var minRank = this.getHero(currPlayerID).getRank();
         var maxRank = Number.MAX_VALUE;
         var hk = HeroKind.None;
-        this.heroList.forEach(hero => {
-            if (hero.getRank() > minRank && hero.getRank() < maxRank) {
-                maxRank = hero.getRank();
-                hk = hero.hk;
+        this.activeHeros.forEach( kind => {
+            let hero = this.getHeroFromHk(kind);
+            if (hero == null) console.log('error hero is null')
+            if (hero!.getRank() > minRank && hero!.getRank() < maxRank) {
+                maxRank = hero!.getRank();
+                hk = hero!.hk;
             }
         })
+        // this.heroList.forEach(hero => {
+        //     if (hero.getRank() > minRank && hero.getRank() < maxRank) {
+        //         maxRank = hero.getRank();
+        //         hk = hero.hk;
+        //     }
+        // })
         // Or loop back to the lowest rank hero
         if (hk == "none") {
             minRank = Number.MAX_VALUE
-            this.heroList.forEach((hero, ID) => {
-                if (hero.getRank() < minRank) {
-                    minRank = hero.getRank()
-                    hk = hero.hk;
+            this.activeHeros.forEach( kind => {
+                let hero = this.getHeroFromHk(kind);
+                if (hero == null) console.log('error hero is null')
+                if (hero!.getRank() < minRank) {
+                    minRank = hero!.getRank()
+                    hk = hero!.hk;
                 }
             })
+            // this.heroList.forEach((hero, ID) => {
+            //     if (hero.getRank() < minRank) {
+            //         minRank = hero.getRank()
+            //         hk = hero.hk;
+            //     }
+            // })
         }
         return hk; // None if not found
     }
