@@ -2,14 +2,16 @@ import TextEdit from 'phaser3-rex-plugins/plugins/textedit.js';
 import BBCodeText from 'phaser3-rex-plugins/plugins/bbcodetext.js';
 import { RoundRectangle } from 'phaser3-rex-plugins/templates/ui/ui-components.js';
 import { reducedWidth, reducedHeight } from "../constants";
+import { lobby } from '../api/lobby';
 export default class LoadGameScene extends Phaser.Scene {
+    private controller: lobby;
     
     constructor() {
         super({ key: 'Load' });
     }
 
     public init(data) {
-
+        this.controller = data.controller;
     }
 
     public preload() {
@@ -69,10 +71,12 @@ export default class LoadGameScene extends Phaser.Scene {
                 });
                 return;
             };
-            console.log('Loading game:', gameName);
+            self.controller.loadGame(gameName, () => {
+                console.log('Loading game:', gameName);
 
-            self.scene.sleep('Load');
-            self.scene.start('Ready', {name: gameName});
+                self.scene.sleep('Load');
+                self.scene.start('Ready', {name: gameName});
+            })
         })
 
         var gobackbtn = this.add.sprite(80, 475, 'goback').setInteractive({useHandCursor: true}).setScale(0.5)
