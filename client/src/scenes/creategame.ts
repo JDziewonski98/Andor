@@ -6,7 +6,7 @@ import { reducedWidth, reducedHeight } from "../constants";
 
 export default class CreateGameScene extends Phaser.Scene {
     private lobbyController: lobby;
-    private numPlayers: number = 1; //TODO ACUI: change this to 2
+    private numPlayers: number = 2; //TODO ACUI: change this to 2
 
     constructor() {
         super({ key: 'Create' });

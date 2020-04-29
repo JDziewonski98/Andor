@@ -690,6 +690,10 @@ export class game {
         this.socket.on("revealHerb", callback);
     }
 
+    public setHerbPos(tileID) {
+        this.socket.emit("setHerbPos", tileID);
+    }
+
     public removeHerb(callback) {
         this.socket.on("removeHerb", callback);
     }

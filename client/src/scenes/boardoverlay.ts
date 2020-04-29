@@ -392,6 +392,8 @@ export default class BoardOverlay extends Phaser.Scene {
             this.monsterMoveTween(this.monsterNameMap[mName], newTile, newTile.x, newTile.y);
             if (mName == "gor_herb") {
                 // Move the herb
+                let tileID = newTileID as number;
+                this.gameinstance.setHerbPos(tileID)
                 this.herbMoveTween(this.herb, newTile.x, newTile.y)
             }
         }

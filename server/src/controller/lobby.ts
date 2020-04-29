@@ -51,6 +51,7 @@ export function lobby(socket, model: Lobby, io) {
         endOfGameState: gameData.endOfGameState,
         prince: JSON.parse(gameData.prince),
         witch: JSON.parse(gameData.witch),
+        herb: JSON.parse(gameData.herb),
         narrator: JSON.parse(gameData.narrator),
         initialCollabDone: gameData.initialCollabDone,
         runestoneCardPos: gameData.runestoneCardPos

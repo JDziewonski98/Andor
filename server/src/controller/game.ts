@@ -33,6 +33,7 @@ export function game(socket, model: Game, io) {
     );
     game['prince'] = JSON.stringify(model.getPrince());
     game['witch'] = JSON.stringify(model.getWitch());
+    game['herb'] = JSON.stringify(model.getHerb());
     game['narrator'] = JSON.stringify(model.getNarrator(), ["legendPosition"])
     game['initialCollabDone'] = model.initialCollabDone;
     game['runestoneCardPos'] = model.runestoneCardPos;
@@ -593,6 +594,11 @@ export function game(socket, model: Game, io) {
     }
   });
 
+  socket.on('setHerbPos', (newTileID) => {
+    console.log('updated herb pos on backend to', newTileID)
+    model.setHerbPos(newTileID);
+  })
+
   socket.on("getNumShields", function (callback) {
     var numShields = model.getCastle().getShields();
 
@@ -717,6 +723,7 @@ export function game(socket, model: Game, io) {
         // Inform clients of position of herb
         socket.broadcast.emit("revealHerb", newTile);
         socket.emit("revealHerb", newTile);
+        model.setHerbPos(newTile);
         // Inform clients of position of witch
         socket.broadcast.emit("revealWitch", tile);
         socket.emit("revealWitch", tile);
@@ -1827,6 +1834,7 @@ export function game(socket, model: Game, io) {
       // remove the herb image from GameScene
       socket.emit("removeHerb");
       socket.broadcast.emit("removeHerb");
+      model.setHerbPos(-1);
     }
     if (monstername == "fortress") {
       // Immediately advance narrator to N and evaluate end of game conditions

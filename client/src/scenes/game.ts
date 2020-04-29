@@ -201,6 +201,12 @@ export default class GameScene extends Phaser.Scene {
       this.overlay = new BoardOverlay(overlayData);
       this.scene.add('BoardOverlay', this.overlay, true);
 
+      if (data.herb != -1) {
+        this.addHerbToScene(data.herb);
+      } else {
+        console.log('no herb saved')
+      }
+
       // prevent initial collab decision from happening again when we load game
       if (!data.initialCollabDone) {
         // Need to wait for heroes to be created before creating collab decision
@@ -583,13 +589,20 @@ export default class GameScene extends Phaser.Scene {
     this.gameinstance.getNarratorPosition(function (pos: number) {
       // Trigger start of game instructions/story
       if (pos == -1) {
-        WindowManager.create(self, `story0`, StoryWindow, {
+        WindowManager.create(self, `story`, StoryWindow, {
           x: reducedWidth / 2,
           y: reducedHeight / 2,
-          id: 0,
+          id: -1,
           gameController: self.gameinstance,
           firstNarrAdvance: (self.gameStartHeroPosition == self.heroes.length)
         })
+        // WindowManager.create(self, `story0`, StoryWindow, {
+        //   x: reducedWidth / 2,
+        //   y: reducedHeight / 2,
+        //   id: 0,
+        //   gameController: self.gameinstance,
+        //   firstNarrAdvance: (self.gameStartHeroPosition == self.heroes.length)
+        // })
 
         // First hero to enter the game triggers placement of the runestone legend
         // This is the only "narrator event" that gets directly triggered from the client
@@ -1208,6 +1221,13 @@ export default class GameScene extends Phaser.Scene {
       }
     })
   }
+
+  private addHerbToScene(tileID) {
+    let tile = this.tiles[tileID];
+    this.herb = this.add.image(tile.x + mOffset + 20, tile.y, "herb").setDisplaySize(30, 30);
+    this.overlay.setHerb(this.herb);
+  }
+
   public addCoastalTraderToScene(){
     var self = this
     //console.log("entered addCoastalTrader listener")

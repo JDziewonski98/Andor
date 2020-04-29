@@ -56,6 +56,7 @@ export class Game {
     public runestoneCardPos: number = -1;
     private prince: Prince | null = null;
     private witch: Witch | null = null;
+    private herb = -1;
 
     private narrator!: Narrator;
     public gameStartHeroPosition: number = 1;
@@ -162,6 +163,7 @@ export class Game {
         endOfGameState = false,
         prince = { tile: { id: -1 } },
         witch = { tileID: -1, brewPrice: -1, numBrews: -1 },
+        herb = -1,
         narrator = dNarrator,
         initialCollabDone = false,
         runestoneCardPos = -1,
@@ -186,6 +188,7 @@ export class Game {
         if (witch && witch.tileID != -1) {
             this.witch = new Witch(witch.tileID, witch.brewPrice, witch.numBrews)
         }
+        this.herb = herb;
 
         this.initialCollabDone = initialCollabDone;
         this.runestoneCardPos = runestoneCardPos;
@@ -417,6 +420,15 @@ export class Game {
 
     public getWitch(): Witch | null {
         return this.witch;
+    }
+
+    public setHerbPos(tileID) {
+        console.log('adding herb tileID on server', tileID)
+        this.herb = tileID;
+    }
+
+    public getHerb() {
+        return this.herb;
     }
 
     public getRegions(): Region[] {
