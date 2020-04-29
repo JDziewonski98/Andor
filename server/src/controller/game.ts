@@ -441,8 +441,8 @@ export function game(socket, model: Game, io) {
       console.log("narrator controller at N")
       let win = model.narratorN(); // check win conditions
       console.log("server game controller win=model.narratorN(): ", win);
-      socket.emit("updateNarrator", narratorPos, win);
-      socket.broadcast.emit("updateNarrator", narratorPos, win);
+      socket.emit("updateNarrator", narratorPos, -1, [], win);
+      socket.broadcast.emit("updateNarrator", narratorPos, -1, [], win);
     }
     else {
       socket.emit("updateNarrator", narratorPos)
@@ -1727,6 +1727,13 @@ export function game(socket, model: Game, io) {
       // remove the herb image from GameScene
       socket.emit("removeHerb");
       socket.broadcast.emit("removeHerb");
+    }
+    if (monstername == "fortress") {
+      // Immediately advance narrator to N and evaluate end of game conditions
+      let win = model.narratorN();
+      console.log("server game controller win=model.narratorN(): ", win);
+      socket.emit("updateNarrator", 13,  -1, [], win);
+      socket.broadcast.emit("updateNarrator", 13,  -1, [], win);
     }
     advanceNarrator();
   })

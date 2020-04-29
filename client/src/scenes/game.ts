@@ -696,7 +696,8 @@ export default class GameScene extends Phaser.Scene {
         id: 10
       })
     }
-
+    self.scene.pause();
+    self.overlay.toggleInteractive(false);
   }
 
   private addFog(fogs) {
@@ -1049,18 +1050,22 @@ export default class GameScene extends Phaser.Scene {
 
     // Listen for end of game state
     this.gameinstance.receiveEndOfGame(function () {
-      let windowData = {
-        controller: self.gameinstance,
-        x: reducedWidth / 2 - 200,
-        y: reducedHeight / 2 - 100,
-        w: 400,
-        h: 200,
-      }
-      // Display end of game window
-      WindowManager.create(self, 'gameover', GameOverWindow, windowData);
-      // Freeze main game while collab window is active
+      // let windowData = {
+      //   controller: self.gameinstance,
+      //   x: reducedWidth / 2 - 200,
+      //   y: reducedHeight / 2 - 100,
+      //   w: 400,
+      //   h: 200,
+      // }
+      // // Display end of game window
+      // WindowManager.create(self, 'gameover', GameOverWindow, windowData);
+      WindowManager.create(self, `story10`, StoryWindow, {
+        x: reducedWidth / 2,
+        y: reducedHeight / 2,
+        id: 10
+      })
       self.scene.pause();
-
+      self.overlay.toggleInteractive(false);
     });
 
     this.gameinstance.receiveUpdateHeroTracker(function (hero) {
