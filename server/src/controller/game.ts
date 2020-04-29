@@ -952,6 +952,9 @@ export function game(socket, model: Game, io) {
                       io.of("/" + model.getName()).emit('updateShields', shieldsLeft);
                     }
                   }
+                  else{
+                    model.applyEvent(event)
+                  }
                 }
               } 
           }
@@ -2337,6 +2340,9 @@ export function game(socket, model: Game, io) {
                     io.of("/" + model.getName()).emit('sendUpdatedMonsters', convMonsters);
                     io.of("/" + model.getName()).emit('updateShields', shieldsLeft);
                   }
+                }
+                else{
+                  model.applyEvent(event)
                 }
               }
             } 
