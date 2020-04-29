@@ -24,7 +24,6 @@ import {
     dFogs,
     dEventDeck,
     dCastle,
-    // dPrince,
     dNarrator,
     dHeros
 } from "./defaults";
@@ -162,6 +161,7 @@ export class Game {
         monstersInCastle = [],
         endOfGameState = false,
         prince = { tile: { id: -1 } },
+        witch = { tileID: -1, brewPrice: -1, numBrews: -1 },
         narrator = dNarrator,
         initialCollabDone = false,
         runestoneCardPos = -1,
@@ -183,6 +183,9 @@ export class Game {
         this.narrator = new Narrator(narrator.legendPosition);
         if (prince && prince.tile && prince.tile.id !== -1)
             this.prince = new Prince(this.regions[prince.tile.id])
+        if (witch && witch.tileID != -1) {
+            this.witch = new Witch(witch.tileID, witch.brewPrice, witch.numBrews)
+        }
 
         this.initialCollabDone = initialCollabDone;
         this.runestoneCardPos = runestoneCardPos;
@@ -851,6 +854,8 @@ export class Game {
         // Determine position of stronghold
         let dieRoll = this.narrator.randomInteger(1, 6);
 
+        // TODO ACUI: TESTING ONLY SWITCH BACK TO DIEROLL
+        // let monster: Monster | null = this.addMonster(MonsterKind.Fortress, 6, 'fortress');
         let monster: Monster | null = this.addMonster(MonsterKind.Fortress, 50+dieRoll, 'fortress');
         if (monster != null) {
             monsterList.push(monster);
@@ -862,6 +867,7 @@ export class Game {
         this.regions[farmObj.getTileID()].addFarmer(farmObj);
 
         // Add more monsters
+        // TODO ACUI: ADD BACK MONSTERS
         monster = this.addMonster(MonsterKind.Gor, 27, 'gor9');
         if (monster != null) {
             monsterList.push(monster);
@@ -988,7 +994,7 @@ export class Game {
                 }
                 // Create new Witch
                 console.log("creating witch on tile with price", tile, this.numOfDesiredPlayers + 1);
-                this.witch = new Witch(tile, this.numOfDesiredPlayers + 1);
+                this.witch = new Witch(tile, this.numOfDesiredPlayers + 1, 5);
                 let herbTileID = this.witch.placeHerb();
                 return { success: true, createSuccess: toPlayer, newTile: herbTileID };
             } else if (fog == Fog.Wineskin) {

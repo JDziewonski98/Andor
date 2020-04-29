@@ -32,6 +32,7 @@ export function game(socket, model: Game, io) {
       key === 'items' ? mapToJson(value) : value
     );
     game['prince'] = JSON.stringify(model.getPrince());
+    game['witch'] = JSON.stringify(model.getWitch());
     game['narrator'] = JSON.stringify(model.getNarrator(), ["legendPosition"])
     game['initialCollabDone'] = model.initialCollabDone;
     game['runestoneCardPos'] = model.runestoneCardPos;

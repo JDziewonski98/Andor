@@ -171,6 +171,18 @@ export default class GameScene extends Phaser.Scene {
 
       this.hourTrackerSetup();
 
+      if (data.prince) {
+        this.addPrince(data.prince.tile.id);
+      } else {
+        console.log('no prince saved')
+      }
+
+      if (data.witch) {
+        this.addWitch(data.witch.tileID);
+      } else {
+        console.log('no witch saved')
+      }
+
       this.setUpListeners();
 
       // Add overlay to game
@@ -658,13 +670,39 @@ export default class GameScene extends Phaser.Scene {
     console.log("client narratorC")
     // Place farmer and prince, these are hardcoded for now
     this.addFarmer(2, 28);
-
-    this.prince = new Prince(this, this.tiles[72], 'prince').setScale(.15);
-    this.add.existing(this.prince);
+    this.addPrince();
+    
     WindowManager.create(this, `story3`, StoryWindow, {
       x: reducedWidth / 2,
       y: reducedHeight / 2,
       id: 3
+    })
+  }
+
+  private addPrince(tileID: number = 72) {
+    this.prince = new Prince(this, this.tiles[tileID], 'prince').setScale(.15);
+    this.add.existing(this.prince);
+  }
+
+  private addWitch(tileID: number) {
+    // Place the witch on tileID
+    var self = this
+    var witch = this.add.image(this.tiles[tileID].x + 50, this.tiles[tileID].y - 5, "witch");
+    witch.setInteractive({useHandCursor: true}).setScale(0.75);
+    witch.on('pointerdown', (pointer) => {
+      if (self.scene.isVisible("witchwindow")) {
+        var thescene = WindowManager.get(self, "witchwindow")
+        thescene.disconnectListeners()
+        WindowManager.destroy(this, "witchwindow");
+      } else {
+        WindowManager.create(self, `witchwindow`, WitchWindow, {
+          controller: self.gameinstance,
+          x: pointer.x + 20,
+          y: pointer.y,
+          w: 105,
+          h: 70,
+        })
+      }
     })
   }
 
@@ -910,24 +948,7 @@ export default class GameScene extends Phaser.Scene {
         y: reducedHeight / 2,
         id: 8
       })
-      // Place the witch on tileID
-      var witch = this.add.image(this.tiles[tileID].x + 50, this.tiles[tileID].y - 5, "witch");
-      witch.setInteractive({useHandCursor: true}).setScale(0.75);
-      witch.on('pointerdown', (pointer) => {
-        if (self.scene.isVisible("witchwindow")) {
-          var thescene = WindowManager.get(self, "witchwindow")
-          thescene.disconnectListeners()
-          WindowManager.destroy(this, "witchwindow");
-        } else {
-          WindowManager.create(self, `witchwindow`, WitchWindow, {
-            controller: self.gameinstance,
-            x: pointer.x + 20,
-            y: pointer.y,
-            w: 105,
-            h: 70,
-          })
-        }
-      })
+      self.addWitch(tileID);
     })
 
     // Reveal the herb
