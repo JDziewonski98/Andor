@@ -163,7 +163,7 @@ export default class ReadyScreenScene extends Phaser.Scene {
     }
 
     private attachHeroBinding(item) {
-        item.setInteractive();
+        item.setInteractive({useHandCursor: true});
         var self = this;
         item.on('pointerdown', function () {
             if (!self.ready) {
