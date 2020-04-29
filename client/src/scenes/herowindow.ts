@@ -16,6 +16,7 @@ export class HeroWindow extends Window {
     private willtext
     private strtext
     private farmtext
+    private dice
     // private name
     private gameinstance: game;
     private clienthero;
@@ -57,6 +58,7 @@ export class HeroWindow extends Window {
         this.largeItem = data.largeItem
         this.windowherotile = data.currtileid
         this.clientherotile  = data.clientherotile
+        this.dice = data.dice
     }
 
     protected initialize() { 
@@ -118,7 +120,7 @@ export class HeroWindow extends Window {
         })
 
         this.add.text(20, 305, heroCardInfo[`${this.windowhero}Ability`], { color: '#4B2504', fontSize: 12 })
-
+        this.add.text(20, 385, this.dice, { color: '#4B2504',})
         bg.setInteractive()
         this.input.setDraggable(bg)
         //This drag is pretty f'd up.
