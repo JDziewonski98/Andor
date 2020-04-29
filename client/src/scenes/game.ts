@@ -252,12 +252,12 @@ export default class GameScene extends Phaser.Scene {
     // Set keys for scrolling
     // Set keys for scrolling and zooming
     this.cameraKeys = this.input.keyboard.addKeys({
-      up: 'w',
-      down: 's',
-      left: 'a',
-      right: 'd',
-      zoomIn: 'q',
-      zoomOut: 'e'
+      up: 'up',
+      down: 'down',
+      left: 'left',
+      right: 'right',
+      zoomIn: 'plus',
+      zoomOut: 'minus'
     });
   }
 
@@ -392,12 +392,14 @@ export default class GameScene extends Phaser.Scene {
   }
 
   private addShieldsToRietburg(numShields) {
-    let s1 = this.add.sprite(95, 188, 'dshield').setDisplaySize(65, 81)
-    let s2 = this.add.sprite(163, 188, 'dshield').setDisplaySize(65, 81)
-    let s3 = this.add.sprite(228, 188, 'dshield').setDisplaySize(65, 81)
-    let s4 = this.add.sprite(95, 310, 'dshield').setDisplaySize(65, 81)
-    let s5 = this.add.sprite(163, 310, 'dshield').setDisplaySize(65, 81)
-    let s6 = this.add.sprite(95, 430, 'dshield').setDisplaySize(65, 81)
+    var overlayoffsetsX = 10;
+    var overlayoffsetsY = 20;
+    let s1 = this.add.sprite(95+overlayoffsetsX, 188+overlayoffsetsY, 'dshield').setDisplaySize(65, 81)
+    let s2 = this.add.sprite(163+overlayoffsetsX, 188+overlayoffsetsY, 'dshield').setDisplaySize(65, 81)
+    let s3 = this.add.sprite(228+overlayoffsetsX, 188+overlayoffsetsY, 'dshield').setDisplaySize(65, 81)
+    let s4 = this.add.sprite(95+overlayoffsetsX, 310+overlayoffsetsY, 'dshield').setDisplaySize(65, 81)
+    let s5 = this.add.sprite(163+overlayoffsetsX, 310+overlayoffsetsY, 'dshield').setDisplaySize(65, 81)
+    let s6 = this.add.sprite(95+overlayoffsetsX, 430+overlayoffsetsY, 'dshield').setDisplaySize(65, 81)
 
     this.castle.shields.push(s1)
     this.castle.shields.push(s2)
