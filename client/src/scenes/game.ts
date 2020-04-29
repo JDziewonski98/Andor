@@ -594,8 +594,10 @@ export default class GameScene extends Phaser.Scene {
       self.add.existing(self.narrator);
 
       // Place runestone legend card
-      // console.log("placing runestone card at position", runestoneCardPos);
-      // self.placeRunestoneCard(runestoneCardPos);
+      if (runestoneCardPos != -1) {
+        console.log("placing runestone card at position", runestoneCardPos);
+        self.placeRunestoneCard(runestoneCardPos);
+      }
     })
   }
 
