@@ -17,6 +17,7 @@ Some instructions on how to start the game.
 
 #### Installing dependencies
 First, we need to install all dependencies for the client. 
+(Install node and yarn if you don't have them)
 
 From the project directory:
 ```
