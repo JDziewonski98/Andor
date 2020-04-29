@@ -191,7 +191,7 @@ export function game(socket, model: Game, io) {
 
       socket.broadcast.emit("updateMovePrinceRequest", hero.getKind(), id, hero.getNumPrinceMoves())
       callback(hero.getKind(), id, hero.getNumPrinceMoves())
-    } else { // Log error message for why you could not move the prince
+    } else {
       let msg;
       if (hero.getTimeOfDay() == 10 && event9) { // event disallows use of 10th hour
         msg = 'Event 9 is active: you cannot use the 10th hour on this day.'
