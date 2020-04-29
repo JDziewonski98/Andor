@@ -7,7 +7,7 @@ export default class JoinGameScene extends Phaser.Scene {
     private lobbyController: lobby;
     private gameNames: string[] = [];
     private gameButtonsMap: Map<string, RoundRectangle> = new Map();
-    private gameChoice: string;
+    private gameChoice: string = "";
 
     constructor() {
         super({key: 'Join'});
@@ -99,7 +99,7 @@ export default class JoinGameScene extends Phaser.Scene {
 
         function toggleChoice(name: string) {
             console.log('toggle', name)
-            this.gameChoice = name;
+            self.gameChoice = name;
             self.gameButtonsMap.forEach((bg, bgName) => {
                 if (name == bgName) {
                     bg.visible = true;
@@ -109,6 +109,13 @@ export default class JoinGameScene extends Phaser.Scene {
             })
         }
 
+        var submitButton = this.add.text(110, 350, 'Submit', numTextStyle);
+        submitButton.setInteractive().on('pointerdown', () => {
+            if (self.gameChoice !== '') {
+                self.lobbyController.addPlayerToGame(self.gameChoice, null);
+                self.scene.start('Ready', {name: self.gameChoice})
+            }
+        })
 
         // //HTML - modify 'joinscreen' for HTML file 
         // var element = this.add.dom(410, 200).createFromCache('joinscreen');
