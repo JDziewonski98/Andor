@@ -730,7 +730,8 @@ export function game(socket, model: Game, io) {
           }
           //these will be blockable
           if(event.id ==  2 || event.id ==  5 || event.id ==  7 || event.id ==  9 || event.id == 11 || event.id == 15 || event.id == 17 || event.id == 18 || 
-              event.id == 19 || event.id == 20 || event.id == 21 || event.id == 22 || event.id == 24 || event.id == 27 || event.id == 31 || event.id == 32 || event.id == 33){
+             event.id == 19 || event.id == 20 || event.id == 21 || event.id == 22 || event.id == 24 || event.id == 27 || event.id == 31 || event.id == 32 || 
+             event.id == 33){
               let heroesWithShields = new Array<Hero>()
               for(let [conn,hero] of model.getHeros()){
                 let largeItem = hero.getLargeItem()
@@ -750,14 +751,14 @@ export function game(socket, model: Game, io) {
                 }
                 if(herosWithStr.length > 0){
                   if(heroesWithShields.length > 0){
-                    io.of("/" + model.getName()).emit('newCollab', 0, heroesWithShields);
-                    if(model.getBlockedEvent()){
-                      model.setBlockedEvent(false)
-                    }
-                    else{
-                      io.of("/" + model.getName()).emit("newCollab", event.id, herosWithStr);
-                      model.applyEvent(event)
-                    }
+                    io.of("/" + model.getName()).emit('newCollab', 0, heroesWithShields, event.id);
+                    // if(model.getBlockedEvent()){
+                    //   model.setBlockedEvent(false)
+                    // }
+                    // else{
+                    //   io.of("/" + model.getName()).emit("newCollab", event.id, herosWithStr);
+                    //   model.applyEvent(event)
+                    // }
                   }
                 }
                 else{
@@ -767,17 +768,14 @@ export function game(socket, model: Game, io) {
               else{
                 if(heroesWithShields.length > 0){
                   //console.log("Heroes with shields:", heroesWithShields)
-                  io.of("/" + model.getName()).emit('newCollab', 0, heroesWithShields);
-                  if (model.getBlockedEvent()) {
-                    model.setBlockedEvent(false)
-                  }
-                  else {
-                    //io.of("/" + model.getName()).emit("newCollab", event.id, herosWithStr);
-                    model.applyEvent(event)
-                  }
-                }
-                if(model.getBlockedEvent()){
-                  model.setBlockedEvent(false)
+                  io.of("/" + model.getName()).emit('newCollab', 0, heroesWithShields, event.id);
+                  // if (model.getBlockedEvent()) {
+                  //   model.setBlockedEvent(false)
+                  // }
+                  // else {
+                  //   //io.of("/" + model.getName()).emit("newCollab", event.id, herosWithStr);
+                  //   model.applyEvent(event)
+                  // }
                 }
                 else{
                   if(event.id == 7){
@@ -1385,14 +1383,13 @@ export function game(socket, model: Game, io) {
    * COLLAB DECISION
    */
   // Submitting a decision
-  socket.on('sendEndCollab', function (resAllocated, resNames, involvedHeroKinds, eventID) {
+  socket.on('sendEndCollab', function (resAllocated, resNames, involvedHeroKinds, eventID, eventToBeBlockedID) {
+    if(eventID == 0){
+      eventID = eventToBeBlockedID
+    }
     console.log("Recieved sendEndCollab")
     // Success: distribute accordingly
     let modelHeros = model.getHeros();
-    let event18 = false
-    let moveLowMonster = true
-    let event27 = false
-    let moveHighMonster = true
     //let 
     for (let hero of modelHeros.values()) {
       let heroTypeString = hero.getKind().toString();
@@ -1558,7 +1555,43 @@ export function game(socket, model: Game, io) {
         // console.log("Updated", heroTypeString, "gold:", currHero?.getGold(), "wineskin:", currHero?.getWineskin())
       }
     }
-    if(eventID == 16){
+    if(eventID== 7){
+      if(model.getBlockedEvent()){
+        model.setBlockedEvent(false)
+      }
+      else{
+        let lowestRank = Number.MAX_VALUE
+        let lowestHeroKind = HeroKind.None
+        for(let [conn,hero] of model.getHeros()){
+            if(hero.getRank() < lowestRank){
+                  lowestRank = hero.getRank()
+                  lowestHeroKind = hero.getKind()
+            }
+        }
+        let lowestHero
+        let roll
+        for(let [conn,hero] of model.getHeros()){
+          if(hero.getRank() == lowestRank){
+                lowestHero = hero
+          }
+        }
+        roll = lowestHero.eventRoll()
+        let msg = `The ` + lowestHero?.getKind() + ` rolled a ` + roll
+        io.of("/" + model.getName()).emit('updateGameLog', msg);
+        //console.log(lowestHeroKind, "rolled a", roll)
+        for(let [conn,hero] of model.getHeros()){
+          hero.setWill(-1*roll)
+        }
+      }
+      
+    }
+    else if(eventID == 15){
+      io.of("/" + model.getName()).emit('removeWell', "35");
+      let msg = `Monsters have destroyed the well at tile 35. It is broken beyond repair and can no longer be used.`
+      io.of("/" + model.getName()).emit('updateGameLog', msg);
+      model.applyEvent(event)
+    }
+    else if(eventID == 16){
       if(model.getBlockedEvent()){
         model.setBlockedEvent(false)
       }
@@ -1567,7 +1600,6 @@ export function game(socket, model: Game, io) {
         model.drawCard()
       }
     }
-    
     else if(eventID == 18){
       if(model.getBlockedEvent()){
         model.setBlockedEvent(false)
@@ -1622,20 +1654,50 @@ export function game(socket, model: Game, io) {
         model.getFarmers().splice(index, 1)
       }
     }
-    if(eventID == 27){
+    else if(eventID == 22){
       if(model.getBlockedEvent()){
         model.setBlockedEvent(false)
       }
       else{
+        io.of("/" + model.getName()).emit('removeWell', "45");
+        let msg = `Monsters have destroyed the well at tile 45. It is broken beyond repair and can no longer be used.`
+        io.of("/" + model.getName()).emit('updateGameLog', msg);
+        model.applyEvent(event)
+      }
+      
+    }
+    else if(eventID == 27){
+      if(model.getBlockedEvent()){
+        model.setBlockedEvent(false)
+      }
+      else{
+        //check which heros have gold and willpower to lose. 
+      let elligibleHeroes = Array<Hero>()
+      //let totalCount = 0
+      for(let [conn,hero] of model.getHeros()){
+        if(hero.getGold() > 1 || hero.getWill() > 1){
+          elligibleHeroes.push(hero)
+          //totalCount += hero.getGold() + hero.getWill()
+        }
+      }
+      let heroMaxes = new Array()
+      if(elligibleHeroes.length >= model.getHeros().size){
+        for(let hero of elligibleHeroes){
+          heroMaxes.push([hero.getGold(),hero.getWill()])
+        }
+        io.of("/" + model.getName()).emit('newCollab', 27, elligibleHeroes, heroMaxes);
+      }
+      else{
         let maxID = -1
         for(let [n,m] of model.getMonsters()){
-          console.log(m.getTileID())
+          //console.log(m.getTileID())
           if( m.getTileID() > maxID){
             maxID = m.getTileID()
           }
         }
         //let currM
         var shieldsLeft
+        var nextM
         let convMonsters = {};
         //console.log(maxID)
         for(let [n,m] of model.getMonsters()){
@@ -1644,6 +1706,7 @@ export function game(socket, model: Game, io) {
             let shieldsRemaining = model.moveMonster(m)
             shieldsLeft = shieldsRemaining
             convMonsters[m.name] = m.getTileID();
+            console.log(convMonsters)
             if (oldNumShields > shieldsRemaining) {
               let msg = oldNumShields - 1 > shieldsRemaining ? 
                 `Monsters have reached the castle! Shields were lost defending against them.` :
@@ -1662,8 +1725,39 @@ export function game(socket, model: Game, io) {
         io.of("/" + model.getName()).emit('updateShields', shieldsLeft);
       }
     }
-    model.initialCollabDone = true
-    io.of("/" + model.getName()).emit('receiveEndCollab', involvedHeroKinds);
+      
+  }
+  else if(eventID == 33){
+    if(model.getBlockedEvent()){
+      model.setBlockedEvent(false)
+    }
+    //if someone has > 1 str point
+    //if(herosWithStr.length > 0){
+    else{
+      let herosWithStr = Array<Hero>()
+      for(let [conn,hero] of model.getHeros()){
+        if(hero.getStrength() > 1){
+          herosWithStr.push(hero)
+        }
+      }
+      io.of("/" + model.getName()).emit("newCollab", eventID, herosWithStr);
+      model.applyEvent(event)
+    }
+    //}
+    // else{
+    //   //event 33 is not triggered. We should probably communicate this somehow.
+    // }
+  }
+  else{
+    if(model.getBlockedEvent()){
+      model.setBlockedEvent(false)
+    }
+    else{
+      model.applyEventByID(eventID)
+    }
+  }
+  model.initialCollabDone = true
+  io.of("/" + model.getName()).emit('receiveEndCollab', involvedHeroKinds);
   })
 
   //buying from coastalTrader
@@ -2012,7 +2106,8 @@ export function game(socket, model: Game, io) {
         }
         //these will be blockable
         if(event.id ==  2 || event.id ==  5 || event.id ==  7 || event.id ==  9 || event.id == 11 || event.id == 15 || event.id == 17 || event.id == 18 || 
-           event.id == 19 || event.id == 20 || event.id == 21 || event.id == 22 || event.id == 24 || event.id == 27 || event.id == 31 || event.id == 32 || event.id == 33){
+           event.id == 19 || event.id == 20 || event.id == 21 || event.id == 22 || event.id == 24 || event.id == 27 || event.id == 31 || event.id == 32 || 
+           event.id == 33){
             let heroesWithShields = new Array<Hero>()
             for(let [conn,hero] of model.getHeros()){
               let largeItem = hero.getLargeItem()
@@ -2032,14 +2127,14 @@ export function game(socket, model: Game, io) {
               }
               if(herosWithStr.length > 0){
                 if(heroesWithShields.length > 0){
-                  io.of("/" + model.getName()).emit('newCollab', 0, heroesWithShields);
-                  if(model.getBlockedEvent()){
-                    model.setBlockedEvent(false)
-                  }
-                  else{
-                    io.of("/" + model.getName()).emit("newCollab", event.id, herosWithStr);
-                    model.applyEvent(event)
-                  }
+                  io.of("/" + model.getName()).emit('newCollab', 0, heroesWithShields, null, event.id);
+                  // if(model.getBlockedEvent()){
+                  //   model.setBlockedEvent(false)
+                  // }
+                  // else{
+                  //   io.of("/" + model.getName()).emit("newCollab", event.id, herosWithStr);
+                  //   model.applyEvent(event)
+                  // }
                 }
               }
               else{
@@ -2048,20 +2143,19 @@ export function game(socket, model: Game, io) {
             }
             else{
               if(heroesWithShields.length > 0){
+                //console.log(heroesWithShields, "A")
                 //console.log("Heroes with shields:", heroesWithShields)
-                io.of("/" + model.getName()).emit('newCollab', 0, heroesWithShields);
-                if (model.getBlockedEvent()) {
-                  model.setBlockedEvent(false)
-                }
-                else {
-                  //io.of("/" + model.getName()).emit("newCollab", event.id, herosWithStr);
-                  model.applyEvent(event)
-                }
-              }
-              if(model.getBlockedEvent()){
-                model.setBlockedEvent(false)
+                io.of("/" + model.getName()).emit('newCollab', 0, heroesWithShields, null, event.id);
+                // if (model.getBlockedEvent()) {
+                //   model.setBlockedEvent(false)
+                // }
+                // else {
+                //   //io.of("/" + model.getName()).emit("newCollab", event.id, herosWithStr);
+                //   model.applyEvent(event)
+                // }
               }
               else{
+                //console.log(heroesWithShields, "B")
                 if(event.id == 7){
                   let lowestRank = Number.MAX_VALUE
                   let lowestHeroKind = HeroKind.None

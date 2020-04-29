@@ -45,6 +45,7 @@ export class CollabWindow extends Window {
     private heroMaxes
     private sumNeeded: number
     private eventID
+    private eventToBeBlockedID
     private desc
     public constructor(key: string, data) {
         super(key, {x: data.x, y: data.y, width: data.w, height: data.h});
@@ -74,6 +75,7 @@ export class CollabWindow extends Window {
         this.initialSleep = data.initialSleep
         this.eventID = data.eventID
         this.desc = data.desc
+        this.eventToBeBlockedID = data.eventToBeBlockedID
         //console.log(this.involvedHeroes)
     }
 
@@ -317,7 +319,7 @@ export class CollabWindow extends Window {
                         for(let hk of self.involvedHeroes){
                             involvedHeroKinds.push(hk)
                         }
-                        self.gameinstance.sendEndCollab(convMap, self.resourceNames, involvedHeroKinds, self.eventID)
+                        self.gameinstance.sendEndCollab(convMap, self.resourceNames, involvedHeroKinds, self.eventID, self.eventToBeBlockedID)
                     }
                     //self.gameinstance.collabDecisionSubmit(convMap, self.resourceNames, self.involvedHeroes);
                     //

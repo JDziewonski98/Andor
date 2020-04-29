@@ -1115,9 +1115,9 @@ export default class GameScene extends Phaser.Scene {
     this.gameinstance.newEventListener((event: EventCard) => {
       this.applyEvent(event)
     })
-    this.gameinstance.newCollabListener((eventID, heroes, heroMaxes) => {
+    this.gameinstance.newCollabListener((eventID, heroes, heroMaxes, eventToBeBlockedID) => {
       console.log("Received newCollab")
-
+      //console.log(eventID, heroes, heroMaxes, eventToBeBlockedID)
       var involved = false
       var involvedHeroKinds = new Array<HeroKind>()
       for (let hero of heroes) {
@@ -1168,7 +1168,8 @@ export default class GameScene extends Phaser.Scene {
           sumNeeded: sumNeeded,
           initialSleep: true,
           eventID: eventID,
-          desc: desc
+          desc: desc,
+          eventToBeBlockedID: eventToBeBlockedID
         };
 
         WindowManager.create(this, 'collab', CollabWindow, collabWindowData);

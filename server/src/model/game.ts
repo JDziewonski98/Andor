@@ -976,7 +976,7 @@ export class Game {
                 this.getHeroFromHk(this.currPlayersTurn)!.setWill(3);
                 return { success: true };
             } else if (fog == Fog.Strength) {
-                this.getHeroFromHk(this.currPlayersTurn)!.setStrength(2);
+                this.getHeroFromHk(this.currPlayersTurn)!.setStrength(1);
                 return { success: true };
             } else if (fog == Fog.WitchFog) {
                 let toPlayer = false;
@@ -1283,7 +1283,195 @@ export class Game {
         } 
         //if one that returns to deck ?? not sure if any return
     }
-
+    public applyEventByID(eventID) {
+        console.log("Applying event: ", eventID)
+        //do something
+        if(eventID == 1){
+            //do nothing
+        }
+        else if(eventID == 2){
+            for(let [conn,hero] of this.heroList){
+                let tID = hero.getRegion().getID()
+                if (0 <= tID && tID <= 20) {
+                    hero.setWill(-3)
+                }
+            }
+        }
+        else if(eventID == 3){
+            var count = 0
+            //var highestHero = new Hero()
+            var highestRank = Number.MIN_VALUE
+            var highestHeroKind = HeroKind.None
+            for(let [conn,hero] of this.heroList){
+                if(hero.getRegion().getID() == 57){
+                    count++
+                    if(highestRank < hero.getRank()){
+                        //highestHero = hero
+                        highestRank = hero.getRank()
+                        highestHeroKind = hero.getKind()
+                    }
+                }
+            }
+            if(count >= 1){
+                //give highestHero strength point
+                for(let [conn,hero] of this.heroList){
+                    if(hero.getKind() == highestHeroKind){
+                        hero.setStrength(1)
+                    }
+                }
+            }
+            else{
+                //add to active events until someone activates it
+                this.activeEvents.push(eventID)
+        
+            }
+        }
+        else if(eventID == 5){
+            for(let [conn,hero] of this.heroList){
+                let tID = hero.getRegion().getID()
+                if (37 <= tID && tID <= 70) {
+                    hero.setWill(-3)
+                }
+            }
+        }
+        else if(eventID == 7){
+            //handled on server controller
+        }
+        else if(eventID == 9){
+            this.activeEvents.push(9)
+        }
+        else if(eventID ==11){
+            for(let [name,monster] of this.monsters){
+                let currStr = monster.getStrength()
+                monster.setStrength(currStr + 1)
+            }
+            this.activeEvents.push(11)
+        }
+        else if (eventID == 12) {
+            for (let [conn, hero] of this.heroList) {
+                if (hero.getKind() == HeroKind.Archer || hero.getKind() == HeroKind.Mage) {
+                    hero.setWill(3)
+                }
+            }
+        }
+        else if (eventID == 13) {
+            for (let [conn, hero] of this.heroList) {
+                let currWill = hero.getWill()
+                if (currWill < 10) {
+                    hero.setWill(10 - currWill)
+                }
+            }
+        }
+        else if (eventID == 14) {
+            for (let [conn, hero] of this.heroList) {
+                if (hero.getKind() == HeroKind.Dwarf || hero.getKind() == HeroKind.Warrior) {
+                    hero.setWill(3)
+                }
+            }
+        }
+        else if (eventID == 15) {
+            this.regions[35].removeWell()
+        }
+        else if (eventID == 17) {
+            for (let [conn, hero] of this.heroList) {
+                let currWill = hero.getWill()
+                if (currWill > 12) {
+                    hero.setWill(12 - currWill)
+                }
+            }
+        }
+        else if (eventID == 19) {
+            this.activeEvents.push(eventID)
+        }
+        else if(eventID == 20){
+            //handled on server controller
+        }
+        else if(eventID == 21){
+            var count = 0
+            //var highestHero = new Hero(HeroKind.None, this.regions[0])
+            var highestRank = Number.MIN_VALUE
+            var highestHeroKind = HeroKind.None
+            for(let [conn,hero] of this.heroList){
+                let reg = hero.getRegion().getID()
+                if(reg == 22 || reg == 23 || reg == 24 || reg == 25){
+                    count++
+                    if(highestRank < hero.getRank()){
+                        //highestHero = hero
+                        highestRank = hero.getRank()
+                    }
+                }
+            }
+            if(count >= 2){
+                //give highestHero strength point
+                for(let [conn,hero] of this.heroList){
+                    if(hero.getKind() == highestHeroKind){
+                        hero.setStrength(1)
+                    }
+                }
+            }
+            else{
+                this.activeEvents.push(21)
+            }
+        }
+        else if(eventID == 22){
+            this.regions[45].removeWell()
+        }
+        else if (eventID == 24) {
+            for (let [conn, hero] of this.heroList) {
+                let tID = hero.getRegion().getID()
+                if (tID == 71 || tID == 72 || tID == 0 || 47 <= tID && tID <= 63) {
+                    //this hero is safe
+                    continue
+                }
+                else {
+                    hero.setWill(-2)
+                }
+            }
+        }
+        else if (eventID == 26) {
+            this.activeEvents.push(eventID)
+        }
+        else if (eventID == 28) {
+            for (let [conn, hero] of this.heroList) {
+                let time = hero.getTimeOfDay()
+                console.log(hero.getKind(), time)
+                if (time == 1) {
+                    hero.setWill(2)
+                }
+            }
+        }
+        else if(eventID == 29){
+            //handled on server controller
+        }
+        else if(eventID == 30){
+            //handled on server controller
+        }
+        else if(eventID == 31){
+            for(let [conn,hero] of this.heroList){
+                let tID = hero.getRegion().getID()
+                if (tID == 71 || tID == 72 || tID == 0 || 47 <= tID && tID <= 63) {
+                    //this hero is safe
+                    continue
+                }
+                else {
+                    hero.setWill(-2)
+                }
+            }
+        }
+        else if (eventID == 32) {
+            for (let [conn, hero] of this.heroList) {
+                let time = hero.getTimeOfDay()
+                console.log(hero.getKind(), time)
+                if (time == 1) {
+                    hero.setWill(-2)
+                }
+            }
+        }
+        else if(eventID == 33){
+            //handled on server controller
+        } 
+        //if one that returns to deck ?? not sure if any return
+    }
     public setBlockedEvent(b){
         this.blockedEvent = b
     }

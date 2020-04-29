@@ -45,7 +45,7 @@ export const dMonsters = [{
 
 export function dEventDeck() {
     let map = require("./EventCardMap").map;
-    _shuffle(map);
+    //_shuffle(map);
     return map;
 }
 
