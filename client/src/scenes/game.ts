@@ -128,6 +128,7 @@ export default class GameScene extends Phaser.Scene {
     this.load.image("half_brew", "../assets/items/half_brew.jpg")
     this.load.image("herb", "../assets/items/herb.png");
     this.load.image("shield", "../assets/items/shield.png")
+    this.load.image("damaged_shield", "../assets/items/brokenshield.PNG")
 
     this.load.image("prince", "../assets/board-minor/prince.png");
     this.load.image("gold", "../assets/fog-tokens/gold.png")

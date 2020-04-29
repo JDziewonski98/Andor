@@ -59,7 +59,11 @@ export function game(socket, model: Game, io) {
     model.gameStartHeroPosition += 1;
     callback(tempModel)
   })
-
+  socket.on('enterGame', function(){
+    model.updatePlayersInGame(1)
+    console.log("received enterGame. now ", model.getPlayersInGame(), " in game")
+    
+  })
   socket.on("moveRequest", function (id, callback) {
     id = +id // turning Id from string to number
     var heroID = socket.conn.id
@@ -99,15 +103,28 @@ export function game(socket, model: Game, io) {
       let targetRegion: Region = model.getRegions()[id];
       // Check if the move kills any carried farmers
       killFarmersOfHeroes(id, hero);
+      let freeMoves = hero.getFreeMoves()
       //if event 26 is active and it is your 8th hour, move freely
       if (hero.getTimeOfDay() == 8 && event26) {
         hero.freeMoveTo(targetRegion)
+        if(freeMoves == 0){
+          console.log("A")
+          io.of("/" + model.getName()).emit('receiveUpdateHeroTracker', hero.getKind());
+        }
       }
       else if ((hero.getTimeOfDay() == 9 || (hero.getTimeOfDay() == 10 && !event9)) && event19) {
         hero.exhaustingMoveTo(targetRegion)
+        if(freeMoves == 0){
+          console.log("B")
+          io.of("/" + model.getName()).emit('receiveUpdateHeroTracker', hero.getKind());
+        }
       }
       else {
         hero.moveTo(targetRegion)
+        if(freeMoves == 0){
+          console.log("C")
+          io.of("/" + model.getName()).emit('receiveUpdateHeroTracker', hero.getKind());
+        }
       }
       if (model.dangerousRegion(targetRegion)) {
         hero.setWill(-4)
@@ -491,12 +508,52 @@ export function game(socket, model: Game, io) {
       callback();
       // Using a merchant ends your turn
       // Update game log
-      var msg = `The ${hero.getKind()} bought one ${item} from a merchant.`
+      let skin = ""
+      if(item == "wine"){
+        skin = "skin"
+      }
+      var msg = `The ${hero.getKind()} bought one ${item}${skin} from a merchant.`
       socket.emit("updateGameLog", msg);
       socket.broadcast.emit("updateGameLog", msg);
       // End turn
       if (model.getCurrPlayersTurn() == hero.getKind()) {
         freeActionEndTurn(hero);
+      }
+    }
+    else{
+      if(item == "shield" || item == "falcon" || item == "bow"){
+        if(hero.getLargeItem()){
+          var msg = `The ${hero.getKind()} tried to buy one ${item} from a merchant, but their inventory was full.`
+          socket.emit("updateGameLog", msg);
+        }
+        else{
+          var msg = `The ${hero.getKind()} tried to buy one ${item} from a merchant, but they did not possess the required gold.`
+          socket.emit("updateGameLog", msg);
+        }
+      }
+      else if(item == "wine" || item == "telescope"){
+        let skin = ""
+        if(item == "wine"){
+          skin = "skin"
+        }
+        if(hero.getSmallItems()){
+          if(hero.getSmallItems().length >2){
+            var msg = `The ${hero.getKind()} tried to buy one ${item}${skin} from a merchant, but their inventory was full.`
+            socket.emit("updateGameLog", msg);
+          }
+          else{
+            var msg = `The ${hero.getKind()} tried to buy one ${item}${skin} from a merchant, but they did not possess the required gold.`
+            socket.emit("updateGameLog", msg);
+          }
+        }
+        else{
+          var msg = `The ${hero.getKind()} tried to buy one ${item}${skin} from a merchant, but they did not possess the required gold.`
+          socket.emit("updateGameLog", msg);
+        }
+      }
+      else if(item == "strength"){
+        var msg = `The ${hero.getKind()} tried to buy one ${item} from a merchant, but they did not possess the required gold.`
+        socket.emit("updateGameLog", msg);
       }
     }
   });
@@ -1622,10 +1679,15 @@ export function game(socket, model: Game, io) {
   })
   // increasing/decreasing resources
   socket.on('sendIncResource', function (resourceHeroKind, resourceIndex) {
-    io.of("/" + model.getName()).emit('receiveIncResource', resourceHeroKind, resourceIndex, model.getHero(socket.conn.id).getKind());
+    if(model.getPlayersInGame() == model.getNumOfDesiredPlayers()){
+      io.of("/" + model.getName()).emit('receiveIncResource', resourceHeroKind, resourceIndex, model.getHero(socket.conn.id).getKind());
+    }
+    
   })
   socket.on('sendDecResource', function (resourceHeroKind, resourceIndex) {
-    io.of("/" + model.getName()).emit('receiveDecResource', resourceHeroKind, resourceIndex, model.getHero(socket.conn.id).getKind());
+    if(model.getPlayersInGame() == model.getNumOfDesiredPlayers()){
+      io.of("/" + model.getName()).emit('receiveDecResource', resourceHeroKind, resourceIndex, model.getHero(socket.conn.id).getKind());
+    }
   })
   // Accepting a collab
   socket.on('sendAccept', function (heroKind) {
@@ -1871,7 +1933,10 @@ export function game(socket, model: Game, io) {
   })
 
   socket.on('battleCollabApprove', function (windowname, involvedHeros, res) {
-    socket.broadcast.emit('battleRewardsPopup', windowname, involvedHeros, res)
+    var heroids = model.getIDsByHeroname(involvedHeros)
+    for (let playerid of heroids) {
+      socket.broadcast.to(`/${model.getName()}#${playerid}`).emit('battleRewardsPopup', windowname, involvedHeros, res)
+    }
   })
 
   //TODO test this further

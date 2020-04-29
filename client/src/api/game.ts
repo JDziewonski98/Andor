@@ -380,6 +380,12 @@ export class game {
     }
 
 
+    ///
+    //tell server you entered game
+    public enterGame(){
+        this.socket.emit('enterGame')
+    }
+
     ////
     //Removing wells from game
     public removeWell(callback){

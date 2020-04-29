@@ -65,6 +65,7 @@ export class Game {
     // collab decision related state
     public numAccepts: number;
     private availableHeros: Array<Hero>;
+    private playersInGame: number
     //private availableHeros: Array<HeroKind> = new Array(HeroKind.Archer, HeroKind.Dwarf, HeroKind.Mage, HeroKind.Warrior);
 
     //EventCards
@@ -93,6 +94,7 @@ export class Game {
         this.blockedEvent = false;
         this.initialCollabDone = false;
         this.runestoneCardPos = -1;
+        this.playersInGame = 0
         // this.narrator = new Narrator(this, 0)
     }
 
@@ -230,7 +232,12 @@ export class Game {
     //     console.log("setting first player turn to", this.heroList[ID].getKind());
     //     this.currPlayersTurn = this.heroList[ID].getKind();
     // }
-
+    public updatePlayersInGame(i){
+        this.playersInGame +=i
+    }
+    public getPlayersInGame(){
+        return this.playersInGame
+    }
     public getIDsByHeroname(heronames) {
         var heroids: string[] = []
         this.heroList.forEach((hero, ID) => {
