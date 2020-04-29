@@ -101,7 +101,7 @@ export default class ReadyScreenScene extends Phaser.Scene {
         this.add.text(reducedWidth/2, 410, 'Choose the hero you wish to play.', textStyle).setOrigin(0.5);
 
         // back button
-        var gobackbtn = this.add.sprite(80, 475, 'goback').setInteractive().setScale(0.5)
+        var gobackbtn = this.add.sprite(80, 475, 'goback').setInteractive({useHandCursor: true}).setScale(0.5)
         gobackbtn.on('pointerdown', function (pointer) {
             this.scene.start('Lobby');
 
@@ -110,7 +110,7 @@ export default class ReadyScreenScene extends Phaser.Scene {
         var self = this;
 
         //advance to game button.
-        this.playbutton = this.add.sprite(900, 485, 'entergame').setInteractive().setScale(0.5)
+        this.playbutton = this.add.sprite(900, 485, 'entergame').setInteractive({useHandCursor: true}).setScale(0.5)
         this.playbutton.on('pointerdown', function (pointer) {
             self.gameController.allPlayersReady((ready) => {
                 if (this.ready && ready) {
@@ -130,7 +130,7 @@ export default class ReadyScreenScene extends Phaser.Scene {
         // chat window
         WindowManager.create(this, 'chat', Chat, { controller: self.gameController });
         this.chatButton = this.add.image(775, 540, 'chaticon').setScale(0.3)
-        this.chatButton.setInteractive();
+        this.chatButton.setInteractive({useHandCursor: true})
         this.chatButton.on('pointerdown', function (pointer) {
             if (this.scene.isVisible('chat')) {
                 WindowManager.destroy(this, "chat")

@@ -21,7 +21,7 @@ export class WitchWindow extends Window {
         // Get the tile's gold amount from server
         this.gameController.getNumBrews(function(numBrews: number) {
             self.buyBrewButton = self.add.text(33, 33, ""+numBrews, { fontSize: 10, backgroundColor: '#f00' });
-            self.buyBrewButton.setInteractive();
+            self.buyBrewButton.setInteractive({useHandCursor: true})
             self.buyBrewButton.on("pointerdown", function(pointer) {
                 self.gameController.purchaseBrew();
             }, this)

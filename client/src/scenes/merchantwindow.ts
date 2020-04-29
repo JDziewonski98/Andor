@@ -128,7 +128,7 @@ export class MerchantWindow extends Window {
         self.add.image(20, 175, 'item_border').setOrigin(0);
         self.add.image(25, 180, 'Strength').setOrigin(0).setDisplaySize(35,35);
         this.strengthBuy = this.add.text(80, 175, 'BUY', buyButtonStyle)
-        this.strengthBuy.setInteractive();
+        this.strengthBuy.setInteractive({useHandCursor: true});
 
         var self = this
         this.strengthBuy.on('pointerdown', function (pointer) {
@@ -142,7 +142,7 @@ export class MerchantWindow extends Window {
         self.add.image(20, 245, 'item_border').setOrigin(0);
         self.add.image(25, 250, 'bow').setOrigin(0).setDisplaySize(35,35);
         this.bowBuy= this.add.text(70, 245, 'BUY', buyButtonStyle)
-        this.bowBuy.setInteractive()
+        this.bowBuy.setInteractive({useHandCursor: true})
         this.bowBuy.on('pointerdown', function (pointer) {
             self.gameinstance.merchant("bow", function(){
                 WindowManager.destroy(self, self.key);
@@ -154,7 +154,7 @@ export class MerchantWindow extends Window {
         self.add.image(150, 245, 'item_border').setOrigin(0);
         self.add.image(155, 250, 'helm').setOrigin(0).setDisplaySize(35,35);
         this.helmBuy = this.add.text(200, 245, 'BUY', buyButtonStyle)
-        this.helmBuy.setInteractive();
+        this.helmBuy.setInteractive({useHandCursor: true})
 
         this.helmBuy.on('pointerdown', function (pointer) {
             self.gameinstance.merchant("helm", function(){
@@ -167,7 +167,7 @@ export class MerchantWindow extends Window {
         self.add.image(270, 245, 'item_border').setOrigin(0);
         self.add.image(275, 250, 'wineskin').setOrigin(0).setDisplaySize(35,35);
         this.wineBuy = this.add.text(320, 245, 'BUY', buyButtonStyle)
-        this.wineBuy.setInteractive()
+        this.wineBuy.setInteractive({useHandCursor: true})
 
         this.wineBuy.on('pointerdown', function (pointer) {
             self.gameinstance.merchant("wine", function(){
@@ -180,7 +180,7 @@ export class MerchantWindow extends Window {
         self.add.image(20, 320, 'item_border').setOrigin(0);
         self.add.image(25, 325, 'falcon').setOrigin(0).setDisplaySize(35,35);
         this.falconBuy= this.add.text(70, 320, 'BUY', buyButtonStyle)
-        this.falconBuy.setInteractive()
+        this.falconBuy.setInteractive({useHandCursor: true})
 
         this.falconBuy.on('pointerdown', function (pointer) {
             self.gameinstance.merchant("falcon", function(){
@@ -193,7 +193,7 @@ export class MerchantWindow extends Window {
         self.add.image(150, 320, 'item_border').setOrigin(0);
         self.add.image(155, 325, 'telescope').setOrigin(0).setDisplaySize(35,35);
         this.telescopeBuy = this.add.text(200, 320, 'BUY', buyButtonStyle)
-        this.telescopeBuy.setInteractive()
+        this.telescopeBuy.setInteractive({useHandCursor: true})
 
         this.telescopeBuy.on('pointerdown', function (pointer) {
             self.gameinstance.merchant("telescope", function(){
@@ -206,7 +206,7 @@ export class MerchantWindow extends Window {
         self.add.image(270, 320, 'item_border').setOrigin(0);
         self.add.image(275, 325, 'shield').setOrigin(0).setDisplaySize(35,35);
         this.shieldBuy = this.add.text(320, 320, 'BUY', buyButtonStyle)
-        this.shieldBuy.setInteractive()
+        this.shieldBuy.setInteractive({useHandCursor: true})
 
         this.shieldBuy.on('pointerdown', function (pointer) {
             self.gameinstance.merchant("shield", function(){

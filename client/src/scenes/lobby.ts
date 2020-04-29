@@ -81,7 +81,7 @@ export default class LobbyScene extends Phaser.Scene {
         // NEW BUTTON
         this.gameText = this.add.text(500, 300, "New", menuText).setOrigin(0.5)
         this.gameText.setShadow(0, 0, 'black', 10);
-        this.gameText.setInteractive();
+        this.gameText.setInteractive({useHandCursor: true});
         this.gameText.on('pointerdown', function (pointer) {
             this.scene.start('Create', { controller: self.lobbyController });
         }, this);
@@ -89,7 +89,7 @@ export default class LobbyScene extends Phaser.Scene {
         // JOIN BUTTON
         this.gameText = this.add.text(500, 400, "Join", menuText).setOrigin(0.5)
         this.gameText.setShadow(0, 0, 'black', 10);
-        this.gameText.setInteractive();
+        this.gameText.setInteractive({useHandCursor: true});
         this.gameText.on('pointerdown', function (pointer) {
             this.scene.start('Join', { controller: self.lobbyController });
         }, this);
@@ -97,13 +97,13 @@ export default class LobbyScene extends Phaser.Scene {
         // LOAD BUTTON
         this.gameText = this.add.text(500, 500, "Load", menuText).setOrigin(0.5)
         this.gameText.setShadow(0, 0, 'black', 10);
-        this.gameText.setInteractive();
+        this.gameText.setInteractive({useHandCursor: true});
         this.gameText.on('pointerdown', function (pointer) {
             this.scene.start('Load', { controller: self.lobbyController });
         }, this);
 
         // HEROS' DWELLING
-        this.optionsIcon = this.add.image(900, 80, 'optionsicon').setInteractive().setScale(0.3);
+        this.optionsIcon = this.add.image(900, 80, 'optionsicon').setInteractive({useHandCursor: true}).setScale(0.3);
         this.add.text(900, 133, "heroes' dwelling", housetText).setOrigin(0.5)
         this.optionsIcon.on('pointerdown', function (pointer) {
             this.scene.bringToTop('Options')

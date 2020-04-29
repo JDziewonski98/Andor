@@ -270,7 +270,7 @@ export default class GameScene extends Phaser.Scene {
       // console.log(t, scaleFactor, borderWidth)
       var tile = new Tile(t.id, this, t.xcoord * scaleFactor + borderWidth, t.ycoord * scaleFactor + borderWidth, treeTile, t.adjRegionsIds);
       this.tiles[t.id] = tile;
-      tile.setInteractive();
+      tile.setInteractive({useHandCursor: true});
       this.add.existing(tile);
 
       
@@ -311,10 +311,10 @@ export default class GameScene extends Phaser.Scene {
             this.addMerchant(3060, 3680, t.id as number);
             break;
           case 57:
-            this.addMerchant(7337, 968, t.id as number);
+            this.addMerchant(7708, 1340, t.id as number);
             break;
           case 71:
-            this.addMerchant(7088, 4360, t.id as number);
+            this.addMerchant(7426, 4320, t.id as number);
             break;
         }
       }
@@ -467,7 +467,7 @@ export default class GameScene extends Phaser.Scene {
   private addMonster(monsterTile: number, type: string, id: string) {
     const tile: Tile = this.tiles[monsterTile];
 
-    let monster: Monster = new Monster(this, tile, type, id).setInteractive().setScale(.5);
+    let monster: Monster = new Monster(this, tile, type, id).setInteractive({useHandCursor: true}).setScale(.5);
     this.monsters.push(monster);
     this.monsterNameMap[monster.name] = monster;
     tile.setMonster(monster);
@@ -497,7 +497,7 @@ export default class GameScene extends Phaser.Scene {
 
   private addFarmer(id: number, tileID: number) {
     const tile: Tile = this.tiles[tileID];
-    const farmerObj = new Farmer(id, this, tile, 'farmer').setDisplaySize(40, 40).setInteractive();
+    const farmerObj = new Farmer(id, this, tile, 'farmer').setDisplaySize(40, 40).setInteractive({useHandCursor: true});
     this.farmers.push(farmerObj);
     tile.farmers.push(farmerObj);
     this.add.existing(farmerObj);
@@ -573,13 +573,14 @@ export default class GameScene extends Phaser.Scene {
           x: reducedWidth / 2,
           y: reducedHeight / 2,
           id: 0,
-          gameController: self.gameinstance
+          gameController: self.gameinstance,
+          firstNarrAdvance: (self.gameStartHeroPosition == self.heroes.length)
         })
 
-        // Last hero to enter the game triggers placement of the runestone legend
+        // First hero to enter the game triggers placement of the runestone legend
         // This is the only "narrator event" that gets directly triggered from the client
         // because it doesn't happen on a monster kill or end of day
-        if (self.gameStartHeroPosition == self.heroes.length) {
+        if (self.gameStartHeroPosition == 1) {
           // console.log('client emits placeRunestoneLegend')
           self.gameinstance.placeRuneStoneLegend();
         }
@@ -591,8 +592,8 @@ export default class GameScene extends Phaser.Scene {
       self.add.existing(self.narrator);
 
       // Place runestone legend card
-      console.log("placing runestone card at position", runestoneCardPos);
-      self.placeRunestoneCard(runestoneCardPos);
+      // console.log("placing runestone card at position", runestoneCardPos);
+      // self.placeRunestoneCard(runestoneCardPos);
     })
   }
 
@@ -702,7 +703,7 @@ export default class GameScene extends Phaser.Scene {
       f.name = fog[1];
       f.setTint(0x101010); // darken
       tile.setFog(f) // add to tile
-      f.setInteractive()
+      f.setInteractive({useHandCursor: true});
       this.add.existing(f);
       var self = this
       f.on("pointerdown", (pointer) => {
@@ -906,7 +907,7 @@ export default class GameScene extends Phaser.Scene {
       })
       // Place the witch on tileID
       var witch = this.add.image(this.tiles[tileID].x + 50, this.tiles[tileID].y - 5, "witch");
-      witch.setInteractive().setScale(0.75);
+      witch.setInteractive({useHandCursor: true}).setScale(0.75);
       witch.on('pointerdown', (pointer) => {
         if (self.scene.isVisible("witchwindow")) {
           var thescene = WindowManager.get(self, "witchwindow")
@@ -1087,7 +1088,7 @@ export default class GameScene extends Phaser.Scene {
     this.gameinstance.addCoastalTrader(function(){
       //console.log("entered addCoastalTrader listener")
       let tempMerchant = self.add.image(self.tiles[9].x + 50, self.tiles[9].y - 5, "merchant-trade");
-      tempMerchant.setInteractive().setScale(0.75);
+      tempMerchant.setInteractive({useHandCursor: true}).setScale(0.75);
       tempMerchant.on('pointerdown', function (pointer) {
         if (self.hero.tile.id == 9) {
           if (self.scene.isVisible('temp_merchant')) {
@@ -1180,7 +1181,7 @@ export default class GameScene extends Phaser.Scene {
     var self = this
     //console.log("entered addCoastalTrader listener")
     let tempMerchant = self.add.image(self.tiles[9].x + 50, self.tiles[9].y - 5, "merchant-trade");
-    tempMerchant.setInteractive().setScale(0.75);
+    tempMerchant.setInteractive({useHandCursor: true}).setScale(0.75);
     tempMerchant.on('pointerdown', function (pointer) {
       if (self.hero.tile.id == 9) {
         if (self.scene.isVisible('temp_merchant')) {

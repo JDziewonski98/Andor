@@ -161,19 +161,41 @@ export class CollabWindow extends Window {
                 } 
             }
         })
-
+        
+        
         this.gameinstance.acceptListener((heroKind) => {
+            let smallTextStyle = {
+                color: '#d11313',
+                fontSize: collabTextHeight - 2
+            }
+            let numInvolved = self.involvedHeroes.length;
+            let spacing = 3 * (numInvolved - 1); // 6 pixels spacing between each icon
+            let currX = self.width/2 - (numInvolved - 1) * 20 - spacing;
             console.log("entered accept listener")
             var involved = false
             for(let hk of self.involvedHeroes){
                 if(hk == heroKind){
                     involved = true
+                    //console.log(involved)
                 }
             }
             if(self.ownHeroKind == heroKind){
                 involved = false
+                //console.log(involved)
             }
+            //console.log(involved)
             if(involved){
+                self.heroAccepts.get(heroKind).destroy();
+                self.heroAccepts.delete(heroKind)
+                for(let hk of this.involvedHeroes){
+                    if(hk != heroKind){
+                        currX += 46
+                    }
+                    else{
+                        break
+                    }
+                }
+                self.heroAccepts.set(heroKind, this.add.text(currX, this.height-16, 'Accept', smallTextStyle).setOrigin(0.5, 0))
                 self.heroAccepts.get(heroKind).setColor('#037d50');
                 self.numAccepts++
             }
@@ -268,7 +290,7 @@ export class CollabWindow extends Window {
             currX += 46;
         }
         
-        this.acceptText.setInteractive()
+        this.acceptText.setInteractive({useHandCursor: true});
         this.acceptText.on('pointerdown', function (pointer) {
             if(!self.hasAccepted){
                // Check that resAllocated corresponds with specified quantities from data.resources
@@ -549,13 +571,22 @@ export class CollabWindow extends Window {
     }
 
     private resetAccepts() {
+        // let smallTextStyle = {
+        //     color: '#d11313',
+        //     fontSize: collabTextHeight - 2
+        // }
+        // let numInvolved = this.involvedHeroes.length;
+        // let spacing = 3 * (numInvolved - 1); // 6 pixels spacing between each icon
+        // let currX = this.width/2 - (numInvolved - 1) * 20 - spacing;
+        
         for (let i=0; i<this.involvedHeroes.length; i++) {
             let heroKind = this.involvedHeroes[i];
             if (heroKind != this.ownHeroKind) {
                 this.heroAccepts.get(heroKind).setColor('#d11313');
             } else {
-                this.heroAccepts.get(heroKind).setColor('#000000');
+                 this.heroAccepts.get(heroKind).setColor('#000000');
             }
+            //currX += 46
         }
         this.numAccepts = 0;
         this.hasAccepted = false;

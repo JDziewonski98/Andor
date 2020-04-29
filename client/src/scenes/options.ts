@@ -43,8 +43,8 @@ export default class Options extends Phaser.Scene {
         }
         this.optionsText = this.add.text(500, 200, "Options", style1).setOrigin(0.5)
         // Images for toggling sound on and off
-        this.soundOn = this.add.image(500, 300, 'soundon').setOrigin(0.5).setInteractive();
-        this.soundOff = this.add.image(500, 300, 'soundoff').setOrigin(0.5).setInteractive();
+        this.soundOn = this.add.image(500, 300, 'soundon').setOrigin(0.5).setInteractive({useHandCursor: true})
+        this.soundOff = this.add.image(500, 300, 'soundoff').setOrigin(0.5).setInteractive({useHandCursor: true})
 
         this.soundOn.on('pointerdown', function (pointer) {
             music.pause()
@@ -66,7 +66,7 @@ export default class Options extends Phaser.Scene {
             this.soundOff.visible = false;
         }, this);
 
-        this.backText = this.add.text(500, 400, "Back", style1).setOrigin(0.5).setInteractive();
+        this.backText = this.add.text(500, 400, "Back", style1).setOrigin(0.5).setInteractive({useHandCursor: true})
         this.backText.on('pointerdown', function (pointer) {
             this.scene.sleep('Options')
         }, this);
