@@ -128,7 +128,7 @@ export default class BoardOverlay extends Phaser.Scene {
         }
 
         //Options
-        var optionsIcon = this.add.image(55, 40, 'optionsicon').setInteractive();
+        var optionsIcon = this.add.image(55, 40, 'optionsicon').setInteractive({useHandCursor: true});
         optionsIcon.setScale(0.2)
         optionsIcon.on('pointerdown', function (pointer) {
             this.scene.bringToTop('Options')
