@@ -24,7 +24,6 @@ import {
     dFogs,
     dEventDeck,
     dCastle,
-    // dPrince,
     dNarrator,
     dHeros
 } from "./defaults";
@@ -65,6 +64,7 @@ export class Game {
     // collab decision related state
     public numAccepts: number;
     private availableHeros: Array<Hero>;
+    private playersInGame: number
     //private availableHeros: Array<HeroKind> = new Array(HeroKind.Archer, HeroKind.Dwarf, HeroKind.Mage, HeroKind.Warrior);
 
     //EventCards
@@ -93,6 +93,7 @@ export class Game {
         this.blockedEvent = false;
         this.initialCollabDone = false;
         this.runestoneCardPos = -1;
+        this.playersInGame = 0
         // this.narrator = new Narrator(this, 0)
     }
 
@@ -160,6 +161,7 @@ export class Game {
         monstersInCastle = [],
         endOfGameState = false,
         prince = { tile: { id: -1 } },
+        witch = { tileID: -1, brewPrice: -1, numBrews: -1 },
         narrator = dNarrator,
         initialCollabDone = false,
         runestoneCardPos = -1,
@@ -181,6 +183,9 @@ export class Game {
         this.narrator = new Narrator(narrator.legendPosition);
         if (prince && prince.tile && prince.tile.id !== -1)
             this.prince = new Prince(this.regions[prince.tile.id])
+        if (witch && witch.tileID != -1) {
+            this.witch = new Witch(witch.tileID, witch.brewPrice, witch.numBrews)
+        }
 
         this.initialCollabDone = initialCollabDone;
         this.runestoneCardPos = runestoneCardPos;
@@ -230,7 +235,12 @@ export class Game {
     //     console.log("setting first player turn to", this.heroList[ID].getKind());
     //     this.currPlayersTurn = this.heroList[ID].getKind();
     // }
-
+    public updatePlayersInGame(i){
+        this.playersInGame +=i
+    }
+    public getPlayersInGame(){
+        return this.playersInGame
+    }
     public getIDsByHeroname(heronames) {
         var heroids: string[] = []
         this.heroList.forEach((hero, ID) => {
@@ -264,21 +274,37 @@ export class Game {
         var minRank = this.getHero(currPlayerID).getRank();
         var maxRank = Number.MAX_VALUE;
         var hk = HeroKind.None;
-        this.heroList.forEach(hero => {
-            if (hero.getRank() > minRank && hero.getRank() < maxRank) {
-                maxRank = hero.getRank();
-                hk = hero.hk;
+        this.activeHeros.forEach( kind => {
+            let hero = this.getHeroFromHk(kind);
+            if (hero == null) console.log('error hero is null')
+            if (hero!.getRank() > minRank && hero!.getRank() < maxRank) {
+                maxRank = hero!.getRank();
+                hk = hero!.hk;
             }
         })
+        // this.heroList.forEach(hero => {
+        //     if (hero.getRank() > minRank && hero.getRank() < maxRank) {
+        //         maxRank = hero.getRank();
+        //         hk = hero.hk;
+        //     }
+        // })
         // Or loop back to the lowest rank hero
         if (hk == "none") {
             minRank = Number.MAX_VALUE
-            this.heroList.forEach((hero, ID) => {
-                if (hero.getRank() < minRank) {
-                    minRank = hero.getRank()
-                    hk = hero.hk;
+            this.activeHeros.forEach( kind => {
+                let hero = this.getHeroFromHk(kind);
+                if (hero == null) console.log('error hero is null')
+                if (hero!.getRank() < minRank) {
+                    minRank = hero!.getRank()
+                    hk = hero!.hk;
                 }
             })
+            // this.heroList.forEach((hero, ID) => {
+            //     if (hero.getRank() < minRank) {
+            //         minRank = hero.getRank()
+            //         hk = hero.hk;
+            //     }
+            // })
         }
         return hk; // None if not found
     }
@@ -828,6 +854,8 @@ export class Game {
         // Determine position of stronghold
         let dieRoll = this.narrator.randomInteger(1, 6);
 
+        // TODO ACUI: TESTING ONLY SWITCH BACK TO DIEROLL
+        // let monster: Monster | null = this.addMonster(MonsterKind.Fortress, 6, 'fortress');
         let monster: Monster | null = this.addMonster(MonsterKind.Fortress, 50+dieRoll, 'fortress');
         if (monster != null) {
             monsterList.push(monster);
@@ -839,6 +867,7 @@ export class Game {
         this.regions[farmObj.getTileID()].addFarmer(farmObj);
 
         // Add more monsters
+        // TODO ACUI: ADD BACK MONSTERS
         monster = this.addMonster(MonsterKind.Gor, 27, 'gor9');
         if (monster != null) {
             monsterList.push(monster);
@@ -965,7 +994,7 @@ export class Game {
                 }
                 // Create new Witch
                 console.log("creating witch on tile with price", tile, this.numOfDesiredPlayers + 1);
-                this.witch = new Witch(tile, this.numOfDesiredPlayers + 1);
+                this.witch = new Witch(tile, this.numOfDesiredPlayers + 1, 5);
                 let herbTileID = this.witch.placeHerb();
                 return { success: true, createSuccess: toPlayer, newTile: herbTileID };
             } else if (fog == Fog.Wineskin) {

@@ -41,6 +41,7 @@ export default class BoardOverlay extends Phaser.Scene {
     private COLOR_PRIMARY = 0xD9B382;
     private COLOR_LIGHT = 0x7b5e57;
     private COLOR_DARK = 0x4B2504;
+    private content; // game log content
 
     constructor(data) {
         super({
@@ -55,6 +56,8 @@ export default class BoardOverlay extends Phaser.Scene {
         this.clientheroobject = data.clientheroobject
         this.herb = data.herb;
         this.initialCollabDone = data.initialCollabDone;
+        this.content = this.initialCollabDone ? 
+        `View in game updates here:\n > Game loaded.` : `View in game updates here:\n > The legend begins.`;
     }
 
     public init() { }
@@ -128,7 +131,7 @@ export default class BoardOverlay extends Phaser.Scene {
         }
 
         //Options
-        var optionsIcon = this.add.image(55, 40, 'optionsicon').setInteractive();
+        var optionsIcon = this.add.image(55, 40, 'optionsicon').setInteractive({useHandCursor: true});
         optionsIcon.setScale(0.2)
         optionsIcon.on('pointerdown', function (pointer) {
             this.scene.bringToTop('Options')
@@ -137,7 +140,7 @@ export default class BoardOverlay extends Phaser.Scene {
 
 
          // save btn
-         var savebtn = this.add.image(920, 40, 'saveicon').setInteractive().setScale(0.22);
+         var savebtn = this.add.image(920, 25, 'saveicon').setInteractive({useHandCursor: true}).setScale(0.25);
          savebtn.on('pointerdown', (pointer) => {
              console.log("manual saving")
              this.gameinstance.save()
@@ -146,7 +149,7 @@ export default class BoardOverlay extends Phaser.Scene {
 
         // chat window
         this.chatButton = this.add.image(775, 565, 'chaticon').setScale(0.3)
-        this.chatButton.setInteractive();
+        this.chatButton.setInteractive({useHandCursor: true});
         this.chatButton.on('pointerdown', function (pointer) {
             if (this.scene.isVisible('chat')) {
                 WindowManager.destroy(this, 'chat');
@@ -199,7 +202,7 @@ export default class BoardOverlay extends Phaser.Scene {
         var panelThumb = new RoundRectangle(this, 0, 0, 0, 0, 8, this.COLOR_LIGHT);
 
         var panelConfig = {
-            x: 170,
+            x: 215,
             y: 545,
             width: 300,
             height: 70,
@@ -237,12 +240,17 @@ export default class BoardOverlay extends Phaser.Scene {
             console.log("game log update:", update, "||")
             self.updateContent(panel, update);
         })
+        // x: 170,
+        //     y: 545,
+        // Indicator of the hero you are playing
+        let heroTexture = this.clientheroobject.getKind();
+        this.add.image(10, 512, heroTexture).setScale(0.16).setOrigin(0);
 
         // TODO: REMOVE LATER, FOR TESTING NARRATOR ONLY
-        var advance = this.add.text(400, 560, "ADVANCE NARRATOR", style2).setInteractive()
-        advance.on('pointerdown', function (pointer) {
-            this.gameinstance.advanceNarrator();
-        }, this)
+        // var advance = this.add.text(400, 560, "ADVANCE NARRATOR", style2).setInteractive()
+        // advance.on('pointerdown', function (pointer) {
+        //     this.gameinstance.advanceNarrator();
+        // }, this)
 
 
         this.gameinstance.getHeros((heros) => {
@@ -294,11 +302,6 @@ export default class BoardOverlay extends Phaser.Scene {
         panel.layout();
         return panel;
     }
-    
-    // Game log content
-    // TODO: save up to n messages in the log, clear previous messages.
-    private content = this.initialCollabDone ? 
-        `View in game updates here:\n > The legend begins.` : `View in game updates here:\n > Game loaded.`;
 
     private endDaySetup() {
         var self = this;
@@ -434,10 +437,10 @@ export default class BoardOverlay extends Phaser.Scene {
 
     public toggleInteractive(interactive: boolean) {
         if (interactive) {
-            this.endTurnButton.setInteractive();
-            this.endDayButton.setInteractive();
+            this.endTurnButton.setInteractive({useHandCursor: true});
+            this.endDayButton.setInteractive({useHandCursor: true});
             this.heroButtons.forEach(function (button) {
-                button.setInteractive();
+                button.setInteractive({useHandCursor: true});
             })
         } else {
             this.endTurnButton.disableInteractive();

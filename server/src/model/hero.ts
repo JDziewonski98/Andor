@@ -54,7 +54,8 @@ export class Hero {
             farmers: this.farmers.length, 
             largeItem: this.largeItem, 
             currtileid:this.region.getID(),
-            timeofday: this.timeOfDay
+            timeofday: this.timeOfDay,
+            dice: this.getDice()
         };
         return data;
     }
@@ -360,6 +361,28 @@ export class Hero {
         this.timeOfDay++
     }
 
+    public getDice() {
+        var rollamt;
+        var returnedtext = '';
+        if (this.will < 7) {
+            rollamt = this.dice[0]
+        }
+        else if (this.will < 14) {
+            rollamt = this.dice[1]
+        }
+        else {
+            rollamt = this.dice[2]
+        }
+        if (this.smallItems.includes(SmallItem.BlueRunestone) && this.smallItems.includes(SmallItem.YellowRunestone) && this.smallItems.includes(SmallItem.GreenRunestone)) {
+            returnedtext = 'You have 1 Black die, ' + (rollamt - 1) + ' red dice.'
+        }
+        else {
+            returnedtext = rollamt + ' red dice.'
+        }
+        var dicesplit = this.dice[0] + ' below 7 will, ' + this.dice[1] + ' below 14 will, ' + this.dice[2] + ' above 14 will.'
+        return returnedtext + ' ' + dicesplit;
+    }
+
     public roll(usingBow = false) {
 
         var dicefaces = [1, 2, 3, 4, 5, 6]
@@ -461,7 +484,9 @@ export class Hero {
                 if (index_w > -1) {
                     // Remove wineskin item and replace with half_wineskin
                     this.smallItems.splice(index_w, 1);
+                    console.log(this.freeMoves)
                     this.freeMoves++
+                    console.log(this.freeMoves)
                     this.pickUpSmallItem(this.region.getID(), SmallItem.HalfWineskin)
                     console.log(this.hk, "has", this.getItemDict());
                 }
@@ -471,7 +496,9 @@ export class Hero {
                 let index_hw = this.smallItems.indexOf(SmallItem.HalfWineskin);
                 if (index_hw > -1) {
                     this.smallItems.splice(index_hw, 1);
+                    console.log(this.freeMoves)
                     this.freeMoves++
+                    console.log(this.freeMoves)
                     console.log(this.hk, "has", this.getItemDict());
                 }
                 break;

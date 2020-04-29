@@ -6,7 +6,7 @@ export var reducedWidth = 1000;
 export var reducedHeight = 600;
 
 // Gameboard jpg size
-export var borderWidth = 40;
+export var borderWidth = 60;
 export var expandedWidth = 9861*scaleFactor;
 export var fullWidth = expandedWidth+borderWidth*2;
 export var expandedHeight = 6476*scaleFactor;
@@ -99,7 +99,7 @@ behind the high walls of Rietburg Castle`,
 
 // A4, story1
 `At first sunlight, the heroes receive a message: 
-Old King Brandmur's willposwr seems to have weakened with the 
+Old King Brandmur's willpower seems to have weakened with the 
 passage of time. But there is said to be a herb growing in 
 the mountain passes that can revive a person's life.
 
@@ -184,31 +184,31 @@ But a Gor has obtained it! The Gor must be defeated to pick
 up the herb.`,
 
 // N (win game), story9
-`With their combined powers, the heroes were able to take the 
-skral's stronghold. 
+`With their combined powers, the heroes were able to defeat 
+the Skral's Stronghold. 
 
-The medicinal herb did its work as well, 
-and King Brandur soon felt better.
+The medicinal herb did its work as well, and King Brandur soon 
+felt better.
 
-And yet, the heroes still feld troubled.
-The king's son, Prince Thorald, had not yet returned.
-What was keeping him so long ?
+And yet, the heroes still felt troubled. The king's son, 
+Prince Thorald, had not yet returned. What was keeping him so 
+long? In the next Legend, you will find out.
 
-In the next Legend, you will find out.
-Congratulatioins. you won!!
-`,
+Congratulations. You won!!`,
 
 // N (lose game), story10
-`You Lost.
+`You lost.
+
 Tips for next time:
 + Articles such as the falcon and telescope can be very helpful.
-+ Prince Thorald's extra strength can help in a battle 
-  against skrals.
++ Prince Thorald's extra strength can help in a battle against 
+  Skrals.
 + It's very important to find the witch quickly.
-+ To save time, it is sometimes better for one hero to 
-  get the entire reward in gold.
-  Then just one hero has to het to the merchant`
++ To save time, it is sometimes better for one hero to get the 
+  entire reward in gold. Then just one hero has to get to the 
+  merchant`
 ]
+
 export const storyCardStyleText = {
     fontSize: 12,
     color: '#000000'

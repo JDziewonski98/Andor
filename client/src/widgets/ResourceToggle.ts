@@ -19,9 +19,9 @@ export class ResourceToggle {
         //this.resourceName = resourceName
         this.amountText = scene.add.text(x, y, this.amount);
         this.amountText.setActive(true)
-        this.incButton = scene.add.sprite(x+30, y, 'pointerbtn').setDisplaySize(15, 15).setInteractive();
+        this.incButton = scene.add.sprite(x+30, y, 'pointerbtn').setDisplaySize(15, 15).setInteractive({useHandCursor: true})
         this.incButton.angle = 270;
-        this.decButton = scene.add.sprite(x+30, y+15, 'pointerbtn').setDisplaySize(15, 15).setInteractive();
+        this.decButton = scene.add.sprite(x+30, y+15, 'pointerbtn').setDisplaySize(15, 15).setInteractive({useHandCursor: true})
         this.decButton.angle = 90;
 
         this.collabWindow = scene

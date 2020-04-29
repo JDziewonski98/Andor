@@ -36,14 +36,14 @@ export class HourTracker extends Phaser.GameObjects.Sprite {
     }
 
     public incHour(hk: HeroKind) {
-        console.log(hk, "ht inc");
         var shift = this.heroSprites.get(hk).x < htX-20 ? htShift*2 : htShift;
         this.heroSprites.get(hk).x += shift;
+        console.log(hk, "ht inc", this.heroSprites.get(hk).x);
 
         // acui: gross hack for hours 8, 9 and 10
-        if ((hk == HeroKind.Warrior || hk == HeroKind.Dwarf) && this.heroSprites.get(hk).x == 2040) {
+        if ((hk == HeroKind.Warrior || hk == HeroKind.Dwarf) && this.heroSprites.get(hk).x == 2060) {
             this.heroSprites.get(hk).x += 40;
-        } else if (this.heroSprites.get(hk).x == 2000) {
+        } else if (this.heroSprites.get(hk).x == 2020) {
             this.heroSprites.get(hk).x += 40;
         }
     }

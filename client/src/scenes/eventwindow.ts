@@ -55,7 +55,7 @@ export class EventWindow extends Window {
         var bg = this.add.image(0, 0, 'scrollbg').setDisplaySize(this.w, currY).setOrigin(0);
 
         this.okButton = this.add.image(this.w - 35, bg.displayHeight - 35, 'okay');
-        this.okButton.setInteractive().setDisplaySize(30, 30).setOrigin(0);
+        this.okButton.setInteractive({useHandCursor: true}).setDisplaySize(30, 30).setOrigin(0);
         this.okButton.on('pointerdown', function (pointer) {
             if(this.id == 16){
                 this.scene.remove(this.key)

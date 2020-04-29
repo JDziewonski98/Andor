@@ -16,6 +16,7 @@ export class HeroWindow extends Window {
     private willtext
     private strtext
     private farmtext
+    private dice
     // private name
     private gameinstance: game;
     private clienthero;
@@ -57,6 +58,7 @@ export class HeroWindow extends Window {
         this.largeItem = data.largeItem
         this.windowherotile = data.currtileid
         this.clientherotile  = data.clientherotile
+        this.dice = data.dice
     }
 
     protected initialize() { 
@@ -118,7 +120,7 @@ export class HeroWindow extends Window {
         })
 
         this.add.text(20, 305, heroCardInfo[`${this.windowhero}Ability`], { color: '#4B2504', fontSize: 12 })
-
+        this.add.text(10, 385, this.dice, { color: 'red', fontSize: 12})
         bg.setInteractive()
         this.input.setDraggable(bg)
         //This drag is pretty f'd up.
@@ -137,13 +139,13 @@ export class HeroWindow extends Window {
 
         var self = this
         if (this.clienthero == this.windowhero){
-            this.goldDrop.setInteractive()
-            this.farmerDrop.setInteractive()
-            this.largeItemDrop.setInteractive()
-            this.helmDrop.setInteractive()
-            this.smallItem1Drop.setInteractive()
-            this.smallItem2Drop.setInteractive()
-            this.smallItem3Drop.setInteractive()
+            this.goldDrop.setInteractive({useHandCursor: true})
+            this.farmerDrop.setInteractive({useHandCursor: true})
+            this.largeItemDrop.setInteractive({useHandCursor: true})
+            this.helmDrop.setInteractive({useHandCursor: true})
+            this.smallItem1Drop.setInteractive({useHandCursor: true})
+            this.smallItem2Drop.setInteractive({useHandCursor: true})
+            this.smallItem3Drop.setInteractive({useHandCursor: true})
         }
         
         // Drop farmer button
@@ -249,12 +251,14 @@ export class HeroWindow extends Window {
 
         //todo account for falcon
         console.log('ids:xxxxxxxxxxx', this.windowherotile, this.clientherotile)
-        if (this.clienthero != this.windowhero && (this.windowherotile == this.clientherotile )) {
-            this.add.text(320,20, 'TRADE',{color: "#4944A4"}).setInteractive().on('pointerdown', function(pointer) {
-                self.gameinstance.sendTradeInvite(self.clienthero, self.windowhero)
-                WindowManager.create(this, 'tradewindow', TradeWindow, {gameinstance:self.gameinstance, hosthero:self.clienthero, inviteehero:self.windowhero, parentkey:self.key, clienthero:self.clienthero})
-            }, this)
-        }
+        this.gameinstance.getHeroItems(this.clienthero, function(dict) {
+            if (self.clienthero != self.windowhero && (self.windowherotile == self.clientherotile ) || self.clienthero != self.windowhero && dict['largeItem'] == 'falcon') {
+                self.add.text(320,20, 'TRADE',{color: "#4944A4"}).setInteractive({useHandCursor: true}).on('pointerdown', function(pointer) {
+                    self.gameinstance.sendTradeInvite(self.clienthero, self.windowhero)
+                    WindowManager.create(self, 'tradewindow', TradeWindow, {gameinstance:self.gameinstance, hosthero:self.clienthero, inviteehero:self.windowhero, parentkey:self.key, clienthero:self.clienthero})
+                }, self)
+            }
+        })
 
     }
 
@@ -262,7 +266,7 @@ export class HeroWindow extends Window {
         var self = this
 
         function defineOnclick(itemIcon:Phaser.GameObjects.Image, itemtype, slot) {
-            itemIcon.setInteractive()
+            itemIcon.setInteractive({useHandCursor: true})
             switch(itemtype) {
                 case 'wineskin':
                     itemIcon.on('pointerdown', function(pointer) {

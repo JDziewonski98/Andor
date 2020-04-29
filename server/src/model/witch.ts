@@ -6,10 +6,10 @@ export class Witch {
     private numBrews: number;
     private brewPrice: number;
 
-    constructor(tileID: number, brewPrice: number) {
+    constructor(tileID: number, brewPrice: number, numBrews) {
         this.tileID = tileID;
         this.brewPrice = brewPrice;
-        this.numBrews = 5;
+        this.numBrews = numBrews;
     }
 
     public purchaseBrew(hero: Hero) : boolean {
@@ -40,7 +40,7 @@ export class Witch {
                 pos = 61;
                 break;
         }
-        // TODO: change back to pos, testing purposes only
+        // TODO ACUI: change back to pos, testing purposes only
         return pos;
     }
 

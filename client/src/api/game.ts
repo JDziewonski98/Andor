@@ -113,6 +113,10 @@ export class game {
         this.socket.on("updateRunestoneLegend", callback);
     }
 
+    public logRunestoneLegendPos() { // tells server to send game log update to single client
+        this.socket.emit("logRunestoneLegendPos");
+    }
+
     public revealRunestone(tileID: number, stoneName: string) {
         this.socket.emit("revealRunestone", tileID, stoneName);
     }
@@ -375,6 +379,12 @@ export class game {
 
     }
 
+
+    ///
+    //tell server you entered game
+    public enterGame(){
+        this.socket.emit('enterGame')
+    }
 
     ////
     //Removing wells from game

@@ -110,7 +110,6 @@ export default class GameScene extends Phaser.Scene {
     //items
     // this.load.image("Brew", "../assets/brew.png");
     // this.load.image("Wineskin", "../assets/wineskin.png");
-    // this.load.image("shield", "../assets/shield.PNG")
     this.load.image("menubackground", "../assets/menubackground.png");
     this.load.image("blue_runestone", "../assets/stones/runestone_b.PNG");
     this.load.image("green_runestone", "../assets/stones/runestone_g.PNG");
@@ -128,6 +127,9 @@ export default class GameScene extends Phaser.Scene {
     this.load.image("half_wineskin", "../assets/items/half_wineskin.jpg")
     this.load.image("half_brew", "../assets/items/half_brew.jpg")
     this.load.image("herb", "../assets/items/herb.png");
+    this.load.image("shield", "../assets/items/shield.png")
+    this.load.image("damaged_shield", "../assets/items/brokenshield.PNG")
+
     this.load.image("prince", "../assets/board-minor/prince.png");
     this.load.image("gold", "../assets/fog-tokens/gold.png")
 
@@ -168,6 +170,18 @@ export default class GameScene extends Phaser.Scene {
       })
 
       this.hourTrackerSetup();
+
+      if (data.prince) {
+        this.addPrince(data.prince.tile.id);
+      } else {
+        console.log('no prince saved')
+      }
+
+      if (data.witch) {
+        this.addWitch(data.witch.tileID);
+      } else {
+        console.log('no witch saved')
+      }
 
       this.setUpListeners();
 
@@ -250,12 +264,12 @@ export default class GameScene extends Phaser.Scene {
     // Set keys for scrolling
     // Set keys for scrolling and zooming
     this.cameraKeys = this.input.keyboard.addKeys({
-      up: 'w',
-      down: 's',
-      left: 'a',
-      right: 'd',
-      zoomIn: 'q',
-      zoomOut: 'e'
+      up: 'up',
+      down: 'down',
+      left: 'left',
+      right: 'right',
+      zoomIn: 'plus',
+      zoomOut: 'minus'
     });
   }
 
@@ -268,7 +282,7 @@ export default class GameScene extends Phaser.Scene {
       // console.log(t, scaleFactor, borderWidth)
       var tile = new Tile(t.id, this, t.xcoord * scaleFactor + borderWidth, t.ycoord * scaleFactor + borderWidth, treeTile, t.adjRegionsIds);
       this.tiles[t.id] = tile;
-      tile.setInteractive();
+      tile.setInteractive({useHandCursor: true});
       this.add.existing(tile);
 
       
@@ -309,10 +323,10 @@ export default class GameScene extends Phaser.Scene {
             this.addMerchant(3060, 3680, t.id as number);
             break;
           case 57:
-            this.addMerchant(7337, 968, t.id as number);
+            this.addMerchant(7708, 1340, t.id as number);
             break;
           case 71:
-            this.addMerchant(7088, 4360, t.id as number);
+            this.addMerchant(7426, 4320, t.id as number);
             break;
         }
       }
@@ -390,12 +404,14 @@ export default class GameScene extends Phaser.Scene {
   }
 
   private addShieldsToRietburg(numShields) {
-    let s1 = this.add.sprite(85, 188, 'dshield').setDisplaySize(65, 81)
-    let s2 = this.add.sprite(153, 188, 'dshield').setDisplaySize(65, 81)
-    let s3 = this.add.sprite(218, 188, 'dshield').setDisplaySize(65, 81)
-    let s4 = this.add.sprite(85, 310, 'dshield').setDisplaySize(65, 81)
-    let s5 = this.add.sprite(153, 310, 'dshield').setDisplaySize(65, 81)
-    let s6 = this.add.sprite(85, 430, 'dshield').setDisplaySize(65, 81)
+    var overlayoffsetsX = 10;
+    var overlayoffsetsY = 20;
+    let s1 = this.add.sprite(95+overlayoffsetsX, 188+overlayoffsetsY, 'dshield').setDisplaySize(65, 81)
+    let s2 = this.add.sprite(163+overlayoffsetsX, 188+overlayoffsetsY, 'dshield').setDisplaySize(65, 81)
+    let s3 = this.add.sprite(228+overlayoffsetsX, 188+overlayoffsetsY, 'dshield').setDisplaySize(65, 81)
+    let s4 = this.add.sprite(95+overlayoffsetsX, 310+overlayoffsetsY, 'dshield').setDisplaySize(65, 81)
+    let s5 = this.add.sprite(163+overlayoffsetsX, 310+overlayoffsetsY, 'dshield').setDisplaySize(65, 81)
+    let s6 = this.add.sprite(95+overlayoffsetsX, 430+overlayoffsetsY, 'dshield').setDisplaySize(65, 81)
 
     this.castle.shields.push(s1)
     this.castle.shields.push(s2)
@@ -465,7 +481,7 @@ export default class GameScene extends Phaser.Scene {
   private addMonster(monsterTile: number, type: string, id: string) {
     const tile: Tile = this.tiles[monsterTile];
 
-    let monster: Monster = new Monster(this, tile, type, id).setInteractive().setScale(.5);
+    let monster: Monster = new Monster(this, tile, type, id).setInteractive({useHandCursor: true}).setScale(.5);
     this.monsters.push(monster);
     this.monsterNameMap[monster.name] = monster;
     tile.setMonster(monster);
@@ -475,10 +491,18 @@ export default class GameScene extends Phaser.Scene {
         WindowManager.destroy(this, monster.name);
       }
       else {
+        var princetile = -69
+        try {
+          princetile = this.prince.tile.id
+        }
+        catch {
+          princetile = -69
+        }
         WindowManager.create(this, monster.name, Fight, {
           controller: this.gameinstance,
           hero: this.hero, monster: monster, heroes: this.heroes,
-          overlayRef: this.overlay
+          overlayRef: this.overlay,
+          princePos: princetile
         });
         this.scene.pause()
       }
@@ -487,7 +511,7 @@ export default class GameScene extends Phaser.Scene {
 
   private addFarmer(id: number, tileID: number) {
     const tile: Tile = this.tiles[tileID];
-    const farmerObj = new Farmer(id, this, tile, 'farmer').setDisplaySize(40, 40).setInteractive();
+    const farmerObj = new Farmer(id, this, tile, 'farmer').setDisplaySize(40, 40).setInteractive({useHandCursor: true});
     this.farmers.push(farmerObj);
     tile.farmers.push(farmerObj);
     this.add.existing(farmerObj);
@@ -562,13 +586,15 @@ export default class GameScene extends Phaser.Scene {
         WindowManager.create(self, `story0`, StoryWindow, {
           x: reducedWidth / 2,
           y: reducedHeight / 2,
-          id: 0
+          id: 0,
+          gameController: self.gameinstance,
+          firstNarrAdvance: (self.gameStartHeroPosition == self.heroes.length)
         })
 
-        // Last hero to enter the game triggers placement of the runestone legend
+        // First hero to enter the game triggers placement of the runestone legend
         // This is the only "narrator event" that gets directly triggered from the client
         // because it doesn't happen on a monster kill or end of day
-        if (self.gameStartHeroPosition == self.heroes.length) {
+        if (self.gameStartHeroPosition == 1) {
           // console.log('client emits placeRunestoneLegend')
           self.gameinstance.placeRuneStoneLegend();
         }
@@ -580,8 +606,10 @@ export default class GameScene extends Phaser.Scene {
       self.add.existing(self.narrator);
 
       // Place runestone legend card
-      console.log("placing runestone card at position", runestoneCardPos);
-      self.placeRunestoneCard(runestoneCardPos);
+      if (runestoneCardPos != -1) {
+        console.log("placing runestone card at position", runestoneCardPos);
+        self.placeRunestoneCard(runestoneCardPos);
+      }
     })
   }
 
@@ -642,13 +670,39 @@ export default class GameScene extends Phaser.Scene {
     console.log("client narratorC")
     // Place farmer and prince, these are hardcoded for now
     this.addFarmer(2, 28);
-
-    this.prince = new Prince(this, this.tiles[72], 'prince').setScale(.15);
-    this.add.existing(this.prince);
+    this.addPrince();
+    
     WindowManager.create(this, `story3`, StoryWindow, {
       x: reducedWidth / 2,
       y: reducedHeight / 2,
       id: 3
+    })
+  }
+
+  private addPrince(tileID: number = 72) {
+    this.prince = new Prince(this, this.tiles[tileID], 'prince').setScale(.15);
+    this.add.existing(this.prince);
+  }
+
+  private addWitch(tileID: number) {
+    // Place the witch on tileID
+    var self = this
+    var witch = this.add.image(this.tiles[tileID].x + 50, this.tiles[tileID].y - 5, "witch");
+    witch.setInteractive({useHandCursor: true}).setScale(0.75);
+    witch.on('pointerdown', (pointer) => {
+      if (self.scene.isVisible("witchwindow")) {
+        var thescene = WindowManager.get(self, "witchwindow")
+        thescene.disconnectListeners()
+        WindowManager.destroy(this, "witchwindow");
+      } else {
+        WindowManager.create(self, `witchwindow`, WitchWindow, {
+          controller: self.gameinstance,
+          x: pointer.x + 20,
+          y: pointer.y,
+          w: 105,
+          h: 70,
+        })
+      }
     })
   }
 
@@ -680,7 +734,8 @@ export default class GameScene extends Phaser.Scene {
         id: 10
       })
     }
-
+    self.scene.pause();
+    self.overlay.toggleInteractive(false);
   }
 
   private addFog(fogs) {
@@ -691,7 +746,7 @@ export default class GameScene extends Phaser.Scene {
       f.name = fog[1];
       f.setTint(0x101010); // darken
       tile.setFog(f) // add to tile
-      f.setInteractive()
+      f.setInteractive({useHandCursor: true});
       this.add.existing(f);
       var self = this
       f.on("pointerdown", (pointer) => {
@@ -709,9 +764,9 @@ export default class GameScene extends Phaser.Scene {
             if (itemdict['smallItems'].includes('telescope') && flag) {
               console.log('using telescope.')
               f.clearTint();
-              setTimeout(() => {
-                f.setTint(0x101010);
-              }, 800);
+              // setTimeout(() => {
+              //   f.setTint(0x101010);
+              // }, 800);
               self.gameinstance.telescopeEndTurn();
             }
             else {
@@ -893,24 +948,7 @@ export default class GameScene extends Phaser.Scene {
         y: reducedHeight / 2,
         id: 8
       })
-      // Place the witch on tileID
-      var witch = this.add.image(this.tiles[tileID].x + 50, this.tiles[tileID].y - 5, "witch");
-      witch.setInteractive().setScale(0.75);
-      witch.on('pointerdown', (pointer) => {
-        if (self.scene.isVisible("witchwindow")) {
-          var thescene = WindowManager.get(self, "witchwindow")
-          thescene.disconnectListeners()
-          WindowManager.destroy(this, "witchwindow");
-        } else {
-          WindowManager.create(self, `witchwindow`, WitchWindow, {
-            controller: self.gameinstance,
-            x: pointer.x + 20,
-            y: pointer.y,
-            w: 105,
-            h: 70,
-          })
-        }
-      })
+      self.addWitch(tileID);
     })
 
     // Reveal the herb
@@ -968,11 +1006,18 @@ export default class GameScene extends Phaser.Scene {
         WindowManager.destroy(self, monster.name);
       }
       else {
+        var princetile = -69
+        try {
+          princetile = self.prince.tile.id
+        }
+        catch {
+          princetile = -69
+        }
         WindowManager.create(self, monster.name, Fight, {
           controller: self.gameinstance,
           hero: self.hero, monster: monster, heroes: self.heroes,
           overlayRef: self.overlay,
-          princePos: self.prince.tile.id
+          princePos: princetile
         });
         self.scene.pause()
       }
@@ -1026,18 +1071,22 @@ export default class GameScene extends Phaser.Scene {
 
     // Listen for end of game state
     this.gameinstance.receiveEndOfGame(function () {
-      let windowData = {
-        controller: self.gameinstance,
-        x: reducedWidth / 2 - 200,
-        y: reducedHeight / 2 - 100,
-        w: 400,
-        h: 200,
-      }
-      // Display end of game window
-      WindowManager.create(self, 'gameover', GameOverWindow, windowData);
-      // Freeze main game while collab window is active
+      // let windowData = {
+      //   controller: self.gameinstance,
+      //   x: reducedWidth / 2 - 200,
+      //   y: reducedHeight / 2 - 100,
+      //   w: 400,
+      //   h: 200,
+      // }
+      // // Display end of game window
+      // WindowManager.create(self, 'gameover', GameOverWindow, windowData);
+      WindowManager.create(self, `story10`, StoryWindow, {
+        x: reducedWidth / 2,
+        y: reducedHeight / 2,
+        id: 10
+      })
       self.scene.pause();
-
+      self.overlay.toggleInteractive(false);
     });
 
     this.gameinstance.receiveUpdateHeroTracker(function (hero) {
@@ -1069,7 +1118,7 @@ export default class GameScene extends Phaser.Scene {
     this.gameinstance.addCoastalTrader(function(){
       //console.log("entered addCoastalTrader listener")
       let tempMerchant = self.add.image(self.tiles[9].x + 50, self.tiles[9].y - 5, "merchant-trade");
-      tempMerchant.setInteractive().setScale(0.75);
+      tempMerchant.setInteractive({useHandCursor: true}).setScale(0.75);
       tempMerchant.on('pointerdown', function (pointer) {
         if (self.hero.tile.id == 9) {
           if (self.scene.isVisible('temp_merchant')) {
@@ -1162,7 +1211,7 @@ export default class GameScene extends Phaser.Scene {
     var self = this
     //console.log("entered addCoastalTrader listener")
     let tempMerchant = self.add.image(self.tiles[9].x + 50, self.tiles[9].y - 5, "merchant-trade");
-    tempMerchant.setInteractive().setScale(0.75);
+    tempMerchant.setInteractive({useHandCursor: true}).setScale(0.75);
     tempMerchant.on('pointerdown', function (pointer) {
       if (self.hero.tile.id == 9) {
         if (self.scene.isVisible('temp_merchant')) {

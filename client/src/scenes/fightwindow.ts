@@ -73,6 +73,9 @@ export class Fight extends Window {
   private continueresponsecnt = 0;
   private continuinghero;
 
+  private hour = -1
+  private hourtext
+
   public constructor(
     key,
     data,
@@ -93,6 +96,8 @@ export class Fight extends Window {
         self.yourwilltxt = self.add.text(90, 200, "Your will: " + self.yourwill, {
             backgroundColor: "fx00",
           });
+        self.hour = data.timeofday
+        self.hourtext = self.add.text(90, 260, 'Hour: ' + (self.hour - 1))
     }); 
     //this.yourwill = this.hero.getWillPower();
     // this.heroobjectsforcollab = data.heroes
@@ -170,6 +175,7 @@ export class Fight extends Window {
 
     //click the fight text to enter the fight.
     this.fighttext.on("pointerdown", function (pointer) {
+      self.yourroll.setText("Your roll:")
       self.inviteresponses = 0;
       var haveyourolled = false;
       self.alliedrollstxt.setText("Allied rolls: ");
@@ -205,7 +211,7 @@ export class Fight extends Window {
 
           //click to get your roll.
           var rollbutton = self.add
-            .text(220, 123, "ROLL.", { backgroundColor: "#3b44af" })
+            .text(200, 130, "ROLL.", { backgroundColor: "#3b44af" })
             .setInteractive();
           rollbutton.on("pointerdown", function (pointer) {
             haveyourolled = true;
@@ -344,7 +350,7 @@ export class Fight extends Window {
 
           //confirm you want to use your current roll and ally's rolls.
           var confirmbutton = self.add
-            .text(300, 300, "Confirm.")
+            .text(260, 300, "Confirm.")
             .setInteractive();
           confirmbutton.on("pointerdown", function (pointer) {
             if (
@@ -352,6 +358,8 @@ export class Fight extends Window {
               self.inviteresponses == self.alliedheros.length &&
               haveyourolled == true
             ) {
+              self.hour++
+              self.hourtext.setText("Hour: " + (self.hour - 1))
               confirmbutton.destroy();
               self.gameinstance.unsubscribeAlliedRollListener();
               self.gameinstance.unsubscribeShieldListeners();
@@ -596,7 +604,7 @@ export class Fight extends Window {
                 self.alliedheros.length
               );
               this.setText(
-                "Not all allied heroes\nhave confirmed their roll.\n Click again."
+                "Not all allied heroes\nhave confirmed their roll.\n Click again. Make sure you rolled!"
               );
             }
             self.gameinstance.getHeroAttributes(self.hero.getKind(), function(data) {
@@ -690,6 +698,7 @@ export class Fight extends Window {
       if (response == "yes") {
         console.log("yes " + herokind);
         self.actuallyjoinedheros.push(herokind);
+        console.log('currently joined heros:', self.actuallyjoinedheros)
       }
       else {
         var index = self.alliedheros.indexOf(herokind)
@@ -697,6 +706,7 @@ export class Fight extends Window {
           self.alliedheros.splice(index, 1);
           self.inviteresponses--;
         }
+        console.log('currently joined heros:', self.actuallyjoinedheros)
       }
     });
   }
@@ -799,6 +809,7 @@ export class Fight extends Window {
     for (let h of this.actuallyjoinedheros) {
       involvedheros.push(h);
     }
+    console.log(involvedheros)
 
     goldtext.on(
       "pointerdown",
@@ -924,6 +935,7 @@ export class Fight extends Window {
     if (victory) {
       this.monster.destroy();
     }
+    this.hourtext.destroy()
     this.princeText.destroy();
     this.alliedrollstxt.destroy();
     this.invitetext.destroy();

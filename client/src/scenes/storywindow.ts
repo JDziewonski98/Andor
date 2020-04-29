@@ -8,6 +8,8 @@ export class StoryWindow extends Window {
     private id;
     private okButton: Phaser.GameObjects.Image;
     private runestoneLocs;
+    private gameController;
+    private firstNarrAdvance;
 
     private x;
     private y;
@@ -30,6 +32,15 @@ export class StoryWindow extends Window {
         this.width = storyCardWidths[data.id];
         this.height = storyCardHeights[data.id];
         this.runestoneLocs = data.locs;
+        if (data.gameController) {
+            this.gameController = data.gameController;
+        }
+        if (data.gameController) {
+            this.gameController = data.gameController;
+        }
+        if (data.firstNarrAdvance) {
+            this.firstNarrAdvance = data.firstNarrAdvance;
+        }
     }
 
     protected initialize() {
@@ -43,7 +54,7 @@ export class StoryWindow extends Window {
         }
 
         this.okButton = this.add.image(this.width-35, this.height-35, 'okay');
-        this.okButton.setInteractive().setDisplaySize(30, 30).setOrigin(0);
+        this.okButton.setInteractive({useHandCursor: true}).setDisplaySize(30, 30).setOrigin(0);
 
         // Start of game story and instructions, IDs 0, 1 and 2
         let continueCards = [0, 1, 3, 4]
@@ -53,17 +64,22 @@ export class StoryWindow extends Window {
                 WindowManager.create(self, `story${this.id+1}`, StoryWindow, {
                     x: this.x + storyCardWidths[this.id]/2,
                     y: this.y + storyCardHeights[this.id]/2,
-                    id: this.id+1
+                    id: this.id+1,
+                    gameController: this.gameController,
+                    firstNarrAdvance: this.firstNarrAdvance
                 })
                 this.scene.remove(this.key)
             }, this);
         } else if (this.id == 2) {
+            // Legend A5: determine placement of the Rune Stones Legend
+            if (this.firstNarrAdvance) {
+                this.gameController.logRunestoneLegendPos();
+            }
             this.okButton.on('pointerdown', function (pointer) {
                 this.scene.bringToTop('collab')
                 this.scene.wake('collab')
                 this.scene.remove(this.key)
             }, this);
-            // Legend A5: determine placement of the Rune Stones Legend
         } else {
             this.okButton.on('pointerdown', function (pointer) {
                 this.scene.remove(this.key)
