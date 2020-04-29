@@ -494,12 +494,52 @@ export function game(socket, model: Game, io) {
       callback();
       // Using a merchant ends your turn
       // Update game log
-      var msg = `The ${hero.getKind()} bought one ${item} from a merchant.`
+      let skin = ""
+      if(item == "wine"){
+        skin = "skin"
+      }
+      var msg = `The ${hero.getKind()} bought one ${item}${skin} from a merchant.`
       socket.emit("updateGameLog", msg);
       socket.broadcast.emit("updateGameLog", msg);
       // End turn
       if (model.getCurrPlayersTurn() == hero.getKind()) {
         freeActionEndTurn(hero);
+      }
+    }
+    else{
+      if(item == "shield" || item == "falcon" || item == "bow"){
+        if(hero.getLargeItem()){
+          var msg = `The ${hero.getKind()} tried to buy one ${item} from a merchant, but their inventory was full.`
+          socket.emit("updateGameLog", msg);
+        }
+        else{
+          var msg = `The ${hero.getKind()} tried to buy one ${item} from a merchant, but they did not possess the required gold.`
+          socket.emit("updateGameLog", msg);
+        }
+      }
+      else if(item == "wine" || item == "telescope"){
+        let skin = ""
+        if(item == "wine"){
+          skin = "skin"
+        }
+        if(hero.getSmallItems()){
+          if(hero.getSmallItems().length >2){
+            var msg = `The ${hero.getKind()} tried to buy one ${item}${skin} from a merchant, but their inventory was full.`
+            socket.emit("updateGameLog", msg);
+          }
+          else{
+            var msg = `The ${hero.getKind()} tried to buy one ${item}${skin} from a merchant, but they did not possess the required gold.`
+            socket.emit("updateGameLog", msg);
+          }
+        }
+        else{
+          var msg = `The ${hero.getKind()} tried to buy one ${item}${skin} from a merchant, but they did not possess the required gold.`
+          socket.emit("updateGameLog", msg);
+        }
+      }
+      else if(item == "strength"){
+        var msg = `The ${hero.getKind()} tried to buy one ${item} from a merchant, but they did not possess the required gold.`
+        socket.emit("updateGameLog", msg);
       }
     }
   });
