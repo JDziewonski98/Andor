@@ -252,12 +252,12 @@ export default class GameScene extends Phaser.Scene {
     // Set keys for scrolling
     // Set keys for scrolling and zooming
     this.cameraKeys = this.input.keyboard.addKeys({
-      up: 'w',
-      down: 's',
-      left: 'a',
-      right: 'd',
-      zoomIn: 'q',
-      zoomOut: 'e'
+      up: 'up',
+      down: 'down',
+      left: 'left',
+      right: 'right',
+      zoomIn: 'plus',
+      zoomOut: 'minus'
     });
   }
 
