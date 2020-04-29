@@ -175,6 +175,7 @@ export class Fight extends Window {
 
     //click the fight text to enter the fight.
     this.fighttext.on("pointerdown", function (pointer) {
+      self.yourroll.setText("Your roll:")
       self.inviteresponses = 0;
       var haveyourolled = false;
       self.alliedrollstxt.setText("Allied rolls: ");
@@ -349,7 +350,7 @@ export class Fight extends Window {
 
           //confirm you want to use your current roll and ally's rolls.
           var confirmbutton = self.add
-            .text(280, 300, "Confirm.")
+            .text(260, 300, "Confirm.")
             .setInteractive();
           confirmbutton.on("pointerdown", function (pointer) {
             if (
@@ -603,7 +604,7 @@ export class Fight extends Window {
                 self.alliedheros.length
               );
               this.setText(
-                "Not all allied heroes\nhave confirmed their roll.\n Click again."
+                "Not all allied heroes\nhave confirmed their roll.\n Click again. Make sure you rolled!"
               );
             }
             self.gameinstance.getHeroAttributes(self.hero.getKind(), function(data) {
