@@ -1,14 +1,3 @@
-# TEAM 2 
-
-### Team Members
- * *Philip Cheng*
- * *William Chien*
- * *Anthony Cui*
- * *Jacek Dziewonski*
- * *Omar Ibrahim*
- * *Cayce McClenen*
- * *Justin Sun*
-
 ## Instructions
 
 Some instructions on how to start the game. 
@@ -58,3 +47,11 @@ npm run serve
 ```
 localhost:8080
 ```
+### Team Members
+ * *Philip Cheng*
+ * *William Chien*
+ * *Anthony Cui*
+ * *Jacek Dziewonski*
+ * *Omar Ibrahim*
+ * *Cayce McClenen*
+ * *Justin Sun*
