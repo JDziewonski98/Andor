@@ -265,8 +265,9 @@ accepts@~1.3.4, accepts@~1.3.5, accepts@~1.3.7:
     negotiator "0.6.2"
 
 acorn@^6.2.1:
-  version "6.4.0"
-  resolved "https://registry.yarnpkg.com/acorn/-/acorn-6.4.0.tgz#b659d2ffbafa24baf5db1cdbb2c94a983ecd2784"
+  version "6.4.1"
+  resolved "https://registry.yarnpkg.com/acorn/-/acorn-6.4.1.tgz#531e58ba3f51b9dacb9a6646ca4debf5b14ca474"
+  integrity sha512-ZVA9k326Nwrj3Cj9jlh3wGFutC2ZornPNARZwsNYqQYgN0EsV2d53w5RN/co65Ohn4sUAUtb1rSUAOD6XN9idA==
 
 after@0.8.2:
   version "0.8.2"
@@ -2799,10 +2800,10 @@ pbkdf2@^3.0.3:
     safe-buffer "^5.0.1"
     sha.js "^2.4.8"
 
-phaser3-rex-plugins@^1.1.11:
-  version "1.1.13"
-  resolved "https://registry.yarnpkg.com/phaser3-rex-plugins/-/phaser3-rex-plugins-1.1.13.tgz#3954010d723b4a1b39f6ce963b6fea84222ff51e"
-  integrity sha512-o6XrpjscgROqXYPRF4lEmf6JMEG/GFLTZZO6zuGWQt11gJocnvVj4ESRFcGURt/DIRluvnN4bdXn+s+biSOdVw==
+phaser3-rex-plugins@^1.1.13:
+  version "1.1.17"
+  resolved "https://registry.yarnpkg.com/phaser3-rex-plugins/-/phaser3-rex-plugins-1.1.17.tgz#55fcdc03de9c0e8a71e28a1daa8755527cd980e7"
+  integrity sha512-tm/bbsLkU73GrZkD3fhevG6UbxilxNvnBQse6lmx44cIywyyysGpQVxIs3Z6t/eYKld7sBMicBVOG9swatBfFg==
   dependencies:
     eventemitter3 "^3.1.2"
     lokijs "^1.5.8"
