@@ -1,7 +1,13 @@
 ## Concept 
 
-This is a web based implementation of the board game Legends of Andor  made with Phaser 3 + Typescript.
-It features concurrent multiplayer game sessions, chat, and the possibility to save and load games.
+This is an implementation of the board game Legends of Andor  made with Phaser 3 + Typescript, that runs in the browser.
+It features concurrent multiplayer game sessions (on computers connected to the same network),
+chat, and the possibility to save and load games. The rules are full-fledged for legend 2.
+
+![github-small](https://github.com/JDziewonski98/Andor/blob/master/screenshots/Capture.PNG)
+![github-small](https://github.com/JDziewonski98/Andor/blob/master/screenshots/Capture2.PNG)
+![github-small](https://github.com/JDziewonski98/Andor/blob/master/screenshots/Capture3.PNG)
+![github-small](https://github.com/JDziewonski98/Andor/blob/master/screenshots/Capture4.PNG)
 
 ## Instructions
 
