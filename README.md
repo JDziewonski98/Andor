@@ -1,3 +1,8 @@
+## Concept 
+
+This is a web based implementation of the board game Legends of Andor  made with Phaser 3 + Typescript.
+It features concurrent multiplayer game sessions, chat, and the possibility to save and load games.
+
 ## Instructions
 
 Some instructions on how to start the game. 
