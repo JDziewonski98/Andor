@@ -2700,10 +2700,10 @@ pako@~1.0.5:
   version "1.0.10"
   resolved "https://registry.yarnpkg.com/pako/-/pako-1.0.10.tgz#4328badb5086a426aa90f541977d4955da5c9732"
 
-papaparse@^4.6.3:
-  version "4.6.3"
-  resolved "https://registry.yarnpkg.com/papaparse/-/papaparse-4.6.3.tgz#742e5eaaa97fa6c7e1358d2934d8f18f44aee781"
-  integrity sha512-LRq7BrHC2kHPBYSD50aKuw/B/dGcg29omyJbKWY3KsYUZU69RKwaBHu13jGmCYBtOc4odsLCrFyk6imfyNubJQ==
+papaparse@^5.2.0:
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/papaparse/-/papaparse-5.2.0.tgz#97976a1b135c46612773029153dc64995caa3b7b"
+  integrity sha512-ylq1wgUSnagU+MKQtNeVqrPhZuMYBvOSL00DHycFTCxownF95gpLAk1HiHdUW77N8yxRq1qHXLdlIPyBSG9NSA==
 
 parallel-transform@^1.1.0:
   version "1.2.0"
@@ -2799,14 +2799,14 @@ pbkdf2@^3.0.3:
     safe-buffer "^5.0.1"
     sha.js "^2.4.8"
 
-phaser3-rex-plugins@^1.1.11:
-  version "1.1.13"
-  resolved "https://registry.yarnpkg.com/phaser3-rex-plugins/-/phaser3-rex-plugins-1.1.13.tgz#3954010d723b4a1b39f6ce963b6fea84222ff51e"
-  integrity sha512-o6XrpjscgROqXYPRF4lEmf6JMEG/GFLTZZO6zuGWQt11gJocnvVj4ESRFcGURt/DIRluvnN4bdXn+s+biSOdVw==
+phaser3-rex-plugins@^1.1.13:
+  version "1.1.18"
+  resolved "https://registry.yarnpkg.com/phaser3-rex-plugins/-/phaser3-rex-plugins-1.1.18.tgz#26d947a846aa27bc3d7113be8ab607409a332325"
+  integrity sha512-M6dSxy8l7KM1501SBi3McL4zOmDvn989npMYN/oRwfqOOrY1qj07z1hQy9johZGdlAepoYxdyAWxkcAyjgRM8A==
   dependencies:
     eventemitter3 "^3.1.2"
     lokijs "^1.5.8"
-    papaparse "^4.6.3"
+    papaparse "^5.2.0"
     webfontloader "^1.6.28"
 
 phaser@^3.21.0:
@@ -3904,8 +3904,9 @@ websocket-driver@>=0.5.1:
     websocket-extensions ">=0.1.1"
 
 websocket-extensions@>=0.1.1:
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/websocket-extensions/-/websocket-extensions-0.1.3.tgz#5d2ff22977003ec687a4b87073dfbbac146ccf29"
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/websocket-extensions/-/websocket-extensions-0.1.4.tgz#7f8473bc839dfd87608adb95d7eb075211578a42"
+  integrity sha512-OqedPIGOfsDlo31UNwYbCFMSaO9m9G/0faIHj5/dZFDMFqPTcx6UwqyOy3COEaEOg/9VsGIpdqn62W5KhoKSpg==
 
 which-module@^2.0.0:
   version "2.0.0"
